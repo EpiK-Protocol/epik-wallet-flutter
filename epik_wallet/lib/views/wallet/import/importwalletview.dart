@@ -79,6 +79,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
       });
     }
 
+    if(_controllerKeyword_1==null)
     _controllerKeyword_1 = new TextEditingController.fromValue(TextEditingValue(
       text: keyword_1,
       selection: new TextSelection.fromPosition(
@@ -87,6 +88,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
       ),
     ));
 
+    if(_controllerKeyword_2==null)
     _controllerKeyword_2 = new TextEditingController.fromValue(TextEditingValue(
       text: keyword_2,
       selection: new TextSelection.fromPosition(
@@ -95,6 +97,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
       ),
     ));
 
+    if(_controllerAccount==null)
     _controllerAccount = new TextEditingController.fromValue(TextEditingValue(
       text: accountName,
       selection: new TextSelection.fromPosition(
@@ -103,6 +106,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
       ),
     ));
 
+    if(_controllerImport==null)
     _controllerImport = new TextEditingController(text: importString);
 
     return SingleChildScrollView(
@@ -233,6 +237,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
             }, () {
               setState(() {
                 accountName = "";
+                _controllerAccount=null;
               });
             }, isPassword: false),
             Padding(
@@ -255,6 +260,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
             }, () {
               setState(() {
                 keyword_1 = "";
+                _controllerKeyword_1=null;
               });
             }),
             Container(
@@ -277,6 +283,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
             }, () {
               setState(() {
                 keyword_2 = "";
+                _controllerKeyword_2=null;
               });
             }),
             Container(

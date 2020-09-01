@@ -38,6 +38,17 @@ android {
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
+        ndk {
+            abiFilters("armeabi-v7a") //"armeabi", "armeabi-v7a","arm64-v8a", "mips", "x86", "x86_64"
+        }
+//        flutter.so默认只生成64位
+//        在flutterSDK中找到flutter.gradle
+//        .../flutter/packages/flutter_tools/gradle/flutter.gradle
+//        修改为一下代码
+//        private List<String> getTargetPlatforms() {
+//            return DEFAULT_PLATFORMS
+//        }
     }
 
     //签名配置

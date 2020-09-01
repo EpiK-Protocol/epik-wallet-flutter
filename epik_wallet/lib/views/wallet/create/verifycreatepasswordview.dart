@@ -52,6 +52,7 @@ class _VerifyCreatePasswordViewState
 
   @override
   Widget buildWidget(BuildContext context) {
+    if(_controllerKeyword==null)
     _controllerKeyword = new TextEditingController.fromValue(TextEditingValue(
       text: keyword,
       selection: new TextSelection.fromPosition(
@@ -110,6 +111,7 @@ class _VerifyCreatePasswordViewState
             }, () {
               setState(() {
                 keyword = "";
+                _controllerKeyword=null;
               });
             }),
             Container(

@@ -3,13 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 
-class EpikView extends BaseInnerWidget
+class TransactionView extends BaseInnerWidget
 {
-  EpikView(Key key) : super(key: key) {}
+  TransactionView(Key key) : super(key: key) {}
 
   @override
   BaseInnerWidgetState<BaseInnerWidget> getState() {
-    return _EpikViewState();
+    return TransactionViewState();
   }
 
   @override
@@ -19,7 +19,7 @@ class EpikView extends BaseInnerWidget
 
 }
 
-class _EpikViewState extends BaseInnerWidgetState<EpikView>
+class TransactionViewState extends BaseInnerWidgetState<TransactionView>
 {
   @override
   void initState() {

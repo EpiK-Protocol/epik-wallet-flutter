@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:bip32/bip32.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
+import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:hex/hex.dart';
 
@@ -32,11 +33,11 @@ class WalletUtils {
     try {
       HDWallet hdWallet = new HDWallet.fromSeed(seed);
       HDWallet wallet_path = hdWallet.derivePath(path);
-      print("createHdWallet.address = ${wallet_path.address}");
-      print("createHdWallet.pubKey = ${wallet_path.pubKey}");
-      print("createHdWallet.privkey = ${wallet_path.privKey}");
-      print("createHdWallet.wif = ${wallet_path.wif}");
-      print("createHdWallet.networktype = ${wallet_path.network.toString()}");
+      Dlog.p("WalletUtils","createHdWallet.address = ${wallet_path.address}");
+      Dlog.p("WalletUtils","createHdWallet.pubKey = ${wallet_path.pubKey}");
+      Dlog.p("WalletUtils","createHdWallet.privkey = ${wallet_path.privKey}");
+      Dlog.p("WalletUtils","createHdWallet.wif = ${wallet_path.wif}");
+      Dlog.p("WalletUtils","createHdWallet.networktype = ${wallet_path.network.toString()}");
       return wallet_path;
     } catch (e) {
       print(e);
@@ -75,11 +76,11 @@ class WalletUtils {
 
       HDWallet wallet_path =
           HDWallet(bip32: bip32, p2pkh: p2pkh, network: network, seed: null);
-      print("import.address = ${wallet_path.address}");
-      print("import.pubKey = ${wallet_path.pubKey}");
-      print("import.privkey = ${wallet_path.privKey}");
-      print("import.wif = ${wallet_path.wif}");
-      print("import.networktype = ${wallet_path.network.toString()}");
+      Dlog.p("WalletUtils","import.address = ${wallet_path.address}");
+      Dlog.p("WalletUtils","import.pubKey = ${wallet_path.pubKey}");
+      Dlog.p("WalletUtils","import.privkey = ${wallet_path.privKey}");
+      Dlog.p("WalletUtils","import.wif = ${wallet_path.wif}");
+      Dlog.p("WalletUtils","import.networktype = ${wallet_path.network.toString()}");
 
       if (StringUtils.isNotEmpty(wallet_path.privKey) &&
           StringUtils.isNotEmpty(wallet_path.pubKey)) {

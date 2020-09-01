@@ -8,7 +8,9 @@ import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/screen/screen_util.dart';
-import 'package:epikwallet/views/epikview.dart';
+import 'package:epikwallet/utils/toast/toast.dart';
+import 'package:epikwallet/views/miningview.dart';
+import 'package:epikwallet/views/transactionview.dart';
 import 'package:epikwallet/views/walletmenu.dart';
 import 'package:epikwallet/views/walletview.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +24,7 @@ class MainView extends BaseWidget {
 }
 
 class _MainViewState extends BaseWidgetState<MainView> {
-  int currentIndex = 0;
+  int currentIndex = 1;
   int lastIndex = -1;
 
   final GlobalKey<ScaffoldState> key_scaffold = GlobalKey();
@@ -40,11 +42,13 @@ class _MainViewState extends BaseWidgetState<MainView> {
     keyList = <GlobalKey<BaseInnerWidgetState>>[
       GlobalKey(),
       GlobalKey(),
+      GlobalKey(),
     ];
 
     subViews = <BaseInnerWidget>[
-      WalletView(keyList[0]),
-      EpikView(keyList[1]),
+      MiningView(keyList[0]),
+      WalletView(keyList[1]),
+      TransactionView(keyList[2]),
     ];
   }
 
@@ -61,54 +65,57 @@ class _MainViewState extends BaseWidgetState<MainView> {
         index: currentIndex,
         children: subViews,
       ),
-//      bottomNavigationBar: BottomNavigationBar(
-//        backgroundColor: Colors.white,
-//        items: getBottomNavigationBarItems(),
-//        currentIndex: currentIndex,
-//        selectedItemColor: Color(0xff000000),
-//        unselectedItemColor: Color(0xff999999),
-//        onTap: _onItemTapped,
-//        type: BottomNavigationBarType.fixed,
-//        selectedFontSize: 11,
-//        unselectedFontSize: 11,
-//        iconSize: 21,
-//      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
+        items: getBottomNavigationBarItems(),
+        currentIndex: currentIndex,
+        selectedItemColor: Color(0xff000000),
+        unselectedItemColor: Color(0xff999999),
+        onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
+        selectedFontSize: 11,
+        unselectedFontSize: 11,
+        iconSize: 21,
+      ),
       endDrawer: Drawer(
         child: WalletMenu(),
       ),
       endDrawerEnableOpenDragGesture: false,
     );
-    return scaffold;
+//    return scaffold;
 
-//    return WillPopScope(
-//      onWillPop: () async {
-//
-//        if(closeRightDrawer())
-//          return;
-//
-//        if (lastPopTime == null ||
-//            DateTime.now().difference(lastPopTime) > Duration(seconds: 1)) {
-//          //两次点击间隔超过1秒则重新计时
-//          lastPopTime = DateTime.now();
-//          ToastUtils.showToast("再按一次退出");
-//          return new Future.value(false);
-//        }
-//        return new Future.value(true);
-//      },
-//      child:scaffold,
-//    );
+    return WillPopScope(
+      onWillPop: () async {
+        if (closeRightDrawer()) return new Future.value(false);;
+
+        if (lastPopTime == null ||
+            DateTime.now().difference(lastPopTime) > Duration(seconds: 1)) {
+          //两次点击间隔超过1秒则重新计时
+          lastPopTime = DateTime.now();
+          ToastUtils.showToast("再按一次退出");
+          return new Future.value(false);
+        }
+        return new Future.value(true);
+      },
+      child: scaffold,
+    );
   }
 
   List<BottomNavigationBarItem> getBottomNavigationBarItems() {
     // 导航按钮
     return [
       BottomNavigationBarItem(
+        icon: Icon(Icons.bubble_chart),
+        title: Text('挖矿'),
+      ),
+      BottomNavigationBarItem(
         icon: Icon(Icons.account_balance_wallet),
         title: Text('钱包'),
       ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.bubble_chart),
-        title: Text('EPIK'),
+        icon: Icon(Icons.swap_horizontal_circle),
+        //repeat swap_horiz   swap_horizontal_circle
+        title: Text('交易'),
       ),
     ];
   }

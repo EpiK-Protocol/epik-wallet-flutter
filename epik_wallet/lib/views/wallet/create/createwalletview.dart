@@ -48,6 +48,7 @@ class _CreateWalletViewState extends BaseWidgetState<CreateWalletView> {
 
   @override
   Widget buildWidget(BuildContext context) {
+    if(_controllerKeyword_1==null)
     _controllerKeyword_1 = new TextEditingController.fromValue(TextEditingValue(
       text: keyword_1,
       selection: new TextSelection.fromPosition(
@@ -56,6 +57,7 @@ class _CreateWalletViewState extends BaseWidgetState<CreateWalletView> {
       ),
     ));
 
+    if(_controllerKeyword_2==null)
     _controllerKeyword_2 = new TextEditingController.fromValue(TextEditingValue(
       text: keyword_2,
       selection: new TextSelection.fromPosition(
@@ -64,6 +66,7 @@ class _CreateWalletViewState extends BaseWidgetState<CreateWalletView> {
       ),
     ));
 
+    if(_controllerAccount==null)
     _controllerAccount = new TextEditingController.fromValue(TextEditingValue(
       text: accountName,
       selection: new TextSelection.fromPosition(
@@ -123,6 +126,7 @@ class _CreateWalletViewState extends BaseWidgetState<CreateWalletView> {
             }, () {
               setState(() {
                 accountName = "";
+                _controllerAccount=null;
               });
             }, isPassword: false),
             Padding(
@@ -145,6 +149,7 @@ class _CreateWalletViewState extends BaseWidgetState<CreateWalletView> {
             }, () {
               setState(() {
                 keyword_1 = "";
+                _controllerKeyword_1=null;
               });
             }),
             Container(
@@ -167,6 +172,7 @@ class _CreateWalletViewState extends BaseWidgetState<CreateWalletView> {
             }, () {
               setState(() {
                 keyword_2 = "";
+                _controllerKeyword_2=null;
               });
             }),
             Container(

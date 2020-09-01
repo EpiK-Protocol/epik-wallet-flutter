@@ -5,6 +5,7 @@ import 'package:epikwallet/utils/CupertinoLocalizationsDelegate.dart';
 import 'package:epikwallet/utils/sp_utils/sp_utils.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
 import 'package:epikwallet/views/mainview.dart';
+import 'package:epikwallet/views/splashview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -64,7 +65,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       //隐藏debug标签
 //      navigatorObservers: [AppAnalysis()],//umeng自动统计
-      color: Colors.white,
+      color: Color(0xff10052f),
       theme: ThemeData(
         fontFamily: fontFamily_def, // 统一指定应用的字体。
         platform: TargetPlatform.iOS, // ios 有手势返回  右侧滑入新页面
@@ -103,7 +104,7 @@ class _MyAppState extends State<MyApp> {
         },
 //        child: MainView(),
         child: hasDataInit
-            ? MainView()
+            ? SplashView()
             : Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
