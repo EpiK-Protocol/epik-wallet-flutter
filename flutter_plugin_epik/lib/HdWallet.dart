@@ -9,16 +9,13 @@ class HD {
   /// 用助记词创建HD钱包
   static Future<HdWallet> newFromMnemonic(String mnemonic) async {
     try {
-      print("hd_wallet_balance start");
-      await EpikPlugin.channel.invokeMethod(
+      var ret = await EpikPlugin.channel.invokeMethod(
           "hd_hd_newFromMnemonic", <String, dynamic>{"mnemonic": mnemonic});
       hdWallet = HdWallet(mnemonic: mnemonic);
       return hdWallet;
     } catch (e) {
-      print("hd_wallet_balance error");
       print(e);
     }
-    print("hd_wallet_balance null");
     hdWallet = null;
     return hdWallet;
   }
@@ -39,12 +36,16 @@ class HD {
 
   /// 创建助记词 bits = 128 生成12个助记词单词
   static Future<String> newMnemonic({int bits = 128}) async {
+    print("hd_wallet_newMnemonic start");
     try {
-      return await EpikPlugin.channel
+      String ret= await EpikPlugin.channel
           .invokeMethod("hd_hd_newMnemonic", <String, dynamic>{"bits": bits});
+      return ret;
     } catch (e) {
+      print("hd_wallet_newMnemonic error");
       print(e);
     }
+    print("hd_wallet_newMnemonic null");
     return null;
   }
 
@@ -85,12 +86,16 @@ class HdWallet {
   }
 
   Future<String> balance(String address) async {
+    print("hd_wallet_newMnemonic start");
     try {
-      return await EpikPlugin.channel.invokeMethod(
+      String ret= await EpikPlugin.channel.invokeMethod(
           "hd_wallet_balance", <String, dynamic>{"address": address});
+      return ret;
     } catch (e) {
+      print("hd_wallet_newMnemonic error");
       print(e);
     }
+    print("hd_wallet_newMnemonic null");
     return null;
   }
 
