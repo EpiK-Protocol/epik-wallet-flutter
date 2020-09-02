@@ -19,14 +19,13 @@ class Epik {
     return epikWallet;
   }
 
-  static Future<EpikWallet> newWalletFromSeed(Uint8List seed,{String t="bls"}) async {
+  static Future<EpikWallet> newWalletFromSeed(Uint8List seed,
+      {String t = "bls"}) async {
     try {
       await newWallet();
-      if(epikWallet!=null)
-      {
-        await epikWallet.generateKey(seed,t:t);
-        if(epikWallet!=null)
-        {
+      if (epikWallet != null) {
+        await epikWallet.generateKey(seed, t: t);
+        if (epikWallet != null) {
           return epikWallet;
         }
       }
@@ -39,7 +38,6 @@ class Epik {
 }
 
 class EpikWallet {
-
   String address;
 
   Future<String> balance(String addr) async {
@@ -54,8 +52,11 @@ class EpikWallet {
 
   Future<PrivateKey> export(String addr) async {
     try {
-      Map<String, String> reslut = await EpikPlugin.channel
+      
+      var map = await EpikPlugin.channel
           .invokeMethod("epik_wallet_export", <String, dynamic>{"addr": addr});
+
+      Map<String, dynamic> reslut = new Map<String, dynamic>.from(map);
 
       if (reslut != null && reslut.length > 0) {
         String keyType = reslut["keyType"];
@@ -70,9 +71,9 @@ class EpikWallet {
   }
 
   /// t: bls , secp256k1
-  Future<String> generateKey(Uint8List seed,{String t="bls"}) async {
+  Future<String> generateKey(Uint8List seed, {String t = "bls"}) async {
     try {
-      address= await EpikPlugin.channel.invokeMethod(
+      address = await EpikPlugin.channel.invokeMethod(
           "epik_wallet_generateKey", <String, dynamic>{"t": t, "seed": seed});
       return address;
     } catch (e) {
