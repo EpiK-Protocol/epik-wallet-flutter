@@ -4,16 +4,19 @@ import 'package:epikplugin/PrivateKey.dart';
 import 'package:epikplugin/epikplugin.dart';
 
 class Epik {
+  static EpikWallet epikWallet;
 
   /// 在SDK中单例
   static Future<EpikWallet> newWallet() async {
     try {
       await EpikPlugin.channel.invokeMethod("epik_epik_newWallet");
-      return EpikWallet();
+      epikWallet = EpikWallet();
+      return epikWallet;
     } catch (e) {
       print(e);
     }
-    return null;
+    epikWallet = null;
+    return epikWallet;
   }
 }
 

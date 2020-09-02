@@ -3,6 +3,10 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 export 'HdWallet.dart' show HD, HdWallet;
+export 'EpikWallet.dart';
+export 'PrivateKey.dart';
+export 'Bip44Path.dart';
+
 
 class EpikPlugin {
   static const MethodChannel channel = const MethodChannel('epikplugin');

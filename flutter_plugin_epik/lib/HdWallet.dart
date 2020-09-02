@@ -67,7 +67,7 @@ class HD {
   }
 }
 
-/// HD钱包实例,, sdk中hdwallet是单例的
+/// HD钱包实例, sdk中hdwallet是单例的
 class HdWallet {
   String mnemonic;
   Uint8List seed;
@@ -101,7 +101,7 @@ class HdWallet {
     return null;
   }
 
-  Future<String> derive(String path, bool pin) async {
+  Future<String> derive(String path, {bool pin=true}) async {
     try {
       return await EpikPlugin.channel
           .invokeMethod("hd_wallet_derive", <String, dynamic>{
@@ -154,7 +154,7 @@ class HdWallet {
       return await EpikPlugin.channel
           .invokeMethod("hd_wallet_tokenBalance", <String, dynamic>{
         "address": address,
-        "text": p1,
+        "p1": p1,
       });
     } catch (e) {
       print(e);
@@ -168,7 +168,7 @@ class HdWallet {
       return await EpikPlugin.channel
           .invokeMethod("hd_wallet_tokenBalance", <String, dynamic>{
         "address": address,
-        "text": p1,
+        "p1": p1,
         "page": page,
         "offset": offset,
         "asc": asc,

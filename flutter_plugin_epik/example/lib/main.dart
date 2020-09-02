@@ -56,7 +56,6 @@ class _MyAppState extends State<MyApp> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text('Running on: $_platformVersion\n'),
-
               MaterialButton(
                 minWidth: double.infinity,
                 padding: EdgeInsets.all(15),
@@ -67,22 +66,19 @@ class _MyAppState extends State<MyApp> {
                   });
                 },
               ),
-
               MaterialButton(
                 minWidth: double.infinity,
                 padding: EdgeInsets.all(15),
                 child: Text(
                     "助记词生成种子\n${seedFromMnemonic == null ? "" : base64Encode(seedFromMnemonic)}"),
                 onPressed: () {
-                  if(newMnemonic==null)
-                    return;
+                  if (newMnemonic == null) return;
 
                   HD.seedFromMnemonic(newMnemonic).then((seed) {
                     setState(() => seedFromMnemonic = seed);
                   });
                 },
               ),
-
               MaterialButton(
                 minWidth: double.infinity,
                 padding: EdgeInsets.all(15),
@@ -94,17 +90,28 @@ class _MyAppState extends State<MyApp> {
                   });
                 },
               ),
-
               MaterialButton(
                 minWidth: double.infinity,
                 padding: EdgeInsets.all(15),
                 child: Text(
                     "助记词创建钱包\nhashcode=${walletnewFromMnemonic?.hashCode}"),
                 onPressed: () {
-                  if(newMnemonic!=null)
-                  HD.newFromMnemonic(newMnemonic).then((hdwallet) {
-                    setState(() => walletnewFromMnemonic = hdwallet);
-                  });
+                  if (newMnemonic != null)
+                    HD.newFromMnemonic(newMnemonic).then((hdwallet) {
+                      setState(() => walletnewFromMnemonic = hdwallet);
+                    });
+                },
+              ),
+              MaterialButton(
+                minWidth: double.infinity,
+                padding: EdgeInsets.all(15),
+                child:
+                    Text("随机种子创建钱包\nhashcode=${walletnewFromSeed?.hashCode}"),
+                onPressed: () {
+                  if (newSeed != null)
+                    HD.newFromSeed(newSeed).then((hdwallet) {
+                      setState(() => walletnewFromSeed = hdwallet);
+                    });
                 },
               ),
 
@@ -112,12 +119,54 @@ class _MyAppState extends State<MyApp> {
                 minWidth: double.infinity,
                 padding: EdgeInsets.all(15),
                 child: Text(
-                    "随机种子创建钱包\nhashcode=${walletnewFromSeed?.hashCode}"),
+                    "设置HdWallet RPC地址 \nurl = ${hdwallet_rpc}"),
                 onPressed: () {
-                  if(newSeed!=null)
-                  HD.newFromSeed(newSeed).then((hdwallet) {
-                    setState(() => walletnewFromSeed = hdwallet);
-                  });
+                  if (walletnewFromMnemonic != null) {
+                    String rpcUrl = "https://mainnet.infura.io/v3/1bbd25bd3af94ca2b294f93c346f69cd";
+                    walletnewFromMnemonic
+                        .setRPC(rpcUrl)
+                        .then((_) {
+                      setState(() => hdwallet_rpc=rpcUrl);
+                    });
+                  }
+                },
+              ),
+
+              MaterialButton(
+                minWidth: double.infinity,
+                padding: EdgeInsets.all(15),
+                child: Text(
+                    "生成ETH子钱包\nETH path = ${hdwallet_eth_path}\nETH addrss = ${hdwallet_eth_address}"),
+                onPressed: () {
+                  if (walletnewFromMnemonic != null) {
+                    hdwallet_eth_path = Bip44Path.getPath("ETH");
+                    walletnewFromMnemonic
+                        .derive(hdwallet_eth_path)
+                        .then((address) {
+                      setState(() => hdwallet_eth_address = address);
+                    });
+                  }
+                },
+              ),
+
+
+              MaterialButton(
+                minWidth: double.infinity,
+                padding: EdgeInsets.all(15),
+                child: Text(
+                    "ETH 余额\n${hdwallet_eth_balance}"),
+                onPressed: () {
+                  if (walletnewFromMnemonic != null) {
+                    setState(() {
+                      hdwallet_eth_balance="loading...";
+                    });
+                    walletnewFromMnemonic
+                        .balance(hdwallet_eth_address)
+                        .then((balance) {
+                      setState(() => hdwallet_eth_balance = balance);
+                    });
+                  }
+
                 },
               ),
             ],
@@ -128,6 +177,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   String newMnemonic;
-  Uint8List newSeed,seedFromMnemonic;
-  HdWallet walletnewFromMnemonic,walletnewFromSeed;
+  Uint8List newSeed, seedFromMnemonic;
+  HdWallet walletnewFromMnemonic, walletnewFromSeed;
+  String hdwallet_rpc;
+  String hdwallet_eth_path, hdwallet_eth_address, hdwallet_eth_balance;
 }
