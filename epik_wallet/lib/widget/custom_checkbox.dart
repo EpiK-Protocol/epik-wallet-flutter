@@ -20,10 +20,10 @@ class CustomCheckBox extends StatefulWidget {
   CustomCheckBox({
     @required this.value,
     @required this.onChanged,
-    this.color_check = Colors.blue,
-    this.color_border = Colors.blue,
-    this.color_check_no = const Color(0xFF90CAF9),
-    this.color_border_no = const Color(0xFF90CAF9),
+    this.color_check = const Color(0xff1A1C1F),//Colors.blue,
+    this.color_border = const Color(0xff1A1C1F),
+    this.color_check_no = const Color(0xff393E45),//Color(0xFF90CAF9)
+    this.color_border_no = const Color(0xff393E45),
     this.width = 16,
     this.height = 16,
     this.checkSize = 14,

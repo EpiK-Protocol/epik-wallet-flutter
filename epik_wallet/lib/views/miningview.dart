@@ -1,4 +1,5 @@
 import 'package:epikwallet/base/base_inner_widget.dart';
+import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/list_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -304,7 +305,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
         highlightColor: Colors.white24,
         splashColor: Colors.white24,
         onPressed: () {
-//        clickImport();
+          onClickAction();
         },
         child: Text(
           "报名",
@@ -325,8 +326,17 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
     //todo
   }
 
-  Future<void> _pullRefreshCallback() async{
+  onClickAction()
+  {
+    // 报名 、 审核中 、
+//    ViewGT.showMiningSignupView(context);
 
+    // 预挖奖励
+    ViewGT.showMiningProfitView(context);
+  }
+
+  Future<void> _pullRefreshCallback() async{
+    // todo 刷新排行榜
     await Future.delayed(Duration(milliseconds: 1000));
   }
 }

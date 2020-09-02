@@ -1,6 +1,8 @@
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/LocalKeyStore.dart';
 import 'package:epikwallet/views/currency/currencydetailview.dart';
+import 'package:epikwallet/views/mining/miningprofitview.dart';
+import 'package:epikwallet/views/mining/miningsignupview.dart';
 import 'package:epikwallet/views/wallet/accountdetailview.dart';
 import 'package:epikwallet/views/wallet/create/createwalletview.dart';
 import 'package:epikwallet/views/wallet/import/importwalletview.dart';
@@ -57,14 +59,26 @@ class ViewGT {
   }
 
   /// 币种详情
-  static showCurrencyDetailView(BuildContext context,CurrencyAsset currencyasset)
-  {
+  static showCurrencyDetailView(
+      BuildContext context, CurrencyAsset currencyasset) {
     showView(context, CurrencyDetailView(currencyasset));
   }
 
   /// 账号详情
-  static showAccountDetailView(BuildContext context,LocalKeyStore localKeyStore)
-  {
-    showView(context,AccountDetailView(localKeyStore));
+  static showAccountDetailView(
+      BuildContext context, LocalKeyStore localKeyStore) {
+    showView(context, AccountDetailView(localKeyStore));
   }
+
+  /// 挖矿报名
+  static showMiningSignupView(BuildContext context) {
+    showView(context, MiningSignupView());
+  }
+
+  /// 挖矿奖励
+  static showMiningProfitView(BuildContext context) {
+    showView(context, MiningProfitView());
+  }
+
+
 }

@@ -194,6 +194,7 @@ flutter:
     - assets/img/bg_account_header.png
     - assets/img/bg_splash.png
     - assets/img/bg_header.png
+    - assets/img/ic_wechat.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

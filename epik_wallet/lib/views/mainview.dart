@@ -42,13 +42,13 @@ class _MainViewState extends BaseWidgetState<MainView> {
     keyList = <GlobalKey<BaseInnerWidgetState>>[
       GlobalKey(),
       GlobalKey(),
-      GlobalKey(),
+//      GlobalKey(),
     ];
 
     subViews = <BaseInnerWidget>[
       MiningView(keyList[0]),
       WalletView(keyList[1]),
-      TransactionView(keyList[2]),
+//      TransactionView(keyList[2]),
     ];
   }
 
@@ -112,11 +112,11 @@ class _MainViewState extends BaseWidgetState<MainView> {
         icon: Icon(Icons.account_balance_wallet),
         title: Text('钱包'),
       ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.swap_horizontal_circle),
-        //repeat swap_horiz   swap_horizontal_circle
-        title: Text('交易'),
-      ),
+//      BottomNavigationBarItem(
+//        icon: Icon(Icons.swap_horizontal_circle),
+//        //repeat swap_horiz   swap_horizontal_circle
+//        title: Text('交易'),
+//      ),
     ];
   }
 
