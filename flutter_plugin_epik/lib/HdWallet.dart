@@ -9,13 +9,16 @@ class HD {
   /// 用助记词创建HD钱包
   static Future<HdWallet> newFromMnemonic(String mnemonic) async {
     try {
+      print("hd_wallet_balance start");
       await EpikPlugin.channel.invokeMethod(
           "hd_hd_newFromMnemonic", <String, dynamic>{"mnemonic": mnemonic});
       hdWallet = HdWallet(mnemonic: mnemonic);
       return hdWallet;
     } catch (e) {
+      print("hd_wallet_balance error");
       print(e);
     }
+    print("hd_wallet_balance null");
     hdWallet = null;
     return hdWallet;
   }

@@ -26,7 +26,7 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
 
     public static void registerWith(Registrar registrar)
     {
-        final MethodChannel channel = new MethodChannel(registrar.messenger(), "flutterplugin");
+        final MethodChannel channel = new MethodChannel(registrar.messenger(), "epikplugin");
         channel.setMethodCallHandler(new FlutterpluginPlugin());
     }
 

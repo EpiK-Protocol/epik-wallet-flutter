@@ -1,0 +1,22 @@
+PODS:
+  - epikplugin (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+
+DEPENDENCIES:
+  - epikplugin (from `.symlinks/plugins/epikplugin/ios`)
+  - Flutter (from `Flutter`)
+
+EXTERNAL SOURCES:
+  epikplugin:
+    :path: ".symlinks/plugins/epikplugin/ios"
+  Flutter:
+    :path: Flutter
+
+SPEC CHECKSUMS:
+  epikplugin: dfebb77d09e3cffded8e05bd14b15057b5428bde
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+
+PODFILE CHECKSUM: c34e2287a9ccaa606aeceab922830efb9a6ff69a
+
+COCOAPODS: 1.9.3
