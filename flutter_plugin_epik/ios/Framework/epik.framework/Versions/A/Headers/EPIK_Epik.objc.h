@@ -69,7 +69,7 @@
 /**
  * Export ...
  */
-- (EPIK_EpikPrivateKey* _Nullable)export:(NSString* _Nullable)addr error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)export:(NSString* _Nullable)addr error:(NSError* _Nullable* _Nullable)error;
 /**
  * GenerateKey t:bls,secp256k1
  */
@@ -81,7 +81,7 @@
 /**
  * Import ...
  */
-- (NSString* _Nonnull)import:(EPIK_EpikPrivateKey* _Nullable)privateKey error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)import:(NSString* _Nullable)privateKey error:(NSError* _Nullable* _Nullable)error;
 /**
  * MessageList ...
  */
