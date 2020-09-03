@@ -38,7 +38,7 @@ class HD {
   static Future<String> newMnemonic({int bits = 128}) async {
     print("hd_wallet_newMnemonic start");
     try {
-      String ret= await EpikPlugin.channel
+      String ret = await EpikPlugin.channel
           .invokeMethod("hd_hd_newMnemonic", <String, dynamic>{"bits": bits});
       return ret;
     } catch (e) {
@@ -85,17 +85,24 @@ class HdWallet {
     return super.hashCode;
   }
 
-  Future<String> balance(String address) async {
-    print("hd_wallet_newMnemonic start");
+  Future<String> accounts() async {
     try {
-      String ret= await EpikPlugin.channel.invokeMethod(
+      String ret = await EpikPlugin.channel.invokeMethod("hd_wallet_accounts");
+      return ret;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  Future<String> balance(String address) async {
+    try {
+      String ret = await EpikPlugin.channel.invokeMethod(
           "hd_wallet_balance", <String, dynamic>{"address": address});
       return ret;
     } catch (e) {
-      print("hd_wallet_newMnemonic error");
       print(e);
     }
-    print("hd_wallet_newMnemonic null");
     return null;
   }
 
@@ -109,7 +116,7 @@ class HdWallet {
     return null;
   }
 
-  Future<String> derive(String path, {bool pin=true}) async {
+  Future<String> derive(String path, {bool pin = true}) async {
     try {
       return await EpikPlugin.channel
           .invokeMethod("hd_wallet_derive", <String, dynamic>{
@@ -157,12 +164,12 @@ class HdWallet {
     return null;
   }
 
-  Future<String> tokenBalance(String address, String p1) async {
+  Future<String> tokenBalance(String address, String currency) async {
     try {
       return await EpikPlugin.channel
           .invokeMethod("hd_wallet_tokenBalance", <String, dynamic>{
         "address": address,
-        "p1": p1,
+        "currency": currency,
       });
     } catch (e) {
       print(e);
@@ -171,12 +178,12 @@ class HdWallet {
   }
 
   Future<String> transactions(
-      String address, String p1, int page, int offset, bool asc) async {
+      String address, String currency, int page, int offset, bool asc) async {
     try {
       return await EpikPlugin.channel
-          .invokeMethod("hd_wallet_tokenBalance", <String, dynamic>{
+          .invokeMethod("hd_wallet_transactions", <String, dynamic>{
         "address": address,
-        "p1": p1,
+        "currency": currency,
         "page": page,
         "offset": offset,
         "asc": asc,
@@ -202,13 +209,13 @@ class HdWallet {
   }
 
   Future<String> transferToken(
-      String from, String to, String p2, String amount) async {
+      String from, String to, String currency, String amount) async {
     try {
       return await EpikPlugin.channel
           .invokeMethod("hd_wallet_transferToken", <String, dynamic>{
         "from": from,
         "to": to,
-        "p2": p2,
+        "currency": currency,
         "amount": amount,
       });
     } catch (e) {

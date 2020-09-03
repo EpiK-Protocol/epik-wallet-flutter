@@ -189,7 +189,7 @@ class _MyAppState extends State<MyApp> {
                 minWidth: double.infinity,
                 padding: EdgeInsets.all(15),
                 child: Text(
-                    "设置Epik钱包 RPC地址 \nurl=${hdwallet_rpc}\ntoken=${epikwallet_address}"),
+                    "设置Epik钱包 RPC地址 \nurl=${epikwallet_rpc}\ntoken=${epikwallet_rpc_token}"),
                 onPressed: () {
                   if (Epik.epikWallet != null) {
                     String rpcUrl = "http://120.55.82.202:1234/rpc/v0";
@@ -198,7 +198,7 @@ class _MyAppState extends State<MyApp> {
                     Epik.epikWallet.setRPC(rpcUrl, token).then((_) {
                       setState(() {
                         epikwallet_rpc = rpcUrl;
-                        token = token;
+                        epikwallet_rpc_token = token;
                       });
                     });
                   }
@@ -231,6 +231,6 @@ class _MyAppState extends State<MyApp> {
   HdWallet walletnewFromMnemonic, walletnewFromSeed;
   String hdwallet_rpc;
   String hdwallet_eth_path, hdwallet_eth_address, hdwallet_eth_balance;
-  String epikwallet_rpc, epikwallet_address;
+  String epikwallet_rpc,epikwallet_rpc_token, epikwallet_address;
   PrivateKey epikPrivateKey;
 }

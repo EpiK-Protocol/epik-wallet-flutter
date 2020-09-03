@@ -52,7 +52,6 @@ class EpikWallet {
 
   Future<PrivateKey> export(String addr) async {
     try {
-      
       var map = await EpikPlugin.channel
           .invokeMethod("epik_wallet_export", <String, dynamic>{"addr": addr});
 
@@ -92,6 +91,19 @@ class EpikWallet {
     return null;
   }
 
+  Future<String> import(PrivateKey privateKey) async {
+    try {
+      return await EpikPlugin.channel.invokeMethod(
+          "epik_wallet_import", <String, String>{
+        "keyType": privateKey.keyType,
+        "privateKey": privateKey.privateKey
+      });
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
   Future<String> messageList(int toHeight, String addr) async {
     try {
       return await EpikPlugin.channel.invokeMethod("epik_wallet_messageList",
@@ -102,24 +114,36 @@ class EpikWallet {
     return null;
   }
 
-  Future setDefault(String addr) async {
+  Future<String> send(String to, String amount)async{
     try {
       return await EpikPlugin.channel.invokeMethod(
-          "epik_wallet_setDefault", <String, dynamic>{"addr": addr});
+          "epik_wallet_send", <String, dynamic>{"to": to,"amount": amount});
     } catch (e) {
       print(e);
     }
     return null;
   }
 
-  Future setRPC(String url, String token) async {
+  Future setDefault(String addr) async {
     try {
-      return await EpikPlugin.channel.invokeMethod(
-          "epik_wallet_setRPC", <String, dynamic>{"url": url, "token": token});
+      await EpikPlugin.channel.invokeMethod(
+          "epik_wallet_setDefault", <String, dynamic>{"addr": addr});
+      return;
     } catch (e) {
       print(e);
     }
-    return null;
+    return;
+  }
+
+  Future setRPC(String url, String token) async {
+    try {
+      await EpikPlugin.channel.invokeMethod(
+          "epik_wallet_setRPC", <String, dynamic>{"url": url, "token": token});
+      return;
+    } catch (e) {
+      print(e);
+    }
+    return;
   }
 
   Future<Uint8List> sign(String addr, Uint8List hash) async {
