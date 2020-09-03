@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
+import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:epikwallet/model/currencytype.dart';
 
 class WalletView extends BaseInnerWidget {
   WalletView(Key key) : super(key: key) {}
@@ -178,7 +180,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
         );
       },
       scrollCallback: scrollCallback,
-//      pullRefreshCallback: _pullRefreshCallback,
+      pullRefreshCallback: _pullRefreshCallback,
 //      needLoadMore: needLoadMore,
 //      onLoadMore: onLoadMore,
       key: key_scroll,
@@ -286,28 +288,60 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
 //                border:
 //                Border.all(color: ResColor.black_10, width: 0.5),
 //              ),
-              child: ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: ca.icon_url,
-                  width: 48,
-                  height: 48,
-                  fit: BoxFit.contain,
-                  placeholder: (context, url) {
-                    return Container(
-                      color: ResColor.black_10,
-                    );
-                  },
-                  errorWidget: (context, url, error) {
-                    return Container(
-                      color: ResColor.black_10,
-                      child: Icon(
-                        Icons.broken_image,
-                        size: 24,
-                        color: ResColor.white_80,
+              child: Stack(
+                children: <Widget>[
+                  Positioned(
+                    left: 0,
+                    top: 0,
+                    child: ClipOval(
+                      child: ca?.icon_url?.startsWith("http")
+                          ? CachedNetworkImage(
+                              imageUrl: ca.icon_url,
+                              width: 48,
+                              height: 48,
+                              fit: BoxFit.contain,
+                              placeholder: (context, url) {
+                                return Container(
+                                  color: ResColor.black_10,
+                                );
+                              },
+                              errorWidget: (context, url, error) {
+                                return Container(
+                                  color: ResColor.black_10,
+                                  child: Icon(
+                                    Icons.broken_image,
+                                    size: 24,
+                                    color: ResColor.white_80,
+                                  ),
+                                );
+                              },
+                            )
+                          : Image(
+                              image: AssetImage(ca.icon_url),
+                              width: 48,
+                              height: 48,
+                            ),
+                    ),
+                  ),
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: ca.networkType != null ? Container(
+                      width: 15,
+                      height: 15,
+                      padding: EdgeInsets.all(1),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
                       ),
-                    );
-                  },
-                ),
+                      child: Image(
+                        image: AssetImage(ca.networkType.iconUrl),
+                        width: 13,
+                        height: 13,
+                      )
+                    ) : Container(),
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -323,7 +357,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        ca.balance,
+                        ca.balance.isNotEmpty ? ca.balance : "--",
                         style: TextStyle(
                           fontSize: 25,
                           color: Colors.black,
@@ -609,43 +643,19 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
       setState(() {});
       return;
     }
-    ;
 
     setState(() {
       dlog("refresh ${AccountMgr().currentAccount.account}");
     });
 
-//    isLoading = true;
-//    setLoadingWidgetVisible(true);
+    isLoading = true;
+    setLoadingWidgetVisible(true);
 
-//    page = 1;
-//    Future<HttpJsonRes> res =
-//        ApiNews.getNewsListByType(page, pageSize, widget.newsTypeModel.code);
-//    res.then(jsonCallback);
-
-    data_list_item = [];
-
-    {
-      CurrencyAsset ca = CurrencyAsset();
-      ca.symbol = "EPK";
-      ca.price_usd = 5.6; //单价
-      ca.change_usd = 0.015; //涨幅
-      ca.balance = StringUtils.formatNumAmount(12345.75, point: 8); //余额
-      ca.icon_url = "https://officalimg-cdn.maoshen.com/epik/ic_epik.png";
-      data_list_item.add(ca);
-    }
-
-//    for (int i = 1; i <=1; i++) {
-//      CurrencyAsset ca = CurrencyAsset();
-//      ca.symbol = "BTC";
-//      ca.price_usd = 999; //单价
-//      ca.change_usd = i % 2 != 0 ? 0.015 : -0.073; //涨幅
-//      ca.balance = StringUtils.formatNumAmount(1.234 * i, point: 8); //余额
-//      ca.icon_url =
-//          "https://static.coinall.ltd/cdn/announce/20200630/1593491715965ae2fee43-b412-4984-aa65-40c924b09d5d.png";
-//
-//      data_list_item.add(ca);
-//    }
+    EpikWalletUtils.requestBalance(AccountMgr().currentAccount).then((value) {
+      isLoading = false;
+      data_list_item = AccountMgr().currentAccount.currencyList;
+      closeStateLayout();
+    });
   }
 
   void onClickErrorWidget() {
@@ -657,15 +667,11 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
   }
 
   Future<void> _pullRefreshCallback() async {
-    if (isLoading) {
-      return;
-    }
-
-    page = 1;
-    isLoading = true;
-//      HttpJsonRes res = await ApiNews.getNewsListByType(
-//          page, pageSize, widget.newsTypeModel.code);
-//      jsonCallback(res);
+    await EpikWalletUtils.requestBalance(AccountMgr().currentAccount);
+    setState(() {
+      isLoading = false;
+      data_list_item = AccountMgr().currentAccount.currencyList;
+    });
   }
 
   /**是否需要加载更多*/

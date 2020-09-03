@@ -1,6 +1,6 @@
+import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
-import 'package:epikwallet/logic/WalletUtils.dart';
 import 'package:epikwallet/model/CreateAccountModel.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/views/viewgoto.dart';
@@ -62,9 +62,11 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
   Widget buildWidget(BuildContext context) {
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
-      child:ConstrainedBox(
+      child: ConstrainedBox(
         constraints: BoxConstraints(
-          minHeight: getScreenHeight()-BaseFuntion.topbarheight-BaseFuntion.appbarheight,
+          minHeight: getScreenHeight() -
+              BaseFuntion.topbarheight -
+              BaseFuntion.appbarheight,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +112,8 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
                       onPressed: () {
                         createMnemonic();
                       },
-                      icon: Icon(Icons.refresh, size: 20, color: Colors.black54),
+                      icon:
+                          Icon(Icons.refresh, size: 20, color: Colors.black54),
                     ),
                   ),
                 ],
@@ -236,7 +239,14 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
   }
 
   createMnemonic() {
-    WalletUtils.createMnemonic().then((mnemonic) {
+//    WalletUtils.createMnemonic().then((mnemonic) {
+//      mnemonic_string = mnemonic;
+//      mnemonic_list = mnemonic.split(" ");
+//      if (mounted) setState(() {});
+//    });
+
+    HD.newMnemonic().then((mnemonic) {
+      dlog("newMnemonic $mnemonic");
       mnemonic_string = mnemonic;
       mnemonic_list = mnemonic.split(" ");
       if (mounted) setState(() {});
@@ -248,13 +258,10 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
         model: ViewPushModel.PushReplacement);
   }
 
-  clickNextSetp()
-  {
-
+  clickNextSetp() {
     widget._CreateAccountModel.mnemonic_string = mnemonic_string;
     widget._CreateAccountModel.mnemonic_list = mnemonic_list;
     ViewGT.showView(context, VerifyMnemonicView(widget._CreateAccountModel),
         model: ViewPushModel.PushReplacement);
   }
-
 }

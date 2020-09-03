@@ -1,17 +1,14 @@
-import 'dart:io';
+import 'dart:typed_data';
 
-import 'package:bitcoin_flutter/bitcoin_flutter.dart';
+import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
-import 'package:epikwallet/logic/WalletUtils.dart';
+import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
-import 'package:epikwallet/model/CreateAccountModel.dart';
-import 'package:epikwallet/model/LocalKeyStore.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
-import 'package:epikwallet/views/wallet/create/createmnemonicview.dart';
 import 'package:epikwallet/views/wallet/create/createwalletview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +25,9 @@ class ImportWalletView extends BaseWidget {
 
 class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
     with TickerProviderStateMixin {
-  List<String> tabItems = ["助记词", "私钥"];
+  List<String> tabItems = [
+    "助记词" /*, "私钥"*/
+  ];
   TabController _tabController;
   int _selectedIndex = 0;
 
@@ -79,35 +78,37 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
       });
     }
 
-    if(_controllerKeyword_1==null)
-    _controllerKeyword_1 = new TextEditingController.fromValue(TextEditingValue(
-      text: keyword_1,
-      selection: new TextSelection.fromPosition(
-        TextPosition(
-            affinity: TextAffinity.downstream, offset: keyword_1.length),
-      ),
-    ));
+    if (_controllerKeyword_1 == null)
+      _controllerKeyword_1 =
+          new TextEditingController.fromValue(TextEditingValue(
+        text: keyword_1,
+        selection: new TextSelection.fromPosition(
+          TextPosition(
+              affinity: TextAffinity.downstream, offset: keyword_1.length),
+        ),
+      ));
 
-    if(_controllerKeyword_2==null)
-    _controllerKeyword_2 = new TextEditingController.fromValue(TextEditingValue(
-      text: keyword_2,
-      selection: new TextSelection.fromPosition(
-        TextPosition(
-            affinity: TextAffinity.downstream, offset: keyword_2.length),
-      ),
-    ));
+    if (_controllerKeyword_2 == null)
+      _controllerKeyword_2 =
+          new TextEditingController.fromValue(TextEditingValue(
+        text: keyword_2,
+        selection: new TextSelection.fromPosition(
+          TextPosition(
+              affinity: TextAffinity.downstream, offset: keyword_2.length),
+        ),
+      ));
 
-    if(_controllerAccount==null)
-    _controllerAccount = new TextEditingController.fromValue(TextEditingValue(
-      text: accountName,
-      selection: new TextSelection.fromPosition(
-        TextPosition(
-            affinity: TextAffinity.downstream, offset: accountName.length),
-      ),
-    ));
+    if (_controllerAccount == null)
+      _controllerAccount = new TextEditingController.fromValue(TextEditingValue(
+        text: accountName,
+        selection: new TextSelection.fromPosition(
+          TextPosition(
+              affinity: TextAffinity.downstream, offset: accountName.length),
+        ),
+      ));
 
-    if(_controllerImport==null)
-    _controllerImport = new TextEditingController(text: importString);
+    if (_controllerImport == null)
+      _controllerImport = new TextEditingController(text: importString);
 
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
@@ -145,7 +146,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
               margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
               child: TabBar(
                 onTap: (int index) {
-                   dlog('Selected......$index');
+                  dlog('Selected......$index');
                 },
                 //设置未选中时的字体颜色，tabs里面的字体样式优先级最高
                 unselectedLabelColor: Color(0xff999999),
@@ -228,16 +229,16 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
               ),
             ),
             getInputWidget(accountName, "请输入钱包名称", _controllerAccount, (text) {
-               dlog(text); // 当输入内容变更时,如何处理
+              dlog(text); // 当输入内容变更时,如何处理
               setState(() {
 //              text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
-                 dlog(text);
+                dlog(text);
                 accountName = text.trim();
               });
             }, () {
               setState(() {
                 accountName = "";
-                _controllerAccount=null;
+                _controllerAccount = null;
               });
             }, isPassword: false),
             Padding(
@@ -251,16 +252,16 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
               ),
             ),
             getInputWidget(keyword_1, "请输入钱包密码", _controllerKeyword_1, (text) {
-               dlog(text); // 当输入内容变更时,如何处理
+              dlog(text); // 当输入内容变更时,如何处理
               setState(() {
                 text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
-                 dlog(text);
+                dlog(text);
                 keyword_1 = text;
               });
             }, () {
               setState(() {
                 keyword_1 = "";
-                _controllerKeyword_1=null;
+                _controllerKeyword_1 = null;
               });
             }),
             Container(
@@ -275,7 +276,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
               ),
             ),
             getInputWidget(keyword_2, "请确认钱包密码", _controllerKeyword_2, (text) {
-               dlog(text); // 当输入内容变更时,如何处理
+              dlog(text); // 当输入内容变更时,如何处理
               setState(() {
                 text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
                 keyword_2 = text;
@@ -283,7 +284,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
             }, () {
               setState(() {
                 keyword_2 = "";
-                _controllerKeyword_2=null;
+                _controllerKeyword_2 = null;
               });
             }),
             Container(
@@ -478,8 +479,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
         return false;
       }
     } else {
-      if(importString.length!=64)
-      {
+      if (importString.length != 64) {
         showToast("私钥格式不正确");
         return false;
       }
@@ -488,9 +488,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
   }
 
   clickNext() {
-
-    if(!checkImportString())
-    {
+    if (!checkImportString()) {
       return;
     }
 
@@ -500,37 +498,52 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
 
     closeInput();
 
-    showLoadDialog("",touchOutClose: false,backClose: false,onShow: (){
+    showLoadDialog("", touchOutClose: false, backClose: false, onShow: () {
+//      Function callback = (HDWallet hdwallet) async{
+//
+//        LocalKeyStore lks = LocalKeyStore();
+//        lks.account =accountName;
+//        lks.password = keyword_1;
+//        lks.mHDWallet = hdwallet;
+//
+//        AccountMgr().addAccount(lks);
+//
+//        closeLoadDialog();
+//
+//        finish();
+//      };
+//
+//      if (_selectedIndex == 0){
+//        // 助记词
+//        WalletUtils.createFromMnemonic(
+//            importString, Bip32Path.filecoin)
+//            .then(callback);
+//      }else{
+//        // 私钥
+//        WalletUtils.ImportFromPrivKey(importString).then(callback);
+//      }
 
-      Function callback = (HDWallet hdwallet) async{
-        LocalKeyStore lks = LocalKeyStore();
-        lks.account =accountName;
-        lks.password = keyword_1;
-        lks.mHDWallet = hdwallet;
-
-        sleep(Duration(milliseconds: 200));
-
-        AccountMgr().addAccount(lks);
-
-        sleep(Duration(milliseconds: 200));
-
-        closeLoadDialog();
-
-        sleep(Duration(milliseconds: 200));
-
-        finish();
-      };
-
-      if (_selectedIndex == 0){
-        // 助记词
-        WalletUtils.createFromMnemonic(
-            importString, Bip32Path.filecoin)
-            .then(callback);
-      }else{
-        // 私钥
-        WalletUtils.ImportFromPrivKey(importString).then(callback);
-      }
-
+      HD.seedFromMnemonic(importString).then((Uint8List seed) {
+        if (seed == null || seed.length == 0) {
+          // 验证助记词失败
+          showToast("导入失败，助记词不能正确解析");
+          closeLoadDialog();
+        }
+        WalletAccount waccount = WalletAccount();
+        waccount.account = accountName;
+        waccount.password = keyword_1;
+        waccount.mnemonic = importString;
+        AccountMgr().addAccount(waccount);
+        AccountMgr().setCurrentAccount(waccount).then((ok) {
+          if (ok) {
+            closeLoadDialog();
+            Future.delayed(Duration(milliseconds: 300)).then((value) => finish());
+          } else {
+            closeLoadDialog();
+            showToast("导入失败钱包失败");
+          }
+        });
+      });
     });
   }
 

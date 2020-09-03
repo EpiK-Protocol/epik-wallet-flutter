@@ -168,6 +168,10 @@ dependencies:
 #  filecoin:
 #    path: ../filecoin
 
+  epikplugin:
+    path: ../flutter_plugin_epik
+  # 此插件android只支持arm64-v8a架构
+
   bitcoin_flutter: ^2.0.1
 
 dev_dependencies:
@@ -195,6 +199,9 @@ flutter:
     - assets/img/bg_splash.png
     - assets/img/bg_header.png
     - assets/img/ic_wechat.png
+    - assets/img/ic_eth.png
+    - assets/img/ic_usdt.png
+    - assets/img/ic_epk.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -1,8 +1,8 @@
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
+import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
-import 'package:epikwallet/model/LocalKeyStore.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
@@ -14,9 +14,9 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 
 class AccountDetailView extends BaseWidget {
-  LocalKeyStore localKeyStore;
+  WalletAccount walletaccount;
 
-  AccountDetailView(this.localKeyStore);
+  AccountDetailView(this.walletaccount);
 
   @override
   BaseWidgetState<BaseWidget> getState() {
@@ -126,7 +126,7 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Text(
-                            widget.localKeyStore.account,
+                            widget.walletaccount.account,
                             style: TextStyle(
                               fontSize: 18,
                               color: Colors.white,
@@ -153,8 +153,8 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
                       children: <Widget>[
                         Container(
                           child: Text(
-                            "PublicKey:" +
-                                widget.localKeyStore.mHDWallet.pubKey,
+                            "Address:" +
+                                widget.walletaccount.hd_eth_address,
                             maxLines: 3,
 //                        overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -177,7 +177,7 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
                               size: 15,
                             ),
                             onPressed: () {
-                              clickCopy(widget.localKeyStore);
+                              clickCopy(widget.walletaccount);
                             },
                           ),
                         ),
@@ -280,9 +280,9 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
     );
   }
 
-  clickCopy(LocalKeyStore lks) {
+  clickCopy(WalletAccount wa) {
      dlog("clickCopy");
-    DeviceUtils.copyText(lks.user_id);
+    DeviceUtils.copyText(wa.hd_eth_address);
     ToastUtils.showToast("已复制到剪切板");
   }
 
@@ -293,7 +293,7 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
   clickDel() {
     BottomDialog.showPassWordInputDialog(
       context,
-      widget.localKeyStore.password,
+      widget.walletaccount.password,
       (password) {
         //点击确定回调
 
@@ -301,14 +301,16 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
           "正在删除钱包...",
           touchOutClose: false,
           backClose: false,
-          timedShutdown_ms: 2000,
+          onShow: (){
+            AccountMgr().delAccount(widget.walletaccount).then((_){
+              closeLoadDialog();
+            });
+          },
           onClose: () {
             //on dismiss
             finish();
           },
         );
-
-        AccountMgr().delAccount(widget.localKeyStore);
       },
     );
   }

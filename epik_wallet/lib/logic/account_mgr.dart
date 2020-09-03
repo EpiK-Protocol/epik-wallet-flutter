@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:epikwallet/model/LocalKeyStore.dart';
+import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
@@ -8,8 +8,7 @@ import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/sp_utils/sp_utils.dart';
 
 class AccountMgr {
-
-  static  final String TAG ="AccountMgr";
+  static final String TAG = "AccountMgr";
 
   static const String _KEY_ACCOUNT_LIST = "am_account_list";
 
@@ -21,41 +20,43 @@ class AccountMgr {
 
   AccountMgr._internal() {
     // 单例初始化
-    Dlog.p(TAG,"初始化");
+    Dlog.p(TAG, "初始化");
 //    load();
   }
 
-  List<LocalKeyStore> _account_list = [];
-  LocalKeyStore _currentAccount;
+  List<WalletAccount> _account_list = [];
+  WalletAccount _currentAccount;
 
-  LocalKeyStore get currentAccount {
-    Dlog.p(TAG," get currentAccount");
-
-    Dlog.p(TAG," get _account_list=${_account_list.length}");
-    if (_account_list != null && _account_list.length > 0) {
-      _currentAccount = _account_list[0];
-    }
+  WalletAccount get currentAccount {
+    Dlog.p(TAG, " get currentAccount");
+//    if(_currentAccount==null)
+//    {
+//      Dlog.p(TAG, " get _account_list=${_account_list.length}");
+//      if (_account_list != null && _account_list.length > 0) {
+//        _currentAccount = _account_list[0];
+//      }
+//    }
     return _currentAccount;
   }
 
-  List<LocalKeyStore> get account_list {
-    Dlog.p(TAG," get account_list");
+  List<WalletAccount> get account_list {
+    Dlog.p(TAG, " get account_list");
     if (_account_list == null) _account_list = [];
     return _account_list;
   }
 
   Future load() async {
-    Dlog.p(TAG," load");
+    Dlog.p(TAG, " load");
     String jsonstr = SpUtils.getString(_KEY_ACCOUNT_LIST);
-    Dlog.p(TAG," load => ${jsonstr}");
+    Dlog.p(TAG, " load => ${jsonstr}");
 
-    List<LocalKeyStore> temp = [];
+    List<WalletAccount> temp = [];
     if (jsonstr != null && jsonstr.length > 0) {
       try {
-        temp = JsonArray<LocalKeyStore>().parseList(
+        temp = JsonArray<WalletAccount>().parseList(
             JsonArray.obj2List(jsonDecode(jsonstr)),
-            (json) => LocalKeyStore.fromJson(json));
-        Dlog.p(TAG," load => ${temp}");
+            (json) => WalletAccount.fromJson(json));
+        Dlog.p(TAG, " load => ${temp}");
       } catch (e) {
         print(e);
       }
@@ -63,11 +64,16 @@ class AccountMgr {
 
     _account_list = temp ?? [];
 
-    Dlog.p(TAG," load size = ${_account_list.length}");
+    // 设置当前使用账号
+    if (_account_list != null && _account_list.length > 0) {
+      setCurrentAccount(_account_list[0]);
+    }
+
+    Dlog.p(TAG, " load size = ${_account_list.length}");
   }
 
   Future save() async {
-    Dlog.p(TAG," save");
+    Dlog.p(TAG, " save");
     try {
       String save = "";
       if (_account_list != null && _account_list.length > 0) {
@@ -79,16 +85,16 @@ class AccountMgr {
       } else {
         save = "[]";
       }
-      Dlog.p(TAG," save json => " + save);
+      Dlog.p(TAG, " save json => " + save);
       SpUtils.putString(_KEY_ACCOUNT_LIST, save).then((res) {
-        Dlog.p(TAG," save res => $res");
+        Dlog.p(TAG, " save res => $res");
       });
     } catch (e) {
       print(e);
     }
   }
 
-  addAccount(LocalKeyStore account, {bool toFrist = true}) {
+  addAccount(WalletAccount account, {bool toFrist = true}) {
     if (toFrist) {
       account_list.insert(0, account);
     } else {
@@ -101,31 +107,50 @@ class AccountMgr {
   }
 
   /* 删除账号 */
-  delAccount(LocalKeyStore account) {
-    LocalKeyStore nextAccount = null;
-    List<LocalKeyStore> temp = List.from(account_list);
+  Future delAccount(WalletAccount account) async{
+    WalletAccount nextAccount = null;
+    List<WalletAccount> temp = List.from(account_list);
 
     temp.remove(account);
     if (temp.length > 0) nextAccount = temp[0];
 
-    _currentAccount = nextAccount;
     account_list.remove(account);
-    save();
-    eventMgr.send(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, account);
+
+    if (_currentAccount != nextAccount) {
+      // 下一个账号 与当前账号不同
+      await setCurrentAccount(nextAccount);
+    } else {
+      save();
+      eventMgr.send(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, account);
+    }
   }
 
-  setCurrentAccount(LocalKeyStore account) {
-    this._currentAccount = account;
-
-    try {
-      if (account != null) {
-        account_list.remove(account);
-        account_list.insert(0, account);
-        save();
-        eventMgr.send(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, account);
+  Future<bool> setCurrentAccount(WalletAccount account) async {
+    /// 初始化账户中的钱包对象
+    bool ok = await EpikWalletUtils.initWalletAccount(account);
+    if (ok) {
+      if (this._currentAccount != null) {
+        this._currentAccount.hdwallet = null;
+        this._currentAccount.epikWallet = null;
       }
-    } catch (e) {
-      print(e);
+
+      this._currentAccount = account;
+
+      try {
+        if (account != null) {
+          if (account_list.length > 0 && account_list[0] == account) {
+            // 已经是第一个了
+          } else {
+            account_list.remove(account);
+            account_list.insert(0, account);
+          }
+          save();
+          eventMgr.send(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, account);
+        }
+      } catch (e) {
+        print(e);
+      }
     }
+    return ok;
   }
 }

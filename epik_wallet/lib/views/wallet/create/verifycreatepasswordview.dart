@@ -1,12 +1,8 @@
-import 'dart:io';
-
-import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
-import 'package:epikwallet/logic/WalletUtils.dart';
+import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/model/CreateAccountModel.dart';
-import 'package:epikwallet/model/LocalKeyStore.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
@@ -52,13 +48,14 @@ class _VerifyCreatePasswordViewState
 
   @override
   Widget buildWidget(BuildContext context) {
-    if(_controllerKeyword==null)
-    _controllerKeyword = new TextEditingController.fromValue(TextEditingValue(
-      text: keyword,
-      selection: new TextSelection.fromPosition(
-        TextPosition(affinity: TextAffinity.downstream, offset: keyword.length),
-      ),
-    ));
+    if (_controllerKeyword == null)
+      _controllerKeyword = new TextEditingController.fromValue(TextEditingValue(
+        text: keyword,
+        selection: new TextSelection.fromPosition(
+          TextPosition(
+              affinity: TextAffinity.downstream, offset: keyword.length),
+        ),
+      ));
 
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
@@ -102,16 +99,16 @@ class _VerifyCreatePasswordViewState
               ),
             ),
             getInputWidget(keyword, "请输入钱包密码", _controllerKeyword, (text) {
-               dlog(text); // 当输入内容变更时,如何处理
+              dlog(text); // 当输入内容变更时,如何处理
               setState(() {
                 text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
-                 dlog(text);
+                dlog(text);
                 keyword = text;
               });
             }, () {
               setState(() {
                 keyword = "";
-                _controllerKeyword=null;
+                _controllerKeyword = null;
               });
             }),
             Container(
@@ -287,21 +284,35 @@ class _VerifyCreatePasswordViewState
 
     showLoadDialog("", touchOutClose: false, backClose: false, onShow: () {
       // 创建钱包
-      WalletUtils.createFromMnemonic(
-              widget._CreateAccountModel.mnemonic_string, Bip32Path.filecoin)
-          .then((HDWallet hdwallet) async {
-        LocalKeyStore lks = LocalKeyStore();
-        lks.account = widget._CreateAccountModel.accountname;
-        lks.password = widget._CreateAccountModel.password;
-        lks.mHDWallet = hdwallet;
+//      WalletUtils.createFromMnemonic(
+//              widget._CreateAccountModel.mnemonic_string, Bip32Path.filecoin)
+//          .then((HDWallet hdwallet) async {
+//        LocalKeyStore lks = LocalKeyStore();
+//        lks.account = widget._CreateAccountModel.accountname;
+//        lks.password = widget._CreateAccountModel.password;
+//        lks.mHDWallet = hdwallet;
+//        // await AccountMgr().load();
+//        AccountMgr().addAccount(lks);
+//        closeLoadDialog();
+//      });
 
-        // await AccountMgr().load();
-        AccountMgr().addAccount(lks);
+      WalletAccount walletaccount = WalletAccount();
+      walletaccount.account = widget._CreateAccountModel.accountname;
+      walletaccount.password = widget._CreateAccountModel.password;
+      walletaccount.mnemonic = widget._CreateAccountModel.mnemonic_string;
 
-        closeLoadDialog();
+      AccountMgr().addAccount(walletaccount);
+      AccountMgr().setCurrentAccount(walletaccount).then((ok) {
+        if (ok) {
+          closeLoadDialog();
+          Future.delayed(Duration(milliseconds: 300)).then((value) => finish());
+        } else {
+          AccountMgr().delAccount(walletaccount).then((_){
+            showToast("创建钱包失败");
+            closeLoadDialog();
+          });
+        }
       });
-    }, onClose: () {
-      finish();
     });
   }
 }

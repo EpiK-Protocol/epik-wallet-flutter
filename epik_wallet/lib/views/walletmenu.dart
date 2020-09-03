@@ -1,8 +1,6 @@
-import 'dart:io';
-
 import 'package:epikwallet/base/base_inner_widget.dart';
+import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
-import 'package:epikwallet/model/LocalKeyStore.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
@@ -25,7 +23,7 @@ class WalletMenu extends BaseInnerWidget {
 }
 
 class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
-  List<LocalKeyStore> data = [];
+  List<WalletAccount> data = [];
 
   @override
   void initState() {
@@ -144,7 +142,7 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
     );
   }
 
-  Widget buildItem(LocalKeyStore lks, bool isCurrent) {
+  Widget buildItem(WalletAccount lks, bool isCurrent) {
     return Column(
       children: <Widget>[
         Container(
@@ -209,7 +207,7 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
                         children: <Widget>[
                           Expanded(
                             child: Text(
-                              "PublicKey:" + lks.mHDWallet.pubKey,
+                              "Address:" + lks.hd_eth_address,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -268,25 +266,22 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
     // todo
   }
 
-  clickWallet(LocalKeyStore lks) {
+  clickWallet(WalletAccount lks) {
      dlog("clickWallet");
-     dlog("networktype ${lks.mHDWallet.network}");
     showLoadDialog("",onShow: (){
 
       AccountMgr().setCurrentAccount(lks);
 
       closeLoadDialog();
 
-      sleep(Duration(milliseconds: 200));
-
-      clickAppBarBack();
+      Future.delayed(Duration(milliseconds: 200)).then((value) => clickAppBarBack());
     });
 
   }
 
-  clickCopy(LocalKeyStore lks) {
+  clickCopy(WalletAccount lks) {
      dlog("clickCopy");
-    DeviceUtils.copyText(lks.user_id);
+    DeviceUtils.copyText(lks.hd_eth_address);
     ToastUtils.showToast("已复制到剪切板");
   }
 

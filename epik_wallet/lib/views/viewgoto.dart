@@ -1,5 +1,5 @@
+import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
-import 'package:epikwallet/model/LocalKeyStore.dart';
 import 'package:epikwallet/views/currency/currencydetailview.dart';
 import 'package:epikwallet/views/mining/miningprofitview.dart';
 import 'package:epikwallet/views/mining/miningsignupview.dart';
@@ -66,8 +66,8 @@ class ViewGT {
 
   /// 账号详情
   static showAccountDetailView(
-      BuildContext context, LocalKeyStore localKeyStore) {
-    showView(context, AccountDetailView(localKeyStore));
+      BuildContext context, WalletAccount walletAccount) {
+    showView(context, AccountDetailView(walletAccount));
   }
 
   /// 挖矿报名
@@ -79,6 +79,4 @@ class ViewGT {
   static showMiningProfitView(BuildContext context) {
     showView(context, MiningProfitView());
   }
-
-
 }
