@@ -324,7 +324,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                     ),
                   ),
                   Positioned(
-                    right: 0,
+                    right: 2,
                     bottom: 0,
                     child: ca.networkType != null ? Container(
                       width: 15,

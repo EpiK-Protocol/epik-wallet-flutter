@@ -305,7 +305,7 @@ class _VerifyCreatePasswordViewState
       AccountMgr().setCurrentAccount(walletaccount).then((ok) {
         if (ok) {
           closeLoadDialog();
-          Future.delayed(Duration(milliseconds: 300)).then((value) => finish());
+          Future.delayed(Duration(milliseconds: 500)).then((value) => finish());
         } else {
           AccountMgr().delAccount(walletaccount).then((_){
             showToast("创建钱包失败");

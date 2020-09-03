@@ -1,4 +1,13 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
+import 'package:epikwallet/logic/account_mgr.dart';
+import 'package:epikwallet/logic/api/api_testnet.dart';
+import 'package:epikwallet/utils/eventbus/event_manager.dart';
+import 'package:epikwallet/utils/eventbus/event_tag.dart';
+import 'package:epikwallet/utils/http/httputils.dart';
+import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/list_view.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,6 +32,11 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
   List<Object> datalist = [];
   GlobalKey<ListPageState> key_scroll;
 
+  /// 总奖励
+  int total_supply = 0;
+
+  /// 已发放
+  int issuance = 0;
 
   @override
   void initState() {
@@ -35,7 +49,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
     isTopBarShow = true; //状态栏是否显示
     isAppBarShow = true; //导航栏是否显示
 
-    key_scroll= GlobalKey();
+    key_scroll = GlobalKey();
 
     for (int i = 0; i < 100; i++) {
       datalist.add(i);
@@ -43,9 +57,63 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
   }
 
   @override
+  void onCreate() {
+    eventMgr.add(EventTag.REFRESH_MININGVIEW, eventcallback_refresh);
+    refresh();
+  }
+  @override
+  void dispose() {
+    eventMgr.remove(EventTag.REFRESH_MININGVIEW, eventcallback_refresh);
+
+    super.dispose();
+  }
+
+  eventcallback_refresh(arg)
+  {
+    refresh();
+  }
+
+  bool hasRefresh = false;
+  bool isLoading = false;
+
+  refresh() {
+    hasRefresh = true;
+
+    isLoading = true;
+    setLoadingWidgetVisible(true);
+
+    ApiTestNet.home().then((httpjsonres) => jsoncallback(httpjsonres));
+  }
+
+  jsoncallback(HttpJsonRes httpjsonres) {
+    isLoading = false;
+    if (httpjsonres != null && httpjsonres.code == 0) {
+      Map testnet = httpjsonres.jsonMap["testnet"];
+      total_supply =testnet["total_supply"]??0;
+      issuance =testnet["issuance"]?? 0;
+
+      closeStateLayout();
+    } else {
+      setErrorWidgetVisible(true);
+    }
+  }
+
+
+  @override
+  void onClickErrorWidget() {
+    refresh();
+  }
+
+  String amountFormat(int amount) {
+    if (amount > 10000) {
+      String ret = "${StringUtils.formatNumAmount(amount / 10000, point: 2)}w";
+      return ret;
+    }
+    return StringUtils.formatNumAmount(amount, point: 0);
+  }
+
+  @override
   Widget buildWidget(BuildContext context) {
-
-
     Widget listpage = ListPage(
       datalist,
       itemWidgetCreator: (context, position) {
@@ -59,15 +127,12 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
       needNoMoreTipe: false,
     );
 
-
-    return Column(
-      children: [
-        getHeader(),
-        Expanded(
-          child: listpage,
-        ),
-      ]
-    );
+    return Column(children: [
+      getHeader(),
+      Expanded(
+        child: listpage,
+      ),
+    ]);
 
 //    return SingleChildScrollView(
 //      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -78,9 +143,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
 //        ),
 //      ),
 //    );
-
   }
-
 
   Widget getHeader() {
     return Container(
@@ -121,7 +184,8 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
               left: 0,
               right: 0,
               top: 0,
-              height: 153,//173
+              height: 153,
+              //173
               child: Container(
                 child: Row(
                   children: <Widget>[
@@ -138,7 +202,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                           ),
                           Container(height: 10),
                           Text(
-                            "250W",
+                            amountFormat(total_supply),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 30,
@@ -169,7 +233,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                           ),
                           Container(height: 10),
                           Text(
-                            "55W",
+                            amountFormat(issuance),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 30,
@@ -204,7 +268,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
             child: Text(
               (index + 1).toString() + ".",
               style: TextStyle(
-                color: index<3 ? Colors.black: Colors.black45,
+                color: index < 3 ? Colors.black : Colors.black45,
                 fontSize: 20,
                 fontFamily: "DIN_Condensed_Bold",
               ),
@@ -326,17 +390,29 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
     //todo
   }
 
-  onClickAction()
-  {
+  onClickAction() {
+
+    if(AccountMgr().currentAccount==null)
+    {
+      //没账号 切换到钱包页面
+      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX,1);
+      return;
+    }
+
     // 报名 、 审核中 、
-//    ViewGT.showMiningSignupView(context);
+    ViewGT.showMiningSignupView(context);
 
     // 预挖奖励
-    ViewGT.showMiningProfitView(context);
+//    ViewGT.showMiningProfitView(context);
+
+//  ApiTestNet.getPriceList().then((res) {
+//    res.forEach((element) {print(element.Price);});
+//  });
   }
 
-  Future<void> _pullRefreshCallback() async{
-    // todo 刷新排行榜
-    await Future.delayed(Duration(milliseconds: 1000));
+  Future<void> _pullRefreshCallback() async {
+    isLoading = true;
+    HttpJsonRes httpjsonres = await ApiTestNet.home();
+    jsoncallback(httpjsonres);
   }
 }

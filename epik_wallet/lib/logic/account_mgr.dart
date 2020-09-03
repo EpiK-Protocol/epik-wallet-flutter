@@ -107,19 +107,24 @@ class AccountMgr {
   }
 
   /* 删除账号 */
-  Future delAccount(WalletAccount account) async{
+  Future delAccount(WalletAccount account) async {
     WalletAccount nextAccount = null;
-    List<WalletAccount> temp = List.from(account_list);
+    _account_list.remove(account);
+    if (_account_list.length > 0) {
+      nextAccount = _account_list[0];
+    }
 
-    temp.remove(account);
-    if (temp.length > 0) nextAccount = temp[0];
-
-    account_list.remove(account);
-
-    if (_currentAccount != nextAccount) {
+    if (nextAccount == null) {
+      print("没有账号了");
+      _currentAccount = null;
+      save();
+      eventMgr.send(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, account);
+    } else if (_currentAccount != nextAccount) {
       // 下一个账号 与当前账号不同
+      print("下一个账号 与当前账号不同");
       await setCurrentAccount(nextAccount);
     } else {
+      print("aaaaaa");
       save();
       eventMgr.send(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, account);
     }
