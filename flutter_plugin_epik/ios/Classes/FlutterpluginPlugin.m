@@ -160,21 +160,18 @@
             }
         }else if ([@"epik_wallet_export" isEqualToString:call.method]) {
             if (self->_hdWallet){
-                EPIK_EpikPrivateKey *privateKey = [self->_epikWallet export:arguments[@"addr"] error:&err];
+                NSString *privateKey = [self->_epikWallet export:arguments[@"addr"] error:&err];
                 if (!err) {
-                    resultSync(@{@"keyType":privateKey.keyType,@"privateKey":privateKey.privateKey});
+                    resultSync(privateKey);
                 }
             }else{
                 err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
             }
         }else if ([@"epik_wallet_import" isEqualToString:call.method]) {
             if (self->_hdWallet){
-                EPIK_EpikPrivateKey *privateKey = [EPIK_EpikPrivateKey alloc];
-                privateKey.keyType = arguments[@"keyType"];
-                privateKey.privateKey = arguments[@"privateKey"];
-                [self->_epikWallet import:privateKey error:&err];
+               NSString *addr = [self->_epikWallet import:arguments[@"privateKey"] error:&err];
                 if (!err) {
-                    resultSync(@{@"keyType":privateKey.keyType,@"privateKey":privateKey.privateKey});
+                    resultSync(addr);
                 }
             }else{
                 err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
