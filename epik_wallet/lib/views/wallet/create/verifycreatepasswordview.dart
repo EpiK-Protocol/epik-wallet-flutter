@@ -304,7 +304,9 @@ class _VerifyCreatePasswordViewState
       AccountMgr().addAccount(walletaccount);
       AccountMgr().setCurrentAccount(walletaccount).then((ok) {
         if (ok) {
+          print("test_1");
           closeLoadDialog();
+          print("test_2");
           Future.delayed(Duration(milliseconds: 500)).then((value) => finish());
         } else {
           AccountMgr().delAccount(walletaccount).then((_){
