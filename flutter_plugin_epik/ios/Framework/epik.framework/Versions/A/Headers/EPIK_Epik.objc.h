@@ -73,7 +73,7 @@
 /**
  * GenerateKey t:bls,secp256k1
  */
-- (NSString* _Nonnull)generateKey:(NSString* _Nullable)t seed:(NSData* _Nullable)seed error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)generateKey:(NSString* _Nullable)t seed:(NSData* _Nullable)seed path:(NSString* _Nullable)path error:(NSError* _Nullable* _Nullable)error;
 /**
  * HasAddr ...
  */

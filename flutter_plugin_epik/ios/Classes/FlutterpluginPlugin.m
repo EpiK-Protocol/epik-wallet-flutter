@@ -178,7 +178,7 @@
             }
         }else if ([@"epik_wallet_generateKey" isEqualToString:call.method]) {
             if (self->_hdWallet){
-                NSString *address = [self->_epikWallet generateKey:arguments[@"t"] seed:[arguments[@"seed"] data] error:&err];
+                NSString *address = [self->_epikWallet generateKey:arguments[@"t"] seed:[arguments[@"seed"] data] path:arguments[@"path"] error:&err];
                 if (!err) {
                     resultSync(address);
                 }
