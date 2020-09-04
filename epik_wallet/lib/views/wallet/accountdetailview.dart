@@ -26,8 +26,8 @@ class AccountDetailView extends BaseWidget {
 
 class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
   List<AccountMenu> menudata = [
-    AccountMenu(Icons.lock_outline, "修改密码", MenuType.FIXPASSWORD),
-    AccountMenu(Icons.security, "查看私钥", MenuType.PRIVATEKEY),
+//    AccountMenu(Icons.lock_outline, "修改密码", MenuType.FIXPASSWORD),
+//    AccountMenu(Icons.security, "查看私钥", MenuType.PRIVATEKEY),
   ];
 
   Color color_icon = Color(0xff41454a);

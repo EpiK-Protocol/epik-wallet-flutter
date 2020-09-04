@@ -29,7 +29,7 @@ class EpikWalletUtils {
 
       // epik 钱包,   tEPK = epikWallet.balance
       EpikWallet epikWallet =
-          await Epik.newWalletFromSeed(hdwallet.seed, t: "secp256k1");
+          await Epik.newWalletFromSeed(hdwallet.seed, t: "bls");
 
       // epik 设置RPC地址
       await epikWallet.setRPC(
@@ -51,6 +51,8 @@ class EpikWalletUtils {
 
   static Future<Map<CurrencySymbol, String>> requestBalance(
       WalletAccount waccount) async {
+    Dlog.p("requestBalance", "hd_eth_address ${waccount.hd_eth_address}");
+    Dlog.p("requestBalance", "epik_tEPK_address ${waccount.epik_tEPK_address}");
     Future eth = waccount.hdwallet.balance(waccount.hd_eth_address);
     Future usdt =
         waccount.hdwallet.tokenBalance(waccount.hd_eth_address, "USDT");
@@ -142,23 +144,26 @@ class EpikWalletUtils {
         List jsonarray = jsonDecode(json);
         List<TepkOrder> temp = JsonArray.parseList<TepkOrder>(
             jsonarray, (json) => TepkOrder.fromJson(json));
-        if(temp!=null)
-        {
-          temp.forEach((element) { element.checkSelf(waccount.epik_tEPK_address);});
+        if (temp != null) {
+          temp.forEach((element) {
+            element.checkSelf(waccount.epik_tEPK_address);
+          });
         }
         return temp ?? [];
       } else {
-        //      String address = waccount.hd_eth_address;
-        String address = "0xe9fc6bf283383c17a1377d76df3a2b0a82ad854e"; //todo test
+        String address = waccount.hd_eth_address;
+//        String address = "0xe9fc6bf283383c17a1377d76df3a2b0a82ad854e"; //todo test
         String json = await waccount.hdwallet
             .transactions(address, cs.symbolToNetWork, page, pagesize, false);
         print("getOrderList ETH $json");
-        List jsonarray = jsonDecode(json);
+        Map jsonmap = jsonDecode(json);
+        List jsonarray = JsonArray.obj2List(jsonmap["result"],def:[]);
         List<EthOrder> temp = JsonArray.parseList<EthOrder>(
             jsonarray, (json) => EthOrder.fromJson(json));
-        if(temp!=null)
-        {
-          temp.forEach((element) { element.checkSelf(address);});
+        if (temp != null) {
+          temp.forEach((element) {
+            element.checkSelf(address);
+          });
         }
         return temp ?? [];
       }

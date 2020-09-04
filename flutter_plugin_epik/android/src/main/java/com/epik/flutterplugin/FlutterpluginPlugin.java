@@ -234,7 +234,7 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
                         }
                         case "epik_wallet_generateKey":
                         {
-                            ret = currentEpikWallet.generateKey((String) call.argument("t"), (byte[]) call.argument("seed"));
+                            ret = currentEpikWallet.generateKey((String) call.argument("t"), (byte[]) call.argument("seed"),(String) call.argument("path"));
                             break;
                         }
                         case "epik_wallet_hasAddr":

@@ -399,9 +399,10 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
         HttpJsonRes httpjsonres = await ApiTestNet.signup(weixin, epik_address,
             erc20_address, epik_signature, erc20_signature);
 
+        closeLoadDialog();
+
         if (httpjsonres.code == 0 && httpjsonres.jsonMap != null) {
           String id = httpjsonres.jsonMap["id"] ?? "";
-          closeLoadDialog();
           eventMgr.send(EventTag.REFRESH_MININGVIEW);
           DeviceUtils.copyText(id);
           MessageDialog.showMsgDialog(

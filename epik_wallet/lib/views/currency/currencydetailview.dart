@@ -45,7 +45,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   double header_alpha = 0;
 
   ColorTween header_colortween =
-  ColorTween(begin: Colors.white, end: Colors.black);
+      ColorTween(begin: Colors.white, end: Colors.black);
 
   LinearGradient gradient_ff = LinearGradient(
     colors: [Color(0xff2B2F35), Color(0xff1D2023)],
@@ -190,13 +190,13 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
       key: key_scroll,
       needNoMoreTipe: false,
       bgContainer: (view) {
-        return Stack(
+        return Stack(z
           children: <Widget>[
             Positioned(
               left: 0,
               right: 0,
               bottom: 0,
-              height: getScreenHeight() / 3 * 2 + (tttt > 0 ? tttt : 0),
+              height: getScreenHeight()-10  + (tttt < 0 ? tttt : 0),
               child: Container(
                 color: Colors.white,
               ),
@@ -219,7 +219,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
           left: 0,
           top: 0,
           right: 0,
-          height: getScreenHeight() / 3,
+          height: getScreenHeight(),
           child: Container(
             decoration: BoxDecoration(
               gradient: gradient_ff,
@@ -351,8 +351,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Text(
-                              "\$ ${StringUtils.formatNumAmount(
-                                  widget.currencyAsset.getUsdValue())}",
+                              "\$ ${StringUtils.formatNumAmount(widget.currencyAsset.getUsdValue())}",
                               style: TextStyle(
                                 color: ResColor.white,
                                 fontSize: 15,
@@ -527,7 +526,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   }
 
   Widget itemWidgetBuild_tepk(TepkOrder item) {
-        return Container(
+    return Container(
       width: double.infinity,
       height: 80,
       padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
@@ -548,7 +547,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
             left: 0,
             top: 0,
             child: Text(
-              item.isWithdraw?"提币":"充币",
+              item.isWithdraw ? "提币" : "充币",
               style: TextStyle(
                 fontSize: 15,
                 color: Color(0xff333333),
@@ -579,7 +578,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
             left: 0,
             bottom: 10,
             child: Text(
-              (item.isWithdraw  ? "-" : "+") +
+              (item.isWithdraw ? "-" : "+") +
                   StringUtils.formatNumAmount(item.value_d, point: 8),
               style: TextStyle(
                 fontSize: 15,
@@ -626,7 +625,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
             left: 0,
             top: 0,
             child: Text(
-              item.isWithdraw?"提币":"充币",
+              item.isWithdraw ? "提币" : "充币",
               style: TextStyle(
                 fontSize: 15,
                 color: Color(0xff333333),
@@ -657,7 +656,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
             left: 0,
             bottom: 10,
             child: Text(
-              (item.isWithdraw  ? "-" : "+") +
+              (item.isWithdraw ? "-" : "+") +
                   StringUtils.formatNumAmount(item.value_d, point: 8),
               style: TextStyle(
                 fontSize: 15,
@@ -698,7 +697,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
 
     page = 0;
     EpikWalletUtils.getOrderList(AccountMgr().currentAccount,
-        widget.currencyAsset.cs, page, pageSize)
+            widget.currencyAsset.cs, page, pageSize)
         .then((data) {
       dataCallback(data);
     });
@@ -708,6 +707,10 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     if (data != null) {
       // 请求成功
       if (page == 0) {
+        if(data.isEmpty)
+        {
+          showToast("无数据");
+        }
         data_list_item.clear();
       }
       data_list_item.addAll(data);
@@ -719,6 +722,8 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
       } else {
         hasMore = false;
       }
+    } else {
+      showToast("请求失败");
     }
     closeStateLayout();
     isLoading = false;
@@ -740,7 +745,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     page = 0;
     isLoading = true;
     EpikWalletUtils.getOrderList(AccountMgr().currentAccount,
-        widget.currencyAsset.cs, page, pageSize)
+            widget.currencyAsset.cs, page, pageSize)
         .then((data) {
       dataCallback(data);
     });

@@ -5,7 +5,7 @@ class Bip44Path{
     String index = pathMap[symbol];
     if(index!=null)
     {
-      return "m/44'/$index'/0/0/0";
+      return "m/44'/$index'/0'/0/0";
     }
     return null;
   }
