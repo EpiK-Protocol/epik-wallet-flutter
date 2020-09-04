@@ -1,18 +1,20 @@
-import 'dart:convert';
-
-import 'package:crypto/crypto.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_testnet.dart';
+import 'package:epikwallet/model/MiningRank.dart';
+import 'package:epikwallet/utils/JsonUtils.dart';
+import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
+import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/list_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/widgets.dart';
 
 class MiningView extends BaseInnerWidget {
   MiningView(Key key) : super(key: key) {}
@@ -29,14 +31,20 @@ class MiningView extends BaseInnerWidget {
 }
 
 class MiningViewState extends BaseInnerWidgetState<MiningView> {
-  List<Object> datalist = [];
+  List<MiningRank> datalist = [];
   GlobalKey<ListPageState> key_scroll;
 
   /// 总奖励
-  int total_supply = 0;
+  double total_supply = 0;
 
   /// 已发放
-  int issuance = 0;
+  double issuance = 0;
+
+  // 已报名才有ID
+  String mining_id = "";
+
+  //等待审核pending/ 已经通过confirmed/ 拒绝rejected
+  String mining_status;
 
   @override
   void initState() {
@@ -50,26 +58,25 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
     isAppBarShow = true; //导航栏是否显示
 
     key_scroll = GlobalKey();
-
-    for (int i = 0; i < 100; i++) {
-      datalist.add(i);
-    }
   }
 
   @override
   void onCreate() {
     eventMgr.add(EventTag.REFRESH_MININGVIEW, eventcallback_refresh);
+    eventMgr.add(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventcallback_refresh);
     refresh();
   }
+
   @override
   void dispose() {
     eventMgr.remove(EventTag.REFRESH_MININGVIEW, eventcallback_refresh);
+    eventMgr.remove(
+        EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventcallback_refresh);
 
     super.dispose();
   }
 
-  eventcallback_refresh(arg)
-  {
+  eventcallback_refresh(arg) {
     refresh();
   }
 
@@ -82,15 +89,24 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
     isLoading = true;
     setLoadingWidgetVisible(true);
 
-    ApiTestNet.home().then((httpjsonres) => jsoncallback(httpjsonres));
+    String address = AccountMgr()?.currentAccount?.hd_eth_address ?? "";
+    ApiTestNet.home(address).then((httpjsonres) => jsoncallback(httpjsonres));
   }
 
   jsoncallback(HttpJsonRes httpjsonres) {
     isLoading = false;
     if (httpjsonres != null && httpjsonres.code == 0) {
+      mining_id = httpjsonres.jsonMap["id"];
+      mining_status =
+          httpjsonres.jsonMap["status"]; //等待审核pending/ 已经通过confirmed/ 拒绝reject
+
       Map testnet = httpjsonres.jsonMap["testnet"];
-      total_supply =testnet["total_supply"]??0;
-      issuance =testnet["issuance"]?? 0;
+      total_supply = StringUtils.parseDouble(testnet["total_supply"], 0);
+      issuance = StringUtils.parseDouble(testnet["issuance"], 0);
+
+      List<MiningRank> temp = JsonArray.parseList<MiningRank>(
+          testnet["top_list"], (json) => MiningRank.fromJson(json));
+      datalist = temp ?? [];
 
       closeStateLayout();
     } else {
@@ -98,13 +114,13 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
     }
   }
 
-
   @override
   void onClickErrorWidget() {
     refresh();
+//    ViewGT.showMiningSignupView(context);
   }
 
-  String amountFormat(int amount) {
+  String amountFormat(double amount) {
     if (amount > 10000) {
       String ret = "${StringUtils.formatNumAmount(amount / 10000, point: 2)}w";
       return ret;
@@ -152,7 +168,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
       height: 223,
       width: double.infinity,
       child: Card(
-        color: Color(0xff10052f),
+        color: ResColor.main,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(12.0)),
         ),
@@ -209,6 +225,14 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                               fontFamily: "DIN_Condensed_Bold",
                             ),
                           ),
+                          Text(
+                            "EPK-ERC20",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontFamily: "DIN_Condensed_Bold",
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -240,6 +264,14 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                               fontFamily: "DIN_Condensed_Bold",
                             ),
                           ),
+                          Text(
+                            "EPK-ERC20",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontFamily: "DIN_Condensed_Bold",
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -256,7 +288,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
 
   double rankitem_t_w = 100;
 
-  Widget getRankItem(Object data, int index) {
+  Widget getRankItem(MiningRank data, int index) {
     return Container(
       padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
       child: Row(
@@ -278,10 +310,11 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
             child: Column(
               children: <Widget>[
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(
                       child: Text(
-                        "微信号",
+                        "奖励",
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black87,
@@ -291,7 +324,8 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                     ),
                     Expanded(
                       child: Text(
-                        "Wechat1234",
+                        StringUtils.formatNumAmount(data?.profit ?? "0",
+                            point: 2),
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black87,
@@ -300,13 +334,15 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                     ),
                   ],
                 ),
+                Container(height: 5),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(
                       child: Text(
-                        "TEPK",
+                        "UUID",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 12,
                           color: Colors.black87,
                         ),
                       ),
@@ -314,9 +350,11 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                     ),
                     Expanded(
                       child: Text(
-                        "xxxxxxx",
+                        data?.id ?? "----",
+                        softWrap: false,
+                        overflow: TextOverflow.fade,
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 12,
                           color: Colors.black87,
                         ),
                       ),
@@ -324,12 +362,40 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                   ],
                 ),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      child: Text(
+                        "tEPK",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      width: rankitem_t_w,
+                    ),
+                    Expanded(
+                      child: Text(
+                        data?.epik_address ?? "----",
+                        softWrap: false,
+                        maxLines: 1,
+                        overflow: TextOverflow.fade,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(
                       child: Text(
                         "EPK-ERC20",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 12,
                           color: Colors.black87,
                         ),
                       ),
@@ -337,9 +403,12 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                     ),
                     Expanded(
                       child: Text(
-                        "xxxxxxxx",
+                        data?.erc20_address ?? "----",
+                        softWrap: false,
+                        maxLines: 1,
+                        overflow: TextOverflow.fade,
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 12,
                           color: Colors.black87,
                         ),
                       ),
@@ -361,29 +430,98 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
   }
 
   Widget getActionBtn() {
-    return Positioned(
-      left: 90,
-      right: 90,
-      bottom: 10,
-      child: FlatButton(
-        highlightColor: Colors.white24,
-        splashColor: Colors.white24,
-        onPressed: () {
-          onClickAction();
-        },
-        child: Text(
-          "报名",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
+    String text = "报名";
+    bool canClick = true;
+
+    switch (mining_status) {
+      //等待审核
+      case "pending":
+        {
+          text = "审核中";
+          canClick = false;
+          break;
+        }
+      case "confirmed":
+        {
+          text = "预挖奖励";
+          canClick = true;
+          break;
+        }
+      case "rejected":
+        {
+          text = "报名已被拒绝";
+          canClick = false;
+          break;
+        }
+      default:
+        {
+          text = "报名";
+          canClick = true;
+          break;
+        }
+    }
+
+    if (canClick) {
+      return Positioned(
+        left: 90,
+        right: 90,
+        bottom: 10,
+        child: FlatButton(
+          highlightColor: Colors.white24,
+          splashColor: Colors.white24,
+          onPressed: () {
+            onClickAction();
+          },
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+          ),
+          color: Color(0xff393E45),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(22)),
           ),
         ),
-        color: Color(0xff393E45),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(22)),
+      );
+    } else {
+      return Positioned(
+        left: 15,
+        right: 15,
+        bottom: 20,
+        child: InkWell(
+          onTap: () {
+            DeviceUtils.copyText(mining_id);
+            showToast("已复制ID");
+          },
+          child: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  text,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+                Text(
+                  "ID: $mining_id",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   onItemClick(position) {
@@ -391,28 +529,32 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
   }
 
   onClickAction() {
-
-    if(AccountMgr().currentAccount==null)
-    {
+    if (AccountMgr().currentAccount == null) {
       //没账号 切换到钱包页面
-      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX,1);
+      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX, 1);
       return;
     }
 
-    // 报名 、 审核中 、
-    ViewGT.showMiningSignupView(context);
-
-    // 预挖奖励
-//    ViewGT.showMiningProfitView(context);
-
-//  ApiTestNet.getPriceList().then((res) {
-//    res.forEach((element) {print(element.Price);});
-//  });
+    switch (mining_status) {
+      case "confirmed":
+        {
+          // 预挖奖励
+          ViewGT.showMiningProfitView(context,mining_id);
+          return;
+        }
+      default:
+        {
+          // 报名
+          ViewGT.showMiningSignupView(context);
+          return;
+        }
+    }
   }
 
   Future<void> _pullRefreshCallback() async {
     isLoading = true;
-    HttpJsonRes httpjsonres = await ApiTestNet.home();
+    String address = AccountMgr()?.currentAccount?.hd_eth_address ?? "";
+    HttpJsonRes httpjsonres = await ApiTestNet.home(address);
     jsoncallback(httpjsonres);
   }
 }

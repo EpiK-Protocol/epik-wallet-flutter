@@ -192,8 +192,8 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
                         {
                             String address = call.argument("address");
                             String currency = call.argument("currency");
-                            long page = call.argument("page");
-                            long offset = call.argument("offset");
+                            long page = (int)call.argument("page");
+                            long offset = (int)call.argument("offset");
                             boolean asc = call.argument("asc");
                             ret = currentHdWallet.transactions(address, currency, page, offset, asc);
                             break;

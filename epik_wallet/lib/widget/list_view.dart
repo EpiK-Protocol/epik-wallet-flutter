@@ -1,4 +1,5 @@
 import 'package:epikwallet/utils/Dlog.dart';
+import 'package:epikwallet/utils/res_color.dart';
 import 'package:flutter/material.dart';
 
 typedef HeaderWidgetBuild = Widget Function(BuildContext context, int position);
@@ -14,6 +15,8 @@ typedef LoadMoreCallback = Future<bool> Function();
 
 typedef ScrollCallback = void Function(ScrollController ctrl);
 
+typedef BgContainer = Widget Function(Widget view);
+
 class ListPage extends StatefulWidget {
   List headerList;
   List listData;
@@ -23,6 +26,7 @@ class ListPage extends StatefulWidget {
   NeedLoadMore needLoadMore;
   LoadMoreCallback onLoadMore;
   ScrollCallback scrollCallback;
+  BgContainer bgContainer;
 
   int basePageSize = 20;
 
@@ -40,6 +44,7 @@ class ListPage extends StatefulWidget {
     ScrollCallback this.scrollCallback,
     int this.basePageSize = 20,
     this.needNoMoreTipe,
+        this.bgContainer,
   }) : super(key: key);
 
   @override
@@ -130,8 +135,9 @@ class ListPageState extends State<ListPage> {
 
     if (widget.pullRefreshCallback != null) {
       return RefreshIndicator(
+        color: ResColor.progress,
         onRefresh: widget.pullRefreshCallback,
-        child: listview,
+        child: widget.bgContainer==null? listview: widget.bgContainer(listview),
         key: key_refresh,
       );
     } else {

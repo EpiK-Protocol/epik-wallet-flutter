@@ -174,9 +174,12 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
       headerCreator: headerBuilder,
 //      itemWidgetCreator: itemWidgetBuild,
       itemWidgetCreator: (context, position) {
-        return GestureDetector(
-          onTap: () => onItemClick(position),
-          child: itemWidgetBuild(context, position),
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => onItemClick(position),
+            child: itemWidgetBuild(context, position),
+          ),
         );
       },
       scrollCallback: scrollCallback,
@@ -197,7 +200,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
         height: 173,
         width: double.infinity,
         child: Card(
-          color: Color(0xff10052f),
+          color: ResColor.main,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(12.0)),
           ),
@@ -222,7 +225,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                     ),
                   ),
                   Text(
-                    "0",
+                    StringUtils.formatNumAmount(AccountMgr().currentAccount.total_usd,point: 2),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 40,
@@ -235,7 +238,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    "≈ 0",
+                    "≈ "+StringUtils.formatNumAmount(AccountMgr().currentAccount.total_btc,point: 8),
                     style: TextStyle(
                       color: ResColor.white_40,
                       fontSize: 18,
@@ -272,7 +275,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
       CurrencyAsset ca = data_list_item[position];
       return Container(
         height: 80,
-        padding: EdgeInsets.fromLTRB(15, 0, 25, 0),
+        padding: EdgeInsets.fromLTRB(20, 0, 25, 0),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,

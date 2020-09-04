@@ -162,7 +162,7 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
                     Row(
                       children: <Widget>[
                         Text(
-                          lks.account,
+                          lks?.account ?? "----",
                           style: TextStyle(
                             color: isCurrent ? Colors.white : ResColor.black_70,
                             fontSize: 16,
@@ -207,7 +207,7 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
                         children: <Widget>[
                           Expanded(
                             child: Text(
-                              "Address:" + lks.hd_eth_address,
+                              "Address:${lks?.hd_eth_address}",
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(

@@ -2,7 +2,7 @@ class JsonArray<T> {
   JsonArray();
 
   ///解析jsonarray 返回需要的T类型的数据List
-  List<T> parseList(List data, T Function(Map<String, dynamic> json)) {
+  static List<T> parseList<T>(List data, T Function(Map<String, dynamic> json)) {
     try {
       List<T> ret = List();
       if (data != null) {

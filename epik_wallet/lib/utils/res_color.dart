@@ -25,4 +25,9 @@ class ResColor{
   static const Color white_70 = Color(0xb2ffffff);
   static const Color white_80 = Color(0xccffffff);
   static const Color white_90 = Color(0xe6ffffff);
+
+  static const Color main = Color(0xff10052f);
+  static const Color main_1 = Color(0xff1e183c);
+  static const Color main_2 =  Color(0x7f10052f);
+  static const Color progress = Color(0xff10052f);
 }

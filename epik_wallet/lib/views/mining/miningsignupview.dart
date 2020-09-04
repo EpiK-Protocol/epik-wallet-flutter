@@ -22,6 +22,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 /// 挖矿报名
 class MiningSignupView extends BaseWidget {
@@ -79,7 +81,12 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
             InkWell(
               onTap: () {
                 DeviceUtils.copyText(ServiceInfo.server_wechat);
-                showToast("已复制客服微信号");
+                showToast("已复制客服微信号\n请在微信添加好友",length:Toast.LENGTH_LONG);
+                try {
+                  url_launcher.launch("weixin://");
+                } catch (e) {
+                  print(e);
+                }
               },
               child: Container(
                 width: double.infinity,
@@ -92,7 +99,7 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
                     ),
                     children: <TextSpan>[
                       TextSpan(
-                        text: "请使用绑定的微信号添加客服微信",
+                        text: "报名前请先使用要绑定的微信号添加客服微信",
                       ),
                       TextSpan(
                         text: "${ServiceInfo.server_wechat}",
@@ -103,7 +110,7 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
                         ),
                       ),
                       TextSpan(
-                        text: "为好友，成功报名后将显示ID发送给客服微信。",
+                        text: "为好友，成功报名后将显示UUID发送给客服微信。",
                       ),
                     ],
                   ),
@@ -396,20 +403,22 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
           String id = httpjsonres.jsonMap["id"] ?? "";
           closeLoadDialog();
           eventMgr.send(EventTag.REFRESH_MININGVIEW);
+          DeviceUtils.copyText(id);
           MessageDialog.showMsgDialog(
             context,
             title: "预挖报名",
-            msg: "已报名，请等待审核！",
-              btnRight:"知道了",
-            onClickBtnRight: (YYDialog dialog){
+            msg: "已报名，请将UUID:$id发送给微信客服，然后等待审核。UUID已经复制到剪切板。",
+            btnRight: "知道了",
+            onClickBtnRight: (YYDialog dialog) {
               dialog.dismiss();
             },
-            onDismiss: (dialog){
-              Future.delayed(Duration(milliseconds: 500)).then((value) => finish());
+            onDismiss: (dialog) {
+              Future.delayed(Duration(milliseconds: 500))
+                  .then((value) => finish());
             },
           );
         } else {
-          showToast(httpjsonres.msg??"报名失败");
+          showToast(httpjsonres.msg ?? "报名失败");
         }
       } catch (e) {
         print(e);

@@ -21,8 +21,8 @@ class ApiTestNet {
 //  ###
 
   ///  EPIK测试网活动报名
-  static Future<HttpJsonRes> signup(
-      String weixin, epik_address,erc20_address, epik_signature, erc20_signature) {
+  static Future<HttpJsonRes> signup(String weixin, epik_address, erc20_address,
+      epik_signature, erc20_signature) {
     String url = ServiceInfo.HOST + "/testnet/signup";
     Map<String, dynamic> params = new Map();
     params["weixin"] = weixin;
@@ -32,18 +32,18 @@ class ApiTestNet {
     params["erc20_signature"] = erc20_signature;
     Dlog.p("signup", params.toString());
     String json = jsonEncode(params);
-    Dlog.p("signup",json);
-    return HttpUtil.instance.requestJson(false, url, null,data:json);
+    Dlog.p("signup", json);
+    return HttpUtil.instance.requestJson(false, url, null, data: json);
   }
 
   //  #EPIK测试网状态
-//  GET {{HOST}}/testnet/home
+//  GET {{HOST}}/testnet/home?address=
 //  Content-Type: application/json
 //  ###
 
   ///  EPIK测试网状态
-  static Future<HttpJsonRes> home() {
-    String url = ServiceInfo.HOST + "/testnet/home";
+  static Future<HttpJsonRes> home(String address) {
+    String url = ServiceInfo.HOST + "/testnet/home?address=${address??""}";
     return HttpUtil.instance.requestJson(true, url, null);
   }
 
@@ -69,13 +69,20 @@ class ApiTestNet {
     return HttpUtil.instance.requestJson(true, url, null);
   }
 
+  static List<Prices> _last_prices = [];
+
   static Future<List<Prices>> getPriceList() async {
     List<Prices> ret = [];
     HttpJsonRes res = await getCurrencyPrice();
     if (res != null && res.code == 0) {
-      ret = JsonArray<Prices>().parseList(
+      ret = JsonArray.parseList<Prices>(
           JsonArray.obj2List(res?.jsonMap["prices"]),
           (json) => Prices.fromJson(json));
+    }
+    if (ret != null && ret.length > 0) {
+      _last_prices = ret;
+    } else {
+      ret = _last_prices;
     }
     return ret;
   }

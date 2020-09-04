@@ -1,5 +1,4 @@
 import 'package:epikwallet/utils/RegExpUtil.dart';
-import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
 import 'package:flutter/cupertino.dart';
@@ -46,8 +45,8 @@ class BottomDialog {
         });
   }
 
-  static Future showPassWordInputDialog(@required BuildContext context,String verifyText,@required ValueChanged<String> callback) {
-
+  static Future showPassWordInputDialog(@required BuildContext context,
+      String verifyText, @required ValueChanged<String> callback) {
     String password = "";
     TextEditingController tec = TextEditingController(text: password);
 
@@ -75,7 +74,7 @@ class BottomDialog {
                 Align(
                   alignment: FractionalOffset.centerRight,
                   child: GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       // 关闭
                       Navigator.pop(context);
                     },
@@ -91,7 +90,6 @@ class BottomDialog {
                     ),
                   ),
                 ),
-
               ],
             ),
           ),
@@ -100,7 +98,8 @@ class BottomDialog {
             height: 44,
             padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
             child: TextField(
-              autofocus: true, //自动获取焦点， 自动弹出输入法
+              autofocus: true,
+              //自动获取焦点， 自动弹出输入法
               controller: tec,
               textAlign: TextAlign.left,
               keyboardType: TextInputType.text,
@@ -134,7 +133,7 @@ class BottomDialog {
               cursorColor: Colors.black,
               //光标颜色
               style: TextStyle(fontSize: 16, color: Color(0xff333333)),
-              onChanged: (text){
+              onChanged: (text) {
                 text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
                 password = text;
               },
@@ -150,37 +149,31 @@ class BottomDialog {
             indent: 25,
             endIndent: 25,
           ),
-
           Container(
             height: 44,
             width: double.infinity,
-            margin: EdgeInsets.fromLTRB(0,30,0,0),
-            padding: EdgeInsets.fromLTRB(25,0,25,0),
+            margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
+            padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
             child: FlatButton(
               highlightColor: Colors.white24,
               splashColor: Colors.white24,
               onPressed: () {
-
-                if(StringUtils.isEmpty(password))
-                {
+                if (StringUtils.isEmpty(password)) {
                   ToastUtils.showToast("请输入密码");
                   return;
                 }
 
-                if(StringUtils.isEmpty(verifyText))
-                {
+                if (StringUtils.isEmpty(verifyText)) {
                   Navigator.pop(context);
                   callback(password);
-                }else
-                  {
-                    if(verifyText!=password)
-                    {
-                      ToastUtils.showToast("密码不正确");
-                    }else{
-                      Navigator.pop(context);
-                      callback(password);
-                    }
+                } else {
+                  if (verifyText != password) {
+                    ToastUtils.showToast("密码不正确");
+                  } else {
+                    Navigator.pop(context);
+                    callback(password);
                   }
+                }
               },
               child: Text(
                 "确定",
@@ -199,7 +192,7 @@ class BottomDialog {
       ),
     );
 
-
-    return showBottomPop(context, widget, radius_top: 15, bgColor: Colors.white);
+    return showBottomPop(context, widget,
+        radius_top: 15, bgColor: Colors.white);
   }
 }

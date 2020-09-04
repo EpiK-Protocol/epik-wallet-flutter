@@ -2,20 +2,16 @@ import 'dart:convert';
 
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/logic/api/api_testnet.dart';
+import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
+import 'package:epikwallet/model/EthOrder.dart';
+import 'package:epikwallet/model/TepkOrder.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/model/prices.dart';
 import 'package:epikwallet/utils/Dlog.dart';
+import 'package:epikwallet/utils/JsonUtils.dart';
 
 class EpikWalletUtils {
-  static final String hd_RpcUrl =
-      "https://mainnet.infura.io/v3/1bbd25bd3af94ca2b294f93c346f69cd";
-
-  static final String epik_RpcUrl = "ws://120.55.82.202:1234/rpc/v0";//"ws://171.221.243.41:1234/rpc/v0";
-
-  static final String epik_RpcUrl_token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIl19.Oivn9CdQ_kB4TriYfoo2CzWQBeCbj9FbH2hVu4ogyBI";
-
   /// 创建钱包 并且初始化
   static Future<bool> initWalletAccount(WalletAccount waccount) async {
     try {
@@ -24,7 +20,7 @@ class EpikWalletUtils {
       hdwallet.seed = await HD.seedFromMnemonic(waccount.mnemonic); //助记词 转种子
 
       // hd 设置RPC地址
-      await hdwallet.setRPC(hd_RpcUrl);
+      await hdwallet.setRPC(ServiceInfo.hd_RpcUrl);
 
       // ETH path
       String hdwallet_eth_path = await Bip44Path.getPath("ETH");
@@ -32,10 +28,12 @@ class EpikWalletUtils {
       String eth_address = await hdwallet.derive(hdwallet_eth_path);
 
       // epik 钱包,   tEPK = epikWallet.balance
-      EpikWallet epikWallet = await Epik.newWalletFromSeed(hdwallet.seed,t: "secp256k1");
+      EpikWallet epikWallet =
+          await Epik.newWalletFromSeed(hdwallet.seed, t: "secp256k1");
 
       // epik 设置RPC地址
-      await epikWallet.setRPC(epik_RpcUrl, epik_RpcUrl_token);
+      await epikWallet.setRPC(
+          ServiceInfo.epik_RpcUrl, ServiceInfo.epik_RpcUrl_token);
 
       //    EPK-ERC20 = hd.tokenbalance("EPK")
       //    USDT = hd.tokenbalance("USDT")
@@ -59,36 +57,116 @@ class EpikWalletUtils {
     Future epk_erc20 =
         waccount.hdwallet.tokenBalance(waccount.hd_eth_address, "EPK");
     Future tepk = waccount.epikWallet.balance(waccount.epik_tEPK_address);
-    List values = await Future.wait([eth, usdt, epk_erc20, tepk]);
+    Future prices = ApiTestNet.getPriceList();
+    List values = await Future.wait([eth, usdt, epk_erc20, tepk, prices]);
     Map<CurrencySymbol, String> map = {
       CurrencySymbol.ETH: values[0] ?? "",
       CurrencySymbol.USDT: values[1] ?? "",
-      CurrencySymbol.EPK: values[2] ?? "",
+      CurrencySymbol.EPKerc20: values[2] ?? "",
       CurrencySymbol.tEPK: values[3] ?? "",
     };
+    //todo test
+//    Map<CurrencySymbol, String> map = {
+//      CurrencySymbol.ETH: "33",//values[0] ?? "",
+//      CurrencySymbol.USDT:"44",// values[1] ?? "",
+//      CurrencySymbol.EPK:"22",// values[2] ?? "",
+//      CurrencySymbol.tEPK:"11",// values[3] ?? "",
+//    };
     Dlog.p("requestBalance", map.toString());
 
-    List<Prices> priceslist = await ApiTestNet.getPriceList();
+    List<Prices> priceslist = values[4];
 
     if (waccount.currencyList == null || waccount.currencyList.length == 0) {
+      // 新价格
       waccount.currencyList = [];
       CurrencySymbol.values.forEach((cs) {
+        Prices price = cs.getPriceUSD(priceslist);
         waccount.currencyList.add(CurrencyAsset(
-          symbol: cs.symbol,
-          name: "",
-          type: "",
-          balance: map[cs] ?? "",
-          icon_url: cs.iconUrl,
-          networkType: cs.networkType,
-        ));
+            symbol: cs.symbol,
+            name: "",
+            type: "",
+            balance: map[cs] ?? "",
+            icon_url: cs.iconUrl,
+            cs: cs,
+            networkType: cs.networkType,
+            price_usd_str: price.price,
+            price_usd: price.dPrice));
       });
     } else {
+      // 更新数据
       for (int i = 0; i < waccount.currencyList.length; i++) {
+        CurrencySymbol cs = CurrencySymbol.values[i];
+        Prices price = cs.getPriceUSD(priceslist);
         CurrencyAsset ca = waccount.currencyList[i];
-        ca.balance = map[CurrencySymbol.values[i]] ?? "";
+        ca.balance = map[cs] ?? "";
+        ca.price_usd_str = price.price;
+        ca.price_usd = price.dPrice;
       }
     }
+
+    // 计算余额
+    if (waccount.currencyList != null) {
+      double total_usd = 0;
+      double total_btc = 0;
+      waccount.currencyList.forEach((currencyasset) {
+        total_usd += currencyasset.getUsdValue();
+      });
+      waccount.total_usd = total_usd;
+
+      if (priceslist != null) {
+        priceslist.forEach((price) {
+          if (price.id == "BTC") {
+            if (price.dPrice != 0) {
+              try {
+                total_btc = total_usd / price.dPrice;
+              } catch (e) {
+                print(e);
+              }
+            }
+          }
+        });
+      }
+      waccount.total_btc = total_btc;
+    }
+
     return map;
+  }
+
+  static Future<List> getOrderList(
+      WalletAccount waccount, CurrencySymbol cs, int page, int pagesize) async {
+    try {
+      if (cs == CurrencySymbol.tEPK) {
+        String json = await waccount.epikWallet
+            .messageList(0, waccount.epik_tEPK_address);
+        print("getOrderList EPIK $json");
+        List jsonarray = jsonDecode(json);
+        List<TepkOrder> temp = JsonArray.parseList<TepkOrder>(
+            jsonarray, (json) => TepkOrder.fromJson(json));
+        if(temp!=null)
+        {
+          temp.forEach((element) { element.checkSelf(waccount.epik_tEPK_address);});
+        }
+        return temp ?? [];
+      } else {
+        //      String address = waccount.hd_eth_address;
+        String address = "0xe9fc6bf283383c17a1377d76df3a2b0a82ad854e"; //todo test
+        String json = await waccount.hdwallet
+            .transactions(address, cs.symbolToNetWork, page, pagesize, false);
+        print("getOrderList ETH $json");
+        List jsonarray = jsonDecode(json);
+        List<EthOrder> temp = JsonArray.parseList<EthOrder>(
+            jsonarray, (json) => EthOrder.fromJson(json));
+        if(temp!=null)
+        {
+          temp.forEach((element) { element.checkSelf(address);});
+        }
+        return temp ?? [];
+      }
+    } catch (e) {
+      print("getOrderList error");
+      print(e);
+    }
+    return null;
   }
 }
 
@@ -141,4 +219,6 @@ class WalletAccount {
   }
 
   List<CurrencyAsset> currencyList = [];
+  double total_usd = 0;
+  double total_btc = 0;
 }

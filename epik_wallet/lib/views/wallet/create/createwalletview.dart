@@ -89,7 +89,7 @@ class _CreateWalletViewState extends BaseWidgetState<CreateWalletView> {
             Padding(
               padding: EdgeInsets.fromLTRB(15, 6, 15, 10),
               child: Text(
-                "创建EPIK钱包",
+                "创建EpiK Portal钱包",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 20,
@@ -99,9 +99,9 @@ class _CreateWalletViewState extends BaseWidgetState<CreateWalletView> {
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
               child: Text(
-                "请备份好您的密码！EPIK不存储用户密码，无法提供找回或重置的服务。",
+                "请备份好您的密码！EpiK Portal不存储用户密码，无法提供找回或重置的服务。",
                 style: TextStyle(
-                  color: ResColor.black_50,
+                  color: Colors.redAccent,
                   fontSize: 13,
                 ),
               ),

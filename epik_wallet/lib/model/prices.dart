@@ -1,19 +1,19 @@
 import 'package:epikwallet/utils/string_utils.dart';
 
 class Prices {
-  String ID;
-  String Price;
+  String id;
+  String price="";
 
   double dPrice = 0;
 
-  Prices();
+  Prices({this.id,this.price,this.dPrice});
 
   Prices.fromJson(Map<String, dynamic> json) {
     try {
-      ID = StringUtils.parseString(json["ID"], "");
-      Price = StringUtils.parseString(json["Price"], "");
-      if (StringUtils.isNotEmpty(Price))
-        dPrice = StringUtils.parseDouble(Price, 0);
+      id = StringUtils.parseString(json["id"], "");
+      price = StringUtils.parseString(json["price"], "");
+      if (StringUtils.isNotEmpty(price))
+        dPrice = StringUtils.parseDouble(price, 0);
     } catch (e) {
       print(e);
     }
@@ -21,8 +21,8 @@ class Prices {
 
   Map<String, dynamic> toJson(){
     Map<String, dynamic> json = {};
-    json["ID"] = ID;
-    json["Price"] = Price;
+    json["id"] = id;
+    json["price"] = price;
     return json;
   }
 

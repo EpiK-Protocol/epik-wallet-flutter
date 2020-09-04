@@ -84,9 +84,9 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
               child: Text(
-                "请备份好您的助记词，不要截图、拍照，不要泄漏给他人！\nEPIK不存储用户数据，无法提供找回或重置的服务。",
+                "请备份好您的助记词，不要截图、拍照，不要泄漏给他人！\nEpiK Portal不存储用户数据，无法提供找回或重置的服务。",
                 style: TextStyle(
-                  color: ResColor.black_50,
+                  color: Colors.redAccent,
                   fontSize: 13,
                 ),
               ),

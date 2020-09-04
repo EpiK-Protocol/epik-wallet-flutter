@@ -7,6 +7,7 @@ import 'package:epikwallet/model/Upgrade.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
+import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/screen/screen_util.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
 import 'package:epikwallet/views/miningview.dart';
@@ -69,8 +70,8 @@ class _MainViewState extends BaseWidgetState<MainView> {
         backgroundColor: Colors.white,
         items: getBottomNavigationBarItems(),
         currentIndex: currentIndex,
-        selectedItemColor: Color(0xff000000),
-        unselectedItemColor: Color(0xff999999),
+        selectedItemColor: ResColor.main,//Color(0xff000000),
+        unselectedItemColor: ResColor.main_2,
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
         selectedFontSize: 11,

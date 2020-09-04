@@ -59,7 +59,7 @@ class _SplashViewState extends BaseWidgetState<SplashView>
     }
 
     return Container(
-      color: Color(0xff10052f),
+      color: ResColor.main,
       child: GestureDetector(
         onTap: () {
           clickToLogin();

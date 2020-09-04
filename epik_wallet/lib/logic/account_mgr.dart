@@ -53,7 +53,7 @@ class AccountMgr {
     List<WalletAccount> temp = [];
     if (jsonstr != null && jsonstr.length > 0) {
       try {
-        temp = JsonArray<WalletAccount>().parseList(
+        temp = JsonArray.parseList<WalletAccount>(
             JsonArray.obj2List(jsonDecode(jsonstr)),
             (json) => WalletAccount.fromJson(json));
         Dlog.p(TAG, " load => ${temp}");

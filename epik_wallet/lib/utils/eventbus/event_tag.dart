@@ -15,4 +15,7 @@ enum EventTag {
 
   //预挖活动页面需要刷新
   REFRESH_MININGVIEW,
+
+  // 二维码扫描结果
+  SCAN_QRCODE_RESULT,
 }

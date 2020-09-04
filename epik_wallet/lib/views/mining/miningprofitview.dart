@@ -1,10 +1,21 @@
 import 'package:epikwallet/base/_base_widget.dart';
+import 'package:epikwallet/logic/api/api_testnet.dart';
+import 'package:epikwallet/model/MiningProfit.dart';
+import 'package:epikwallet/utils/JsonUtils.dart';
+import 'package:epikwallet/utils/data/date_util.dart';
+import 'package:epikwallet/utils/http/httputils.dart';
+import 'package:epikwallet/utils/res_color.dart';
+import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/widget/list_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 class MiningProfitView extends BaseWidget {
+  String mining_id;
+
+  MiningProfitView(this.mining_id);
+
   @override
   BaseWidgetState<BaseWidget> getState() {
     return _MiningProfitViewState();
@@ -12,17 +23,55 @@ class MiningProfitView extends BaseWidget {
 }
 
 class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
-  List<Object> datalist = [];
+  List<MiningProfit> datalist = [];
+
+  double erc20_epk = 0;
+  double tepk = 0;
 
   @override
   void initStateConfig() {
     isTopBarShow = true; //状态栏是否显示
     isAppBarShow = true; //导航栏是否显示
     setAppBarTitle("预挖收益");
+  }
 
-    for (int i = 0; i < 100; i++) {
-      datalist.add(i);
+  @override
+  void onCreate() {
+    super.onCreate();
+    refresh();
+  }
+
+  bool isLoading = false;
+
+  refresh() {
+    isLoading = true;
+    setLoadingWidgetVisible(true);
+    ApiTestNet.getProfit(widget.mining_id).then((httpjsonres) {
+      jsonCallback(httpjsonres);
+    });
+  }
+
+  jsonCallback(HttpJsonRes httpjsonres) {
+    isLoading = false;
+    if (httpjsonres != null && httpjsonres.code == 0) {
+      erc20_epk = StringUtils.parseDouble(httpjsonres.jsonMap["erc20_epk"], 0);
+      tepk = StringUtils.parseDouble(httpjsonres.jsonMap["tepk"], 0);
+
+      List<MiningProfit> temp = JsonArray.parseList<MiningProfit>(
+          JsonArray.obj2List(httpjsonres.jsonMap["list"]),
+          (json) => MiningProfit.fromJson(json));
+
+      datalist = temp ?? [];
+      closeStateLayout();
+    } else {
+      setErrorWidgetVisible(true);
     }
+  }
+
+  @override
+  void onClickErrorWidget() {
+    super.onClickErrorWidget();
+    refresh();
   }
 
   @override
@@ -44,6 +93,14 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
     return listpage;
   }
 
+  String amountFormat(double amount) {
+    if (amount > 10000) {
+      String ret = "${StringUtils.formatNumAmount(amount / 10000, point: 2)}w";
+      return ret;
+    }
+    return StringUtils.formatNumAmount(amount, point: 0);
+  }
+
   Widget buildHeaderWidget(Object item, int position) {
     return Container(
       margin: EdgeInsets.only(top: 0),
@@ -51,7 +108,7 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
       height: 173,
       width: double.infinity,
       child: Card(
-        color: Color(0xff10052f),
+        color: ResColor.main,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(12.0)),
         ),
@@ -92,7 +149,7 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            "挖出数量\nTEPK",
+                            "挖出数量\ntEPK",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.white,
@@ -101,7 +158,7 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
                           ),
                           Container(height: 10),
                           Text(
-                            "250W",
+                            amountFormat(tepk),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 30,
@@ -124,7 +181,7 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            "奖励数量\nERC20-EPK",
+                            "奖励数量\nEPK-ERC20",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.white,
@@ -133,7 +190,7 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
                           ),
                           Container(height: 10),
                           Text(
-                            "55W",
+                            amountFormat(erc20_epk),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 30,
@@ -153,20 +210,20 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
     );
   }
 
-  Widget buildItemWidget(Object item, int index) {
+  Widget buildItemWidget(MiningProfit item, int index) {
     return Container(
       padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Expanded(
                 child: Text(
-                  "2020-09-03 18:11",
+                  DateUtil.formatDateMs(item.created_at_ms,
+                      format: DataFormats.y_mo_d_h_m),
                   style: TextStyle(
                     fontSize: 15,
                     color: Color(0xff333333),
@@ -179,13 +236,12 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
           Container(
             height: 5,
           ),
-
           Row(
             children: <Widget>[
               Container(
                 width: 100,
                 child: Text(
-                  "TEPK",
+                  "tEPK",
                   style: TextStyle(
                     fontSize: 15,
                     color: Color(0xff333333),
@@ -194,7 +250,7 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
               ),
               Expanded(
                 child: Text(
-                  "123456.8901",
+                  StringUtils.formatNumAmount(item.tepk),
                   textAlign: TextAlign.end,
                   style: TextStyle(
                     fontSize: 15,
@@ -209,7 +265,7 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
               Container(
                 width: 100,
                 child: Text(
-                  "ERC20-EPK",
+                  "EPK-ERC20",
                   style: TextStyle(
                     fontSize: 15,
                     color: Color(0xff333333),
@@ -218,7 +274,7 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
               ),
               Expanded(
                 child: Text(
-                  "6543.0084",
+                  StringUtils.formatNumAmount(item.erc20_epk),
                   textAlign: TextAlign.end,
                   style: TextStyle(
                     fontSize: 15,
@@ -245,7 +301,7 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
 //              ),
               Expanded(
                 child: Text(
-                  "0x2cac6e4b11d6b58f6d3c1c9d5fe8faa89f60e5a2",
+                  item.hash,
 //                  textAlign: TextAlign.end,
 //                  maxLines: 1,
 //                  overflow: TextOverflow.ellipsis,
@@ -258,7 +314,6 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
               ),
             ],
           ),
-
           Container(height: 14),
           Divider(
             height: 1,
@@ -275,7 +330,8 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
   }
 
   Future<void> _pullRefreshCallback() async {
-    // todo 刷新排行榜
-    await Future.delayed(Duration(milliseconds: 1000));
+    isLoading = true;
+    HttpJsonRes httpjsonres = await ApiTestNet.getProfit(widget.mining_id);
+    jsonCallback(httpjsonres);
   }
 }

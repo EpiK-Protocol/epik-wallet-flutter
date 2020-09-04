@@ -1,8 +1,12 @@
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
+import 'package:epikwallet/model/currencytype.dart';
+import 'package:epikwallet/views/currency/currencydepositview.dart';
 import 'package:epikwallet/views/currency/currencydetailview.dart';
+import 'package:epikwallet/views/currency/currencywithdrawview.dart';
 import 'package:epikwallet/views/mining/miningprofitview.dart';
 import 'package:epikwallet/views/mining/miningsignupview.dart';
+import 'package:epikwallet/views/qrcode/qrcodescanview.dart';
 import 'package:epikwallet/views/wallet/accountdetailview.dart';
 import 'package:epikwallet/views/wallet/create/createwalletview.dart';
 import 'package:epikwallet/views/wallet/import/importwalletview.dart';
@@ -76,7 +80,24 @@ class ViewGT {
   }
 
   /// 挖矿奖励
-  static showMiningProfitView(BuildContext context) {
-    showView(context, MiningProfitView());
+  static showMiningProfitView(BuildContext context,String mining_id) {
+    showView(context, MiningProfitView(mining_id));
+  }
+
+  /// 充币
+  static showCurrencyDepositView(BuildContext context, WalletAccount walletaccount, CurrencySymbol currencysymbol)
+  {
+    showView(context, CurrencyDepositView(walletaccount,currencysymbol));
+  }
+
+  /// 提币
+  static showCurrencyWithdrawView(BuildContext context, WalletAccount walletaccount, CurrencyAsset currencyAsset)
+  {
+    showView(context, CurrencyWithdrawView(walletaccount,currencyAsset));
+  }
+
+  /// 扫描二维码
+  static showQrcodeScanView(BuildContext context) {
+    showView(context, QrcodeScanView());
   }
 }

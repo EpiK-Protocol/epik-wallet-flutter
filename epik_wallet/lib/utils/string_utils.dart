@@ -20,21 +20,39 @@ class StringUtils {
     return _def;
   }
 
-  static int parseInt(String text, int def) {
-    if (isEmpty(text)) return def;
+  static int parseInt(Object data, int def) {
+    if (data == null) return def;
     int ret = def;
     try {
-      ret = int.parse(text);
-    } catch (e) {}
+      if (data is String) {
+        if (isEmpty(data)) return def;
+        ret = int.parse(data);
+      } else if (data is double) {
+        ret = data.toInt();
+      } else if (data is int) {
+        ret = data;
+      }
+    } catch (e) {
+      ret = def;
+    }
     return ret;
   }
 
-  static double parseDouble(String text, double def) {
-    if (isEmpty(text)) return def;
+  static double parseDouble(Object data, double def) {
+    if (data == null) return def;
     double ret = def;
     try {
-      ret = double.parse(text);
-    } catch (e) {}
+      if (data is String) {
+        if (isEmpty(data)) return def;
+        ret = double.parse(data);
+      } else if (data is int) {
+        ret = data.toDouble();
+      } else if (data is double) {
+        ret = data;
+      }
+    } catch (e) {
+      ret = def;
+    }
     return ret;
   }
 

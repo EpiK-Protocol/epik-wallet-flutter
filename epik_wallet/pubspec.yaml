@@ -1,5 +1,5 @@
 name: epikwallet
-description: epik wallet 
+description: EpiK Portal
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -96,12 +96,12 @@ dependencies:
   # <string>Can I use the mic please?</string>
 
   #震动反馈----------------------------
-  #flutter_vibrate: ^1.0.0
+  flutter_vibrate: ^1.0.0
   # android
   # <uses-permission android:name="android.permission.VIBRATE"/>
 
   # 保存图片到相册----------------------
-  #image_gallery_saver: ^1.5.0
+  image_gallery_saver: ^1.5.0
   # android 文件存储 permission_handler检测权限
   # <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
   # <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -118,12 +118,12 @@ dependencies:
   #   compileSdkVersion 28
 
   # 扫描二维码---------------------------
-  #qrcode: ^1.0.4
-  #ios 配置 os/Runner/Info.plis
-  #  <key>NSCameraUsageDescription</key>
-  #  <string>Camera permission is required for qrcode scanning.</string>
-  #  <key>io.flutter.embedded_views_preview</key>
-  #  <true/>
+  qrcode: ^1.0.4
+#  ios 配置 os/Runner/Info.plis
+#    <key>NSCameraUsageDescription</key>
+#    <string>Camera permission is required for qrcode scanning.</string>
+#    <key>io.flutter.embedded_views_preview</key>
+#    <true/>
 
   #全局 dialog 弹窗 封装 ----------------
   #https://pub.dev/packages/flutter_custom_dialog#-readme-tab-
@@ -204,6 +204,8 @@ flutter:
     - assets/img/ic_eth.png
     - assets/img/ic_usdt.png
     - assets/img/ic_epk.png
+    - assets/img/ic_scan.png
+    - assets/img/ic_qrcode_scan.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

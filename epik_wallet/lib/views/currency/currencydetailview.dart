@@ -1,14 +1,19 @@
 import 'dart:math' as math;
 
 import 'package:epikwallet/base/_base_widget.dart';
+import 'package:epikwallet/logic/EpikWalletUtils.dart';
+import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
-import 'package:epikwallet/model/CurrencyOrder.dart';
+import 'package:epikwallet/model/EthOrder.dart';
+import 'package:epikwallet/model/TepkOrder.dart';
+import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/data/date_util.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
+import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/list_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,14 +38,14 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     super.initState();
   }
 
-  List<CurrencyOrder> data_list_item = [];
+  List<Object> data_list_item = [];
 
-  GlobalKey<ListPageState> key_scroll;
+  GlobalKey<ListPageState> key_scroll = GlobalKey();
 
   double header_alpha = 0;
 
   ColorTween header_colortween =
-      ColorTween(begin: Colors.white, end: Colors.black);
+  ColorTween(begin: Colors.white, end: Colors.black);
 
   LinearGradient gradient_ff = LinearGradient(
     colors: [Color(0xff2B2F35), Color(0xff1D2023)],
@@ -83,6 +88,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
 
     eventMgr.add(EventTag.LOCAL_ACCOUNT_LIST_CHANGE, eventCallback_account);
     eventMgr.add(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
+
     refresh();
   }
 
@@ -102,7 +108,15 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
 
   @override
   Widget getTopFloatWidget() {
-    return getAppBar();
+    return InkWell(
+      child: getAppBar(),
+      onTap: () {
+        if (key_scroll != null && !isLoading) {
+          key_scroll.currentState.scrollController.animateTo(0,
+              duration: Duration(milliseconds: 200), curve: Curves.easeIn);
+        }
+      },
+    );
   }
 
   @override
@@ -139,6 +153,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   }
 
   double header_top = 0;
+  double tttt = 0;
 
   /// 控制滑动式 title栏透明度
   scrollCallback(ScrollController ctrl) {
@@ -146,6 +161,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     setState(() {
       if (header_top == 0) header_top = getTopBarHeight() + getAppBarHeight();
       double t = ctrl.position.pixels;
+      tttt = t;
       t = math.min(t, 100);
       t = math.max(0, t);
       header_alpha = t / 100;
@@ -161,19 +177,40 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
       data_list_item,
       headerList: ["header"],
       headerCreator: headerBuilder,
-//      itemWidgetCreator: itemWidgetBuild,
       itemWidgetCreator: (context, position) {
-        return GestureDetector(
+        return InkWell(
           onTap: () => onItemClick(position),
           child: itemWidgetBuild(context, position),
         );
       },
       scrollCallback: scrollCallback,
-//      pullRefreshCallback: _pullRefreshCallback,
-//      needLoadMore: needLoadMore,
-//      onLoadMore: onLoadMore,
+      pullRefreshCallback: _pullRefreshCallback,
+      needLoadMore: needLoadMore,
+      onLoadMore: onLoadMore,
       key: key_scroll,
       needNoMoreTipe: false,
+      bgContainer: (view) {
+        return Stack(
+          children: <Widget>[
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: getScreenHeight() / 3 * 2 + (tttt > 0 ? tttt : 0),
+              child: Container(
+                color: Colors.white,
+              ),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+              child: view,
+            ),
+          ],
+        );
+      },
     );
 
     return Stack(
@@ -280,44 +317,45 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.only(top: 0, left: 5),
-                              child: Text(
-                                "　　",
-                                style: TextStyle(
-                                  color: Colors.transparent,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ),
+//                            Padding(
+//                              padding: EdgeInsets.only(top: 0, left: 5),
+//                              child: Text(
+//                                "　　",
+//                                style: TextStyle(
+//                                  color: Colors.transparent,
+//                                  fontSize: 10,
+//                                ),
+//                              ),
+//                            ),
                             Text(
                               widget.currencyAsset.balance,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 25,
+                                fontSize: 35,
                                 fontFamily: "DIN_Condensed_Bold",
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 0, left: 5),
-                              child: Text(
-                                "全部",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ),
+//                            Padding(
+//                              padding: EdgeInsets.only(top: 0, left: 5),
+//                              child: Text(
+//                                "全部",
+//                                style: TextStyle(
+//                                  color: Colors.white,
+//                                  fontSize: 10,
+//                                ),
+//                              ),
+//                            ),
                           ],
                         ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Text(
-                              "\$ ${StringUtils.formatNumAmount(widget.currencyAsset.getUsdValue())}",
+                              "\$ ${StringUtils.formatNumAmount(
+                                  widget.currencyAsset.getUsdValue())}",
                               style: TextStyle(
                                 color: ResColor.white,
-                                fontSize: 12,
+                                fontSize: 15,
                               ),
                             ),
                           ],
@@ -342,24 +380,30 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                         mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
                           Expanded(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Text(
-                                  "可用",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.white,
+                            child: Material(
+                              color: Colors.transparent,
+                              clipBehavior: Clip.antiAlias,
+                              borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(15)),
+                              child: InkWell(
+                                onTap: () {
+                                  ViewGT.showCurrencyWithdrawView(
+                                      context,
+                                      AccountMgr().currentAccount,
+                                      widget.currencyAsset);
+                                },
+                                child: Container(
+                                  height: double.infinity,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "提币",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
-                                Text(
-                                  "0.00000000",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                           Container(
@@ -368,24 +412,30 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                             color: Color(0x19ffffff),
                           ),
                           Expanded(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Text(
-                                  "冻结",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.white,
+                            child: Material(
+                              color: Colors.transparent,
+                              clipBehavior: Clip.antiAlias,
+                              borderRadius: BorderRadius.only(
+                                  bottomRight: Radius.circular(15)),
+                              child: InkWell(
+                                onTap: () {
+                                  ViewGT.showCurrencyDepositView(
+                                      context,
+                                      AccountMgr().currentAccount,
+                                      widget.currencyAsset.cs);
+                                },
+                                child: Container(
+                                  height: double.infinity,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "充币",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
-                                Text(
-                                  "0.00000000",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         ],
@@ -395,61 +445,61 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                 ],
               ),
             ),
-            Container(
-              margin: EdgeInsets.fromLTRB(25, 20, 25, 30),
-              height: 44,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      height: 44,
-                      child: FlatButton(
-                        highlightColor: Colors.white24,
-                        splashColor: Colors.white24,
-                        onPressed: () {
-                          // todo
-                        },
-                        child: Text(
-                          "提币",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                          ),
-                        ),
-                        color: Color(0xff393E45),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(22)),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(padding: EdgeInsets.only(left: 25)),
-                  Expanded(
-                    child: Container(
-                      height: 44,
-                      child: FlatButton(
-                        highlightColor: Colors.white24,
-                        splashColor: Colors.white24,
-                        onPressed: () {
-                          //todo
-                        },
-                        child: Text(
-                          "充币",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                          ),
-                        ),
-                        color: Color(0xff1A1C1F),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(22)),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+//            Container(
+//              margin: EdgeInsets.fromLTRB(25, 20, 25, 30),
+//              height: 44,
+//              child: Row(
+//                children: <Widget>[
+//                  Expanded(
+//                    child: Container(
+//                      height: 44,
+//                      child: FlatButton(
+//                        highlightColor: Colors.white24,
+//                        splashColor: Colors.white24,
+//                        onPressed: () {
+//                          // todo
+//                        },
+//                        child: Text(
+//                          "提币",
+//                          style: TextStyle(
+//                            color: Colors.white,
+//                            fontSize: 15,
+//                          ),
+//                        ),
+//                        color: Color(0xff393E45),
+//                        shape: RoundedRectangleBorder(
+//                          borderRadius: BorderRadius.all(Radius.circular(22)),
+//                        ),
+//                      ),
+//                    ),
+//                  ),
+//                  Padding(padding: EdgeInsets.only(left: 25)),
+//                  Expanded(
+//                    child: Container(
+//                      height: 44,
+//                      child: FlatButton(
+//                        highlightColor: Colors.white24,
+//                        splashColor: Colors.white24,
+//                        onPressed: () {
+//                          //todo
+//                        },
+//                        child: Text(
+//                          "充币",
+//                          style: TextStyle(
+//                            color: Colors.white,
+//                            fontSize: 15,
+//                          ),
+//                        ),
+//                        color: Color(0xff1A1C1F),
+//                        shape: RoundedRectangleBorder(
+//                          borderRadius: BorderRadius.all(Radius.circular(22)),
+//                        ),
+//                      ),
+//                    ),
+//                  ),
+//                ],
+//              ),
+//            ),
           ],
         ),
       );
@@ -463,87 +513,173 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
 
   Widget itemWidgetBuild(BuildContext context, int position) {
     if (data_list_item != null && position < data_list_item.length) {
-      CurrencyOrder item = data_list_item[position];
-      return Container(
-        width: double.infinity,
-        height: 80,
-        padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
-        color: Colors.white,
-        child: Stack(
-          children: <Widget>[
-            // 底部分割线
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              height: 1,
-              child: Container(
-                color: Color(0xffeeeeee),
-              ),
-            ),
-            Positioned(
-              left: 0,
-              top: 0,
-              child: Text(
-                item.data,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Color(0xff333333),
-                ),
-              ),
-            ),
-            Positioned(
-              right: 10,
-              top: 0,
-              child: Container(
-                height: 20,
-                padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Color(0xfff5f5f5),
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                ),
-                child: Text(
-                  item.type,
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: Color(0xff999999),
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              left: 0,
-              bottom: 10,
-              child: Text(
-                (item.amount > 0 ? "+" : "") +
-                    StringUtils.formatNumAmount(item.amount, point: 8),
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Color(0xff333333),
-                ),
-              ),
-            ),
-            Positioned(
-              right: 10,
-              bottom: 10,
-              child: Text(
-                DateUtil.formatDateMs(item.created_at,
-                    format: DataFormats.y_mo_d_h_m),
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Color(0xffAAAAAA),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
+      var item = data_list_item[position];
+      if (item is TepkOrder) {
+        return itemWidgetBuild_tepk(item);
+      } else {
+        return itemWidgetBuild_eth((item as EthOrder));
+      }
     } else {
       return Padding(
           padding: new EdgeInsets.all(10.0),
           child: new Text("no data $position"));
     }
+  }
+
+  Widget itemWidgetBuild_tepk(TepkOrder item) {
+        return Container(
+      width: double.infinity,
+      height: 80,
+      padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
+      color: Colors.white,
+      child: Stack(
+        children: <Widget>[
+          // 底部分割线
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 1,
+            child: Container(
+              color: Color(0xffeeeeee),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            top: 0,
+            child: Text(
+              item.isWithdraw?"提币":"充币",
+              style: TextStyle(
+                fontSize: 15,
+                color: Color(0xff333333),
+              ),
+            ),
+          ),
+          Positioned(
+            right: 10,
+            top: 0,
+            child: Container(
+              height: 20,
+              padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Color(0xfff5f5f5),
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
+              child: Text(
+                "已完成",
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Color(0xff999999),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            bottom: 10,
+            child: Text(
+              (item.isWithdraw  ? "-" : "+") +
+                  StringUtils.formatNumAmount(item.value_d, point: 8),
+              style: TextStyle(
+                fontSize: 15,
+                color: Color(0xff333333),
+              ),
+            ),
+          ),
+//          Positioned(
+//            right: 10,
+//            bottom: 10,
+//            child: Text(
+//              DateUtil.formatDateMs(item.created_at,
+//                  format: DataFormats.y_mo_d_h_m),
+//              style: TextStyle(
+//                fontSize: 12,
+//                color: Color(0xffAAAAAA),
+//              ),
+//            ),
+//          ),
+        ],
+      ),
+    );
+  }
+
+  Widget itemWidgetBuild_eth(EthOrder item) {
+    return Container(
+      width: double.infinity,
+      height: 80,
+      padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
+      color: Colors.white,
+      child: Stack(
+        children: <Widget>[
+          // 底部分割线
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 1,
+            child: Container(
+              color: Color(0xffeeeeee),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            top: 0,
+            child: Text(
+              item.isWithdraw?"提币":"充币",
+              style: TextStyle(
+                fontSize: 15,
+                color: Color(0xff333333),
+              ),
+            ),
+          ),
+          Positioned(
+            right: 10,
+            top: 0,
+            child: Container(
+              height: 20,
+              padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Color(0xfff5f5f5),
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
+              child: Text(
+                "已完成",
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Color(0xff999999),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            bottom: 10,
+            child: Text(
+              (item.isWithdraw  ? "-" : "+") +
+                  StringUtils.formatNumAmount(item.value_d, point: 8),
+              style: TextStyle(
+                fontSize: 15,
+                color: Color(0xff333333),
+              ),
+            ),
+          ),
+          Positioned(
+            right: 10,
+            bottom: 10,
+            child: Text(
+              DateUtil.formatDateMs(item.timeStamp,
+                  format: DataFormats.y_mo_d_h_m),
+              style: TextStyle(
+                fontSize: 12,
+                color: Color(0xffAAAAAA),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   bool hasRefresh = false;
@@ -557,23 +693,36 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   void refresh() {
     hasRefresh = true;
 
-//    isLoading = true;
+    isLoading = true;
 //    setLoadingWidgetVisible(true);
 
-//    page = 1;
-//    Future<HttpJsonRes> res =
-//        ApiNews.getNewsListByType(page, pageSize, widget.newsTypeModel.code);
-//    res.then(jsonCallback);
+    page = 0;
+    EpikWalletUtils.getOrderList(AccountMgr().currentAccount,
+        widget.currencyAsset.cs, page, pageSize)
+        .then((data) {
+      dataCallback(data);
+    });
+  }
 
-    for (int i = 0; i < 20; i++) {
-      CurrencyOrder order = CurrencyOrder();
-      order.data = i % 2 != 0 ? "提币" : "充币";
-      order.amount = (i % 2 != 0 ? 2 : -1) * 17.2856;
-      order.type = "已完成";
-      order.created_at = DateUtil.getNowDateMs() - i * 50400000;
+  dataCallback(List data) {
+    if (data != null) {
+      // 请求成功
+      if (page == 0) {
+        data_list_item.clear();
+      }
+      data_list_item.addAll(data);
 
-      data_list_item.add(order);
+      if (widget.currencyAsset.cs != CurrencySymbol.tEPK &&
+          data.length >= pageSize) {
+        hasMore = true;
+        page += 1;
+      } else {
+        hasMore = false;
+      }
     }
+    closeStateLayout();
+    isLoading = false;
+    return;
   }
 
   void onClickErrorWidget() {
@@ -588,19 +737,24 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     if (isLoading) {
       return;
     }
-
-    page = 1;
+    page = 0;
     isLoading = true;
-//      HttpJsonRes res = await ApiNews.getNewsListByType(
-//          page, pageSize, widget.newsTypeModel.code);
-//      jsonCallback(res);
+    EpikWalletUtils.getOrderList(AccountMgr().currentAccount,
+        widget.currencyAsset.cs, page, pageSize)
+        .then((data) {
+      dataCallback(data);
+    });
   }
 
   /**是否需要加载更多*/
   bool needLoadMore() {
-    bool ret = hasMore && !isLoading;
-    dlog("needLoadMore = " + ret.toString());
-    return ret;
+    if (widget.currencyAsset.cs == CurrencySymbol.tEPK) {
+      return false;
+    } else {
+      bool ret = hasMore && !isLoading;
+      dlog("needLoadMore = " + ret.toString());
+      return ret;
+    }
   }
 
   /**加载分页*/
@@ -608,9 +762,11 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     if (isLoading) return true;
     dlog("onLoadMore  ");
     isLoading = true;
-//      HttpJsonRes res = await ApiNews.getNewsListByType(
-//          page, pageSize, widget.newsTypeModel.code);
-//      jsonCallback(res);
+
+    List data = await EpikWalletUtils.getOrderList(
+        AccountMgr().currentAccount, widget.currencyAsset.cs, page, pageSize);
+
+    dataCallback(data);
 
     return hasMore;
   }
@@ -620,7 +776,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
         postision >= 0 &&
         postision < data_list_item.length &&
         mounted) {
-      CurrencyOrder item = data_list_item[postision];
+      var item = data_list_item[postision];
       if (item != null) {
         // todo
       }

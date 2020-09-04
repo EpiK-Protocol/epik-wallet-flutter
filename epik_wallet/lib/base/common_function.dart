@@ -192,10 +192,10 @@ abstract class BaseFuntion {
         child:
             // 圆形进度条
             new CircularProgressIndicator(
-//          strokeWidth: 4.0,
+              strokeWidth: 2.0,
+          valueColor: new AlwaysStoppedAnimation<Color>(ResColor.progress),
 //          backgroundColor: Colors.blue,
 //          // value: 0.2,
-//          valueColor: new AlwaysStoppedAnimation<Color>(_appBarColor),
                 ),
 
 //        Container(
