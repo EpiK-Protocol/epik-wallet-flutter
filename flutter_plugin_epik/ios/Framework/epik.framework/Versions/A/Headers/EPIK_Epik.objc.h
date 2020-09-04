@@ -104,6 +104,10 @@
 - (NSData* _Nullable)sign:(NSString* _Nullable)addr hash:(NSData* _Nullable)hash error:(NSError* _Nullable* _Nullable)error;
 @end
 
+FOUNDATION_EXPORT NSString* _Nonnull EPIK_EpikBigIntDiv(NSString* _Nullable balance, long decimals);
+
+FOUNDATION_EXPORT NSString* _Nonnull EPIK_EpikBigIntMul(NSString* _Nullable balance, long decimals);
+
 /**
  * NewWallet ...
  */

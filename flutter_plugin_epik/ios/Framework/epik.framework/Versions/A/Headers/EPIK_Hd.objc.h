@@ -73,6 +73,10 @@
 // skipped const USDT with unsupported type: github.com/EpiK-Protocol/epik-wallet-golib/hd.currencyType
 
 
+FOUNDATION_EXPORT NSString* _Nonnull EPIK_HdBigIntDiv(NSString* _Nullable balance, long decimals);
+
+FOUNDATION_EXPORT NSString* _Nonnull EPIK_HdBigIntMul(NSString* _Nullable balance, long decimals);
+
 /**
  * NewFromMnemonic ...
  */
