@@ -11,5 +11,8 @@ enum EventTag {
   // 本地账号列表变更
   LOCAL_ACCOUNT_LIST_CHANGE,
   // 当前账号变更
-  LOCAL_CURRENT_ACCOUNT_CHANGE
+  LOCAL_CURRENT_ACCOUNT_CHANGE,
+
+  //预挖活动页面需要刷新
+  REFRESH_MININGVIEW,
 }

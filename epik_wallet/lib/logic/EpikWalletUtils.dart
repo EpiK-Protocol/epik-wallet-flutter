@@ -1,16 +1,17 @@
 import 'dart:convert';
 
 import 'package:epikplugin/epikplugin.dart';
+import 'package:epikwallet/logic/api/api_testnet.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/currencytype.dart';
+import 'package:epikwallet/model/prices.dart';
 import 'package:epikwallet/utils/Dlog.dart';
-
 
 class EpikWalletUtils {
   static final String hd_RpcUrl =
       "https://mainnet.infura.io/v3/1bbd25bd3af94ca2b294f93c346f69cd";
 
-  static final String epik_RpcUrl = "http://120.55.82.202:1234/rpc/v0";
+  static final String epik_RpcUrl = "ws://120.55.82.202:1234/rpc/v0";//"ws://171.221.243.41:1234/rpc/v0";
 
   static final String epik_RpcUrl_token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIl19.Oivn9CdQ_kB4TriYfoo2CzWQBeCbj9FbH2hVu4ogyBI";
@@ -31,7 +32,7 @@ class EpikWalletUtils {
       String eth_address = await hdwallet.derive(hdwallet_eth_path);
 
       // epik 钱包,   tEPK = epikWallet.balance
-      EpikWallet epikWallet = await Epik.newWalletFromSeed(hdwallet.seed);
+      EpikWallet epikWallet = await Epik.newWalletFromSeed(hdwallet.seed,t: "secp256k1");
 
       // epik 设置RPC地址
       await epikWallet.setRPC(epik_RpcUrl, epik_RpcUrl_token);
@@ -57,19 +58,18 @@ class EpikWalletUtils {
         waccount.hdwallet.tokenBalance(waccount.hd_eth_address, "USDT");
     Future epk_erc20 =
         waccount.hdwallet.tokenBalance(waccount.hd_eth_address, "EPK");
-//    Future tepk= waccount.epikWallet.balance(waccount.epik_tEPK_address);
-    List values = await Future.wait([
-      eth,
-      usdt,
-      epk_erc20, /*tepk*/
-    ]);
+    Future tepk = waccount.epikWallet.balance(waccount.epik_tEPK_address);
+    List values = await Future.wait([eth, usdt, epk_erc20, tepk]);
     Map<CurrencySymbol, String> map = {
       CurrencySymbol.ETH: values[0] ?? "",
       CurrencySymbol.USDT: values[1] ?? "",
       CurrencySymbol.EPK: values[2] ?? "",
-//     CurrencySymbol.TEPK:values[4]??"0",
+      CurrencySymbol.tEPK: values[3] ?? "",
     };
     Dlog.p("requestBalance", map.toString());
+
+    List<Prices> priceslist = await ApiTestNet.getPriceList();
+
     if (waccount.currencyList == null || waccount.currencyList.length == 0) {
       waccount.currencyList = [];
       CurrencySymbol.values.forEach((cs) {
@@ -85,7 +85,7 @@ class EpikWalletUtils {
     } else {
       for (int i = 0; i < waccount.currencyList.length; i++) {
         CurrencyAsset ca = waccount.currencyList[i];
-        ca.balance = map[CurrencySymbol.values[i]] ?? "0";
+        ca.balance = map[CurrencySymbol.values[i]] ?? "";
       }
     }
     return map;

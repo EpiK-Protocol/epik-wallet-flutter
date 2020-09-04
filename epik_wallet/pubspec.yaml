@@ -52,6 +52,8 @@ dependencies:
   package_info: ^0.4.1
   # 系统url跳转
   url_launcher: ^5.5.0
+  # DART中实现的加解密函数库。支持SHA-1、SHA-256、MD5、HMAC
+  crypto: ^2.1.3
 
   # 官方webview插件 有些小瑕疵
   #webview_flutter: ^0.3.22+1

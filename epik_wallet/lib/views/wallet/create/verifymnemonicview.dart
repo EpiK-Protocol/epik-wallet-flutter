@@ -1,4 +1,5 @@
 import 'package:epikwallet/base/_base_widget.dart';
+import 'package:epikwallet/base/buildConfig.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/main.dart';
 import 'package:epikwallet/model/CreateAccountModel.dart';
@@ -136,6 +137,15 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
                         onPressed: () {
                           clickNextSetp();
                         },
+                        onLongPress: BuildConfig.isDebug?(){
+                          setState(() {
+                            mnemonic_list_source.forEach((element) {element.isSelected=true;});
+                            mnemonic_list=[];
+                            widget._CreateAccountModel.mnemonic_list.forEach((element) {
+                              mnemonic_list.add(SelectedText(element,true));
+                            });
+                          });
+                        }:null,
                         child: Text(
                           "验证助记词",
                           style: TextStyle(

@@ -3,8 +3,6 @@ package com.epik.flutterplugin;
 import android.os.Handler;
 import android.os.Looper;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -231,11 +229,7 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
                         }
                         case "epik_wallet_export":
                         {
-                            epik.PrivateKey pkey = currentEpikWallet.export((String) call.argument("addr"));
-                            Map<String, String> retmap = new HashMap();
-                            retmap.put("keyType", pkey.getKeyType());
-                            retmap.put("privateKey", pkey.getPrivateKey());
-                            ret = retmap;
+                            ret = currentEpikWallet.export((String) call.argument("addr"));
                             break;
                         }
                         case "epik_wallet_generateKey":
@@ -250,10 +244,7 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
                         }
                         case "epik_wallet_import":
                         {
-                            epik.PrivateKey pkey = new epik.PrivateKey();
-                            pkey.setKeyType((String) call.argument("keyType"));
-                            pkey.setPrivateKey((String) call.argument("privateKey"));
-                            ret = currentEpikWallet.import_(pkey);
+                            ret = currentEpikWallet.import_((String) call.argument("privateKey"));
                             break;
                         }
                         case "epik_wallet_messageList":

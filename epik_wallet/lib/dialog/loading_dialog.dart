@@ -34,6 +34,7 @@ class LoadingDialog {
 //      },
 //    );
 
+    bool first=true;
   // 自定义动画效果的dialog
     return showGeneralDialog(
       context: context,
@@ -52,8 +53,9 @@ class LoadingDialog {
           },
           child: getLoadingDialog(context, msg), // widget 具体显示
         );
-        if (onShow != null) {
+        if (onShow != null && first) {
           print("LoadingDialog onShow");
+          first=false;
           Future.delayed(Duration(milliseconds: 500)).then((v) {
             onShow();
           });
@@ -80,6 +82,7 @@ class LoadingDialog {
   }
 
   static cloasLoadDialog(BuildContext context) {
+    print("cloasLoadDialog $context");
     Navigator.pop(context);
   }
 

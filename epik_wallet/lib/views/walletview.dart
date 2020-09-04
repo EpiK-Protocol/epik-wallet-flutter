@@ -5,6 +5,7 @@ import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
+import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
@@ -15,7 +16,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:epikwallet/model/currencytype.dart';
 
 class WalletView extends BaseInnerWidget {
   WalletView(Key key) : super(key: key) {}
@@ -222,7 +222,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                     ),
                   ),
                   Text(
-                    "70,368.95",
+                    "0",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 40,
@@ -235,7 +235,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    "≈ 70.46000000",
+                    "≈ 0",
                     style: TextStyle(
                       color: ResColor.white_40,
                       fontSize: 18,
@@ -324,22 +324,24 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                     ),
                   ),
                   Positioned(
-                    right: 0,
+                    right: 2,
                     bottom: 0,
-                    child: ca.networkType != null ? Container(
-                      width: 15,
-                      height: 15,
-                      padding: EdgeInsets.all(1),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                      child: Image(
-                        image: AssetImage(ca.networkType.iconUrl),
-                        width: 13,
-                        height: 13,
-                      )
-                    ) : Container(),
+                    child: ca.networkType != null
+                        ? Container(
+                            width: 15,
+                            height: 15,
+                            padding: EdgeInsets.all(1),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),
+                            child: Image(
+                              image: AssetImage(ca.networkType.iconUrl),
+                              width: 13,
+                              height: 13,
+                            ))
+                        : Container(),
                   ),
                 ],
               ),
@@ -637,7 +639,9 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
   void refresh() {
     hasRefresh = true;
 
-    noWallet = AccountMgr().currentAccount == null;
+    noWallet = AccountMgr().currentAccount == null ||
+        AccountMgr().account_list == null ||
+        AccountMgr().account_list.isEmpty;
 
     if (noWallet) {
       setState(() {});

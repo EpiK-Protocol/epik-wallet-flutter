@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:epikplugin/PrivateKey.dart';
 import 'package:epikplugin/epikplugin.dart';
 
 class Epik {
@@ -50,19 +49,11 @@ class EpikWallet {
     return null;
   }
 
-  Future<PrivateKey> export(String addr) async {
+  Future<String> export(String addr) async {
     try {
-      var map = await EpikPlugin.channel
+      String privateKey = await EpikPlugin.channel
           .invokeMethod("epik_wallet_export", <String, dynamic>{"addr": addr});
-
-      Map<String, dynamic> reslut = new Map<String, dynamic>.from(map);
-
-      if (reslut != null && reslut.length > 0) {
-        String keyType = reslut["keyType"];
-        String privateKey = reslut["privateKey"];
-        PrivateKey pkey = PrivateKey(keyType, privateKey);
-        return pkey;
-      }
+      return privateKey;
     } catch (e) {
       print(e);
     }
@@ -91,13 +82,10 @@ class EpikWallet {
     return null;
   }
 
-  Future<String> import(PrivateKey privateKey) async {
+  Future<String> import(String privateKey) async {
     try {
       return await EpikPlugin.channel.invokeMethod(
-          "epik_wallet_import", <String, String>{
-        "keyType": privateKey.keyType,
-        "privateKey": privateKey.privateKey
-      });
+          "epik_wallet_import", <String, String>{"privateKey": privateKey});
     } catch (e) {
       print(e);
     }
@@ -114,10 +102,10 @@ class EpikWallet {
     return null;
   }
 
-  Future<String> send(String to, String amount)async{
+  Future<String> send(String to, String amount) async {
     try {
       return await EpikPlugin.channel.invokeMethod(
-          "epik_wallet_send", <String, dynamic>{"to": to,"amount": amount});
+          "epik_wallet_send", <String, dynamic>{"to": to, "amount": amount});
     } catch (e) {
       print(e);
     }

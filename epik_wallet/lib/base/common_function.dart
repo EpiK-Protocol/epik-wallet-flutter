@@ -262,9 +262,11 @@ abstract class BaseFuntion {
       }
     }
     if (Navigator.canPop(_contextBaseFunction)) {
+      print("finish pop $_contextBaseFunction");
       Navigator.pop<T>(_contextBaseFunction, result);
     } else {
       //说明已经没法回退了 ， 可以关闭了
+      print("finish $_contextBaseFunction");
       finishDartPageOrApp();
     }
   }
@@ -792,6 +794,7 @@ abstract class BaseFuntion {
   }
 
   closeLoadDialog() {
+    print("cloasLoadDialog loadingDialogIsShow=$loadingDialogIsShow");
     if (loadingDialogIsShow) {
       LoadingDialog.cloasLoadDialog(_contextBaseFunction);
     }

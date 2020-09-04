@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:epikwallet/utils/string_utils.dart';
 import 'package:dio/dio.dart';
+import 'package:epikwallet/utils/string_utils.dart';
 
 class HttpUtil {
   // 工厂模式
@@ -74,7 +74,7 @@ class HttpUtil {
       bool isGet, String url, Map<String, dynamic> params,
       {Map<String, dynamic> headers,
       FormData formData,
-        data,
+      data,
       bool needToken = false}) async {
     HttpJsonRes mHttpJsonRes = new HttpJsonRes();
     Response response;
@@ -126,9 +126,9 @@ class HttpUtil {
           });
         }
         response = await _dio.post(url,
-            data: formData??data, queryParameters: params, options: options);
+            data: formData ?? data, queryParameters: params, options: options);
 
-        print("response code="+response.statusCode.toString());
+        print("response code=" + response.statusCode.toString());
       }
     } catch (err) {
       print("http error $err");
@@ -156,7 +156,7 @@ class HttpUtil {
       }
     }
 
-    print("httputils response=" + response.toString() + "  from="+url);
+    print("httputils response=" + response.toString() + "  from=" + url);
 
     if (response != null && response.data != null) {
       try {
@@ -182,30 +182,14 @@ class HttpUtil {
     }
 
     if (mHttpJsonRes.jsonMap != null) {
-      if (mHttpJsonRes.jsonMap.length == 1 &&
-          mHttpJsonRes.jsonMap.containsKey("data")) {
-        var ddd = mHttpJsonRes.jsonMap["data"];
-        if (ddd != null && ddd is Map<String, dynamic>) {
-          if (ddd.containsKey("code") && ddd.containsKey("msg")) {
-            mHttpJsonRes.jsonMap = ddd;
-          }
-        }
-      }
-
       var code = mHttpJsonRes.jsonMap["code"];
-      if (code is String) {
-        mHttpJsonRes.code = int.parse(code);
+      if (code is Map) {
+        mHttpJsonRes.code =
+            StringUtils.parseInt(StringUtils.parseString(code["code"], ""), -1);
+        mHttpJsonRes.msg = StringUtils.parseString(code["message"], "");
       } else {
-        mHttpJsonRes.code = code;
-      }
-
-      if (mHttpJsonRes.jsonMap.containsKey("msg")) {
-        mHttpJsonRes.msg = StringUtils.def(mHttpJsonRes.jsonMap["msg"], "");
-      }else if(mHttpJsonRes.jsonMap.containsKey("message")) {
-        mHttpJsonRes.msg = StringUtils.def(mHttpJsonRes.jsonMap["message"], "");
-      }
-      if (mHttpJsonRes.msg.isEmpty && mHttpJsonRes.code != 0) {
-        mHttpJsonRes.msg = "code : ${mHttpJsonRes.code}";
+        mHttpJsonRes.code = -1;
+        mHttpJsonRes.msg = "";
       }
     } else {
       if (mHttpJsonRes.msg.isEmpty) {

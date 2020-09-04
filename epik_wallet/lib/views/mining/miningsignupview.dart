@@ -1,7 +1,19 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:convert/convert.dart';
+import 'package:crypto/crypto.dart';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
+import 'package:epikwallet/dialog/message_dialog.dart';
+import 'package:epikwallet/logic/account_mgr.dart';
+import 'package:epikwallet/logic/api/api_testnet.dart';
+import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
+import 'package:epikwallet/utils/eventbus/event_manager.dart';
+import 'package:epikwallet/utils/eventbus/event_tag.dart';
+import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/widget/custom_checkbox.dart';
@@ -9,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
 
 /// 挖矿报名
 class MiningSignupView extends BaseWidget {
@@ -19,8 +32,6 @@ class MiningSignupView extends BaseWidget {
 }
 
 class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
-  static String server_wechat = "xxxxxx";
-
   TextEditingController _controllerWechat;
   String wechat = "";
   bool agreement = false;
@@ -65,42 +76,40 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
                 ),
               ),
             ),
-
-           InkWell(
-             onTap: (){
-               DeviceUtils.copyText(server_wechat);
-               showToast("已复制客服微信号");
-             },
-             child:  Container(
-               width: double.infinity,
-               padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
-               child: Text.rich(
-                 TextSpan(
-                   style: TextStyle(
-                     color: ResColor.black_50,
-                     fontSize: 13,
-                   ),
-                   children: <TextSpan>[
-                     TextSpan(
-                       text:"请使用绑定的微信号添加客服微信",
-                     ),
-                     TextSpan(
-                       text:"$server_wechat",
-                       style: TextStyle(
-                         color: Colors.blue,
-                         fontSize: 13,
-                         decoration: TextDecoration.underline,
-                       ),
-                     ),
-                     TextSpan(
-                       text: "为好友，成功报名后将显示ID发送给客服微信。",
-                     ),
-                   ],
-                 ),
-               ),
-             ),
-           ),
-
+            InkWell(
+              onTap: () {
+                DeviceUtils.copyText(ServiceInfo.server_wechat);
+                showToast("已复制客服微信号");
+              },
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
+                child: Text.rich(
+                  TextSpan(
+                    style: TextStyle(
+                      color: ResColor.black_50,
+                      fontSize: 13,
+                    ),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: "请使用绑定的微信号添加客服微信",
+                      ),
+                      TextSpan(
+                        text: "${ServiceInfo.server_wechat}",
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 13,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                      TextSpan(
+                        text: "为好友，成功报名后将显示ID发送给客服微信。",
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
               child: Text(
@@ -179,9 +188,9 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
               ),
             ),
             InkWell(
-              onTap: (){
+              onTap: () {
                 setState(() {
-                  this.agreement=!this.agreement;
+                  this.agreement = !this.agreement;
                 });
               },
               child: Container(
@@ -192,7 +201,7 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
                   children: <Widget>[
                     CustomCheckBox(
                       value: this.agreement,
-                      margin: EdgeInsets.only(top:2),
+                      margin: EdgeInsets.only(top: 2),
                       onChanged: (bool value) {
                         setState(() {
                           this.agreement = value;
@@ -335,19 +344,78 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
   }
 
   clickNext() {
-
     closeInput();
 
     if (StringUtils.isEmpty(wechat)) {
       showToast("请输入微信号");
       return;
     }
-    if(!agreement)
-    {
+    if (!agreement) {
       showToast("请确认已读活动说明");
       return;
     }
 
-    // todo
+    showLoadDialog("", touchOutClose: false, backClose: false,
+        onShow: () async {
+      try {
+        String weixin,
+            epik_address,
+            erc20_address,
+            epik_signature,
+            erc20_signature;
+
+        //weixin
+        weixin = wechat.trim();
+
+        //epik_address
+        epik_address = AccountMgr().currentAccount.epik_tEPK_address;
+
+        //erc20_address
+        erc20_address = AccountMgr().currentAccount.hd_eth_address;
+
+        //epik_signature
+        Digest digest = sha256.convert(utf8.encode(weixin));
+        Uint8List epik_signature_byte = await AccountMgr()
+            .currentAccount
+            .epikWallet
+            .sign(epik_address, Uint8List.fromList(digest.bytes));
+        epik_signature = hex.encode(epik_signature_byte);
+
+        //erc20_signature
+        Uint8List erc20_signature_byte = await AccountMgr()
+            .currentAccount
+            .hdwallet
+            .signHash(erc20_address, Uint8List.fromList(digest.bytes));
+//          .signText(erc20_address, weixin);
+        erc20_signature = hex.encode(erc20_signature_byte);
+
+        HttpJsonRes httpjsonres = await ApiTestNet.signup(weixin, epik_address,
+            erc20_address, epik_signature, erc20_signature);
+
+        if (httpjsonres.code == 0 && httpjsonres.jsonMap != null) {
+          String id = httpjsonres.jsonMap["id"] ?? "";
+          closeLoadDialog();
+          eventMgr.send(EventTag.REFRESH_MININGVIEW);
+          MessageDialog.showMsgDialog(
+            context,
+            title: "预挖报名",
+            msg: "已报名，请等待审核！",
+              btnRight:"知道了",
+            onClickBtnRight: (YYDialog dialog){
+              dialog.dismiss();
+            },
+            onDismiss: (dialog){
+              Future.delayed(Duration(milliseconds: 500)).then((value) => finish());
+            },
+          );
+        } else {
+          showToast(httpjsonres.msg??"报名失败");
+        }
+      } catch (e) {
+        print(e);
+        showToast("报名失败ERROR");
+        closeLoadDialog();
+      }
+    });
   }
 }
