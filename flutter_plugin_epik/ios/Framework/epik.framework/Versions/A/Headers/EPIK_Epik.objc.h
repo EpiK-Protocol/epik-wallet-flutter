@@ -73,7 +73,7 @@
 /**
  * GenerateKey t:bls,secp256k1
  */
-- (NSString* _Nonnull)generateKey:(NSString* _Nullable)t seed:(NSData* _Nullable)seed error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)generateKey:(NSString* _Nullable)t seed:(NSData* _Nullable)seed path:(NSString* _Nullable)path error:(NSError* _Nullable* _Nullable)error;
 /**
  * HasAddr ...
  */
@@ -103,6 +103,10 @@
  */
 - (NSData* _Nullable)sign:(NSString* _Nullable)addr hash:(NSData* _Nullable)hash error:(NSError* _Nullable* _Nullable)error;
 @end
+
+FOUNDATION_EXPORT NSString* _Nonnull EPIK_EpikBigIntDiv(NSString* _Nullable balance, long decimals);
+
+FOUNDATION_EXPORT NSString* _Nonnull EPIK_EpikBigIntMul(NSString* _Nullable balance, long decimals);
 
 /**
  * NewWallet ...
