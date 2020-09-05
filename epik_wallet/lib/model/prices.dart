@@ -3,8 +3,9 @@ import 'package:epikwallet/utils/string_utils.dart';
 class Prices {
   String id;
   String price="";
-
   double dPrice = 0;
+  String change="";
+  double dChange=0;
 
   Prices({this.id,this.price,this.dPrice});
 
@@ -14,6 +15,11 @@ class Prices {
       price = StringUtils.parseString(json["price"], "");
       if (StringUtils.isNotEmpty(price))
         dPrice = StringUtils.parseDouble(price, 0);
+      change = StringUtils.parseString(json["change"], "");
+      print("change $change");
+      if (StringUtils.isNotEmpty(change))
+        dChange = StringUtils.parseDouble(change, 0);
+      print("dChange $dChange");
     } catch (e) {
       print(e);
     }

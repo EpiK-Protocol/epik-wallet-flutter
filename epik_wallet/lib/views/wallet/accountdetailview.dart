@@ -6,6 +6,7 @@ import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
+import 'package:epikwallet/views/viewgoto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -27,7 +28,7 @@ class AccountDetailView extends BaseWidget {
 class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
   List<AccountMenu> menudata = [
 //    AccountMenu(Icons.lock_outline, "修改密码", MenuType.FIXPASSWORD),
-//    AccountMenu(Icons.security, "查看私钥", MenuType.PRIVATEKEY),
+    AccountMenu(Icons.security, "导出tEPK私钥", MenuType.PRIVATEKEY),
   ];
 
   Color color_icon = Color(0xff41454a);
@@ -153,8 +154,7 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
                       children: <Widget>[
                         Container(
                           child: Text(
-                            "Address:" +
-                                widget.walletaccount.hd_eth_address,
+                            "Address:" + widget.walletaccount.hd_eth_address,
                             maxLines: 3,
 //                        overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -281,7 +281,7 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
   }
 
   clickCopy(WalletAccount wa) {
-     dlog("clickCopy");
+    dlog("clickCopy");
     DeviceUtils.copyText(wa.hd_eth_address);
     ToastUtils.showToast("已复制到剪切板");
   }
@@ -301,8 +301,8 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
           "正在删除钱包...",
           touchOutClose: false,
           backClose: false,
-          onShow: (){
-            AccountMgr().delAccount(widget.walletaccount).then((_){
+          onShow: () {
+            AccountMgr().delAccount(widget.walletaccount).then((_) {
               closeLoadDialog();
             });
           },
@@ -321,7 +321,17 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
         // todo
         break;
       case MenuType.PRIVATEKEY:
-        // todo
+        {
+          BottomDialog.showPassWordInputDialog(
+            context,
+            widget.walletaccount.password,
+            (password) {
+              //点击确定回调
+              ViewGT.showExportEpikPrivateKeyView(
+                  context, widget.walletaccount);
+            },
+          );
+        }
         break;
     }
   }

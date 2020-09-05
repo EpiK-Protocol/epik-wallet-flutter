@@ -9,6 +9,7 @@ import 'package:epikwallet/views/mining/miningsignupview.dart';
 import 'package:epikwallet/views/qrcode/qrcodescanview.dart';
 import 'package:epikwallet/views/wallet/accountdetailview.dart';
 import 'package:epikwallet/views/wallet/create/createwalletview.dart';
+import 'package:epikwallet/views/wallet/exprot/exportepikprivatekeyview.dart';
 import 'package:epikwallet/views/wallet/import/importwalletview.dart';
 import 'package:epikwallet/views/web/generalwebview.dart';
 import 'package:flutter/cupertino.dart';
@@ -99,5 +100,11 @@ class ViewGT {
   /// 扫描二维码
   static showQrcodeScanView(BuildContext context) {
     showView(context, QrcodeScanView());
+  }
+
+  /// 导出epik钱包的私钥
+  static showExportEpikPrivateKeyView(BuildContext context, WalletAccount walletAccount)
+  {
+    showView(context, ExportEpikPrivateKeyView(walletAccount));
   }
 }

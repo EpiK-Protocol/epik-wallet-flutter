@@ -34,7 +34,7 @@ class EthOrder {
     try {
       from = json["from"] ?? "";
       to = json["to"] ?? "";
-      tokenDecimal = json[tokenDecimal] ?? "0";
+      tokenDecimal = json["tokenDecimal"] ?? "18";
       tokenDecimal_int = StringUtils.parseInt(tokenDecimal, 0);
       double x = 1;
       for (int i = 0; i < tokenDecimal_int; i++) {

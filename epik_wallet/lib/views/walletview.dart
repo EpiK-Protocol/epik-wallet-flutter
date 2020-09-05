@@ -392,9 +392,9 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                               "%",
                           style: TextStyle(
                             fontSize: 14,
-                            color: ca.change_usd > 0
-                                ? Color(0xff0DAC8F)
-                                : Color(0xffF45C78),
+                            color: ca.change_usd >= 0
+                                ? Color(0xffF45C78)
+                                : Color(0xff0DAC8F),
                             fontWeight: FontWeight.w600,
                           ),
                         ),

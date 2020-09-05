@@ -32,6 +32,7 @@ class CurrencyAsset {
     this.price_usd_str,
     this.price_usd,
     this.cs,
+    this.change_usd,
   });
 
   double getBalanceDouble() {

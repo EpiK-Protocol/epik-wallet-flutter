@@ -84,15 +84,17 @@ class EpikWalletUtils {
       CurrencySymbol.values.forEach((cs) {
         Prices price = cs.getPriceUSD(priceslist);
         waccount.currencyList.add(CurrencyAsset(
-            symbol: cs.symbol,
-            name: "",
-            type: "",
-            balance: map[cs] ?? "",
-            icon_url: cs.iconUrl,
-            cs: cs,
-            networkType: cs.networkType,
-            price_usd_str: price.price,
-            price_usd: price.dPrice));
+          symbol: cs.symbol,
+          name: "",
+          type: "",
+          balance: map[cs] ?? "",
+          icon_url: cs.iconUrl,
+          cs: cs,
+          networkType: cs.networkType,
+          price_usd_str: price.price,
+          price_usd: price.dPrice,
+          change_usd: price.dChange,
+        ));
       });
     } else {
       // 更新数据
@@ -103,6 +105,7 @@ class EpikWalletUtils {
         ca.balance = map[cs] ?? "";
         ca.price_usd_str = price.price;
         ca.price_usd = price.dPrice;
+        ca.change_usd = price.dChange;
       }
     }
 
@@ -157,7 +160,7 @@ class EpikWalletUtils {
             .transactions(address, cs.symbolToNetWork, page, pagesize, false);
         print("getOrderList ETH $json");
         Map jsonmap = jsonDecode(json);
-        List jsonarray = JsonArray.obj2List(jsonmap["result"],def:[]);
+        List jsonarray = JsonArray.obj2List(jsonmap["result"], def: []);
         List<EthOrder> temp = JsonArray.parseList<EthOrder>(
             jsonarray, (json) => EthOrder.fromJson(json));
         if (temp != null) {

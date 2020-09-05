@@ -58,18 +58,19 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
 
   @override
   Widget getAppBarRight({Color color}) {
-    return InkWell(
-      onTap: clickSetting,
-      child: Container(
-        width: getAppBarHeight() * 0.8,
-        height: getAppBarHeight(),
-        child: Icon(
-          OMIcons.settings,
-          color: Colors.black,
-          size: 20,
-        ),
-      ),
-    );
+    return Container();
+//    return InkWell(
+//      onTap: clickSetting,
+//      child: Container(
+//        width: getAppBarHeight() * 0.8,
+//        height: getAppBarHeight(),
+//        child: Icon(
+//          OMIcons.settings,
+//          color: Colors.black,
+//          size: 20,
+//        ),
+//      ),
+//    );
   }
 
   @override
