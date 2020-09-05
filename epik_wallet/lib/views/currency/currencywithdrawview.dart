@@ -42,7 +42,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
 
   @override
   void initStateConfig() {
-    setAppBarTitle("${widget.currencyAsset.cs.symbol}提币");
+    setAppBarTitle("${widget.currencyAsset.cs.symbol}转账");
     resizeToAvoidBottomPadding = true;
 
     switch (widget.currencyAsset.cs) {
@@ -247,7 +247,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
               children: <Widget>[
                 Expanded(
                   child: Text(
-                    "提币金额",
+                    "转账金额",
                     style: TextStyle(
                       color: Colors.black54,
                       fontSize: 14,
@@ -387,7 +387,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
     }
 
     if (amount_d == 0) {
-      showToast("提币金额不能是0");
+      showToast("转账金额不能是0");
       return false;
     }
 
@@ -425,14 +425,14 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
     closeLoadDialog();
 
     if (StringUtils.isEmpty(result)) {
-      showToast("提币失败");
+      showToast("转账失败");
       return;
     }
 
     dlog("doWithdraw_epik result=$result");
     MessageDialog.showMsgDialog(
       context,
-      title: "提币",
+      title: "转账",
       msg: "操作成功!",
       btnLeft: "确定",
       onDismiss: (dialog) {
@@ -456,14 +456,14 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
     closeLoadDialog();
 
     if (StringUtils.isEmpty(result)) {
-      showToast("提币失败");
+      showToast("转账失败");
       return;
     }
 
     dlog("doWithdraw_hd result=$result");
     MessageDialog.showMsgDialog(
       context,
-      title: "提币",
+      title: "转账",
       msg: "操作成功!",
       btnLeft: "确定",
       onDismiss: (dialog) {

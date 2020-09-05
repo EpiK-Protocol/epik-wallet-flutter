@@ -190,7 +190,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
       key: key_scroll,
       needNoMoreTipe: false,
       bgContainer: (view) {
-        return Stack(z
+        return Stack(
           children: <Widget>[
             Positioned(
               left: 0,
@@ -395,7 +395,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                                   height: double.infinity,
                                   alignment: Alignment.center,
                                   child: Text(
-                                    "提币",
+                                    "转账",
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.white,
@@ -427,7 +427,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                                   height: double.infinity,
                                   alignment: Alignment.center,
                                   child: Text(
-                                    "充币",
+                                    "收款",
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.white,
@@ -547,7 +547,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
             left: 0,
             top: 0,
             child: Text(
-              item.isWithdraw ? "提币" : "充币",
+              item.isWithdraw ? "转账" : "收款",
               style: TextStyle(
                 fontSize: 15,
                 color: Color(0xff333333),
@@ -625,7 +625,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
             left: 0,
             top: 0,
             child: Text(
-              item.isWithdraw ? "提币" : "充币",
+              item.isWithdraw ? "转账" : "收款",
               style: TextStyle(
                 fontSize: 15,
                 color: Color(0xff333333),

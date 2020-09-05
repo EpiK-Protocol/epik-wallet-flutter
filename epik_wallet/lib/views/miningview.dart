@@ -226,7 +226,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                             ),
                           ),
                           Text(
-                            "EPK-ERC20",
+                            "ERC20-EPK",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 10,
@@ -265,7 +265,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                             ),
                           ),
                           Text(
-                            "EPK-ERC20",
+                            "ERC20-EPK",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 10,
@@ -393,7 +393,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                   children: <Widget>[
                     Container(
                       child: Text(
-                        "EPK-ERC20",
+                        "ERC20-EPK",
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.black87,

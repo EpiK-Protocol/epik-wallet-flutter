@@ -36,7 +36,7 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
 
   @override
   void initStateConfig() {
-    setAppBarTitle("充币");
+    setAppBarTitle("收款");
 
     switch (widget.currencysymbol) {
       case CurrencySymbol.tEPK:

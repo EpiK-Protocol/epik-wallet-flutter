@@ -462,14 +462,14 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                   child: Image(
                     width: 85,
                     height: 85,
-                    image: AssetImage("assets/img/ic_launcher.jpeg"),
+                    image: AssetImage("assets/img/ic_launcher.png"),
                     fit: BoxFit.cover,
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.fromLTRB(0, 15, 0, 20),
                   child: Text(
-                    "EPIK Wallet",
+                    "EpiK Portal",
                     style: TextStyle(
                       fontSize: 17,
                       color: Colors.black,

@@ -181,7 +181,7 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            "奖励数量\nEPK-ERC20",
+                            "奖励数量\nERC20-EPK",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.white,
@@ -265,7 +265,7 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
               Container(
                 width: 100,
                 child: Text(
-                  "EPK-ERC20",
+                  "ERC20-EPK",
                   style: TextStyle(
                     fontSize: 15,
                     color: Color(0xff333333),

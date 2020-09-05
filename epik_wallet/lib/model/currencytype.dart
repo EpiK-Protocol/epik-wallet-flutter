@@ -29,7 +29,7 @@ extension aaaa on CurrencySymbol
   {
     String aa = toString().replaceAll("CurrencySymbol.", "");
     if(aa=="EPKerc20")
-      aa = "EPK-ERC20";
+      aa = "ERC20-EPK";
     return aa;
   }
 
