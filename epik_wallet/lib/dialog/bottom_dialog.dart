@@ -45,6 +45,7 @@ class BottomDialog {
         });
   }
 
+  ///密码输入弹窗
   static Future showPassWordInputDialog(@required BuildContext context,
       String verifyText, @required ValueChanged<String> callback) {
     String password = "";
@@ -174,6 +175,148 @@ class BottomDialog {
                     callback(password);
                   }
                 }
+              },
+              child: Text(
+                "确定",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                ),
+              ),
+              color: Color(0xff1A1C1F),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(22)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    return showBottomPop(context, widget,
+        radius_top: 15, bgColor: Colors.white);
+  }
+
+  ///普通文本输入弹窗
+  static Future showTextInputDialog( BuildContext context,
+      String title,String oldText, String hint,int maxLength,  ValueChanged<String> callback) {
+    String _text = oldText??"";
+    TextEditingController tec = TextEditingController(text: _text);
+
+    Widget widget = Container(
+      padding: EdgeInsets.fromLTRB(0, 5, 0, 20),
+      width: double.infinity,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
+            height: 44,
+            width: double.infinity,
+            child: Stack(
+              children: <Widget>[
+                Align(
+                  alignment: FractionalOffset.center,
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: FractionalOffset.centerRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      // 关闭
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      width: 44,
+                      height: 44,
+                      color: Colors.transparent,
+                      child: Icon(
+                        Icons.close,
+                        color: Color(0xff666666),
+                        size: 14,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            height: 44,
+            padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+            child: TextField(
+              autofocus: true,
+              //自动获取焦点， 自动弹出输入法
+              controller: tec,
+              textAlign: TextAlign.left,
+              keyboardType: TextInputType.text,
+              //获取焦点时,启用的键盘类型
+              maxLines: 1,
+              // 输入框最大的显示行数
+              maxLengthEnforced: true,
+              //是否允许输入的字符长度超过限定的字符长度
+              obscureText: false,
+              //是否是密码
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(maxLength),
+              ],
+              // 这里限制长度 不会有数量提示
+              decoration: InputDecoration(
+                // 以下属性可用来去除TextField的边框
+                border: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                hintText: hint,
+                hintStyle: TextStyle(color: Color(0xff999999), fontSize: 16),
+              ),
+              cursorWidth: 2.0,
+              //光标宽度
+              cursorRadius: Radius.circular(2),
+              //光标圆角弧度
+              cursorColor: Colors.black,
+              //光标颜色
+              style: TextStyle(fontSize: 16, color: Color(0xff333333)),
+              onChanged: (text) {
+                _text = text;
+              },
+              onSubmitted: (value) {
+                // 当用户确定已经完成编辑时触发
+              }, // 是否隐藏输入的内容
+            ),
+          ),
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: Colors.blue,
+            indent: 25,
+            endIndent: 25,
+          ),
+          Container(
+            height: 44,
+            width: double.infinity,
+            margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
+            padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+            child: FlatButton(
+              highlightColor: Colors.white24,
+              splashColor: Colors.white24,
+              onPressed: () {
+                if (StringUtils.isEmpty(_text.trim())) {
+                  ToastUtils.showToast(hint);
+                  return;
+                }
+
+                Navigator.pop(context);
+                callback(_text);
               },
               child: Text(
                 "确定",

@@ -262,13 +262,19 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
   }
 
   clickSetting() {
-     dlog("clickSetting");
+    dlog("clickSetting");
     clickAppBarBack();
     // todo
   }
 
   clickWallet(WalletAccount lks) {
      dlog("clickWallet");
+     if(lks == AccountMgr().currentAccount)
+     {
+       clickAppBarBack();
+       return;
+     }
+
     showLoadDialog("",onShow: (){
 
       AccountMgr().setCurrentAccount(lks);

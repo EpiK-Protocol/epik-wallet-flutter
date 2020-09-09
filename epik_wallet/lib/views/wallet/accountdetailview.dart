@@ -27,7 +27,7 @@ class AccountDetailView extends BaseWidget {
 
 class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
   List<AccountMenu> menudata = [
-//    AccountMenu(Icons.lock_outline, "修改密码", MenuType.FIXPASSWORD),
+    AccountMenu(Icons.lock_outline, "修改密码", MenuType.FIXPASSWORD),
     AccountMenu(Icons.security, "导出tEPK私钥", MenuType.PRIVATEKEY),
   ];
 
@@ -287,7 +287,13 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
   }
 
   clickFixName() {
-    // todo
+    BottomDialog.showTextInputDialog(
+        context, "修改钱包名称", widget.walletaccount.account, "请输入钱包名称", 20, (text) {
+      setState(() {
+        widget.walletaccount.account = text;
+      });
+      AccountMgr().save();
+    });
   }
 
   clickDel() {
@@ -318,10 +324,21 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
   onClickMenu(AccountMenu menu) {
     switch (menu.type) {
       case MenuType.FIXPASSWORD:
-        // todo
+        {
+          BottomDialog.showPassWordInputDialog(
+            context,
+            widget.walletaccount.password,
+            (password) {
+              //点击确定回调
+              // 修改密码
+              ViewGT.showFixPasswordView(context, widget.walletaccount);
+            },
+          );
+        }
         break;
       case MenuType.PRIVATEKEY:
         {
+          // 导出私钥
           BottomDialog.showPassWordInputDialog(
             context,
             widget.walletaccount.password,

@@ -23,6 +23,7 @@ class MiningProfitView extends BaseWidget {
 }
 
 class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
+  ListPageDefState _ListPageDefState = ListPageDefState(null);
   List<MiningProfit> datalist = [];
 
   double erc20_epk = 0;
@@ -62,6 +63,13 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
           (json) => MiningProfit.fromJson(json));
 
       datalist = temp ?? [];
+
+      if (datalist.length == 0) {
+        _ListPageDefState.type = ListPageDefStateType.EMPTY;
+      } else {
+        _ListPageDefState.type = null;
+      }
+
       closeStateLayout();
     } else {
       setErrorWidgetVisible(true);
@@ -78,8 +86,14 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
   Widget buildWidget(BuildContext context) {
     Widget listpage = ListPage(
       datalist,
-      headerList: ["1"],
-      headerCreator: buildHeaderWidget,
+      headerList: ["header", _ListPageDefState],
+      headerCreator: (context, position) {
+        if (position == 0) {
+          return buildHeaderWidget(context, position);
+        } else {
+          return stateHeaderWidgetBuild(context, position);
+        }
+      },
       itemWidgetCreator: (context, position) {
         return GestureDetector(
           onTap: () => onItemClick(position),
@@ -210,6 +224,15 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
     );
   }
 
+  Widget stateHeaderWidgetBuild(BuildContext context, int position) {
+    try {
+      return ListPageDefStateWidgetHeader.getWidgetHeader(_ListPageDefState);
+    } catch (e) {
+      print(e);
+    }
+    return Container();
+  }
+
   Widget buildItemWidget(MiningProfit item, int index) {
     return Container(
       padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
@@ -285,9 +308,10 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
             ],
           ),
           Container(height: 5),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
+          if (StringUtils.isNotEmpty(item.hash))
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
 //              Container(
 //                width: 100,
 //                child: Text(
@@ -299,21 +323,21 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
 //                  ),
 //                ),
 //              ),
-              Expanded(
-                child: Text(
-                  item.hash,
+                Expanded(
+                  child: Text(
+                    item.hash,
 //                  textAlign: TextAlign.end,
 //                  maxLines: 1,
 //                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 15,
+                    style: TextStyle(
+                      fontSize: 15,
 //                    color: Color(0xff333333),
-                    color: Color(0xffAAAAAA),
+                      color: Color(0xffAAAAAA),
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
           Container(height: 14),
           Divider(
             height: 1,

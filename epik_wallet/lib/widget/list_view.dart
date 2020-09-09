@@ -44,7 +44,7 @@ class ListPage extends StatefulWidget {
     ScrollCallback this.scrollCallback,
     int this.basePageSize = 20,
     this.needNoMoreTipe,
-        this.bgContainer,
+    this.bgContainer,
   }) : super(key: key);
 
   @override
@@ -80,7 +80,7 @@ class ListPageState extends State<ListPage> {
         try {
           widget.scrollCallback(scrollController);
         } catch (e) {
-          Dlog.p("ListPage",e);
+          Dlog.p("ListPage", e);
         }
       }
       if (scrollController.position.pixels ==
@@ -137,7 +137,9 @@ class ListPageState extends State<ListPage> {
       return RefreshIndicator(
         color: ResColor.progress,
         onRefresh: widget.pullRefreshCallback,
-        child: widget.bgContainer==null? listview: widget.bgContainer(listview),
+        child: widget.bgContainer == null
+            ? listview
+            : widget.bgContainer(listview),
         key: key_refresh,
       );
     } else {
@@ -164,7 +166,7 @@ class ListPageState extends State<ListPage> {
             padding: new EdgeInsets.all(10.0),
             child: new Text("Header Row $index")),
         onTap: () {
-          Dlog.p("ListPage",'header click $index --------------------');
+          Dlog.p("ListPage", 'header click $index --------------------');
         },
       );
     }
@@ -191,7 +193,7 @@ class ListPageState extends State<ListPage> {
         child: new Padding(
             padding: new EdgeInsets.all(10.0), child: new Text("Row $index")),
         onTap: () {
-          Dlog.p("ListPage",'click $index --------------------');
+          Dlog.p("ListPage", 'click $index --------------------');
         },
       );
     }
@@ -221,5 +223,120 @@ class ListPageState extends State<ListPage> {
     if (key_refresh != null && key_refresh.currentState != null)
       key_refresh.currentState.show();
     if (widget.pullRefreshCallback != null) widget.pullRefreshCallback();
+  }
+}
+
+class ListPageDefState {
+  ListPageDefStateType type;
+  String msg;
+  String img;
+  Function onClick;
+
+  ListPageDefState(this.type, {this.msg, this.img, this.onClick});
+}
+
+enum ListPageDefStateType {
+  EMPTY,
+  ERROR,
+  LOADING,
+}
+
+class ListPageDefStateWidgetHeader {
+  static Widget getWidgetHeader(ListPageDefState state) {
+    if (state == null || state.type == null) return Container();
+
+    switch (state.type) {
+      case ListPageDefStateType.EMPTY:
+        return getEmptyWidgetHeader(
+          state.msg ?? "暂无数据",
+          state.img ?? "assets/img/ic_content_empty.png",
+          onClickEmptyWidget: state.onClick,
+        );
+      case ListPageDefStateType.ERROR:
+        return getErrorWidgetHeader(
+          state.msg??"网络错误",
+          state.img??"assets/img/ic_content_neterror.png",
+          onClickErrorWidget: state.onClick,
+        );
+      case ListPageDefStateType.LOADING:
+        return getLoadingWidgetHeader();
+    }
+  }
+
+  static Widget getErrorWidgetHeader(String errmsg, String img,
+      {double aspectRatio = 1, Function onClickErrorWidget}) {
+    return Container(
+      width: double.infinity,
+      child: AspectRatio(
+        aspectRatio: aspectRatio,
+        child: Center(
+          child: InkWell(
+            onTap: () {
+              if (onClickErrorWidget != null) onClickErrorWidget();
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Image(
+                  image: AssetImage(img),
+                  width: 150,
+                  height: 150,
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                  child: Text(errmsg, style: TextStyle()),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Widget getEmptyWidgetHeader(String msg, String img,
+      {double aspectRatio = 1, Function onClickEmptyWidget}) {
+    return Container(
+      width: double.infinity,
+      child: AspectRatio(
+        aspectRatio: aspectRatio,
+        child: Center(
+          child: InkWell(
+            onTap: () {
+              if (onClickEmptyWidget != null) onClickEmptyWidget();
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Image(
+                  image: AssetImage(img),
+                  width: 150,
+                  height: 150,
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                  child: Text(msg, style: TextStyle()),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Widget getLoadingWidgetHeader({double aspectRatio = 1}) {
+    return Container(
+      width: double.infinity,
+      child: AspectRatio(
+        aspectRatio: aspectRatio,
+        child: Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 2.0,
+            valueColor: new AlwaysStoppedAnimation<Color>(ResColor.progress),
+          ),
+        ),
+      ),
+    );
   }
 }

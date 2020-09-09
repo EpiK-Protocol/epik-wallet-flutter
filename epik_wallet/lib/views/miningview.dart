@@ -31,6 +31,7 @@ class MiningView extends BaseInnerWidget {
 }
 
 class MiningViewState extends BaseInnerWidgetState<MiningView> {
+  List headerList = [];
   List<MiningRank> datalist = [];
   GlobalKey<ListPageState> key_scroll;
 
@@ -108,6 +109,13 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
           testnet["top_list"], (json) => MiningRank.fromJson(json));
       datalist = temp ?? [];
 
+      if(datalist.length==0)
+      {
+        headerList=[ListPageDefState(ListPageDefStateType.EMPTY)];
+      }else{
+        headerList=[];
+      }
+
       closeStateLayout();
     } else {
       setErrorWidgetVisible(true);
@@ -132,6 +140,8 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
   Widget buildWidget(BuildContext context) {
     Widget listpage = ListPage(
       datalist,
+      headerList: headerList,
+      headerCreator: stateHeaderWidgetBuild,
       itemWidgetCreator: (context, position) {
         return GestureDetector(
           onTap: () => onItemClick(position),
@@ -200,7 +210,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
               left: 0,
               right: 0,
               top: 0,
-              height: 153,
+              height: 140,
               //173
               child: Container(
                 child: Row(
@@ -280,6 +290,28 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
               ),
             ),
             getActionBtn(),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: InkWell(
+                onTap: () {
+                  DeviceUtils.copyText(mining_id);
+                  showToast("已复制ID");
+                },
+                child: Container(
+                  height: 20,
+                  child: Text(
+                    "ID: ${mining_id ?? ""}",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white54,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -314,21 +346,30 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                   children: <Widget>[
                     Container(
                       child: Text(
-                        "奖励",
+                        "累计奖励: ",
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black87,
                         ),
                       ),
-                      width: rankitem_t_w,
+                    ),
+                    Text(
+                      StringUtils.formatNumAmount(data?.profit ?? "0",
+                          point: 2),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
                     ),
                     Expanded(
-                      child: Text(
-                        StringUtils.formatNumAmount(data?.profit ?? "0",
-                            point: 2),
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black87,
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
+                        child: Text(
+                          "ERC20-EPK",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.black87,
+                          ),
                         ),
                       ),
                     ),
@@ -338,19 +379,19 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Container(
-                      child: Text(
-                        "UUID",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      width: rankitem_t_w,
-                    ),
+//                    Container(
+//                      child: Text(
+//                        "UUID",
+//                        style: TextStyle(
+//                          fontSize: 12,
+//                          color: Colors.black87,
+//                        ),
+//                      ),
+//                      width: rankitem_t_w,
+//                    ),
                     Expanded(
                       child: Text(
-                        data?.id ?? "----",
+                        "ID: " + (data?.id ?? "----"),
                         softWrap: false,
                         overflow: TextOverflow.fade,
                         style: TextStyle(
@@ -361,60 +402,60 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                     ),
                   ],
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      child: Text(
-                        "tEPK",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      width: rankitem_t_w,
-                    ),
-                    Expanded(
-                      child: Text(
-                        data?.epik_address ?? "----",
-                        softWrap: false,
-                        maxLines: 1,
-                        overflow: TextOverflow.fade,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      child: Text(
-                        "ERC20-EPK",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      width: rankitem_t_w,
-                    ),
-                    Expanded(
-                      child: Text(
-                        data?.erc20_address ?? "----",
-                        softWrap: false,
-                        maxLines: 1,
-                        overflow: TextOverflow.fade,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+//                Row(
+//                  crossAxisAlignment: CrossAxisAlignment.start,
+//                  children: <Widget>[
+//                    Container(
+//                      child: Text(
+//                        "tEPK",
+//                        style: TextStyle(
+//                          fontSize: 12,
+//                          color: Colors.black87,
+//                        ),
+//                      ),
+//                      width: rankitem_t_w,
+//                    ),
+//                    Expanded(
+//                      child: Text(
+//                        data?.epik_address ?? "----",
+//                        softWrap: false,
+//                        maxLines: 1,
+//                        overflow: TextOverflow.fade,
+//                        style: TextStyle(
+//                          fontSize: 12,
+//                          color: Colors.black87,
+//                        ),
+//                      ),
+//                    ),
+//                  ],
+//                ),
+//                Row(
+//                  crossAxisAlignment: CrossAxisAlignment.start,
+//                  children: <Widget>[
+//                    Container(
+//                      child: Text(
+//                        "ERC20-EPK",
+//                        style: TextStyle(
+//                          fontSize: 12,
+//                          color: Colors.black87,
+//                        ),
+//                      ),
+//                      width: rankitem_t_w,
+//                    ),
+//                    Expanded(
+//                      child: Text(
+//                        data?.erc20_address ?? "----",
+//                        softWrap: false,
+//                        maxLines: 1,
+//                        overflow: TextOverflow.fade,
+//                        style: TextStyle(
+//                          fontSize: 12,
+//                          color: Colors.black87,
+//                        ),
+//                      ),
+//                    ),
+//                  ],
+//                ),
                 Container(height: 14),
                 Divider(
                   height: 1,
@@ -465,7 +506,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
       return Positioned(
         left: 90,
         right: 90,
-        bottom: 10,
+        bottom: 20,
         child: FlatButton(
           highlightColor: Colors.white24,
           splashColor: Colors.white24,
@@ -490,33 +531,14 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
       return Positioned(
         left: 15,
         right: 15,
-        bottom: 20,
-        child: InkWell(
-          onTap: () {
-            DeviceUtils.copyText(mining_id);
-            showToast("已复制ID");
-          },
-          child: Container(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  text,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-                Text(
-                  "ID: $mining_id",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
+        bottom: 33,
+        child: Container(
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
             ),
           ),
         ),
@@ -539,7 +561,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
       case "confirmed":
         {
           // 预挖奖励
-          ViewGT.showMiningProfitView(context,mining_id);
+          ViewGT.showMiningProfitView(context, mining_id);
           return;
         }
       default:
@@ -549,6 +571,21 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
           return;
         }
     }
+  }
+
+  Widget stateHeaderWidgetBuild(BuildContext context, int position) {
+    try {
+      if (headerList != null && headerList.length > 0) {
+        var obj = headerList[0];
+        if (obj is ListPageDefState) {
+          ListPageDefState state = obj;
+          return ListPageDefStateWidgetHeader.getWidgetHeader(state);
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+    return Container();
   }
 
   Future<void> _pullRefreshCallback() async {

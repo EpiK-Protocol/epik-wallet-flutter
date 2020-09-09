@@ -38,6 +38,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     super.initState();
   }
 
+  ListPageDefState _ListPageDefState = ListPageDefState(null);
   List<Object> data_list_item = [];
 
   GlobalKey<ListPageState> key_scroll = GlobalKey();
@@ -175,8 +176,14 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   Widget buildWidget(BuildContext context) {
     Widget view = new ListPage(
       data_list_item,
-      headerList: ["header"],
-      headerCreator: headerBuilder,
+      headerList: ["header", _ListPageDefState],
+      headerCreator: (context, position) {
+        if (position == 0) {
+          return headerBuilder(context, position);
+        } else {
+          return stateHeaderWidgetBuild(context, position);
+        }
+      },
       itemWidgetCreator: (context, position) {
         return InkWell(
           onTap: () => onItemClick(position),
@@ -196,7 +203,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
               left: 0,
               right: 0,
               bottom: 0,
-              height: getScreenHeight()-10  + (tttt < 0 ? tttt : 0),
+              height: getScreenHeight() - 10 + (tttt < 0 ? tttt : 0),
               child: Container(
                 color: Colors.white,
               ),
@@ -510,6 +517,15 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     }
   }
 
+  Widget stateHeaderWidgetBuild(BuildContext context, int position) {
+    try {
+      return ListPageDefStateWidgetHeader.getWidgetHeader(_ListPageDefState);
+    } catch (e) {
+      print(e);
+    }
+    return Container();
+  }
+
   Widget itemWidgetBuild(BuildContext context, int position) {
     if (data_list_item != null && position < data_list_item.length) {
       var item = data_list_item[position];
@@ -696,6 +712,9 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
 //    setLoadingWidgetVisible(true);
 
     page = 0;
+    setState(() {
+      _ListPageDefState.type = ListPageDefStateType.LOADING;
+    });
     EpikWalletUtils.getOrderList(AccountMgr().currentAccount,
             widget.currencyAsset.cs, page, pageSize)
         .then((data) {
@@ -707,8 +726,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     if (data != null) {
       // 请求成功
       if (page == 0) {
-        if(data.isEmpty)
-        {
+        if (data.isEmpty) {
           showToast("无数据");
         }
         data_list_item.clear();
@@ -722,8 +740,13 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
       } else {
         hasMore = false;
       }
+      _ListPageDefState.type =
+          data_list_item.length > 0 ? null : ListPageDefStateType.EMPTY;
     } else {
       showToast("请求失败");
+      if (page == 0) {
+        _ListPageDefState.type = ListPageDefStateType.ERROR;
+      }
     }
     closeStateLayout();
     isLoading = false;
@@ -744,11 +767,9 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     }
     page = 0;
     isLoading = true;
-    EpikWalletUtils.getOrderList(AccountMgr().currentAccount,
-            widget.currencyAsset.cs, page, pageSize)
-        .then((data) {
-      dataCallback(data);
-    });
+    var data = await EpikWalletUtils.getOrderList(AccountMgr().currentAccount,
+            widget.currencyAsset.cs, page, pageSize);
+    dataCallback(data);
   }
 
   /**是否需要加载更多*/

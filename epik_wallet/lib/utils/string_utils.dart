@@ -100,15 +100,18 @@ class StringUtils {
     return result;
   }
 
-  static String formatNumAmount(num, {point: 2}) {
+  static String formatNumAmount(num, {int point: 2, bool supply0=false}) {
     if (num != null) {
-      String str = double.parse(num.toString()).toString();
+      double dnum= double.parse(num.toString()) ;
+      String str = dnum.toString();
+      if(dnum==0)
+        str="0";
       // 分开截取
       List<String> sub = str.split('.');
       // 处理值
       List val = List.from(sub[0].split(''));
       // 处理点
-      List<String> points = List.from(sub[1].split(''));
+      List<String> points = sub.length>1 ?List.from(sub[1].split('')): [];
       //处理分割符
       for (int index = 0, i = val.length - 1; i >= 0; index++, i--) {
         // 除以三没有余数、不等于零并且不等于1 就加个逗号
@@ -118,11 +121,14 @@ class StringUtils {
         }
       }
       // 处理小数点
-//      print("point $point - ${points.length}   ${sub[1]}");
-      int pointsize = point - points.length;
-      if (pointsize > 0) {
-        for (int i = 0; i < pointsize; i++) {
-          points.add('0');
+      if(supply0)
+      {
+        // 是否需要补零
+        int pointsize = point - points.length;
+        if (pointsize > 0) {
+          for (int i = 0; i < pointsize; i++) {
+            points.add('0');
+          }
         }
       }
       //如果大于长度就截取

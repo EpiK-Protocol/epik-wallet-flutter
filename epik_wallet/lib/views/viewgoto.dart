@@ -10,6 +10,7 @@ import 'package:epikwallet/views/qrcode/qrcodescanview.dart';
 import 'package:epikwallet/views/wallet/accountdetailview.dart';
 import 'package:epikwallet/views/wallet/create/createwalletview.dart';
 import 'package:epikwallet/views/wallet/exprot/exportepikprivatekeyview.dart';
+import 'package:epikwallet/views/wallet/fixpasswordview.dart';
 import 'package:epikwallet/views/wallet/import/importwalletview.dart';
 import 'package:epikwallet/views/web/generalwebview.dart';
 import 'package:flutter/cupertino.dart';
@@ -106,5 +107,10 @@ class ViewGT {
   static showExportEpikPrivateKeyView(BuildContext context, WalletAccount walletAccount)
   {
     showView(context, ExportEpikPrivateKeyView(walletAccount));
+  }
+
+  /// 修改钱包密码
+  static showFixPasswordView(BuildContext context, WalletAccount walletAccount){
+    showView(context, FixPasswordView(walletAccount));
   }
 }
