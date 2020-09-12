@@ -11,7 +11,37 @@
 #include "Universe.objc.h"
 
 
+@class EPIK_HdAmounts;
+@class EPIK_HdUniswapInfo;
 @class EPIK_HdWallet;
+
+/**
+ * Amounts ...
+ */
+@interface EPIK_HdAmounts : NSObject <goSeqRefInterface> {
+}
+@property(strong, readonly) _Nonnull id _ref;
+
+- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
+- (nonnull instancetype)init;
+@property (nonatomic) NSString* _Nonnull amountIn;
+@property (nonatomic) NSString* _Nonnull amountOut;
+@end
+
+/**
+ * UniswapInfo ...
+ */
+@interface EPIK_HdUniswapInfo : NSObject <goSeqRefInterface> {
+}
+@property(strong, readonly) _Nonnull id _ref;
+
+- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
+- (nonnull instancetype)init;
+@property (nonatomic) NSString* _Nonnull epk;
+@property (nonatomic) NSString* _Nonnull usdt;
+@property (nonatomic) NSString* _Nonnull share;
+@property (nonatomic) int64_t lastBlockTime;
+@end
 
 /**
  * Wallet ...
@@ -66,9 +96,31 @@
  * TransferToken ...
  */
 - (NSString* _Nonnull)transferToken:(NSString* _Nullable)from to:(NSString* _Nullable)to currency:(NSString* _Nullable)currency amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
+/**
+ * UniswapAddLiquidity ...
+ */
+- (NSString* _Nonnull)uniswapAddLiquidity:(NSString* _Nullable)address tokenA:(NSString* _Nullable)tokenA tokenB:(NSString* _Nullable)tokenB amountADesired:(NSString* _Nullable)amountADesired amountBDesired:(NSString* _Nullable)amountBDesired amountAMin:(NSString* _Nullable)amountAMin amountBMin:(NSString* _Nullable)amountBMin deadline:(NSString* _Nullable)deadline error:(NSError* _Nullable* _Nullable)error;
+/**
+ * UniswapExactTokenForTokens ...
+ */
+- (NSString* _Nonnull)uniswapExactTokenForTokens:(NSString* _Nullable)address tokenA:(NSString* _Nullable)tokenA tokenB:(NSString* _Nullable)tokenB amountIn:(NSString* _Nullable)amountIn amountOutMin:(NSString* _Nullable)amountOutMin deadline:(NSString* _Nullable)deadline error:(NSError* _Nullable* _Nullable)error;
+/**
+ * UniswapGetAmountsOut ...
+ */
+- (EPIK_HdAmounts* _Nullable)uniswapGetAmountsOut:(NSString* _Nullable)tokenA tokenB:(NSString* _Nullable)tokenB amountIn:(NSString* _Nullable)amountIn error:(NSError* _Nullable* _Nullable)error;
+/**
+ * UniswapInfo ...
+ */
+- (EPIK_HdUniswapInfo* _Nullable)uniswapInfo:(NSString* _Nullable)address error:(NSError* _Nullable* _Nullable)error;
+/**
+ * UniswapRemoveLiquidity ...
+ */
+- (NSString* _Nonnull)uniswapRemoveLiquidity:(NSString* _Nullable)address tokenA:(NSString* _Nullable)tokenA tokenB:(NSString* _Nullable)tokenB liquidity:(NSString* _Nullable)liquidity amountAMin:(NSString* _Nullable)amountAMin amountBMin:(NSString* _Nullable)amountBMin deadline:(NSString* _Nullable)deadline error:(NSError* _Nullable* _Nullable)error;
 @end
 
 // skipped const EPK with unsupported type: github.com/EpiK-Protocol/epik-wallet-golib/hd.currencyType
+
+// skipped const UNI with unsupported type: github.com/EpiK-Protocol/epik-wallet-golib/hd.currencyType
 
 // skipped const USDT with unsupported type: github.com/EpiK-Protocol/epik-wallet-golib/hd.currencyType
 

@@ -144,6 +144,51 @@
             }else{
                 err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
             }
+        }else if ([@"hd_wallet_uniswapinfo" isEqualToString:call.method]) {
+            if (self->_hdWallet){
+                EPIK_HdUniswapInfo *info = [self->_hdWallet uniswapInfo:arguments[@"address"] error:&err];
+                if (!err) {
+                    resultSync(@{@"USDT":info.usdt,@"EPK":info.epk,@"Share":info.share,@"LastBlockTime":[NSNumber numberWithLong:(info.lastBlockTime)]});
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"hd_wallet_uniswapgetamountsout" isEqualToString:call.method]) {
+            if (self->_hdWallet){
+                EPIK_HdAmounts *amount = [self->_hdWallet uniswapGetAmountsOut:arguments[@"tokenA"] tokenB:arguments[@"tokenB"] amountIn:arguments[@"amountIn"] error:&err];
+                if (!err) {
+                    resultSync(@{@"AmountIn":amount.amountIn,@"AmountOut":amount.amountOut});
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"hd_wallet_uniswapexacttokenfortokens" isEqualToString:call.method]) {
+            if (self->_hdWallet){
+                NSString *txhash = [self->_hdWallet uniswapExactTokenForTokens:arguments[@"address"] tokenA:arguments[@"tokenA"] tokenB:arguments[@"tokenB"] amountIn:arguments[@"amountIn"] amountOutMin:arguments[@"amountOutMin"] deadline:arguments[@"deadline"] error:&err];
+                if (!err) {
+                    resultSync(txhash);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"hd_wallet_uniswapaddliquidity" isEqualToString:call.method]) {
+            if (self->_hdWallet){
+                NSString *txhash = [self->_hdWallet uniswapAddLiquidity:arguments[@"address"] tokenA:arguments[@"tokenA"] tokenB:arguments[@"tokenB"] amountADesired:arguments[@"amountADesired"] amountBDesired:arguments[@"amountBdesired"] amountAMin:arguments[@"amountAMin"] amountBMin:arguments[@"amountBMin"] deadline:arguments[@"deadline"] error:&err];
+                if (!err) {
+                    resultSync(txhash);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"hd_wallet_uniswapremoveliquidity" isEqualToString:call.method]) {
+            if (self->_hdWallet){
+                NSString *txhash = [self->_hdWallet uniswapRemoveLiquidity:arguments[@"address"] tokenA:arguments[@"tokenA"] tokenB:arguments[@"tokenB"] liquidity:arguments[@"liquidity"] amountAMin:arguments[@"amountAMin"] amountBMin:arguments[@"amountBMin"] deadline:arguments[@"deadline"] error:&err];
+                if (!err) {
+                    resultSync(txhash);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
         }else if ([@"epik_epik_newWallet" isEqualToString:call.method]) {
             self->_epikWallet = EPIK_EpikNewWallet(&err);
             if (!err) {
