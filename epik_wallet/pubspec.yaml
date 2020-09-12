@@ -166,15 +166,15 @@ dependencies:
   # 友盟统计
   #umeng_analytics_plugin: ^1.0.3
 
-#  ffi: ^0.1.3
-#  filecoin:
-#    path: ../filecoin
-
   epikplugin:
     path: ../flutter_plugin_epik
   # 此插件android只支持arm64-v8a架构
 
-  bitcoin_flutter: ^2.0.1
+  # 比特币hd钱包
+  # bitcoin_flutter: ^2.0.1
+
+  # 图表 https://google.github.io/charts/flutter/gallery.html
+  charts_flutter: ^0.9.0
 
 dev_dependencies:
   flutter_test:

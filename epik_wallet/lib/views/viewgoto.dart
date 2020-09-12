@@ -7,6 +7,7 @@ import 'package:epikwallet/views/currency/currencywithdrawview.dart';
 import 'package:epikwallet/views/mining/miningprofitview.dart';
 import 'package:epikwallet/views/mining/miningsignupview.dart';
 import 'package:epikwallet/views/qrcode/qrcodescanview.dart';
+import 'package:epikwallet/views/uniswap/uniswapview.dart';
 import 'package:epikwallet/views/wallet/accountdetailview.dart';
 import 'package:epikwallet/views/wallet/create/createwalletview.dart';
 import 'package:epikwallet/views/wallet/exprot/exportepikprivatekeyview.dart';
@@ -113,4 +114,9 @@ class ViewGT {
   static showFixPasswordView(BuildContext context, WalletAccount walletAccount){
     showView(context, FixPasswordView(walletAccount));
   }
+
+  static showUniswapView(BuildContext context, WalletAccount walletAccount){
+    showView(context, UniswapView(walletAccount));
+  }
+
 }
