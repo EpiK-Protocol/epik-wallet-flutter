@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:epikplugin/Amounts.dart';
+import 'package:epikplugin/UniswapInfo.dart';
 import 'package:epikplugin/epikplugin.dart';
 
 /// HD钱包静态方法
@@ -218,6 +220,128 @@ class HdWallet {
         "currency": currency,
         "amount": amount,
       });
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  Future<UniswapInfo> uniswapinfo(String address) async {
+    try {
+      var ret = await EpikPlugin.channel
+          .invokeMethod("hd_wallet_uniswapinfo", <String, dynamic>{
+        "address": address,
+      });
+      if (ret != null) {
+        Map<String, dynamic> json = Map<String, dynamic>.from(ret);
+        if (json != null && json.length > 0) {
+          return UniswapInfo.fromJson(json);
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  Future<Amounts> uniswapGetAmountsOut(
+      String tokenA, String tokenB, String amountIn) async {
+    try {
+      var ret = await EpikPlugin.channel
+          .invokeMethod("hd_wallet_uniswapgetamountsout", <String, dynamic>{
+        "tokenA": tokenA,
+        "tokenB": tokenB,
+        "amountIn": amountIn,
+      });
+      if (ret != null) {
+        Map<String, dynamic> json = Map<String, dynamic>.from(ret);
+        if (json != null && json.length > 0) {
+          Amounts amounts = Amounts.fromJson(json);
+          amounts.tokenA=tokenA;
+          amounts.tokenB=tokenB;
+          return amounts;
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// 兑换 A->B
+  Future<String> uniswapExactTokenForTokens(
+      String address, //hd钱包地址
+      String tokenA, // from 币种
+      String tokenB,// to 币种
+      String amountIn, //from 数量
+      String amountOutMin, // to 期望兑换到的最少数量
+      String deadline,// 最晚成交时间 时间戳 秒
+      ) async {
+    try {
+      String ret = await EpikPlugin.channel.invokeMethod(
+          "hd_wallet_uniswapexacttokenfortokens", <String, dynamic>{
+        "address": address,
+        "tokenA": tokenA,
+        "tokenB": tokenB,
+        "amountIn": amountIn,
+        "amountOutMin": amountOutMin,
+        "deadline": deadline,
+      });
+      return ret;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  Future<String> uniswapAddLiquidity(
+      String address,
+      String tokenA,
+      String tokenB,
+      String amountADesired,
+      String amountBDesired,
+      String amountAMin,
+      String amountBMin,
+      String deadline) async {
+    try {
+      String ret = await EpikPlugin.channel
+          .invokeMethod("hd_wallet_uniswapaddliquidity", <String, dynamic>{
+        "address": address,
+        "tokenA": tokenA,
+        "tokenB": tokenB,
+        "amountADesired": amountADesired,
+        "amountBDesired": amountBDesired,
+        "amountAMin": amountAMin,
+        "amountBMin": amountBMin,
+        "deadline": deadline,
+      });
+      return ret;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  Future<String> uniswapRemoveLiquidity(
+      String address,
+      String tokenA,
+      String tokenB,
+      String liquidity,
+      String amountAMin,
+      String amountBMin,
+      String deadline) async {
+    try {
+      String ret = await EpikPlugin.channel
+          .invokeMethod("hd_wallet_uniswapremoveliquidity", <String, dynamic>{
+        "address": address,
+        "tokenA": tokenA,
+        "tokenB": tokenB,
+        "liquidity": liquidity,
+        "amountAMin": amountAMin,
+        "amountBMin": amountBMin,
+        "deadline": deadline,
+      });
+      return ret;
     } catch (e) {
       print(e);
     }

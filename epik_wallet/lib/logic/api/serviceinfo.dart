@@ -4,6 +4,8 @@ class ServiceInfo {
   static final String hd_RpcUrl =
       "https://mainnet.infura.io/v3/1bbd25bd3af94ca2b294f93c346f69cd";
 
+  static final String hd_RpcUrl_test = "wss://ropsten.infura.io/ws/v3/1bbd25bd3af94ca2b294f93c346f69cd";
+
   static final String epik_RpcUrl = "ws://18.181.234.52:1234/rpc/v0";
 
   static final String epik_RpcUrl_token =

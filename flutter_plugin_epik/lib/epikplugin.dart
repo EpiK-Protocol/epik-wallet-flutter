@@ -6,6 +6,8 @@ export 'HdWallet.dart' show HD, HdWallet;
 export 'EpikWallet.dart';
 export 'PrivateKey.dart';
 export 'Bip44Path.dart';
+export 'UniswapInfo.dart';
+export 'Amounts.dart';
 
 
 class EpikPlugin {

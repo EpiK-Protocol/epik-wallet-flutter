@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
+import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/model/Upgrade.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
@@ -176,6 +177,14 @@ class _MainViewState extends BaseWidgetState<MainView> {
   }
 
   void _onItemTapped(int index) {
+
+    if(index==2){
+      if(AccountMgr().currentAccount==null)
+      {
+        index=1;
+      }
+    }
+
     setState(() {
       lastIndex = currentIndex;
       currentIndex = index;

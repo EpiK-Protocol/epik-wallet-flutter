@@ -1,11 +1,16 @@
+import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
+import 'package:epikwallet/dialog/bottom_dialog.dart';
+import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
+import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
+import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,14 +40,11 @@ class UniswapExchangeViewState
   CurrencySymbol cs_to = CurrencySymbol.USDT;
 
   String text_from = "";
+  double amount_form = 0;
   String text_to = "0.0";
   TextEditingController _tec_from;
 
-  /// 价格 epkerc20/usdt
-  double price_epkerc20_usdt = 365.781;
-
-  /// 价格 usdt/epkerc20
-  double price_usdt_epkerc20 = 0.00274123;
+  Amounts calc_amounts;
 
   @override
   void initStateConfig() {
@@ -107,7 +109,6 @@ class UniswapExchangeViewState
                       ),
                     ),
                     getTo(),
-
                     Container(
                       margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
                       width: double.infinity,
@@ -116,7 +117,7 @@ class UniswapExchangeViewState
                         highlightColor: Colors.white24,
                         splashColor: Colors.white24,
                         onPressed: () {
-                          //todo
+                          onClickExchange();
                         },
                         child: Text(
                           "兑换",
@@ -126,7 +127,7 @@ class UniswapExchangeViewState
                             fontSize: 16,
                           ),
                         ),
-                        color:color_btn_1,
+                        color: color_btn_1,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),
@@ -142,7 +143,7 @@ class UniswapExchangeViewState
     );
   }
 
-  Color color_btn_1 = Colors.pinkAccent[100];
+  Color color_btn_1 = ResColor.main_1;//Colors.pinkAccent[100];
 
   Widget getFrom() {
     if (_tec_from == null)
@@ -175,7 +176,7 @@ class UniswapExchangeViewState
                 ),
                 Text(
                   (widget.walletAccount != null)
-                      ? "余额:${getBalance(cs_from)??"--"}"
+                      ? "余额:${getBalance(cs_from) ?? "--"}"
                       : "",
                   style: TextStyle(
                     color: Colors.black54,
@@ -225,6 +226,7 @@ class UniswapExchangeViewState
                       style: TextStyle(fontSize: 16, color: Colors.black87),
                       onChanged: (value) {
                         text_from = _tec_from.text.trim();
+                        amount_form = StringUtils.parseDouble(text_from, 0);
                       },
                     ),
                   ),
@@ -238,8 +240,9 @@ class UniswapExchangeViewState
                     splashColor: Colors.white24,
                     onPressed: () {
                       setState(() {
-                        text_from = (getBalance(cs_from)??"").replaceAll(",", "");
-                        _tec_from.text=text_from;
+                        text_from =
+                            (getBalance(cs_from) ?? "").replaceAll(",", "");
+                        _tec_from.text = text_from;
                       });
                     },
                     child: Text(
@@ -284,7 +287,6 @@ class UniswapExchangeViewState
   }
 
   Widget getTo() {
-
     return Container(
       margin: EdgeInsets.fromLTRB(20, 10, 20, 20),
       width: double.infinity,
@@ -312,7 +314,7 @@ class UniswapExchangeViewState
                 ),
                 Text(
                   (widget.walletAccount != null)
-                      ? "余额:${getBalance(cs_to)??"--"}"
+                      ? "余额:${getBalance(cs_to) ?? "--"}"
                       : "",
                   style: TextStyle(
                     color: Colors.black54,
@@ -391,11 +393,10 @@ class UniswapExchangeViewState
     cs_from = cs_to;
     cs_to = old_from;
 
-    String old_text_from = text_from;
-    text_from = text_to;
-    text_to = old_text_from;
-
-    _tec_from.text = text_from;
+//    String old_text_from = text_from;
+//    text_from = text_to;
+//    text_to = old_text_from;
+//    _tec_from.text = text_from;
 
     setState(() {});
   }
@@ -411,24 +412,125 @@ class UniswapExchangeViewState
     return null;
   }
 
-  calcToAmount()
-  {
-    if(widget.walletAccount!=null){
-        double amount_from = double.parse(text_from)??0;
-        double amount_to = 0;
-        if(cs_from == CurrencySymbol.EPKerc20)
-        {
-          amount_to = amount_from*price_usdt_epkerc20;
-        }else{
-          amount_to = amount_from*price_epkerc20_usdt;
-        }
-        text_to = StringUtils.formatNumAmount(amount_to,point: 8,supply0: false).replaceAll(",", "");
-        setState(() {
-        });
+  calcToAmount() {
+    if (widget?.walletAccount?.hdwallet == null) {
+      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX, 1);
+      return;
     }
+
+    if (StringUtils.isEmpty(text_from)) {
+      showToast("请输入${cs_from.symbol}数量");
+      return;
+    }
+
+    if (amount_form == 0) {
+      showToast("${cs_from.symbol}数量不能为0");
+      return;
+    }
+
+    closeInput();
+    showLoadDialog("", onShow: () async {
+      Amounts amounts = await widget.walletAccount.hdwallet
+          .uniswapGetAmountsOut(
+              cs_from.symbolToNetWork, cs_to.symbolToNetWork, text_from.trim());
+      if (amounts != null) {
+        dlog("${amounts.AmountIn} -> ${amounts.AmountOut}");
+        if (amount_form == amounts.AmountIn_d ||
+            text_from == amounts.AmountIn) {
+          String amount_out = StringUtils.formatNumAmount(amounts.AmountOut,
+              point: 8, supply0: false);
+          amount_out = amount_out.replaceAll(",", "");
+          amounts.AmountOut = amount_out;
+          amounts.AmountOut_d = StringUtils.parseDouble(amount_out, 0);
+          setState(() {
+            text_to = amount_out;
+            calc_amounts = amounts;
+          });
+        }
+      } else {
+        showToast("请求失败,请稍后重试");
+      }
+      closeLoadDialog();
+    });
   }
 
   onInputFrom() {}
 
   onInputTo() {}
+
+  onClickExchange() {
+    if (widget?.walletAccount?.hdwallet == null) {
+      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX, 1);
+      return;
+    }
+
+    if (StringUtils.isEmpty(text_from)) {
+      showToast("请输入${cs_from.symbol}数量");
+      return;
+    }
+
+    if (amount_form == 0) {
+      showToast("${cs_from.symbol}数量不能为0");
+      return;
+    }
+
+    if (calc_amounts == null || calc_amounts.AmountIn_d != amount_form) {
+      showToast("需要先计算预估");
+      calcToAmount();
+      return;
+    }
+
+    closeInput();
+
+    BottomDialog.showPassWordInputDialog(
+      context,
+      widget.walletAccount.password,
+      (password) async {
+        //点击确定回调
+
+        await Future.delayed(Duration(milliseconds: 200));
+
+        showLoadDialog("正在提交兑换", onShow: () async {
+          String ret =
+              await widget.walletAccount.hdwallet.uniswapExactTokenForTokens(
+            widget.walletAccount.hd_eth_address, //地址
+            cs_from.symbolToNetWork, // from币种
+            cs_to.symbolToNetWork, // to币种
+            text_from.trim(), // from数量
+            "${calc_amounts.AmountOut_d * 0.9}", // , // to 期望兑换到的最少数量
+            "${DateTime.now().toUtc().millisecondsSinceEpoch / 1000 + 20 * 60}", // 最晚成交时间 时间戳 秒
+          );
+
+          // ret = 0xe966bbd1e089becc1d0d23bf8ae145ba3b25ad9b482dbd22b6368bca239e35e2
+          print("uniswapExactTokenForTokens $ret");
+//        showToast("请求失败,请稍后重试");
+          closeLoadDialog();
+
+          if (StringUtils.isNotEmpty(ret)) {
+
+            setState(() {
+              text_from="";
+              _tec_from.text="";
+              amount_form=0;
+              text_to = "0.0";
+            });
+
+            DeviceUtils.copyText(ret);
+
+            MessageDialog.showMsgDialog(
+              context,
+              title: "兑换已提交",
+              msg: ret,
+              btnRight: "确定",
+              onClickBtnRight: (dialog) {
+                dialog.dismiss();
+              },
+            );
+          } else {
+            showToast("请求失败,请稍后重试");
+          }
+        });
+      },
+    );
+  }
 }
