@@ -407,11 +407,10 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
       return;
     }
 
-    // todo test
-//    if (uniswapinfo?.Share == "0") {
-//      showToast("您没有可撤回的资金");
-//      return;
-//    }
+    if (uniswapinfo?.Share == "0") {
+      showToast("您没有可撤回的资金");
+      return;
+    }
 
     ViewGT.showUniswapPoolRemoveView(context, widget.walletAccount,uniswapinfo);
   }

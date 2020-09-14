@@ -6,6 +6,10 @@ class UniswapInfo
   /// 毫秒
   int LastBlockTime = 0;
 
+  double usdt_d=0;
+  double epk_d=0;
+  double share_d=0;
+
   /// 价格 usdt/epk
   double price_USDT_EPK = 0;
   /// 价格 epk/usdt
@@ -21,12 +25,14 @@ class UniswapInfo
       Share =json["Share"]??"0";
       LastBlockTime =(json["LastBlockTime"]??0)*1000;
 
-      double _usdt = double.parse(USDT)??0;
-      double _epk = double.parse(EPK)??0;
-      if(_usdt!=0 && _epk!=0)
+      usdt_d = double.parse(USDT)??0;
+      epk_d = double.parse(EPK)??0;
+      share_d = double.parse(Share)??0;
+
+      if(usdt_d!=0 && epk_d!=0)
       {
-        price_USDT_EPK = _usdt/_epk;
-        price_EPK_USDT = _epk/_usdt;
+        price_USDT_EPK = usdt_d/epk_d;
+        price_EPK_USDT = epk_d/usdt_d;
       }
 
     }catch(e){
