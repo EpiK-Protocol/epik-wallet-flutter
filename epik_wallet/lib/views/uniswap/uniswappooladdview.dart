@@ -376,7 +376,7 @@ class UniswapPoolAddViewState extends BaseWidgetState<UniswapPoolAddView> {
          MessageDialog.showMsgDialog(
            context,
            title: "注入资金已提交",
-           msg: ret,
+           msg: ret+"\n已复制",
            btnRight: "确定",
            onClickBtnRight: (dialog) async {
              dialog.dismiss();

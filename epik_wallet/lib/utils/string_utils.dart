@@ -103,7 +103,7 @@ class StringUtils {
   static String formatNumAmount(num, {int point: 2, bool supply0=false}) {
     if (num != null) {
       double dnum= double.parse(num.toString()) ;
-      String str = dnum.toString();
+      String str = dnum.toStringAsFixed(20);
       if(dnum==0)
         str="0";
       // 分开截取

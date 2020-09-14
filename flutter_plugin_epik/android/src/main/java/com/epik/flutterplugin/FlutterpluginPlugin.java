@@ -227,6 +227,7 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
                             map.put("EPK", uniswapinfo.getEPK());
                             map.put("Share", uniswapinfo.getShare());
                             map.put("LastBlockTime", uniswapinfo.getLastBlockTime());
+                            map.put("UNI",uniswapinfo.getUNI());
                             ret = map;
                             break;
                         }

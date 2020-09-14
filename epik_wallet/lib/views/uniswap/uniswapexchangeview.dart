@@ -520,7 +520,7 @@ class UniswapExchangeViewState
             MessageDialog.showMsgDialog(
               context,
               title: "兑换已提交",
-              msg: ret,
+              msg: ret+"\n已复制",
               btnRight: "确定",
               onClickBtnRight: (dialog) {
                 dialog.dismiss();

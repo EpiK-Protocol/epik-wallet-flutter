@@ -1,8 +1,13 @@
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
+import 'package:epikwallet/dialog/bottom_dialog.dart';
+import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/model/currencytype.dart';
+import 'package:epikwallet/utils/device/deviceutils.dart';
+import 'package:epikwallet/utils/eventbus/event_manager.dart';
+import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:flutter/cupertino.dart';
@@ -30,6 +35,8 @@ class UniswapPoolRemoveViewState
   double amount_ratio = 0;
   double amount_A=0;
   double amount_B=0;
+
+  double price_changes = 0.1;
 
   @override
   void initStateConfig() {
@@ -181,7 +188,7 @@ class UniswapPoolRemoveViewState
                   ),
                 ),
                 Text(
-                  "${cs_A.symbolToNetWork}",
+                  "${cs_A.symbol}",
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.black87,
@@ -205,7 +212,7 @@ class UniswapPoolRemoveViewState
                   ),
                 ),
                 Text(
-                  "${cs_B.symbolToNetWork}",
+                  "${cs_B.symbol}",
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.black87,
@@ -317,12 +324,55 @@ class UniswapPoolRemoveViewState
 
   onClickRemove()
   {
-    if(amount_A==0 || amount_B==0)
+    if(amount_A==0 || amount_B==0 || amount_ratio==0)
     {
       showToast("请选择要撤回的数量");
       return;
     }
 
-    closeInput();
+    BottomDialog.showPassWordInputDialog(context, widget.walletAccount.password, (value) async{
+
+      await Future.delayed(Duration(milliseconds: 200));
+
+      showLoadDialog("正在提交",touchOutClose: false,backClose: false,onShow: ()async{
+
+        String liquidity = StringUtils.formatNumAmount(widget.uniswapinfo.uni_d*amount_ratio,point: 20,supply0: false).replaceAll(",", "");
+        String amountAMin= StringUtils.formatNumAmount(amount_A*(1-price_changes),point: 8,supply0: false).replaceAll(",", "");
+        String amountBMin= StringUtils.formatNumAmount(amount_B*(1-price_changes),point: 8,supply0: false).replaceAll(",", "");
+        String deadline = "${DateTime.now().toUtc().millisecondsSinceEpoch / 1000 + 20 * 60}";
+
+// test
+//        dlog("uniswapRemoveLiquidity amountAMin=$amountAMin amountBMin=$amountBMin liquidity=$liquidity");
+//        dlog("uniswapRemoveLiquidity widget.uniswapinfo.uni_d=${widget.uniswapinfo.uni_d} amount_ratio=${amount_ratio}");
+//        closeLoadDialog();
+//        return;
+
+        String ret = await widget.walletAccount.hdwallet.uniswapRemoveLiquidity(widget.walletAccount.hd_eth_address, cs_A.symbolToNetWork, cs_B.symbolToNetWork, liquidity, amountAMin, amountBMin, deadline);
+
+        dlog("uniswapRemoveLiquidity $ret");
+        closeLoadDialog();
+
+        if (StringUtils.isNotEmpty(ret)) {
+
+          DeviceUtils.copyText(ret);
+
+          MessageDialog.showMsgDialog(
+            context,
+            title: "撤回资金已提交",
+            msg: ret+"\n已复制",
+            btnRight: "确定",
+            onClickBtnRight: (dialog) async {
+              dialog.dismiss();
+              eventMgr.send(EventTag.UNISWAP_REMOVE,null);
+              await Future.delayed(Duration(milliseconds: 200));
+              finish();
+            },
+          );
+        } else {
+          showToast("请求失败,请稍后重试");
+        }
+      });
+
+    });
   }
 }

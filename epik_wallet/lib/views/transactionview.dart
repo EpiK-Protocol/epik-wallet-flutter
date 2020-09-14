@@ -62,6 +62,12 @@ class TransactionViewState extends BaseInnerWidgetState<TransactionView> {
 
   @override
   Widget buildWidget(BuildContext context) {
+
+    if(AccountMgr().currentAccount==null)
+    {
+      return Text("请先登录钱包");
+    }
+
     // 暂时把uniswap嵌入到这里显示
     return UniswapView(AccountMgr().currentAccount);
 

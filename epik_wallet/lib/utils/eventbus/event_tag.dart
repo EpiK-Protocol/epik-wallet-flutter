@@ -22,4 +22,5 @@ enum EventTag {
   BALANCE_UPDATE,
 
   UNISWAP_ADD,
+  UNISWAP_REMOVE,
 }

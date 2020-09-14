@@ -47,24 +47,40 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
   void onCreate() {
     super.onCreate();
 
-    eventMgr.add(EventTag.UNISWAP_ADD, eventcallback_add);
+    eventMgr.add(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventcallback_account);
+    eventMgr.add(EventTag.UNISWAP_ADD, eventcallback_add_remove);
+    eventMgr.add(EventTag.UNISWAP_REMOVE,eventcallback_add_remove);
 
     refresh();
   }
 
   @override
   void dispose() {
-    eventMgr.remove(EventTag.UNISWAP_ADD, eventcallback_add);
+
+    eventMgr.remove(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventcallback_account);
+    eventMgr.remove(EventTag.UNISWAP_ADD, eventcallback_add_remove);
+    eventMgr.remove(EventTag.UNISWAP_REMOVE, eventcallback_add_remove);
     super.dispose();
   }
 
-  eventcallback_add(arg) {
+  eventcallback_account(arg) async{
+    await Future.delayed(Duration(milliseconds: 1000));
+    refresh();
+  }
+
+  eventcallback_add_remove(arg){
     refresh();
   }
 
   bool loading = false;
 
   refresh() {
+
+    dlog("refresh walletAccount=${widget.walletAccount.account}");
+
+    if(loading)
+      return;
+
     if (widget.walletAccount != null) {
       setState(() {
         loading = true;
@@ -77,7 +93,7 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
         loading = false;
         if (_hdwallet == widget?.walletAccount?.hdwallet) {
           this.uniswapinfo = uniswapinfo;
-          dlog("uniswapinfo ${uniswapinfo.Share}");
+          dlog("uniswapinfo share=${uniswapinfo.Share} UNI=${uniswapinfo.UNI}");
         }
         setState(() {});
       });
