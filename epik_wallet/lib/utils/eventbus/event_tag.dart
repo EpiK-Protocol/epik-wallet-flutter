@@ -18,4 +18,6 @@ enum EventTag {
 
   // 二维码扫描结果
   SCAN_QRCODE_RESULT,
+
+  BALANCE_UPDATE,
 }

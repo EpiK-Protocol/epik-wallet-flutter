@@ -12,9 +12,11 @@ import 'package:epikwallet/utils/screen/screen_util.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
 import 'package:epikwallet/views/miningview.dart';
 import 'package:epikwallet/views/transactionview.dart';
+import 'package:epikwallet/views/uniswap/uniswapview.dart';
 import 'package:epikwallet/views/walletmenu.dart';
 import 'package:epikwallet/views/walletview.dart';
 import 'package:flutter/material.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MainView extends BaseWidget {
@@ -43,13 +45,13 @@ class _MainViewState extends BaseWidgetState<MainView> {
     keyList = <GlobalKey<BaseInnerWidgetState>>[
       GlobalKey(),
       GlobalKey(),
-//      GlobalKey(),
+      GlobalKey(),
     ];
 
     subViews = <BaseInnerWidget>[
       MiningView(keyList[0]),
       WalletView(keyList[1]),
-//      TransactionView(keyList[2]),
+      TransactionView(keyList[2]),
     ];
   }
 
@@ -113,11 +115,10 @@ class _MainViewState extends BaseWidgetState<MainView> {
         icon: Icon(Icons.account_balance_wallet),
         title: Text('钱包'),
       ),
-//      BottomNavigationBarItem(
-//        icon: Icon(Icons.swap_horizontal_circle),
-//        //repeat swap_horiz   swap_horizontal_circle
-//        title: Text('交易'),
-//      ),
+      BottomNavigationBarItem(
+        icon: Icon(OMIcons.swapHorizontalCircle),
+        title: Text('交易'),
+      ),
     ];
   }
 

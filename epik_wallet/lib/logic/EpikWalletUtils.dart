@@ -10,6 +10,8 @@ import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/model/prices.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
+import 'package:epikwallet/utils/eventbus/event_manager.dart';
+import 'package:epikwallet/utils/eventbus/event_tag.dart';
 
 class EpikWalletUtils {
   /// 创建钱包 并且初始化
@@ -134,6 +136,8 @@ class EpikWalletUtils {
       waccount.total_btc = total_btc;
     }
 
+    eventMgr.send(EventTag.BALANCE_UPDATE,waccount);
+
     return map;
   }
 
@@ -229,4 +233,20 @@ class WalletAccount {
   List<CurrencyAsset> currencyList = [];
   double total_usd = 0;
   double total_btc = 0;
+
+  CurrencyAsset getCurrencyAssetByCs(CurrencySymbol cs)
+  {
+    if(currencyList!=null)
+    {
+      for(CurrencyAsset ca in currencyList)
+      {
+        if(ca!=null && ca.cs == cs)
+        {
+          return ca;
+        }
+      }
+    }
+    return null;
+  }
+
 }
