@@ -148,7 +148,7 @@
             if (self->_hdWallet){
                 EPIK_HdUniswapInfo *info = [self->_hdWallet uniswapInfo:arguments[@"address"] error:&err];
                 if (!err) {
-                    resultSync(@{@"USDT":info.usdt,@"EPK":info.epk,@"Share":info.share,@"LastBlockTime":[NSNumber numberWithLong:(info.lastBlockTime)]});
+                    resultSync(@{@"USDT":info.usdt,@"EPK":info.epk,@"Share":info.share,@"LastBlockTime":[NSNumber numberWithLong:(info.lastBlockTime)],@"UNI":info.uni});
                 }
             }else{
                 err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];

@@ -39,6 +39,7 @@
 - (nonnull instancetype)init;
 @property (nonatomic) NSString* _Nonnull epk;
 @property (nonatomic) NSString* _Nonnull usdt;
+@property (nonatomic) NSString* _Nonnull uni;
 @property (nonatomic) NSString* _Nonnull share;
 @property (nonatomic) int64_t lastBlockTime;
 @end
