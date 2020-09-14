@@ -1,3 +1,4 @@
+import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/currencytype.dart';
@@ -7,6 +8,8 @@ import 'package:epikwallet/views/currency/currencywithdrawview.dart';
 import 'package:epikwallet/views/mining/miningprofitview.dart';
 import 'package:epikwallet/views/mining/miningsignupview.dart';
 import 'package:epikwallet/views/qrcode/qrcodescanview.dart';
+import 'package:epikwallet/views/uniswap/uniswappooladdview.dart';
+import 'package:epikwallet/views/uniswap/uniswappoolremoveview.dart';
 import 'package:epikwallet/views/uniswap/uniswapview.dart';
 import 'package:epikwallet/views/wallet/accountdetailview.dart';
 import 'package:epikwallet/views/wallet/create/createwalletview.dart';
@@ -117,6 +120,18 @@ class ViewGT {
 
   static showUniswapView(BuildContext context, WalletAccount walletAccount){
     showView(context, UniswapView(walletAccount));
+  }
+
+  ///uniswap 注入资金
+  static showUniswapPoolAddView(BuildContext context, WalletAccount walletAccount,UniswapInfo uniswapinfo)
+  {
+    showView(context,UniswapPoolAddView(walletAccount,uniswapinfo));
+  }
+
+  ///uniswap 撤回资金
+  static showUniswapPoolRemoveView(BuildContext context, WalletAccount walletAccount,UniswapInfo uniswapinfo)
+  {
+    showView(context,UniswapPoolRemoveView(walletAccount,uniswapinfo));
   }
 
 }

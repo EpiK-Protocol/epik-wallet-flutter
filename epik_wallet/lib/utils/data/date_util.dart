@@ -649,4 +649,13 @@ class DateUtil {
     return toMonths(date) / 365;
   }
 
+  /// 时间转换时区， 默认东8区北京时间
+  static DateTime dateTimeFixTimeZone(
+      {DateTime dateTime, int zoneOffsetHours = 8}) {
+    if (dateTime == null) dateTime = DateTime.now();
+    DateTime dt = dateTime.toUtc().add(Duration(hours: zoneOffsetHours));
+    print(
+        "dateTimeFixTimeZone=${dt.toIso8601String()}  utc=${dt.isUtc}  timeZoneOffset=${dt.timeZoneOffset}");
+    return dt;
+  }
 }

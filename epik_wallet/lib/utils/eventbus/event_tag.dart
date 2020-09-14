@@ -20,4 +20,6 @@ enum EventTag {
   SCAN_QRCODE_RESULT,
 
   BALANCE_UPDATE,
+
+  UNISWAP_ADD,
 }

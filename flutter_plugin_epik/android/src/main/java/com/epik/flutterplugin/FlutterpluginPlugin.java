@@ -3,10 +3,13 @@ package com.epik.flutterplugin;
 import android.os.Handler;
 import android.os.Looper;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import androidx.annotation.NonNull;
+import hd.UniswapInfo;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -101,7 +104,7 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
             {
                 try
                 {
-                    System.out.println("onMethodCall : "+call.method+" work in "+Thread.currentThread().getName());
+                    System.out.println("onMethodCall : " + call.method + " work in " + Thread.currentThread().getName());
                     Object ret = "";
                     switch (call.method)
                     {
@@ -192,8 +195,8 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
                         {
                             String address = call.argument("address");
                             String currency = call.argument("currency");
-                            long page = (int)call.argument("page");
-                            long offset = (int)call.argument("offset");
+                            long page = (int) call.argument("page");
+                            long offset = (int) call.argument("offset");
                             boolean asc = call.argument("asc");
                             ret = currentHdWallet.transactions(address, currency, page, offset, asc);
                             break;
@@ -215,6 +218,66 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
                             ret = currentHdWallet.transferToken(from, to, currency, amount);
                             break;
                         }
+                        case "hd_wallet_uniswapinfo":
+                        {
+                            String address = call.argument("address");
+                            UniswapInfo uniswapinfo = currentHdWallet.uniswapInfo(address);
+                            Map<String, Object> map = new HashMap();
+                            map.put("USDT", uniswapinfo.getUSDT());
+                            map.put("EPK", uniswapinfo.getEPK());
+                            map.put("Share", uniswapinfo.getShare());
+                            map.put("LastBlockTime", uniswapinfo.getLastBlockTime());
+                            ret = map;
+                            break;
+                        }
+                        case "hd_wallet_uniswapgetamountsout":
+                        {
+                            String tokenA = call.argument("tokenA");
+                            String tokenB = call.argument("tokenB");
+                            String amountIn = call.argument("amountIn");
+                            hd.Amounts amounts = currentHdWallet.uniswapGetAmountsOut(tokenA, tokenB, amountIn);
+                            Map<String, Object> map = new HashMap();
+                            map.put("AmountIn", amounts.getAmountIn());
+                            map.put("AmountOut", amounts.getAmountOut());
+                            ret = map;
+                            break;
+                        }
+                        case "hd_wallet_uniswapexacttokenfortokens":
+                        {
+                            String address = call.argument("address");
+                            String tokenA = call.argument("tokenA");
+                            String tokenB = call.argument("tokenB");
+                            String amountIn = call.argument("amountIn");
+                            String amountOutMin = call.argument("amountOutMin");
+                            String deadline = call.argument("deadline");
+                            ret = currentHdWallet.uniswapExactTokenForTokens(address, tokenA, tokenB, amountIn, amountOutMin, deadline);
+                            break;
+                        }
+                        case "hd_wallet_uniswapaddliquidity":
+                        {
+                            String address = call.argument("address");
+                            String tokenA = call.argument("tokenA");
+                            String tokenB = call.argument("tokenB");
+                            String amountADesired = call.argument("amountADesired");
+                            String amountBDesired = call.argument("amountBDesired");
+                            String amountAMin = call.argument("amountAMin");
+                            String amountBMin = call.argument("amountBMin");
+                            String deadline = call.argument("deadline");
+                            ret = currentHdWallet.uniswapAddLiquidity(address, tokenA, tokenB, amountADesired, amountBDesired, amountAMin, amountBMin, deadline);
+                            break;
+                        }
+                        case "hd_wallet_uniswapremoveliquidity":
+                        {
+                            String address = call.argument("address");
+                            String tokenA = call.argument("tokenA");
+                            String tokenB = call.argument("tokenB");
+                            String liquidity = call.argument("liquidity");
+                            String amountAMin = call.argument("amountAMin");
+                            String amountBMin = call.argument("amountBMin");
+                            String deadline = call.argument("deadline");
+                            ret = currentHdWallet.uniswapRemoveLiquidity(address, tokenA, tokenB, liquidity, amountAMin, amountBMin, deadline);
+                            break;
+                        }
                         // epik.Epik ------------------------------------------------------------epik.Epik
                         case "epik_epik_newWallet":
                         {
@@ -234,7 +297,7 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
                         }
                         case "epik_wallet_generateKey":
                         {
-                            ret = currentEpikWallet.generateKey((String) call.argument("t"), (byte[]) call.argument("seed"),(String) call.argument("path"));
+                            ret = currentEpikWallet.generateKey((String) call.argument("t"), (byte[]) call.argument("seed"), (String) call.argument("path"));
                             break;
                         }
                         case "epik_wallet_hasAddr":

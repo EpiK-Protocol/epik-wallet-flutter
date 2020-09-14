@@ -22,7 +22,9 @@ class EpikWalletUtils {
       hdwallet.seed = await HD.seedFromMnemonic(waccount.mnemonic); //助记词 转种子
 
       // hd 设置RPC地址
-      await hdwallet.setRPC(ServiceInfo.hd_RpcUrl);
+//      await hdwallet.setRPC(ServiceInfo.hd_RpcUrl);
+      // hd 设置测试rpc地址
+      await hdwallet.setRPC(ServiceInfo.hd_RpcUrl_test);
 
       // ETH path
       String hdwallet_eth_path = await Bip44Path.getPath("ETH");
