@@ -5,10 +5,11 @@ typedef YYDialogCallback = void Function(YYDialog dialog);
 
 // ignore: must_be_immutable
 class MessageDialog {
-  static showMsgDialog(
+  static YYDialog showMsgDialog(
     BuildContext context, {
     String title,
     String msg,
+    Widget extend,
     String btnLeft,
     String btnRight,
     Color btnLeftColor = const Color(0xff808080),
@@ -79,6 +80,11 @@ class MessageDialog {
         alignment: Alignment.center,
         textAlign: TextAlign.left,
       );
+    }
+
+    if(extend != null)
+    {
+      dialog.widget(extend);
     }
 
     if (btnLeft != null || btnRight != null) {
@@ -158,5 +164,7 @@ class MessageDialog {
     }
 
     dialog.show();
+
+    return dialog;
   }
 }

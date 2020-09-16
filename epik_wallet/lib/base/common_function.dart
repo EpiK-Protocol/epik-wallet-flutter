@@ -312,8 +312,14 @@ abstract class BaseFuntion {
 
   ///返回appbar高度，也就是导航栏高度
   double getAppBarHeight() {
-    appbarheight = 45; //kToolbarHeight;
+    if(appbarheight==0)
+      appbarheight = 45; //kToolbarHeight;
     return appbarheight;
+  }
+
+  setAppBarHeight(double h)
+  {
+    appbarheight = h;
   }
 
   ///返回屏幕宽度

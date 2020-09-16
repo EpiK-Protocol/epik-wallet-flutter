@@ -13,6 +13,7 @@ import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/list_view.dart';
+import 'package:epikwallet/widget/text/diff_scale_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -37,6 +38,8 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
   void initState() {
     super.initState();
   }
+
+  String balance = "0";
 
   List<CurrencyAsset> data_list_item = [];
 
@@ -225,10 +228,18 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                       ),
                     ),
                   ),
-                  Text(
-                    StringUtils.formatNumAmount(
-                        AccountMgr().currentAccount.total_usd, point: 2),
-                    style: TextStyle(
+//                  Text(
+//                    StringUtils.formatNumAmount(
+//                        AccountMgr().currentAccount.total_usd, point: 2),
+//                    style: TextStyle(
+//                      color: Colors.white,
+//                      fontSize: 40,
+//                      fontFamily: "DIN_Condensed_Bold",
+//                    ),
+//                  ),
+                  DiffScaleText(
+                    text: balance,
+                    textStyle:TextStyle(
                       color: Colors.white,
                       fontSize: 40,
                       fontFamily: "DIN_Condensed_Bold",
@@ -666,6 +677,8 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     EpikWalletUtils.requestBalance(AccountMgr().currentAccount).then((value) {
       isLoading = false;
       data_list_item = AccountMgr().currentAccount.currencyList;
+      balance = StringUtils.formatNumAmount(
+          AccountMgr().currentAccount.total_usd, point: 2);
       closeStateLayout();
     });
   }
@@ -683,6 +696,8 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     setState(() {
       isLoading = false;
       data_list_item = AccountMgr().currentAccount.currencyList;
+      balance = StringUtils.formatNumAmount(
+          AccountMgr().currentAccount.total_usd, point: 2);
     });
   }
 

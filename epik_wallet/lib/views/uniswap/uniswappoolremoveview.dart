@@ -4,6 +4,7 @@ import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
+import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
@@ -223,9 +224,20 @@ class UniswapPoolRemoveViewState
           ],
         ),
       ),
-
       Container(
-        padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+        width: double.infinity,
+        margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
+        child:  Text(
+          "Gas fee : ${widget.walletAccount.eth_suggestGas} eth",
+          style: TextStyle(
+            color: Colors.black45,
+            fontSize: 12,
+          ),
+        ),
+      ),
+      Container(
+        width: double.infinity,
+        padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
         child: Text(
           "1 ${cs_A.symbol} = ${StringUtils.formatNumAmount(widget.uniswapinfo.price_USDT_EPK, point: 8, supply0: false)} ${cs_B.symbol}",
           style: TextStyle(
@@ -235,7 +247,8 @@ class UniswapPoolRemoveViewState
         ),
       ),
       Container(
-        padding: EdgeInsets.fromLTRB(20, 10, 20, 20),
+        width: double.infinity,
+        padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
         child: Text(
           "1 ${cs_B.symbol} = ${StringUtils.formatNumAmount(widget.uniswapinfo.price_EPK_USDT, point: 8, supply0: false)} ${cs_A.symbol}",
           style: TextStyle(
@@ -355,6 +368,18 @@ class UniswapPoolRemoveViewState
         if (StringUtils.isNotEmpty(ret)) {
 
           DeviceUtils.copyText(ret);
+
+          widget?.walletAccount?.uhMgr?.addOrder(UniswapOrder(
+            hash: ret,
+            state:0,// 等待
+            type:2,//  撤回
+            time:DateTime.now().toUtc().millisecondsSinceEpoch,///utc时间 毫秒
+            token_a:cs_A.symbol,
+            token_b:cs_B.symbol,
+            amount_a:StringUtils.formatNumAmount(amount_A,point: 8,supply0: false).replaceAll(",", ""),
+            amount_b:StringUtils.formatNumAmount(amount_B,point: 8,supply0: false).replaceAll(",", ""),
+          ));
+          widget?.walletAccount?.uhMgr?.save();
 
           MessageDialog.showMsgDialog(
             context,

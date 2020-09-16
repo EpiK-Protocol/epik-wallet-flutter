@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:epikplugin/epikplugin.dart';
+import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
 import 'package:epikwallet/logic/api/api_testnet.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
@@ -138,7 +139,7 @@ class EpikWalletUtils {
       waccount.total_btc = total_btc;
     }
 
-    eventMgr.send(EventTag.BALANCE_UPDATE,waccount);
+    eventMgr.send(EventTag.BALANCE_UPDATE, waccount);
 
     return map;
   }
@@ -203,6 +204,11 @@ class WalletAccount {
   HdWallet hdwallet;
   EpikWallet epikWallet;
 
+  String eth_suggestGas = "";
+  UniswapInfo uniswapinfo;
+
+  UniswapHistoryMgr uhMgr;
+
   WalletAccount();
 
   WalletAccount.fromJson(Map<String, dynamic> json) {
@@ -236,14 +242,10 @@ class WalletAccount {
   double total_usd = 0;
   double total_btc = 0;
 
-  CurrencyAsset getCurrencyAssetByCs(CurrencySymbol cs)
-  {
-    if(currencyList!=null)
-    {
-      for(CurrencyAsset ca in currencyList)
-      {
-        if(ca!=null && ca.cs == cs)
-        {
+  CurrencyAsset getCurrencyAssetByCs(CurrencySymbol cs) {
+    if (currencyList != null) {
+      for (CurrencyAsset ca in currencyList) {
+        if (ca != null && ca.cs == cs) {
           return ca;
         }
       }
@@ -251,4 +253,19 @@ class WalletAccount {
     return null;
   }
 
+  Future<String> uploadSuggestGas() async {
+    String gas = await hdwallet?.suggestGas();
+    if (gas != null) {
+      eth_suggestGas = gas;
+    }
+    eventMgr.send(EventTag.UPLOAD_SUGGESTGAS, eth_suggestGas);
+    return gas;
+  }
+
+  Future<UniswapInfo> uploadUniswapInfo() async {
+    UniswapInfo _uniswapinfo = await hdwallet?.uniswapinfo(hd_eth_address);
+    uniswapinfo = _uniswapinfo;
+    eventMgr.send(EventTag.UPLOAD_UNISWAPINFO, uniswapinfo);
+    return uniswapinfo;
+  }
 }

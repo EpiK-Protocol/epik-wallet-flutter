@@ -347,4 +347,24 @@ class HdWallet {
     }
     return null;
   }
+
+  /// uniswap gas
+  Future<String> suggestGas() async {
+    try {
+      return await EpikPlugin.channel.invokeMethod("hd_wallet_suggestgas");
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// uniswap gas price
+  Future<String> suggestGasPrice() async {
+    try {
+      return await EpikPlugin.channel.invokeMethod("hd_wallet_suggestgasprice");
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
 }

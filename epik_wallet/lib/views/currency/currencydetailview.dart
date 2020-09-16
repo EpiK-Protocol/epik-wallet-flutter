@@ -15,6 +15,7 @@ import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/list_view.dart';
+import 'package:epikwallet/widget/text/diff_scale_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -44,6 +45,8 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   GlobalKey<ListPageState> key_scroll = GlobalKey();
 
   double header_alpha = 0;
+
+  String balance="　";
 
   ColorTween header_colortween =
       ColorTween(begin: Colors.white, end: Colors.black);
@@ -76,6 +79,12 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     isTopFloatWidgetShow = true;
     setAppBarTitle(widget.currencyAsset.symbol);
     setBackIconHinde(isHinde: false);
+
+    Future.delayed(Duration(milliseconds: 200)).then((_){
+      setState(() {
+        balance = StringUtils.formatNumAmount(widget.currencyAsset.balance,point:8,supply0: false );
+      });
+    });
   }
 
   SystemUiOverlayStyle oldSystemUiOverlayStyle;
@@ -334,9 +343,17 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
 //                                ),
 //                              ),
 //                            ),
-                            Text(
-                              widget.currencyAsset.balance,
-                              style: TextStyle(
+//                            Text(
+//                              StringUtils.formatNumAmount(widget.currencyAsset.balance,point:8,supply0: false ),
+//                              style: TextStyle(
+//                                color: Colors.white,
+//                                fontSize: 35,
+//                                fontFamily: "DIN_Condensed_Bold",
+//                              ),
+//                            ),
+                            DiffScaleText(
+                              text: balance,
+                              textStyle: TextStyle(
                                 color: Colors.white,
                                 fontSize: 35,
                                 fontFamily: "DIN_Condensed_Bold",

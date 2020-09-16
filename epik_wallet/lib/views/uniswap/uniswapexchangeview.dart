@@ -4,6 +4,7 @@ import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
+import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
@@ -12,10 +13,13 @@ import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
+import 'package:epikwallet/views/viewgoto.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
 
 class UniswapExchangeView extends BaseInnerWidget {
   // 可能是空
@@ -36,12 +40,20 @@ class UniswapExchangeView extends BaseInnerWidget {
 
 class UniswapExchangeViewState
     extends BaseInnerWidgetState<UniswapExchangeView> {
+
+  double slippage = 0.1;
+
+  Color color_btn_1 = ResColor.main_1; //Colors.pinkAccent[100];
+  Color color_btn_2 = Colors.blue;
+
+  CurrencySymbol cs_A, cs_B;
+
   CurrencySymbol cs_from = CurrencySymbol.EPKerc20;
   CurrencySymbol cs_to = CurrencySymbol.USDT;
 
   String text_from = "";
   double amount_form = 0;
-  String text_to = "0.0";
+  String text_to = "";
   TextEditingController _tec_from;
 
   Amounts calc_amounts;
@@ -50,12 +62,18 @@ class UniswapExchangeViewState
   void initStateConfig() {
     super.initStateConfig();
     bodyBackgroundColor = Colors.transparent;
+
+    cs_A = CurrencySymbol.EPKerc20;
+    cs_B = CurrencySymbol.USDT;
   }
 
   @override
   void onCreate() {
     super.onCreate();
     eventMgr.add(EventTag.BALANCE_UPDATE, eventCallback_balance);
+    eventMgr.add(EventTag.UPLOAD_SUGGESTGAS, eventCallback);
+    eventMgr.add(EventTag.UPLOAD_UNISWAPINFO, eventCallback);
+    refresh();
   }
 
   eventCallback_balance(obj) {
@@ -63,15 +81,31 @@ class UniswapExchangeViewState
       setState(() {});
     }
   }
+  eventCallback(obj)
+  {
+    setState(() {});
+  }
 
   @override
   void dispose() {
     eventMgr.remove(EventTag.BALANCE_UPDATE, eventCallback_balance);
+    eventMgr.remove(EventTag.UPLOAD_SUGGESTGAS, eventCallback);
+    eventMgr.remove(EventTag.UPLOAD_UNISWAPINFO, eventCallback);
     super.dispose();
+  }
+
+  refresh()
+  {
+    widget.walletAccount.uploadSuggestGas();
+    widget.walletAccount.uploadUniswapInfo();
   }
 
   @override
   Widget buildWidget(BuildContext context) {
+
+    Color exchanegBtnColor = (amount_form!=0 && calc_amounts!=null) ?color_btn_2 :color_btn_1;
+    String btn_text = (amount_form!=0 && calc_amounts!=null) ?"兑换":"预估";
+
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.all(0),
@@ -85,7 +119,7 @@ class UniswapExchangeViewState
           children: <Widget>[
             Container(
               width: double.infinity,
-              margin: EdgeInsets.fromLTRB(20, 30, 20, 0),
+              margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
               child: Card(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
@@ -110,6 +144,50 @@ class UniswapExchangeViewState
                     ),
                     getTo(),
                     Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                      child:  Text(
+                        "Gas fee : ${widget.walletAccount.eth_suggestGas} eth",
+                        style: TextStyle(
+                          color: Colors.black45,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.fromLTRB(20, 5, 20, 0),
+                      child:  Text(
+                        "Slippage tolerance : ${StringUtils.formatNumAmount(slippage*100,point: 2,supply0: false)}%",
+                        style: TextStyle(
+                          color: Colors.black45,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
+                      child: Text(
+                        "1 ${cs_A.symbol} = ${StringUtils.formatNumAmount(widget?.walletAccount?.uniswapinfo?.price_USDT_EPK ?? 0, point: 8, supply0: false)} ${cs_B.symbol}",
+                        style: TextStyle(
+                          color: Colors.black45,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
+                      child: Text(
+                        "1 ${cs_B.symbol} = ${StringUtils.formatNumAmount(widget?.walletAccount?.uniswapinfo?.price_EPK_USDT??0, point: 8, supply0: false)} ${cs_A.symbol}",
+                        style: TextStyle(
+                          color: Colors.black45,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    Container(
                       margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
                       width: double.infinity,
                       height: 40,
@@ -120,14 +198,14 @@ class UniswapExchangeViewState
                           onClickExchange();
                         },
                         child: Text(
-                          "兑换",
+                          btn_text,//"兑换",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
                           ),
                         ),
-                        color: color_btn_1,
+                        color: exchanegBtnColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),
@@ -137,13 +215,27 @@ class UniswapExchangeViewState
                 ),
               ),
             ),
+            Container(
+              padding: EdgeInsets.fromLTRB(40, 20, 40, 0),
+              child: InkWell(
+                onTap: () {
+                  onClickReadme();
+                },
+                child: Text(
+                  "使用说明(新手必读)",
+                  style: TextStyle(
+                    color: ResColor.main_1,
+                    fontSize: 14,
+                    decoration: TextDecoration.underline, //下滑线
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
-
-  Color color_btn_1 = ResColor.main_1;//Colors.pinkAccent[100];
 
   Widget getFrom() {
     if (_tec_from == null)
@@ -227,6 +319,7 @@ class UniswapExchangeViewState
                       onChanged: (value) {
                         text_from = _tec_from.text.trim();
                         amount_form = StringUtils.parseDouble(text_from, 0);
+                        onInputFrom();
                       },
                     ),
                   ),
@@ -243,6 +336,8 @@ class UniswapExchangeViewState
                         text_from =
                             (getBalance(cs_from) ?? "").replaceAll(",", "");
                         _tec_from.text = text_from;
+                        amount_form = StringUtils.parseDouble(text_from, 0);
+                        onInputFrom();
                       });
                     },
                     child: Text(
@@ -287,6 +382,9 @@ class UniswapExchangeViewState
   }
 
   Widget getTo() {
+
+    Color calc_color = (calc_amounts==null&&amount_form!=0)? color_btn_2: color_btn_1;
+
     return Container(
       margin: EdgeInsets.fromLTRB(20, 10, 20, 20),
       width: double.infinity,
@@ -332,36 +430,36 @@ class UniswapExchangeViewState
                   child: Container(
                     margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                     child: Text(
-                      text_to,
-                      style: TextStyle(fontSize: 16, color: Colors.black87),
+                      StringUtils.isNotEmpty(text_to)?text_to :"需要预估数量",
+                      style: TextStyle(fontSize: 16, color: StringUtils.isNotEmpty(text_to)?Colors.black87:Colors.black54),
                     ),
                   ),
                 ),
-                Container(
-                  width: 35,
-                  height: 22,
-                  child: OutlineButton(
-                    padding: EdgeInsets.all(0),
-                    highlightColor: color_btn_1.withOpacity(0.1),
-                    splashColor: Colors.white24,
-                    onPressed: () {
-                      calcToAmount();
-                    },
-                    child: Text(
-                      "预估",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: color_btn_1,
-                        fontSize: 12,
-                      ),
-                    ),
-                    borderSide: BorderSide(color: color_btn_1),
-                    highlightedBorderColor: color_btn_1,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(4)),
-                    ),
-                  ),
-                ),
+//                Container(
+//                  width: 35,
+//                  height: 22,
+//                  child: OutlineButton(
+//                    padding: EdgeInsets.all(0),
+//                    highlightColor: color_btn_1.withOpacity(0.1),
+//                    splashColor: Colors.white24,
+//                    onPressed: () {
+//                      calcToAmount();
+//                    },
+//                    child: Text(
+//                      "预估",
+//                      textAlign: TextAlign.center,
+//                      style: TextStyle(
+//                        color:calc_color,
+//                        fontSize: 12,
+//                      ),
+//                    ),
+//                    borderSide: BorderSide(color:calc_color),
+//                    highlightedBorderColor: calc_color,
+//                    shape: RoundedRectangleBorder(
+//                      borderRadius: BorderRadius.all(Radius.circular(4)),
+//                    ),
+//                  ),
+//                ),
                 Container(
                   width: 5,
                 ),
@@ -398,6 +496,9 @@ class UniswapExchangeViewState
 //    text_to = old_text_from;
 //    _tec_from.text = text_from;
 
+    calc_amounts = null;
+    text_to="";
+
     setState(() {});
   }
 
@@ -429,7 +530,8 @@ class UniswapExchangeViewState
     }
 
     closeInput();
-    showLoadDialog("", onShow: () async {
+    showLoadDialog("正在预估数量...", onShow: () async {
+      widget.walletAccount.uploadSuggestGas();//预估的同时 刷新gas
       Amounts amounts = await widget.walletAccount.hdwallet
           .uniswapGetAmountsOut(
               cs_from.symbolToNetWork, cs_to.symbolToNetWork, text_from.trim());
@@ -454,9 +556,82 @@ class UniswapExchangeViewState
     });
   }
 
-  onInputFrom() {}
+  onInputFrom() {
+
+    if(calc_amounts!=null && calc_amounts.AmountIn_d != amount_form)
+    {
+      calc_amounts = null;
+      text_to="";
+    }
+    setState(() {
+    });
+  }
 
   onInputTo() {}
+
+  onClickReadme() {
+    final String address = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
+
+    final TapGestureRecognizer recognizer_1 = TapGestureRecognizer();
+    final TapGestureRecognizer recognizer_2 = TapGestureRecognizer();
+
+    final YYDialog yydialog = MessageDialog.showMsgDialog(
+      context,
+      title: "EpiK提醒您",
+      btnRight: "知道了",
+      onClickBtnRight: (dialog) {
+        dialog.dismiss();
+      },
+      extend: Container(
+        padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+        child: RichText(
+          text: TextSpan(
+            text:
+                "「1」本页兑换交易是基于Uniswap的ERC20-EPK与USDT交易\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
+            style: TextStyle(
+              color: Color(0xff333333),
+              fontSize: 14.0,
+            ),
+            children: <TextSpan>[
+              TextSpan(
+                text: address,
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 14.0,
+//                  decoration: TextDecoration.underline,
+                ),
+                recognizer: recognizer_1,
+              ),
+              TextSpan(
+                text: "\n\n「4」新手操作说明请点击",
+              ),
+              TextSpan(
+                text: "这里",
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 14.0,
+//                  decoration: TextDecoration.underline,
+                ),
+                recognizer: recognizer_2,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    recognizer_1.onTap = () async {
+      yydialog.dismiss();
+      ViewGT.showGeneralWebView(
+          context, "合约", "https://cn.etherscan.com/address/${address}");
+    };
+
+    recognizer_2.onTap = () async {
+      yydialog.dismiss();
+      // todo 需要改地址
+      ViewGT.showGeneralWebView(context, "使用说明", "https://epik-protocol.io/");
+    };
+  }
 
   onClickExchange() {
     if (widget?.walletAccount?.hdwallet == null) {
@@ -475,7 +650,7 @@ class UniswapExchangeViewState
     }
 
     if (calc_amounts == null || calc_amounts.AmountIn_d != amount_form) {
-      showToast("需要先计算预估");
+//      showToast("需要先计算预估");
       calcToAmount();
       return;
     }
@@ -497,7 +672,7 @@ class UniswapExchangeViewState
             cs_from.symbolToNetWork, // from币种
             cs_to.symbolToNetWork, // to币种
             text_from.trim(), // from数量
-            "${calc_amounts.AmountOut_d * 0.9}", // , // to 期望兑换到的最少数量
+            "${calc_amounts.AmountOut_d * (1-slippage)}", // , // to 期望兑换到的最少数量
             "${DateTime.now().toUtc().millisecondsSinceEpoch / 1000 + 20 * 60}", // 最晚成交时间 时间戳 秒
           );
 
@@ -508,10 +683,22 @@ class UniswapExchangeViewState
 
           if (StringUtils.isNotEmpty(ret)) {
 
+            widget?.walletAccount?.uhMgr?.addOrder(UniswapOrder(
+              hash: ret,
+              state:0,// 等待
+              type:0,// 兑换
+              time:DateTime.now().toUtc().millisecondsSinceEpoch,///utc时间 毫秒
+              token_a:cs_from.symbol,
+              token_b:cs_to.symbol,
+              amount_a:text_from,
+              amount_b:text_to,
+            ));
+            widget?.walletAccount?.uhMgr?.save();
+
             setState(() {
-              text_from="";
-              _tec_from.text="";
-              amount_form=0;
+              text_from = "";
+              _tec_from.text = "";
+              amount_form = 0;
               text_to = "0.0";
             });
 
@@ -520,7 +707,7 @@ class UniswapExchangeViewState
             MessageDialog.showMsgDialog(
               context,
               title: "兑换已提交",
-              msg: ret+"\n已复制",
+              msg: ret + "\n已复制",
               btnRight: "确定",
               onClickBtnRight: (dialog) {
                 dialog.dismiss();

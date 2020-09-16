@@ -4,6 +4,7 @@ import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/views/uniswap/uniswapexchangeview.dart';
 import 'package:epikwallet/views/uniswap/uniswappoolview.dart';
+import 'package:epikwallet/views/viewgoto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -32,9 +33,12 @@ class UniswapViewState extends BaseWidgetState<UniswapView> with TickerProviderS
     setBackIconHinde();
     setTopBarVisible(false);
     setAppBarVisible(false);
+    setAppBarHeight(60);
     setAppBarBackColor(Colors.transparent);
     setTopBarBackColor(Colors.transparent);
     isTopFloatWidgetShow = true;
+
+    setAppBarRightTitle("交易记录");
 
     _tabController = new TabController(
         initialIndex: pageIndex, length: 2, vsync: this);
@@ -63,6 +67,16 @@ class UniswapViewState extends BaseWidgetState<UniswapView> with TickerProviderS
     );
   }
 
+
+  @override
+  Widget getAppBarRight({Color color}) {
+    return InkWell(
+      onTap: (){
+        ViewGT.showUniswaporderlistView(context, widget.walletAccount);
+      },
+      child: super.getAppBarRight(color: color),
+    );
+  }
 
   @override
   Widget getAppBarCenter({Color color}) {

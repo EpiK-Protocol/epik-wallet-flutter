@@ -82,7 +82,7 @@ class _GeneralWebViewState extends BaseWidgetState<GeneralWebView> {
     // TODO: implement onCreate
     dlog("onCreate");
     last = DeviceUtils.system_bar_current;
-    DeviceUtils.setSystemBarStyle(DeviceUtils.system_bar_light);
+    DeviceUtils.setSystemBarStyle(DeviceUtils.system_bar_dark);
   }
 
   @override

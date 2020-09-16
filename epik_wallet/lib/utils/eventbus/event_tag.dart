@@ -23,4 +23,9 @@ enum EventTag {
 
   UNISWAP_ADD,
   UNISWAP_REMOVE,
+
+  // 已刷新eth合约gas
+  UPLOAD_SUGGESTGAS,
+  // 已刷新uniswap信息
+  UPLOAD_UNISWAPINFO,
 }

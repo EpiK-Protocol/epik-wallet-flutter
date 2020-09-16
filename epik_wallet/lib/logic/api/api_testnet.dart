@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/prices.dart';
 import 'package:epikwallet/utils/Dlog.dart';
@@ -85,5 +86,11 @@ class ApiTestNet {
       ret = _last_prices;
     }
     return ret;
+  }
+
+  static Future<HttpJsonRes> checkUniswapOrder(UniswapOrder order) {
+//    https://tx.epik-protocol.io/api?module=transaction&action=getstatus&txhash=0x182a8257c552c79ba36d628f123f47bbcfda55482735d4ce433d97ddae1ea01a
+    String url ="https://tx.epik-protocol.io/api?module=transaction&action=getstatus&txhash=${order.hash}";
+    return HttpUtil.instance.requestJson(true, url, null);
   }
 }

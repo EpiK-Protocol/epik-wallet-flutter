@@ -279,6 +279,16 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
                             ret = currentHdWallet.uniswapRemoveLiquidity(address, tokenA, tokenB, liquidity, amountAMin, amountBMin, deadline);
                             break;
                         }
+                        case "hd_wallet_suggestgas":
+                        {
+                            ret = currentHdWallet.suggestGas();
+                            break;
+                        }
+                        case "hd_wallet_suggestgasprice":
+                        {
+                            ret = currentHdWallet.suggestGasPrice();
+                            break;
+                        }
                         // epik.Epik ------------------------------------------------------------epik.Epik
                         case "epik_epik_newWallet":
                         {

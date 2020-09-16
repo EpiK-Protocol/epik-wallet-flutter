@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
+import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
@@ -150,6 +151,8 @@ class AccountMgr {
             account_list.insert(0, account);
           }
           save();
+          print("set AccountMgr");
+          account.uhMgr = UniswapHistoryMgr(account.hd_eth_address);
           eventMgr.send(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, account);
         }
       } catch (e) {

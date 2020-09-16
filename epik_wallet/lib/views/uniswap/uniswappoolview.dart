@@ -1,6 +1,7 @@
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
+import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/data/date_util.dart';
@@ -10,8 +11,10 @@ import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
 
 class UniswapPoolView extends BaseInnerWidget {
   // 可能是空
@@ -49,54 +52,62 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
 
     eventMgr.add(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventcallback_account);
     eventMgr.add(EventTag.UNISWAP_ADD, eventcallback_add_remove);
-    eventMgr.add(EventTag.UNISWAP_REMOVE,eventcallback_add_remove);
+    eventMgr.add(EventTag.UNISWAP_REMOVE, eventcallback_add_remove);
+    eventMgr.add(EventTag.UPLOAD_UNISWAPINFO, eventcallback_uniswapinfo);
 
     refresh();
   }
 
   @override
   void dispose() {
-
-    eventMgr.remove(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventcallback_account);
+    eventMgr.remove(
+        EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventcallback_account);
     eventMgr.remove(EventTag.UNISWAP_ADD, eventcallback_add_remove);
     eventMgr.remove(EventTag.UNISWAP_REMOVE, eventcallback_add_remove);
+    eventMgr.remove(EventTag.UPLOAD_UNISWAPINFO, eventcallback_uniswapinfo);
     super.dispose();
   }
 
-  eventcallback_account(arg) async{
+  eventcallback_account(arg) async {
     await Future.delayed(Duration(milliseconds: 1000));
     refresh();
   }
 
-  eventcallback_add_remove(arg){
+  eventcallback_add_remove(arg) {
     refresh();
+  }
+
+  eventcallback_uniswapinfo(arg) {
+    loading = false;
+    this.uniswapinfo = arg;
+    dlog("uniswapinfo share=${uniswapinfo.Share} UNI=${uniswapinfo.UNI}");
+    setState(() {});
   }
 
   bool loading = false;
 
   refresh() {
-
     dlog("refresh walletAccount=${widget.walletAccount.account}");
 
-    if(loading)
-      return;
+    if (loading) return;
 
     if (widget.walletAccount != null) {
       setState(() {
         loading = true;
       });
 
-      HdWallet _hdwallet = widget?.walletAccount?.hdwallet;
-      _hdwallet
-          .uniswapinfo(widget.walletAccount.hd_eth_address)
-          .then((uniswapinfo) {
-        loading = false;
-        if (_hdwallet == widget?.walletAccount?.hdwallet) {
-          this.uniswapinfo = uniswapinfo;
-          dlog("uniswapinfo share=${uniswapinfo.Share} UNI=${uniswapinfo.UNI}");
-        }
-        setState(() {});
-      });
+//      HdWallet _hdwallet = widget?.walletAccount?.hdwallet;
+//      _hdwallet
+//          .uniswapinfo(widget.walletAccount.hd_eth_address)
+//          .then((uniswapinfo) {
+//        loading = false;
+//        if (_hdwallet == widget?.walletAccount?.hdwallet) {
+//          this.uniswapinfo = uniswapinfo;
+//          dlog("uniswapinfo share=${uniswapinfo.Share} UNI=${uniswapinfo.UNI}");
+//        }
+//        setState(() {});
+//      });
+      widget.walletAccount.uploadUniswapInfo();
     }
   }
 
@@ -115,7 +126,7 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
           children: <Widget>[
             Container(
               width: double.infinity,
-              margin: EdgeInsets.fromLTRB(20, 30, 20, 0),
+              margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
               child: Card(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
@@ -182,6 +193,22 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
                     ),
                     getUserLiquidity(),
                   ],
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(40, 20, 40, 0),
+              child: InkWell(
+                onTap: () {
+                  onClickReadme();
+                },
+                child: Text(
+                  "使用说明(新手必读)",
+                  style: TextStyle(
+                    color: ResColor.main_1,
+                    fontSize: 14,
+                    decoration: TextDecoration.underline, //下滑线
+                  ),
                 ),
               ),
             ),
@@ -428,6 +455,71 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
       return;
     }
 
-    ViewGT.showUniswapPoolRemoveView(context, widget.walletAccount,uniswapinfo);
+    ViewGT.showUniswapPoolRemoveView(
+        context, widget.walletAccount, uniswapinfo);
+  }
+
+  onClickReadme() {
+    final String address = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
+
+    final TapGestureRecognizer recognizer_1 = TapGestureRecognizer();
+    final TapGestureRecognizer recognizer_2 = TapGestureRecognizer();
+
+    final YYDialog yydialog = MessageDialog.showMsgDialog(
+      context,
+      title: "EpiK提醒您",
+      btnRight: "知道了",
+      onClickBtnRight: (dialog) {
+        dialog.dismiss();
+      },
+      extend: Container(
+        padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+        child: RichText(
+          text: TextSpan(
+            text:
+                "「1」本页资金池交易是基于Uniswap的ERC20-EPK与USDT的流动性支持\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
+            style: TextStyle(
+              color: Color(0xff333333),
+              fontSize: 14.0,
+            ),
+            children: <TextSpan>[
+              TextSpan(
+                text: address,
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 14.0,
+//                  decoration: TextDecoration.underline,
+                ),
+                recognizer: recognizer_1,
+              ),
+              TextSpan(
+                text: "\n\n「4」新手操作说明请点击",
+              ),
+              TextSpan(
+                text: "这里",
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 14.0,
+//                  decoration: TextDecoration.underline,
+                ),
+                recognizer: recognizer_2,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    recognizer_1.onTap = () async {
+      yydialog.dismiss();
+      ViewGT.showGeneralWebView(
+          context, "合约", "https://cn.etherscan.com/address/${address}");
+    };
+
+    recognizer_2.onTap = () async {
+      yydialog.dismiss();
+      // todo 需要改地址
+      ViewGT.showGeneralWebView(context, "使用说明", "https://epik-protocol.io/");
+    };
   }
 }

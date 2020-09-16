@@ -8,6 +8,7 @@ import 'package:epikwallet/views/currency/currencywithdrawview.dart';
 import 'package:epikwallet/views/mining/miningprofitview.dart';
 import 'package:epikwallet/views/mining/miningsignupview.dart';
 import 'package:epikwallet/views/qrcode/qrcodescanview.dart';
+import 'package:epikwallet/views/uniswap/uniswaporderlistview.dart';
 import 'package:epikwallet/views/uniswap/uniswappooladdview.dart';
 import 'package:epikwallet/views/uniswap/uniswappoolremoveview.dart';
 import 'package:epikwallet/views/uniswap/uniswapview.dart';
@@ -133,5 +134,12 @@ class ViewGT {
   {
     showView(context,UniswapPoolRemoveView(walletAccount,uniswapinfo));
   }
+
+  ///
+  static showUniswaporderlistView(BuildContext context, WalletAccount walletAccount)
+  {
+    showView(context,UniswaporderlistView(walletAccount));
+  }
+
 
 }
