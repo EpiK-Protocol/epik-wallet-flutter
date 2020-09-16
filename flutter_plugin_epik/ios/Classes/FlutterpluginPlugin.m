@@ -117,6 +117,24 @@
             }else{
                 err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
             }
+        }else if ([@"hd_wallet_suggestgas" isEqualToString:call.method]) {
+            if (self->_hdWallet){
+                NSString *gas = [self->_hdWallet suggestGas:&err];
+                if (!err) {
+                    resultSync(gas);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"hd_wallet_suggestgasprice" isEqualToString:call.method]) {
+            if (self->_hdWallet){
+                NSString *price = [self->_hdWallet suggestGasPrice:&err];
+                if (!err) {
+                    resultSync(price);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
         }else if ([@"hd_wallet_transactions" isEqualToString:call.method]) {
             if (self->_hdWallet){
                 NSString *txs = [self->_hdWallet transactions:arguments[@"address"] currency:arguments[@"currency"] page:[arguments[@"page"] intValue] offset:[arguments[@"offset"] intValue] asc:[arguments[@"asc"] boolValue] error:&err];

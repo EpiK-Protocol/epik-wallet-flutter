@@ -82,6 +82,14 @@
  */
 - (NSData* _Nullable)signText:(NSString* _Nullable)address text:(NSString* _Nullable)text error:(NSError* _Nullable* _Nullable)error;
 /**
+ * SuggestGas ...
+ */
+- (NSString* _Nonnull)suggestGas:(NSError* _Nullable* _Nullable)error;
+/**
+ * SuggestGasPrice ...
+ */
+- (NSString* _Nonnull)suggestGasPrice:(NSError* _Nullable* _Nullable)error;
+/**
  * TokenBalance ...
  */
 - (NSString* _Nonnull)tokenBalance:(NSString* _Nullable)address currency:(NSString* _Nullable)currency error:(NSError* _Nullable* _Nullable)error;
@@ -125,10 +133,6 @@
 
 // skipped const USDT with unsupported type: github.com/EpiK-Protocol/epik-wallet-golib/hd.currencyType
 
-
-FOUNDATION_EXPORT NSString* _Nonnull EPIK_HdBigIntDiv(NSString* _Nullable balance, long decimals);
-
-FOUNDATION_EXPORT NSString* _Nonnull EPIK_HdBigIntMul(NSString* _Nullable balance, long decimals);
 
 /**
  * NewFromMnemonic ...
