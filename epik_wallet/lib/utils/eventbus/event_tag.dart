@@ -28,4 +28,6 @@ enum EventTag {
   UPLOAD_SUGGESTGAS,
   // 已刷新uniswap信息
   UPLOAD_UNISWAPINFO,
+  // 服务配置已更新
+  UPDATE_SERVER_CONFIG,
 }

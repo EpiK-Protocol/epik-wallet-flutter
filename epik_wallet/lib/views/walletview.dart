@@ -61,6 +61,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     super.onCreate();
     eventMgr.add(EventTag.LOCAL_ACCOUNT_LIST_CHANGE, eventCallback_account);
     eventMgr.add(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
+    eventMgr.add(EventTag.UPDATE_SERVER_CONFIG, eventCallback_account);
     refresh();
   }
 
@@ -73,6 +74,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     eventMgr.remove(EventTag.LOCAL_ACCOUNT_LIST_CHANGE, eventCallback_account);
     eventMgr.remove(
         EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
+    eventMgr.remove(EventTag.UPDATE_SERVER_CONFIG, eventCallback_account);
     super.dispose();
   }
 

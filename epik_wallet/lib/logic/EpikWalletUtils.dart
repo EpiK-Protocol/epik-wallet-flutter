@@ -15,17 +15,14 @@ import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 
 class EpikWalletUtils {
+  static final String TAG = "EpikWalletUtils";
+
   /// 创建钱包 并且初始化
   static Future<bool> initWalletAccount(WalletAccount waccount) async {
     try {
       // 助记词创建HD钱包,  ETH = hdwallet.balance
       HdWallet hdwallet = await HD.newFromMnemonic(waccount.mnemonic);
       hdwallet.seed = await HD.seedFromMnemonic(waccount.mnemonic); //助记词 转种子
-
-      // hd 设置RPC地址
-//      await hdwallet.setRPC(ServiceInfo.hd_RpcUrl);
-      // hd 设置测试rpc地址
-      await hdwallet.setRPC(ServiceInfo.hd_RpcUrl_test);
 
       // ETH path
       String hdwallet_eth_path = await Bip44Path.getPath("ETH");
@@ -36,22 +33,30 @@ class EpikWalletUtils {
       EpikWallet epikWallet =
           await Epik.newWalletFromSeed(hdwallet.seed, t: "bls");
 
-      // epik 设置RPC地址
-      await epikWallet.setRPC(
-          ServiceInfo.epik_RpcUrl, ServiceInfo.epik_RpcUrl_token);
-
       //    EPK-ERC20 = hd.tokenbalance("EPK")
       //    USDT = hd.tokenbalance("USDT")
-
       waccount.hd_eth_address = eth_address;
       waccount.epik_tEPK_address = epikWallet.address;
       waccount.hdwallet = hdwallet;
       waccount.epikWallet = epikWallet;
+
+      await setWalletConfig(waccount);
+
       return true;
     } catch (e) {
       print(e);
     }
     return false;
+  }
+
+  static Future setWalletConfig(WalletAccount waccount) async {
+    Dlog.p(TAG,
+        "setWalletConfig ${waccount.account} hd_RpcUrl=${ServiceInfo.hd_RpcUrl} epik_RpcUrl=${ServiceInfo.epik_RpcUrl} epik_RpcUrl_token${ServiceInfo.epik_RpcUrl_token}");
+    // hd 设置RPC地址
+    await waccount.hdwallet.setRPC(ServiceInfo.hd_RpcUrl);
+    // epik 设置RPC地址
+    await waccount.epikWallet
+        .setRPC(ServiceInfo.epik_RpcUrl, ServiceInfo.epik_RpcUrl_token);
   }
 
   static Future<Map<CurrencySymbol, String>> requestBalance(

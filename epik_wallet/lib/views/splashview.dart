@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:epikwallet/base/_base_widget.dart';
+import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/mainview.dart';
@@ -43,6 +44,7 @@ class _SplashViewState extends BaseWidgetState<SplashView>
       timer = null;
     });
   }
+
 
   @override
   void dispose() {

@@ -5,8 +5,7 @@ typedef YYDialogCallback = void Function(YYDialog dialog);
 
 // ignore: must_be_immutable
 class MessageDialog {
-  static YYDialog showMsgDialog(
-    BuildContext context, {
+  static YYDialog showMsgDialog(BuildContext context, {
     String title,
     String msg,
     Widget extend,
@@ -17,11 +16,16 @@ class MessageDialog {
     YYDialogCallback onClickBtnLeft,
     YYDialogCallback onClickBtnRight,
     bool touchOutClose = true,
+    bool backClose = true,
     YYDialogCallback onShow,
     YYDialogCallback onDismiss,
+    TextAlign msgAlign = TextAlign.left,
   }) {
     YYDialog dialog = YYDialog().build(context)
-      ..width = MediaQuery.of(context).size.width // dialog宽度
+      ..width = MediaQuery
+          .of(context)
+          .size
+          .width // dialog宽度
       ..margin = EdgeInsets.fromLTRB(50, 0, 50, 0) //外边距
       ..borderRadius = 10 // 圆角尺寸
       ..barrierColor = Colors.black54 //dialog 外部背景颜色
@@ -37,8 +41,10 @@ class MessageDialog {
       //        scale: Tween(begin: 0.7, end: 1.0).animate(animation),
       //      );
       return Transform.scale(
-          // 缩放
-          scale: Tween(begin: 0.7, end: 1.0).animate(animation).value, // 从0.7到1
+        // 缩放
+          scale: Tween(begin: 0.7, end: 1.0)
+              .animate(animation)
+              .value, // 从0.7到1
           child: Opacity(
             //透明度
             opacity: animation.value, // 0-1
@@ -59,6 +65,17 @@ class MessageDialog {
     // 顶部 h20 占位
     dialog.widget(Container(height: 20));
 
+    if(!backClose)
+    {
+      dialog.widget(WillPopScope(
+        onWillPop: () async {
+          print("MessageDialog WillPopScope false");
+          return false;
+        },
+        child: Container(),
+      ));
+    }
+
     // title
     if (title != null && title.isNotEmpty) {
       dialog.text(
@@ -78,12 +95,11 @@ class MessageDialog {
         fontSize: 14.0,
         padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
         alignment: Alignment.center,
-        textAlign: TextAlign.left,
+        textAlign: msgAlign,
       );
     }
 
-    if(extend != null)
-    {
+    if (extend != null) {
       dialog.widget(extend);
     }
 

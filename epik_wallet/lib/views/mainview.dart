@@ -2,8 +2,9 @@ import 'dart:io';
 
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
-import 'package:epikwallet/base/common_function.dart';
+import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
+import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/Upgrade.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
@@ -13,7 +14,6 @@ import 'package:epikwallet/utils/screen/screen_util.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
 import 'package:epikwallet/views/miningview.dart';
 import 'package:epikwallet/views/transactionview.dart';
-import 'package:epikwallet/views/uniswap/uniswapview.dart';
 import 'package:epikwallet/views/walletmenu.dart';
 import 'package:epikwallet/views/walletview.dart';
 import 'package:flutter/material.dart';
@@ -73,7 +73,8 @@ class _MainViewState extends BaseWidgetState<MainView> {
         backgroundColor: Colors.white,
         items: getBottomNavigationBarItems(),
         currentIndex: currentIndex,
-        selectedItemColor: ResColor.main,//Color(0xff000000),
+        selectedItemColor: ResColor.main,
+        //Color(0xff000000),
         unselectedItemColor: ResColor.main_2,
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
@@ -90,7 +91,8 @@ class _MainViewState extends BaseWidgetState<MainView> {
 
     return WillPopScope(
       onWillPop: () async {
-        if (closeRightDrawer()) return new Future.value(false);;
+        if (closeRightDrawer()) return new Future.value(false);
+        ;
 
         if (lastPopTime == null ||
             DateTime.now().difference(lastPopTime) > Duration(seconds: 1)) {
@@ -177,11 +179,9 @@ class _MainViewState extends BaseWidgetState<MainView> {
   }
 
   void _onItemTapped(int index) {
-
-    if(index==2){
-      if(AccountMgr().currentAccount==null)
-      {
-        index=1;
+    if (index == 2) {
+      if (AccountMgr().currentAccount == null) {
+        index = 1;
       }
     }
 
@@ -209,8 +209,8 @@ class _MainViewState extends BaseWidgetState<MainView> {
   }
 
   checkUpgrade() async {
-// 检测升级
-//    try {
+    // 检测升级
+    try {
 //      HttpJsonRes httpjsonres = await ApiUpgrade.getUpgrade();
 //      if (httpjsonres == null ||
 //          httpjsonres.code != 0 ||
@@ -221,51 +221,61 @@ class _MainViewState extends BaseWidgetState<MainView> {
 //          : httpjsonres.jsonMap["ios"];
 //      Upgrade upgrade = Upgrade.fromJson(json);
 //      await upgrade.checkVersion();
-//
-//      if (upgrade.needUpgrade) {
-//        showUpgradeDialog(upgrade);
-//      }
-//    } catch (e) {
-//      print(e);
-//    }
+      if (ServiceInfo.upgrade != null) {
+        Upgrade upgrade = ServiceInfo.upgrade;
+        await upgrade.checkVersion();
+        if (upgrade.needUpgrade) {
+          showUpgradeDialog(upgrade);
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
-//  showUpgradeDialog(Upgrade upgrade) {
-//    showMsgDialog(MsgDialogModel(
-//        title: "版本升级提示",
-//        message: upgrade.description,
-//        negativeText: upgrade.needRequired ? null : "取消",
-//        positiveText: "升级",
-//        needCloseBtn: !upgrade.needRequired,
-//        // 强制升级没有关闭
-//        onCloseEvent: () {
-//          if (!upgrade.needRequired) {
-//            showMsgDialog(null);
+  showUpgradeDialog(Upgrade upgrade) {
+    MessageDialog.showMsgDialog(
+      context,
+      title: "版本升级提示",
+      msg: upgrade.description,
+      msgAlign: TextAlign.center,
+      btnLeft: upgrade.needRequired ? null : "取消",
+      btnRight: "升级",
+      touchOutClose: !upgrade.needRequired,
+      backClose: !upgrade.needRequired,
+      onClickBtnLeft: (dialog) {
+        dialog.dismiss();
+      },
+      onClickBtnRight: (dialog) {
+        if (!upgrade.needRequired) {
+          dialog.dismiss();
+        }
+        if (Platform.isAndroid) {
+          // 外部下载
+          canLaunch(upgrade.upgrade_url).then((value) {
+            if (value) {
+              launch(upgrade.upgrade_url).then((value) {
+                print("upgrade launch = $value  url = ${upgrade.upgrade_url}");
+              });
+            }
+          });
+        } else if (Platform.isIOS) {
+          canLaunch(upgrade.upgrade_url).then((value) {
+            if (value) {
+              launch(upgrade.upgrade_url).then((value) {
+                print("upgrade launch = $value  url = ${upgrade.upgrade_url}");
+              });
+            }
+          });
+          // todo  去苹果商店
+//        String url = "http://itunes.apple.com/cn/lookup?id=项目包名";
+//        canLaunch(url).then((value) {
+//          if (value) {
+//            launch(url);
 //          }
-//        },
-//        onPositivePressEvent: () {
-//          if (!upgrade.needRequired) {
-//            showMsgDialog(null);
-//          }
-//          if (Platform.isAndroid) {
-//            // 外部下载
-//            canLaunch(upgrade.upgrade_url).then((value) {
-//              if (value) {
-//                launch(upgrade.upgrade_url).then((value) {
-//                  print(
-//                      "upgrade launch = $value  url = ${upgrade.upgrade_url}");
-//                });
-//              }
-//            });
-//          } else if (Platform.isIOS) {
-//            // todo  去苹果商店
-//            String url = "http://itunes.apple.com/cn/lookup?id=项目包名";
-//            canLaunch(url).then((value) {
-//              if (value) {
-//                launch(url);
-//              }
-//            });
-//          }
-//        }));
-//  }
+//        });
+        }
+      },
+    );
+  }
 }

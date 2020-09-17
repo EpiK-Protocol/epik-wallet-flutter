@@ -228,7 +228,7 @@ class UniswapPoolRemoveViewState
         width: double.infinity,
         margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
         child:  Text(
-          "Gas fee : ${widget.walletAccount.eth_suggestGas} eth",
+          "手续费 : ${widget.walletAccount.eth_suggestGas} eth",
           style: TextStyle(
             color: Colors.black45,
             fontSize: 12,
@@ -383,8 +383,9 @@ class UniswapPoolRemoveViewState
 
           MessageDialog.showMsgDialog(
             context,
-            title: "撤回资金已提交",
-            msg: ret+"\n已复制",
+            title: "撤回资金",
+            msg: "已提交到以太坊\n稍后可在交易记录中查询结果",
+            msgAlign: TextAlign.center,
             btnRight: "确定",
             onClickBtnRight: (dialog) async {
               dialog.dismiss();

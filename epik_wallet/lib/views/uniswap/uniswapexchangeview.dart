@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
@@ -57,6 +59,8 @@ class UniswapExchangeViewState
   TextEditingController _tec_from;
 
   Amounts calc_amounts;
+
+  double slippage_calc;
 
   @override
   void initStateConfig() {
@@ -147,7 +151,7 @@ class UniswapExchangeViewState
                       width: double.infinity,
                       margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
                       child:  Text(
-                        "Gas fee : ${widget.walletAccount.eth_suggestGas} eth",
+                        "手续费 : ${widget.walletAccount.eth_suggestGas} eth",
                         style: TextStyle(
                           color: Colors.black45,
                           fontSize: 12,
@@ -158,7 +162,7 @@ class UniswapExchangeViewState
                       width: double.infinity,
                       margin: EdgeInsets.fromLTRB(20, 5, 20, 0),
                       child:  Text(
-                        "Slippage tolerance : ${StringUtils.formatNumAmount(slippage*100,point: 2,supply0: false)}%",
+                        "滑点 : ${StringUtils.formatNumAmount((slippage_calc??0.01)*100,point: 2,supply0: false)}%",
                         style: TextStyle(
                           color: Colors.black45,
                           fontSize: 12,
@@ -435,6 +439,20 @@ class UniswapExchangeViewState
                     ),
                   ),
                 ),
+                if(calc_amounts!=null&&amount_form!=0)
+                InkWell(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  onTap: () {
+                    calcToAmount();
+                  },
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    child: Icon(Icons.refresh,
+                    color: color_btn_1,
+                    ),
+                  ),
+                ),
 //                Container(
 //                  width: 35,
 //                  height: 22,
@@ -499,7 +517,9 @@ class UniswapExchangeViewState
     calc_amounts = null;
     text_to="";
 
-    setState(() {});
+    setState(() {
+      calcSlippage();
+    });
   }
 
   String getBalance(CurrencySymbol cs) {
@@ -547,13 +567,41 @@ class UniswapExchangeViewState
           setState(() {
             text_to = amount_out;
             calc_amounts = amounts;
+            calcSlippage();
           });
         }
+
+
       } else {
         showToast("请求失败,请稍后重试");
       }
       closeLoadDialog();
     });
+  }
+
+  ///计算滑点
+  calcSlippage()
+  {
+    if(widget?.walletAccount?.uniswapinfo!=null && calc_amounts!=null)
+    {
+      double price = calc_amounts.AmountIn_d / calc_amounts.AmountOut_d;
+      double price_pool=0;
+      if(cs_from == CurrencySymbol.EPKerc20)
+      {
+        price_pool = widget.walletAccount.uniswapinfo.price_EPK_USDT;
+      }else{
+        price_pool = widget.walletAccount.uniswapinfo.price_USDT_EPK;
+      }
+      dlog("slippage_calc $price $price_pool");
+      if(price !=0 && price_pool!=0)
+      {
+        double difference = price_pool-price;
+        slippage_calc = (difference/price_pool).abs();
+        dlog("slippage_calc = $slippage_calc ");
+        return;
+      }
+    }
+    slippage_calc = null;
   }
 
   onInputFrom() {
@@ -564,6 +612,7 @@ class UniswapExchangeViewState
       text_to="";
     }
     setState(() {
+      calcSlippage();
     });
   }
 
@@ -665,7 +714,7 @@ class UniswapExchangeViewState
 
         await Future.delayed(Duration(milliseconds: 200));
 
-        showLoadDialog("正在提交兑换", onShow: () async {
+        showLoadDialog("正在提交到以太坊网络，请耐心等待", onShow: () async {
           String ret =
               await widget.walletAccount.hdwallet.uniswapExactTokenForTokens(
             widget.walletAccount.hd_eth_address, //地址
@@ -702,12 +751,13 @@ class UniswapExchangeViewState
               text_to = "0.0";
             });
 
-            DeviceUtils.copyText(ret);
+//            DeviceUtils.copyText(ret);
 
             MessageDialog.showMsgDialog(
               context,
-              title: "兑换已提交",
-              msg: ret + "\n已复制",
+              title: "兑换",
+              msg: "已提交到以太坊\n稍后可在交易记录中查询结果",
+              msgAlign: TextAlign.center,
               btnRight: "确定",
               onClickBtnRight: (dialog) {
                 dialog.dismiss();

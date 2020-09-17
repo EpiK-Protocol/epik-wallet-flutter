@@ -2,6 +2,7 @@ import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
+import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/views/uniswap/uniswapexchangeview.dart';
 import 'package:epikwallet/views/uniswap/uniswappoolview.dart';
 import 'package:epikwallet/views/viewgoto.dart';
@@ -50,6 +51,24 @@ class UniswapViewState extends BaseWidgetState<UniswapView> with TickerProviderS
       });
       print("tabbar indexIsChanging -> ${_tabController.indexIsChanging}");
     });
+  }
+
+  @override
+  void onCreate() {
+    super.onCreate();
+    eventMgr.add(EventTag.UPDATE_SERVER_CONFIG, eventCallback_upconfig);
+  }
+
+  @override
+  void dispose() {
+    eventMgr.remove(EventTag.UPDATE_SERVER_CONFIG, eventCallback_upconfig);
+    super.dispose();
+  }
+
+  eventCallback_upconfig(arg)
+  {
+    // 钱包接口api更新 重新请求uniswapinfo
+    widget?.walletAccount?.uploadUniswapInfo();
   }
 
   @override

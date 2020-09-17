@@ -327,7 +327,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
           width: double.infinity,
           margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
           child:  Text(
-            "Gas fee : ${widget.walletaccount.eth_suggestGas} eth",
+            "手续费 : ${widget.walletaccount.eth_suggestGas} eth",
             style: TextStyle(
               color: Colors.black45,
               fontSize: 12,
