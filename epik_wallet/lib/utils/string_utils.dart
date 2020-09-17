@@ -111,6 +111,10 @@ class StringUtils {
       // 处理值
       List val = List.from(sub[0].split(''));
       // 处理点
+      if(sub.length>1 && sub[1].length>point)
+      {
+        sub[1] = sub[1].substring(0,point);
+      }
       List<String> points = sub.length>1 ?List.from(sub[1].split('')): [];
       //处理分割符
       for (int index = 0, i = val.length - 1; i >= 0; index++, i--) {
@@ -129,6 +133,11 @@ class StringUtils {
           for (int i = 0; i < pointsize; i++) {
             points.add('0');
           }
+        }
+      }else{
+        while(points.length>0 && points[points.length-1]=="0")
+        {
+          points.removeLast();
         }
       }
       //如果大于长度就截取

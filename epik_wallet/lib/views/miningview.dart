@@ -302,7 +302,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                 child: Container(
                   height: 20,
                   child: Text(
-                    "ID: ${mining_id ?? ""}",
+                    (StringUtils.isEmpty(mining_id))?"":"ID: ${mining_id}",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white54,

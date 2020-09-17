@@ -15,6 +15,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UniswapPoolView extends BaseInnerWidget {
   // 可能是空
@@ -80,7 +81,7 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
   eventcallback_uniswapinfo(arg) {
     loading = false;
     this.uniswapinfo = arg;
-    dlog("uniswapinfo share=${uniswapinfo.Share} UNI=${uniswapinfo.UNI}");
+    dlog("uniswapinfo share=${uniswapinfo?.Share} UNI=${uniswapinfo?.UNI}");
     setState(() {});
   }
 
@@ -460,7 +461,8 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
   }
 
   onClickReadme() {
-    final String address = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
+//    final String address = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
+    final String address = "0xDaF88906aC1DE12bA2b1D2f7bfC94E9638Ac40c4";
 
     final TapGestureRecognizer recognizer_1 = TapGestureRecognizer();
     final TapGestureRecognizer recognizer_2 = TapGestureRecognizer();
@@ -518,8 +520,13 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
 
     recognizer_2.onTap = () async {
       yydialog.dismiss();
-      // todo 需要改地址
-      ViewGT.showGeneralWebView(context, "使用说明", "https://epik-protocol.io/");
+      String url = "https://shimo.im/docs/dXyqQyKTct6qxjg6/";
+//      ViewGT.showGeneralWebView(context, "EpiK 钱包兑换交易手册", url);
+      canLaunch(url).then((value) {
+        if (value) {
+          launch(url).then((value) {});
+        }
+      });
     };
   }
 }

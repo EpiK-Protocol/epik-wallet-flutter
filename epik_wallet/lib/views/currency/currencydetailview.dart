@@ -743,9 +743,9 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     if (data != null) {
       // 请求成功
       if (page == 0) {
-        if (data.isEmpty) {
-          showToast("无数据");
-        }
+//        if (data.isEmpty) {
+//          showToast("无数据");
+//        }
         data_list_item.clear();
       }
       data_list_item.addAll(data);

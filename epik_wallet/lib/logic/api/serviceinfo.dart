@@ -38,8 +38,9 @@ class ServiceInfo {
   }
 
   static String get hd_RpcUrl {
-//    return serverConfig?.ETHAPI ?? _hd_RpcUrl;
-    return serverConfig?.ETHAPI ?? _hd_RpcUrl_test; //测试地址
+//    return _hd_RpcUrl;
+    return serverConfig?.ETHAPI ?? _hd_RpcUrl; // 正式地址
+//    return serverConfig?.ETHAPI ?? _hd_RpcUrl_test; //测试地址
   }
 
   static String get epik_RpcUrl {

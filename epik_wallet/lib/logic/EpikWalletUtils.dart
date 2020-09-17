@@ -271,6 +271,7 @@ class WalletAccount {
     UniswapInfo _uniswapinfo = await hdwallet?.uniswapinfo(hd_eth_address);
     uniswapinfo = _uniswapinfo;
     eventMgr.send(EventTag.UPLOAD_UNISWAPINFO, uniswapinfo);
+    Dlog.p("uploadUniswapInfo", " epk=${uniswapinfo?.EPK}  usdt=${uniswapinfo?.USDT}  share=${uniswapinfo?.Share}  uni=${uniswapinfo.UNI}");
     return uniswapinfo;
   }
 }

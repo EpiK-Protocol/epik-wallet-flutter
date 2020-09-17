@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
@@ -10,7 +8,6 @@ import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
-import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
@@ -22,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UniswapExchangeView extends BaseInnerWidget {
   // 可能是空
@@ -42,7 +40,6 @@ class UniswapExchangeView extends BaseInnerWidget {
 
 class UniswapExchangeViewState
     extends BaseInnerWidgetState<UniswapExchangeView> {
-
   double slippage = 0.1;
 
   Color color_btn_1 = ResColor.main_1; //Colors.pinkAccent[100];
@@ -85,8 +82,8 @@ class UniswapExchangeViewState
       setState(() {});
     }
   }
-  eventCallback(obj)
-  {
+
+  eventCallback(obj) {
     setState(() {});
   }
 
@@ -98,17 +95,16 @@ class UniswapExchangeViewState
     super.dispose();
   }
 
-  refresh()
-  {
+  refresh() {
     widget.walletAccount.uploadSuggestGas();
     widget.walletAccount.uploadUniswapInfo();
   }
 
   @override
   Widget buildWidget(BuildContext context) {
-
-    Color exchanegBtnColor = (amount_form!=0 && calc_amounts!=null) ?color_btn_2 :color_btn_1;
-    String btn_text = (amount_form!=0 && calc_amounts!=null) ?"兑换":"预估";
+    Color exchanegBtnColor =
+        (amount_form != 0 && calc_amounts != null) ? color_btn_2 : color_btn_1;
+    String btn_text = (amount_form != 0 && calc_amounts != null) ? "兑换" : "预估";
 
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
@@ -150,7 +146,7 @@ class UniswapExchangeViewState
                     Container(
                       width: double.infinity,
                       margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                      child:  Text(
+                      child: Text(
                         "手续费 : ${widget.walletAccount.eth_suggestGas} eth",
                         style: TextStyle(
                           color: Colors.black45,
@@ -161,8 +157,8 @@ class UniswapExchangeViewState
                     Container(
                       width: double.infinity,
                       margin: EdgeInsets.fromLTRB(20, 5, 20, 0),
-                      child:  Text(
-                        "滑点 : ${StringUtils.formatNumAmount((slippage_calc??0.01)*100,point: 2,supply0: false)}%",
+                      child: Text(
+                        "滑点 : ${StringUtils.formatNumAmount((slippage_calc ?? 0.01) * 100, point: 2, supply0: false)}%",
                         style: TextStyle(
                           color: Colors.black45,
                           fontSize: 12,
@@ -184,7 +180,7 @@ class UniswapExchangeViewState
                       width: double.infinity,
                       padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
                       child: Text(
-                        "1 ${cs_B.symbol} = ${StringUtils.formatNumAmount(widget?.walletAccount?.uniswapinfo?.price_EPK_USDT??0, point: 8, supply0: false)} ${cs_A.symbol}",
+                        "1 ${cs_B.symbol} = ${StringUtils.formatNumAmount(widget?.walletAccount?.uniswapinfo?.price_EPK_USDT ?? 0, point: 8, supply0: false)} ${cs_A.symbol}",
                         style: TextStyle(
                           color: Colors.black45,
                           fontSize: 12,
@@ -202,7 +198,7 @@ class UniswapExchangeViewState
                           onClickExchange();
                         },
                         child: Text(
-                          btn_text,//"兑换",
+                          btn_text, //"兑换",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
@@ -386,8 +382,8 @@ class UniswapExchangeViewState
   }
 
   Widget getTo() {
-
-    Color calc_color = (calc_amounts==null&&amount_form!=0)? color_btn_2: color_btn_1;
+    Color calc_color =
+        (calc_amounts == null && amount_form != 0) ? color_btn_2 : color_btn_1;
 
     return Container(
       margin: EdgeInsets.fromLTRB(20, 10, 20, 20),
@@ -434,25 +430,30 @@ class UniswapExchangeViewState
                   child: Container(
                     margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                     child: Text(
-                      StringUtils.isNotEmpty(text_to)?text_to :"需要预估数量",
-                      style: TextStyle(fontSize: 16, color: StringUtils.isNotEmpty(text_to)?Colors.black87:Colors.black54),
+                      StringUtils.isNotEmpty(text_to) ? text_to : "需要预估数量",
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: StringUtils.isNotEmpty(text_to)
+                              ? Colors.black87
+                              : Colors.black54),
                     ),
                   ),
                 ),
-                if(calc_amounts!=null&&amount_form!=0)
-                InkWell(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  onTap: () {
-                    calcToAmount();
-                  },
-                  child: Container(
-                    width: 30,
-                    height: 30,
-                    child: Icon(Icons.refresh,
-                    color: color_btn_1,
+                if (calc_amounts != null && amount_form != 0)
+                  InkWell(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    onTap: () {
+                      calcToAmount();
+                    },
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      child: Icon(
+                        Icons.refresh,
+                        color: color_btn_1,
+                      ),
                     ),
                   ),
-                ),
 //                Container(
 //                  width: 35,
 //                  height: 22,
@@ -515,7 +516,7 @@ class UniswapExchangeViewState
 //    _tec_from.text = text_from;
 
     calc_amounts = null;
-    text_to="";
+    text_to = "";
 
     setState(() {
       calcSlippage();
@@ -551,7 +552,7 @@ class UniswapExchangeViewState
 
     closeInput();
     showLoadDialog("正在预估数量...", onShow: () async {
-      widget.walletAccount.uploadSuggestGas();//预估的同时 刷新gas
+      widget.walletAccount.uploadSuggestGas(); //预估的同时 刷新gas
       Amounts amounts = await widget.walletAccount.hdwallet
           .uniswapGetAmountsOut(
               cs_from.symbolToNetWork, cs_to.symbolToNetWork, text_from.trim());
@@ -570,8 +571,6 @@ class UniswapExchangeViewState
             calcSlippage();
           });
         }
-
-
       } else {
         showToast("请求失败,请稍后重试");
       }
@@ -580,23 +579,19 @@ class UniswapExchangeViewState
   }
 
   ///计算滑点
-  calcSlippage()
-  {
-    if(widget?.walletAccount?.uniswapinfo!=null && calc_amounts!=null)
-    {
+  calcSlippage() {
+    if (widget?.walletAccount?.uniswapinfo != null && calc_amounts != null) {
       double price = calc_amounts.AmountIn_d / calc_amounts.AmountOut_d;
-      double price_pool=0;
-      if(cs_from == CurrencySymbol.EPKerc20)
-      {
+      double price_pool = 0;
+      if (cs_from == CurrencySymbol.EPKerc20) {
         price_pool = widget.walletAccount.uniswapinfo.price_EPK_USDT;
-      }else{
+      } else {
         price_pool = widget.walletAccount.uniswapinfo.price_USDT_EPK;
       }
       dlog("slippage_calc $price $price_pool");
-      if(price !=0 && price_pool!=0)
-      {
-        double difference = price_pool-price;
-        slippage_calc = (difference/price_pool).abs();
+      if (price != 0 && price_pool != 0) {
+        double difference = price_pool - price;
+        slippage_calc = (difference / price_pool).abs();
         dlog("slippage_calc = $slippage_calc ");
         return;
       }
@@ -605,11 +600,9 @@ class UniswapExchangeViewState
   }
 
   onInputFrom() {
-
-    if(calc_amounts!=null && calc_amounts.AmountIn_d != amount_form)
-    {
+    if (calc_amounts != null && calc_amounts.AmountIn_d != amount_form) {
       calc_amounts = null;
-      text_to="";
+      text_to = "";
     }
     setState(() {
       calcSlippage();
@@ -619,7 +612,8 @@ class UniswapExchangeViewState
   onInputTo() {}
 
   onClickReadme() {
-    final String address = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
+//    final String address = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
+    final String address = "0xDaF88906aC1DE12bA2b1D2f7bfC94E9638Ac40c4";
 
     final TapGestureRecognizer recognizer_1 = TapGestureRecognizer();
     final TapGestureRecognizer recognizer_2 = TapGestureRecognizer();
@@ -677,8 +671,13 @@ class UniswapExchangeViewState
 
     recognizer_2.onTap = () async {
       yydialog.dismiss();
-      // todo 需要改地址
-      ViewGT.showGeneralWebView(context, "使用说明", "https://epik-protocol.io/");
+      String url = "https://shimo.im/docs/dXyqQyKTct6qxjg6/";
+//      ViewGT.showGeneralWebView(context, "EpiK 钱包兑换交易手册", url);
+      canLaunch(url).then((value) {
+        if (value) {
+          launch(url).then((value) {});
+        }
+      });
     };
   }
 
@@ -721,7 +720,8 @@ class UniswapExchangeViewState
             cs_from.symbolToNetWork, // from币种
             cs_to.symbolToNetWork, // to币种
             text_from.trim(), // from数量
-            "${calc_amounts.AmountOut_d * (1-slippage)}", // , // to 期望兑换到的最少数量
+            "${calc_amounts.AmountOut_d * (1 - slippage)}",
+            // , // to 期望兑换到的最少数量
             "${DateTime.now().toUtc().millisecondsSinceEpoch / 1000 + 20 * 60}", // 最晚成交时间 时间戳 秒
           );
 
@@ -731,16 +731,19 @@ class UniswapExchangeViewState
           closeLoadDialog();
 
           if (StringUtils.isNotEmpty(ret)) {
-
             widget?.walletAccount?.uhMgr?.addOrder(UniswapOrder(
               hash: ret,
-              state:0,// 等待
-              type:0,// 兑换
-              time:DateTime.now().toUtc().millisecondsSinceEpoch,///utc时间 毫秒
-              token_a:cs_from.symbol,
-              token_b:cs_to.symbol,
-              amount_a:text_from,
-              amount_b:text_to,
+              state: 0,
+              // 等待
+              type: 0,
+              // 兑换
+              time: DateTime.now().toUtc().millisecondsSinceEpoch,
+
+              ///utc时间 毫秒
+              token_a: cs_from.symbol,
+              token_b: cs_to.symbol,
+              amount_a: text_from,
+              amount_b: text_to,
             ));
             widget?.walletAccount?.uhMgr?.save();
 
