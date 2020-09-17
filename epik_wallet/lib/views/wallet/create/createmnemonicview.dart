@@ -66,7 +66,7 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
         constraints: BoxConstraints(
           minHeight: getScreenHeight() -
               BaseFuntion.topbarheight -
-              BaseFuntion.appbarheight,
+              BaseFuntion.appbarheight_def,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

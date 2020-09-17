@@ -120,7 +120,7 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
         constraints: BoxConstraints(
           minHeight: getScreenHeight() -
               BaseFuntion.topbarheight -
-              BaseFuntion.appbarheight,
+              BaseFuntion.appbarheight_def,
         ),
         child: Column(
           children: <Widget>[

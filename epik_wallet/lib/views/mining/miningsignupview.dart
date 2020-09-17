@@ -63,7 +63,7 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
         constraints: BoxConstraints(
           minHeight: getScreenHeight() -
               BaseFuntion.topbarheight -
-              BaseFuntion.appbarheight,
+              BaseFuntion.appbarheight_def,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

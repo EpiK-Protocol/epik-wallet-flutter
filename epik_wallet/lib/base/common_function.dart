@@ -308,12 +308,13 @@ abstract class BaseFuntion {
     return topbarheight;
   }
 
-  static double appbarheight = 0;
+  static final double appbarheight_def = 45;
+  double appbarheight = 0;
 
   ///返回appbar高度，也就是导航栏高度
   double getAppBarHeight() {
     if(appbarheight==0)
-      appbarheight = 45; //kToolbarHeight;
+      appbarheight = appbarheight_def; //kToolbarHeight;
     return appbarheight;
   }
 

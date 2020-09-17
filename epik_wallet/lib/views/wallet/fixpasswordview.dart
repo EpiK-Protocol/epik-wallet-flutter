@@ -86,7 +86,7 @@ class _FixPasswordViewState extends BaseWidgetState<FixPasswordView> {
         constraints: BoxConstraints(
           minHeight: getScreenHeight() -
               BaseFuntion.topbarheight -
-              BaseFuntion.appbarheight,
+              BaseFuntion.appbarheight_def,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

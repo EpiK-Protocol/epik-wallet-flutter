@@ -86,7 +86,7 @@ class UniswapPoolAddViewState extends BaseWidgetState<UniswapPoolAddView> {
         constraints: BoxConstraints(
           minHeight: getScreenHeight() -
               BaseFuntion.topbarheight -
-              BaseFuntion.appbarheight,
+              BaseFuntion.appbarheight_def,
         ),
         child: Column(
           children: <Widget>[
@@ -322,7 +322,7 @@ class UniswapPoolAddViewState extends BaseWidgetState<UniswapPoolAddView> {
 
     return Container(
       padding: EdgeInsets.fromLTRB(
-          0, BaseFuntion.topbarheight + BaseFuntion.appbarheight, 0, 0),
+          0, BaseFuntion.topbarheight + BaseFuntion.appbarheight_def, 0, 0),
       decoration: BoxDecoration(
         gradient: RadialGradient(
           colors: [

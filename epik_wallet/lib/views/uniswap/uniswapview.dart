@@ -162,7 +162,7 @@ class UniswapViewState extends BaseWidgetState<UniswapView> with TickerProviderS
   @override
   Widget buildWidget(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(0, BaseFuntion.topbarheight+BaseFuntion.appbarheight, 0, 0),
+      padding: EdgeInsets.fromLTRB(0, BaseFuntion.topbarheight+BaseFuntion.appbarheight_def, 0, 0),
       decoration: BoxDecoration(
         gradient:RadialGradient(
           colors: [Color(0xfff7e6f0),Colors.white,],

@@ -368,7 +368,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
         constraints: BoxConstraints(
           minHeight: getScreenHeight() -
               BaseFuntion.topbarheight -
-              BaseFuntion.appbarheight,
+              BaseFuntion.appbarheight_def,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

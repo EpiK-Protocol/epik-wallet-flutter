@@ -116,7 +116,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
         constraints: BoxConstraints(
           minHeight: getScreenHeight() -
               BaseFuntion.topbarheight -
-              BaseFuntion.appbarheight,
+              BaseFuntion.appbarheight_def,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
