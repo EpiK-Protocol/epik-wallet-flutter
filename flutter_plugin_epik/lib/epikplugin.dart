@@ -8,6 +8,7 @@ export 'PrivateKey.dart';
 export 'Bip44Path.dart';
 export 'UniswapInfo.dart';
 export 'Amounts.dart';
+export 'ResultObj.dart';
 
 
 class EpikPlugin {

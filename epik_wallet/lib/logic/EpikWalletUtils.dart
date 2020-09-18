@@ -209,7 +209,7 @@ class WalletAccount {
   HdWallet hdwallet;
   EpikWallet epikWallet;
 
-  String eth_suggestGas = "";
+  String eth_suggestGas = "0";
   UniswapInfo uniswapinfo;
 
   UniswapHistoryMgr uhMgr;

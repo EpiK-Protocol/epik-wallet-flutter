@@ -360,17 +360,17 @@ class UniswapPoolRemoveViewState
 //        closeLoadDialog();
 //        return;
 
-        String ret = await widget.walletAccount.hdwallet.uniswapRemoveLiquidity(widget.walletAccount.hd_eth_address, cs_A.symbolToNetWork, cs_B.symbolToNetWork, liquidity, amountAMin, amountBMin, deadline);
+        ResultObj<String>  ret = await widget.walletAccount.hdwallet.uniswapRemoveLiquidity(widget.walletAccount.hd_eth_address, cs_A.symbolToNetWork, cs_B.symbolToNetWork, liquidity, amountAMin, amountBMin, deadline);
 
-        dlog("uniswapRemoveLiquidity $ret");
+        dlog("uniswapRemoveLiquidity ${ret?.data}");
         closeLoadDialog();
 
-        if (StringUtils.isNotEmpty(ret)) {
+        if (StringUtils.isNotEmpty(ret?.data)) {
 
-          DeviceUtils.copyText(ret);
+//          DeviceUtils.copyText(ret?.data);
 
           widget?.walletAccount?.uhMgr?.addOrder(UniswapOrder(
-            hash: ret,
+            hash: ret?.data,
             state:0,// 等待
             type:2,//  撤回
             time:DateTime.now().toUtc().millisecondsSinceEpoch,///utc时间 毫秒
@@ -395,7 +395,7 @@ class UniswapPoolRemoveViewState
             },
           );
         } else {
-          showToast("请求失败,请稍后重试");
+          showToast(ret?.errorMsg ?? "请求失败,请稍后重试");
         }
       });
 

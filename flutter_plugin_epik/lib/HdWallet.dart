@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:epikplugin/Amounts.dart';
+import 'package:epikplugin/ResultObj.dart';
 import 'package:epikplugin/UniswapInfo.dart';
 import 'package:epikplugin/epikplugin.dart';
 
@@ -269,7 +270,7 @@ class HdWallet {
   }
 
   /// 兑换 A->B
-  Future<String> uniswapExactTokenForTokens(
+  Future<ResultObj<String>> uniswapExactTokenForTokens(
       String address, //hd钱包地址
       String tokenA, // from 币种
       String tokenB,// to 币种
@@ -277,6 +278,7 @@ class HdWallet {
       String amountOutMin, // to 期望兑换到的最少数量
       String deadline,// 最晚成交时间 时间戳 秒
       ) async {
+
     try {
       String ret = await EpikPlugin.channel.invokeMethod(
           "hd_wallet_uniswapexacttokenfortokens", <String, dynamic>{
@@ -287,14 +289,14 @@ class HdWallet {
         "amountOutMin": amountOutMin,
         "deadline": deadline,
       });
-      return ret;
+      return ResultObj<String>(data:ret);
     } catch (e) {
       print(e);
+      return ResultObj<String>.fromError(e);
     }
-    return null;
   }
 
-  Future<String> uniswapAddLiquidity(
+  Future<ResultObj<String>>  uniswapAddLiquidity(
       String address,
       String tokenA,
       String tokenB,
@@ -315,14 +317,14 @@ class HdWallet {
         "amountBMin": amountBMin,
         "deadline": deadline,
       });
-      return ret;
+      return ResultObj<String>(data:ret);
     } catch (e) {
       print(e);
+      return ResultObj<String>.fromError(e);
     }
-    return null;
   }
 
-  Future<String> uniswapRemoveLiquidity(
+  Future<ResultObj<String>>  uniswapRemoveLiquidity(
       String address,
       String tokenA,
       String tokenB,
@@ -341,11 +343,11 @@ class HdWallet {
         "amountBMin": amountBMin,
         "deadline": deadline,
       });
-      return ret;
+      return ResultObj<String>(data:ret);
     } catch (e) {
       print(e);
+      return ResultObj<String>.fromError(e);
     }
-    return null;
   }
 
   /// uniswap gas

@@ -369,17 +369,17 @@ class UniswapPoolAddViewState extends BaseWidgetState<UniswapPoolAddView> {
        String amountAMin= StringUtils.formatNumAmount(amount_A*(1-price_changes),point: 8,supply0: false).replaceAll(",", "");
        String amountBMin= StringUtils.formatNumAmount(amount_B*(1-price_changes),point: 8,supply0: false).replaceAll(",", "");
        String deadline = "${DateTime.now().toUtc().millisecondsSinceEpoch / 1000 + 20 * 60}";
-       String ret = await widget.walletAccount.hdwallet.uniswapAddLiquidity(widget.walletAccount.hd_eth_address, cs_A.symbolToNetWork, cs_B.symbolToNetWork, text_A, text_B, amountAMin, amountBMin, deadline);
+       ResultObj<String>  ret = await widget.walletAccount.hdwallet.uniswapAddLiquidity(widget.walletAccount.hd_eth_address, cs_A.symbolToNetWork, cs_B.symbolToNetWork, text_A, text_B, amountAMin, amountBMin, deadline);
 
-       dlog("uniswapAddLiquidity $ret");
+       dlog("uniswapAddLiquidity ${ret?.data}");
        closeLoadDialog();
 
-       if (StringUtils.isNotEmpty(ret)) {
+       if (StringUtils.isNotEmpty(ret?.data)) {
 
 //         DeviceUtils.copyText(ret);
 
          widget?.walletAccount?.uhMgr?.addOrder(UniswapOrder(
-           hash: ret,
+           hash: ret?.data,
            state:0,// 等待
            type:1,//  注入
            time:DateTime.now().toUtc().millisecondsSinceEpoch,///utc时间 毫秒
@@ -413,7 +413,7 @@ class UniswapPoolAddViewState extends BaseWidgetState<UniswapPoolAddView> {
            },
          );
        } else {
-         showToast("请求失败,请稍后重试");
+         showToast(ret?.errorMsg ?? "请求失败,请稍后重试");
        }
      });
 
