@@ -262,6 +262,7 @@ class WalletAccount {
     String gas = await hdwallet?.suggestGas();
     if (gas != null) {
       eth_suggestGas = gas;
+      Dlog.p("uploadSuggestGas","$gas");
     }
     eventMgr.send(EventTag.UPLOAD_SUGGESTGAS, eth_suggestGas);
     return gas;

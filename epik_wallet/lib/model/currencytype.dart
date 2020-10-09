@@ -7,11 +7,9 @@ enum CurrencySymbol {
   USDT,
 }
 
-extension aaaa on CurrencySymbol
-{
+extension aaaa on CurrencySymbol {
   String get iconUrl {
-    switch(this)
-    {
+    switch (this) {
       case CurrencySymbol.tEPK:
         return "assets/img/ic_epk.png";
       case CurrencySymbol.EPKerc20:
@@ -25,57 +23,46 @@ extension aaaa on CurrencySymbol
     }
   }
 
-  String get symbol
-  {
+  String get symbol {
     String aa = toString().replaceAll("CurrencySymbol.", "");
-    if(aa=="EPKerc20")
-      aa = "ERC20-EPK";
+    if (aa == "EPKerc20") aa = "ERC20-EPK";
     return aa;
   }
 
-  String get symbolToNetWork
-  {
+  String get symbolToNetWork {
     String aa = toString().replaceAll("CurrencySymbol.", "");
-    if(aa=="EPKerc20")
-      aa = "EPK";
+    if (aa == "EPKerc20") aa = "EPK";
     return aa;
   }
 
-  CurrencySymbol get networkType{
-    if(this != CurrencySymbol.tEPK)
-      return CurrencySymbol.ETH;
+  CurrencySymbol get networkType {
+    if (this != CurrencySymbol.tEPK) return CurrencySymbol.ETH;
     return null;
   }
 
-  Prices getPriceUSD(List<Prices> priceslist)
-  {
-    Prices find(List<Prices> list,String symbol)
-    {
-      for(Prices prices in list)
-      {
-        if(prices.id == symbol)
-        {
+  Prices getPriceUSD(List<Prices> priceslist) {
+    Prices find(List<Prices> list, String symbol) {
+      for (Prices prices in list) {
+        if (prices.id == symbol) {
           return prices;
         }
       }
       return null;
     }
 
-    if(priceslist!=null)
-    {
-      switch(this)
-      {
+    if (priceslist != null) {
+      switch (this) {
         case CurrencySymbol.tEPK:
-          return Prices(price: "0",dPrice: 0);
+          return Prices(price: "0", dPrice: 0);
         case CurrencySymbol.EPKerc20:
-          return Prices(price: "0",dPrice: 0);
+          return find(priceslist, "ERC20_EPK") ?? Prices(price: "0", dPrice: 0);
         case CurrencySymbol.ETH:
-          return find(priceslist, "ETH") ?? Prices(price: "0",dPrice: 0);
+          return find(priceslist, "ETH") ?? Prices(price: "0", dPrice: 0);
         case CurrencySymbol.USDT:
-          return Prices(price: "1",dPrice: 1);
+          return find(priceslist, "USDT") ??Prices(price: "1", dPrice: 1);
       }
     }
 
-    return Prices(price: "0",dPrice: 0);
+    return Prices(price: "0", dPrice: 0);
   }
 }
