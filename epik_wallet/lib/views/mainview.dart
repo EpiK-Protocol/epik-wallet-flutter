@@ -12,6 +12,7 @@ import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/screen/screen_util.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
+import 'package:epikwallet/views/bountyview.dart';
 import 'package:epikwallet/views/miningview.dart';
 import 'package:epikwallet/views/transactionview.dart';
 import 'package:epikwallet/views/walletmenu.dart';
@@ -47,12 +48,14 @@ class _MainViewState extends BaseWidgetState<MainView> {
       GlobalKey(),
       GlobalKey(),
       GlobalKey(),
+      GlobalKey(),
     ];
 
     subViews = <BaseInnerWidget>[
       MiningView(keyList[0]),
       WalletView(keyList[1]),
       TransactionView(keyList[2]),
+      BountyView(keyList[3]),
     ];
   }
 
@@ -121,6 +124,10 @@ class _MainViewState extends BaseWidgetState<MainView> {
       BottomNavigationBarItem(
         icon: Icon(OMIcons.swapHorizontalCircle),
         title: Text('交易'),
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(OMIcons.assignmentTurnedIn),
+        title: Text('赏金'),
       ),
     ];
   }

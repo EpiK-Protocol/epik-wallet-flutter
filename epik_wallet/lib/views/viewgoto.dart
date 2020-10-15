@@ -1,7 +1,12 @@
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
+import 'package:epikwallet/model/BountyTask.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/currencytype.dart';
+import 'package:epikwallet/utils/Dlog.dart';
+import 'package:epikwallet/views/bounty/bountydetailview.dart';
+import 'package:epikwallet/views/bounty/bountyeditview.dart';
+import 'package:epikwallet/views/bounty/bountyexchangeview.dart';
 import 'package:epikwallet/views/currency/currencydepositview.dart';
 import 'package:epikwallet/views/currency/currencydetailview.dart';
 import 'package:epikwallet/views/currency/currencywithdrawview.dart';
@@ -20,6 +25,7 @@ import 'package:epikwallet/views/wallet/import/importwalletview.dart';
 import 'package:epikwallet/views/web/generalwebview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 enum ViewPushModel {
   /// 新页面
@@ -59,6 +65,21 @@ class ViewGT {
     showView(context, GeneralWebView(title, url));
   }
 
+  /// 打开外部网页
+  static Future<bool> openOutUrl(String url) async {
+    Dlog.p("ViewGT", "openOutUrl  $url");
+    try {
+      if (await canLaunch(url)) {
+        await launch(url);
+        return true;
+      }
+    } catch (e) {
+      Dlog.p("ViewGT", "openOutUrl  error");
+      print(e);
+    }
+    return false;
+  }
+
   /// 创建钱包
   static showCreateWalletView(BuildContext context) {
     showView(context, CreateWalletView());
@@ -87,20 +108,20 @@ class ViewGT {
   }
 
   /// 挖矿奖励
-  static showMiningProfitView(BuildContext context,String mining_id) {
+  static showMiningProfitView(BuildContext context, String mining_id) {
     showView(context, MiningProfitView(mining_id));
   }
 
   /// 充币
-  static showCurrencyDepositView(BuildContext context, WalletAccount walletaccount, CurrencySymbol currencysymbol)
-  {
-    showView(context, CurrencyDepositView(walletaccount,currencysymbol));
+  static showCurrencyDepositView(BuildContext context,
+      WalletAccount walletaccount, CurrencySymbol currencysymbol) {
+    showView(context, CurrencyDepositView(walletaccount, currencysymbol));
   }
 
   /// 提币
-  static showCurrencyWithdrawView(BuildContext context, WalletAccount walletaccount, CurrencyAsset currencyAsset)
-  {
-    showView(context, CurrencyWithdrawView(walletaccount,currencyAsset));
+  static showCurrencyWithdrawView(BuildContext context,
+      WalletAccount walletaccount, CurrencyAsset currencyAsset) {
+    showView(context, CurrencyWithdrawView(walletaccount, currencyAsset));
   }
 
   /// 扫描二维码
@@ -109,37 +130,48 @@ class ViewGT {
   }
 
   /// 导出epik钱包的私钥
-  static showExportEpikPrivateKeyView(BuildContext context, WalletAccount walletAccount)
-  {
+  static showExportEpikPrivateKeyView(
+      BuildContext context, WalletAccount walletAccount) {
     showView(context, ExportEpikPrivateKeyView(walletAccount));
   }
 
   /// 修改钱包密码
-  static showFixPasswordView(BuildContext context, WalletAccount walletAccount){
+  static showFixPasswordView(
+      BuildContext context, WalletAccount walletAccount) {
     showView(context, FixPasswordView(walletAccount));
   }
 
-  static showUniswapView(BuildContext context, WalletAccount walletAccount){
+  static showUniswapView(BuildContext context, WalletAccount walletAccount) {
     showView(context, UniswapView(walletAccount));
   }
 
   ///uniswap 注入资金
-  static showUniswapPoolAddView(BuildContext context, WalletAccount walletAccount,UniswapInfo uniswapinfo)
-  {
-    showView(context,UniswapPoolAddView(walletAccount,uniswapinfo));
+  static showUniswapPoolAddView(BuildContext context,
+      WalletAccount walletAccount, UniswapInfo uniswapinfo) {
+    showView(context, UniswapPoolAddView(walletAccount, uniswapinfo));
   }
 
   ///uniswap 撤回资金
-  static showUniswapPoolRemoveView(BuildContext context, WalletAccount walletAccount,UniswapInfo uniswapinfo)
-  {
-    showView(context,UniswapPoolRemoveView(walletAccount,uniswapinfo));
+  static showUniswapPoolRemoveView(BuildContext context,
+      WalletAccount walletAccount, UniswapInfo uniswapinfo) {
+    showView(context, UniswapPoolRemoveView(walletAccount, uniswapinfo));
   }
 
   ///
-  static showUniswaporderlistView(BuildContext context, WalletAccount walletAccount)
-  {
-    showView(context,UniswaporderlistView(walletAccount));
+  static showUniswaporderlistView(
+      BuildContext context, WalletAccount walletAccount) {
+    showView(context, UniswaporderlistView(walletAccount));
   }
 
+  static showBountyExchangeView(BuildContext context) {
+    showView(context, BountyExchangeView());
+  }
 
+  static showBountyDetailView(BuildContext context, BountyTask bt) {
+    showView(context, BountyDetailView(bt));
+  }
+
+  static showBountyEditView(BuildContext context, BountyTask bt) {
+    if (bt != null) showView(context, BountyEditView(bt));
+  }
 }

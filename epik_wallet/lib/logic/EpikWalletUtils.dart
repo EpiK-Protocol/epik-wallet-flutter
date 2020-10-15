@@ -214,6 +214,15 @@ class WalletAccount {
 
   UniswapHistoryMgr uhMgr;
 
+  // 赏金任务的积分
+  double bounty_score=0;
+  // 赏金任务的兑换比例
+  double bounty_swap_rate=1;
+  // 赏金任务的兑换手续费 ERC20-EPK
+  double bounty_swap_fee=0;
+  // 挖矿的已报名才有的ID
+  String mining_id = "";
+
   WalletAccount();
 
   WalletAccount.fromJson(Map<String, dynamic> json) {

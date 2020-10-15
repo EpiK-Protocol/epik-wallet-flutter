@@ -11,7 +11,7 @@ description: EpiK Portal
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.2+102
+version: 1.0.3+103
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -74,7 +74,7 @@ dependencies:
   #flutter_des: ^1.1.1
 
   # html标签转widget显示,图文混排文本font 适用于内嵌到list中
-  #flutter_widget_from_html: ^0.3.3+4
+  flutter_widget_from_html: ^0.3.3+4
 
   # 指纹 faceid-----------------------
   #local_auth: ^0.6.2+3
@@ -175,6 +175,9 @@ dependencies:
 
   # 图表 https://google.github.io/charts/flutter/gallery.html
   charts_flutter: ^0.9.0
+
+  # 扩展NestedScrollView 解决一些坑 https://github.com/fluttercandies/extended_nested_scroll_view/blob/master/README-ZH.md
+  #extended_nested_scroll_view: ^1.0.1
 
 dev_dependencies:
   flutter_test:

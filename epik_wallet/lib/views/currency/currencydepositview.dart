@@ -49,7 +49,8 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
           address = widget.walletaccount.hd_eth_address;
         }
     }
-    url_qrcode = "http://qr.topscan.com/api.php?text=" + address;
+//    url_qrcode = "http://qr.topscan.com/api.php?text=" + address;
+    url_qrcode= "https://wenhairu.com/static/api/qr/?size=300&text="+address;
   }
 
   SystemUiOverlayStyle oldSystemUiOverlayStyle;

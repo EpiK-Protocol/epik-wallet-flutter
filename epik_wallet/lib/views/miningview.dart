@@ -101,6 +101,8 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
       mining_status =
           httpjsonres.jsonMap["status"]; //等待审核pending/ 已经通过confirmed/ 拒绝reject
 
+      AccountMgr()?.currentAccount?.mining_id = mining_id;
+
       Map testnet = httpjsonres.jsonMap["testnet"];
       total_supply = StringUtils.parseDouble(testnet["total_supply"], 0);
       issuance = StringUtils.parseDouble(testnet["issuance"], 0);

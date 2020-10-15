@@ -43,7 +43,7 @@ class ListPage extends StatefulWidget {
     LoadMoreCallback this.onLoadMore,
     ScrollCallback this.scrollCallback,
     int this.basePageSize = 20,
-    this.needNoMoreTipe,
+    this.needNoMoreTipe = false,
     this.bgContainer,
   }) : super(key: key);
 

@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
+import 'package:epikwallet/logic/api/api_testnet.dart';
+import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
@@ -138,6 +140,7 @@ class AccountMgr {
       if (this._currentAccount != null) {
         this._currentAccount.hdwallet = null;
         this._currentAccount.epikWallet = null;
+        DL_TepkLoginToken.destroyIns();
       }
 
       this._currentAccount = account;
@@ -153,6 +156,11 @@ class AccountMgr {
           save();
           print("set AccountMgr");
           account.uhMgr = UniswapHistoryMgr(account.hd_eth_address);
+
+          ApiTestNet.login(this._currentAccount);
+          DL_TepkLoginToken.ins(account);
+          DL_TepkLoginToken.getEntity().refreshData(false);
+
           eventMgr.send(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, account);
         }
       } catch (e) {

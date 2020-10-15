@@ -1,13 +1,51 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart';
+import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/prices.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
+import 'package:epikwallet/utils/data/date_util.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
 
+import 'package:convert/convert.dart';
+
+
 class ApiTestNet {
+
+//  #EPIK测试网登录
+//  POST {{HOST}}/testnet/login
+//  Content-Type: application/json
+//  {
+//  "timestamp":123,
+//  "address":"",
+//  "signature":""
+//  }
+  static Future<HttpJsonRes> login(WalletAccount account)async
+  {
+    int timestamp =( DateTime.now().toUtc().millisecondsSinceEpoch/1000).toInt();
+    String address = account?.hd_eth_address;
+    String text = "address=${address}&timestamp=${timestamp}";
+    Digest digest = sha256.convert(utf8.encode(text));
+    String signature = hex.encode(await account?.hdwallet?.signHash(address,Uint8List.fromList(digest.bytes)));
+    Dlog.p("login", "text = $text");
+    String url = ServiceInfo.HOST + "/testnet/login";
+    Map<String, dynamic> params = new Map();
+    params["timestamp"] = timestamp;
+    params["address"] = address;
+    params["signature"] = signature;
+//    Dlog.p("login", params.toString());
+    String json = jsonEncode(params);
+    Dlog.p("login", json);
+    return HttpUtil.instance.requestJson(false, url, null, data: json);
+
+
+  }
+
+
   //  #EPIK测试网活动报名
 //  POST {{HOST}}/testnet/signup
 //  Content-Type: application/json
