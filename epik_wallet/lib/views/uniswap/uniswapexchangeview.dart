@@ -147,7 +147,7 @@ class UniswapExchangeViewState
                       width: double.infinity,
                       margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
                       child: Text(
-                        "手续费 : ${widget.walletAccount.eth_suggestGas} eth",
+                        "手续费 : ${StringUtils.formatNumAmount(StringUtils.parseDouble(widget.walletAccount.eth_suggestGas, 0) * 9, point: 8, supply0: false)} eth",
                         style: TextStyle(
                           color: Colors.black45,
                           fontSize: 12,
@@ -714,7 +714,7 @@ class UniswapExchangeViewState
         await Future.delayed(Duration(milliseconds: 200));
 
         showLoadDialog("正在提交到以太坊网络，请耐心等待", onShow: () async {
-          String ret =
+          ResultObj<String> ret =
               await widget.walletAccount.hdwallet.uniswapExactTokenForTokens(
             widget.walletAccount.hd_eth_address, //地址
             cs_from.symbolToNetWork, // from币种
@@ -726,13 +726,13 @@ class UniswapExchangeViewState
           );
 
           // ret = 0xe966bbd1e089becc1d0d23bf8ae145ba3b25ad9b482dbd22b6368bca239e35e2
-          print("uniswapExactTokenForTokens $ret");
+          print("uniswapExactTokenForTokens ${ret?.data}");
 //        showToast("请求失败,请稍后重试");
           closeLoadDialog();
 
-          if (StringUtils.isNotEmpty(ret)) {
+          if (StringUtils.isNotEmpty(ret?.data)) {
             widget?.walletAccount?.uhMgr?.addOrder(UniswapOrder(
-              hash: ret,
+              hash: ret?.data,
               state: 0,
               // 等待
               type: 0,
@@ -767,7 +767,7 @@ class UniswapExchangeViewState
               },
             );
           } else {
-            showToast("请求失败,请稍后重试");
+            showToast(ret?.errorMsg ?? "请求失败,请稍后重试");
           }
         });
       },
