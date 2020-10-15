@@ -127,4 +127,12 @@ class _DefaultCupertinoLocalizations extends CupertinoLocalizations {
 
   @override
   String get todayLabel => _get("today");
+
+  @override
+  String get modalBarrierDismissLabel => "";
+
+  @override
+  String tabSemanticsLabel({int tabIndex, int tabCount}) {
+    return "tab，${(tabIndex+1)}/${tabCount}";
+  }
 }
