@@ -157,7 +157,6 @@ class AccountMgr {
           print("set AccountMgr");
           account.uhMgr = UniswapHistoryMgr(account.hd_eth_address);
 
-          ApiTestNet.login(this._currentAccount);
           DL_TepkLoginToken.ins(account);
           DL_TepkLoginToken.getEntity().refreshData(false);
 

@@ -528,6 +528,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
           // 验证助记词失败
           showToast("导入失败，助记词不能正确解析");
           closeLoadDialog();
+          return;
         }
         WalletAccount waccount = WalletAccount();
         waccount.account = accountName;

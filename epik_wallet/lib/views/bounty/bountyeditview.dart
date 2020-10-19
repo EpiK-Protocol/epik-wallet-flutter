@@ -5,6 +5,8 @@ import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
 import 'package:epikwallet/model/BountyTask.dart';
 import 'package:epikwallet/model/BountyTaskUser.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
+import 'package:epikwallet/utils/eventbus/event_manager.dart';
+import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/widget/rect_getter.dart';
@@ -162,7 +164,7 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
                       height: 10,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0x22000000), Color(0x00000000)],
+                          colors: [Color(0x10000000), Color(0x00000000)],
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
                         ),
@@ -330,6 +332,8 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
             widget.bountyTask.status = BountyStateType.PUBLICITY;
 
             showToast("奖励分配方案已提交并公示");
+
+            eventMgr.send(EventTag.BOUNTY_EDITED_USER_LIST,null);
 
             finish();
           } else {

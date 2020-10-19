@@ -90,6 +90,7 @@ class DateUtil {
   }
 
   /// get DateTime By DateStr.
+  /// isUtc false, 可以把格林威治时间转成本地时区时间
   static DateTime getDateTime(String dateStr, {bool isUtc}) {
     DateTime dateTime = DateTime.tryParse(dateStr);
     if (isUtc != null) {
@@ -657,5 +658,25 @@ class DateUtil {
     print(
         "dateTimeFixTimeZone=${dt.toIso8601String()}  utc=${dt.isUtc}  timeZoneOffset=${dt.timeZoneOffset}");
     return dt;
+  }
+
+  static String getCountdownString(int timeMs) {
+    String twoDigits(int n) {
+      if (n >= 10) return "$n";
+      return "0$n";
+    }
+
+    String ret = "";
+    try {
+      int days = (timeMs / 86400000).toInt();
+      int hours = (timeMs % 86400000 / 3600000).toInt();
+      int minutes = (timeMs % 3600000 / 60000).toInt();
+      int seconds = (timeMs % 60000/1000).toInt();
+      if (days > 0) ret += "$days天 ";
+      ret += "${twoDigits(hours)}:${twoDigits(minutes)}:${twoDigits(seconds)}";
+    } catch (e) {
+      print(e);
+    }
+    return ret;
   }
 }

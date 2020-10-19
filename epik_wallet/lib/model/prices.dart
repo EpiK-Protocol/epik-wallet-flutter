@@ -16,10 +16,8 @@ class Prices {
       if (StringUtils.isNotEmpty(price))
         dPrice = StringUtils.parseDouble(price, 0);
       change = StringUtils.parseString(json["change"], "");
-      print("change $change");
       if (StringUtils.isNotEmpty(change))
         dChange = StringUtils.parseDouble(change, 0);
-      print("dChange $dChange");
     } catch (e) {
       print(e);
     }

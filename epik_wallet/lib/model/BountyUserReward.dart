@@ -34,8 +34,9 @@ class BountyUserRewardRecord {
       title = json["title"] ?? "";
       description = json["description"] ?? "完成任务";
 
-      DateTime dt_created = DateTime.tryParse(created_at) ?? DateTime.now();
-      created_at_local = DateUtil.formatDate(dt_created,format: DataFormats.full);
+      DateTime dt_created = DateUtil.getDateTime(created_at,isUtc: false) ?? DateTime.now();
+      created_at_local =
+          DateUtil.formatDate(dt_created, format: DataFormats.full);
     } catch (e) {
       print(e);
     }

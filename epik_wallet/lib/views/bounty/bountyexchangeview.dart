@@ -7,7 +7,6 @@ import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_bounty.dart';
 import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
-import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/bounty/bountyexchangerecordlistview.dart';
@@ -16,6 +15,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
 
 class BountyExchangeView extends BaseWidget {
   @override
@@ -26,7 +26,6 @@ class BountyExchangeView extends BaseWidget {
 
 class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
     with TickerProviderStateMixin {
-
   ScrollController scrollController = new ScrollController();
 
   TabController _tabController;
@@ -48,19 +47,19 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
     setAppBarTitle("积分兑换");
 
     _tabController =
-    new TabController(initialIndex: pageIndex, length: 2, vsync: this);
+        new TabController(initialIndex: pageIndex, length: 2, vsync: this);
     _tabController.addListener(() {
       // tabbar 监听
       setState(() {
         _selectedIndex_lest = pageIndex;
         pageIndex = _tabController.index;
       });
-      print("tabbar indexIsChanging -> ${_tabController.indexIsChanging}");
+//      print("tabbar indexIsChanging -> ${_tabController.indexIsChanging}");
     });
 
     // 刷新积分
     ApiBounty.getBountyScore(DL_TepkLoginToken.getEntity().getToken(),
-        AccountMgr().currentAccount)
+            AccountMgr().currentAccount)
         .then((currentAccount) {
       if (mounted) setState(() {});
     });
@@ -78,22 +77,21 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
     return NestedScrollView(
       controller: scrollController,
       // 头部-----------
-      headerSliverBuilder: (context, innerScrolled) =>
-      <Widget>[
+      headerSliverBuilder: (context, innerScrolled) => <Widget>[
         SliverOverlapAbsorber(
           // 传入 handle 值，直接通过 `sliverOverlapAbsorberHandleFor` 获取即可
           handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
           sliver: SliverPersistentHeader(
             delegate: BountyHeader(
               50,
-              300,
+              340,
               OverflowBox(
-                maxHeight: 250,
+                maxHeight: 290,
                 minHeight: 0,
                 child: Container(
                   margin: EdgeInsets.only(top: 0),
                   padding: EdgeInsets.all(15),
-                  height: 250,
+                  height: 290,
                   width: double.infinity,
                   child: Card(
                     color: ResColor.main,
@@ -105,6 +103,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                     elevation: 10,
                     child: Stack(
                       children: <Widget>[
+                        //背景图片
                         Positioned(
                           left: 0,
                           right: 0,
@@ -115,6 +114,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                             fit: BoxFit.cover,
                           ),
                         ),
+                        //背景颜色遮罩
                         Positioned(
                           left: 0,
                           right: 0,
@@ -124,6 +124,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                             color: Colors.black26,
                           ),
                         ),
+                        //积分数量
                         Positioned(
                           left: 0,
                           right: 0,
@@ -141,9 +142,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                               Padding(
                                 padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
                                 child: Text(
-                                  "${StringUtils.formatNumAmount(
-                                      AccountMgr()?.currentAccount
-                                          ?.bounty_score ?? 0)}",
+                                  "${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_score ?? 0)}",
                                   style: TextStyle(
                                     fontSize: 40,
                                     color: Colors.white,
@@ -161,28 +160,14 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                             ],
                           ),
                         ),
+                        //兑换比例
                         Positioned(
                           left: 20,
                           right: 20,
                           top: 80,
                           child: Text(
-                            "当前兑换比例：1积分 = ${StringUtils.formatNumAmount(
-                                AccountMgr()?.currentAccount
-                                    ?.bounty_swap_rate ?? 1)}ERC20-EPK",
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 20,
-                          right: 0,
-                          top: 100,
-                          child: Text(
-                            "当前以太坊收币账户：${AccountMgr()?.currentAccount
-                                ?.hd_eth_address}",
+//                            "当前兑换比例：1积分 = ${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1)}ERC20-EPK",
+                            "当前兑换比例：${StringUtils.formatNumAmount(1/(AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1))} 积分 = 1 ERC20-EPK",
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               fontSize: 12,
@@ -193,7 +178,35 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                         Positioned(
                           left: 20,
                           right: 20,
-                          top: 135,
+                          top: 100,
+                          child: Text(
+                            "当前绑定微信：${AccountMgr()?.currentAccount?.mining_weixin}",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ),
+                        //以太坊地址
+                        Positioned(
+                          left: 20,
+                          right: 0,
+                          top: 120,
+                          child: Text(
+                            "当前以太坊收币账户：${AccountMgr()?.currentAccount?.hd_eth_address}",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ),
+                        // 输入框
+                        Positioned(
+                          left: 20,
+                          right: 20,
+                          top: 155,
                           height: 40,
                           child: Row(
                             children: <Widget>[
@@ -219,7 +232,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                                     enabledBorder: InputBorder.none,
                                     focusedBorder: InputBorder.none,
                                     contentPadding:
-                                    EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        EdgeInsets.fromLTRB(0, 0, 0, 0),
                                     hintText: "请输入兑换数量",
                                     hintStyle: TextStyle(
                                         color: Colors.white70, fontSize: 16),
@@ -260,17 +273,18 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                                   color: Color(0xff393E45),
                                   shape: RoundedRectangleBorder(
                                     borderRadius:
-                                    BorderRadius.all(Radius.circular(22)),
+                                        BorderRadius.all(Radius.circular(22)),
                                   ),
                                 ),
                               ),
                             ],
                           ),
                         ),
+                        //输入框底部线条
                         Positioned(
                           left: 20,
                           right: 120,
-                          top: 170,
+                          top: 190,
                           height: 1,
                           child: Divider(
                             height: 0.5,
@@ -281,18 +295,30 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                         Positioned(
                           left: 20,
                           right: 20,
-                          top: 185,
+                          top: 205,
+                          child: Text(
+                            "最少兑换数量：${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_min ?? 1)} 积分",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ),
+                        //手续费
+                        Positioned(
+                          left: 20,
+                          right: 20,
+                          top: 225,
                           child: InkWell(
                             onTap: () {
-                              //todo
+                              onClickHelp();
                             },
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
                                 Text(
-                                  "预估手续费：${StringUtils.formatNumAmount(
-                                      AccountMgr()?.currentAccount
-                                          ?.bounty_swap_fee ?? "0")} ERC20-EPK",
+                                  "预估手续费：${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_fee ?? "0")} ERC20-EPK",
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontSize: 12,
@@ -416,10 +442,16 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
       return;
     }
 
+    double min = AccountMgr()?.currentAccount?.bounty_swap_min ?? 1;
+    if(amount_form < min){
+      showToast("最少兑换数量为${StringUtils.formatNumAmount(min)}积分");
+      return;
+    }
+
     BottomDialog.showPassWordInputDialog(
       context,
       AccountMgr().currentAccount.password,
-          (password) {
+      (password) {
         //点击确定回调
         showLoadDialog(
           "正在提交兑换...",
@@ -427,12 +459,13 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
           backClose: false,
           onShow: () {
             ApiBounty.bountySwap(
-                DL_TepkLoginToken.getEntity().getToken(), amount_form)
+                    DL_TepkLoginToken.getEntity().getToken(), amount_form)
                 .then((hjr) {
               closeLoadDialog();
               if (hjr != null && hjr.code == 0) {
                 // 请求成功
-                MessageDialog.showMsgDialog(context,
+                MessageDialog.showMsgDialog(
+                  context,
                   title: "积分兑换",
                   msg: "积分兑换已提交，\n请稍后刷新查看钱包余额。",
                   btnRight: "确定",
@@ -442,18 +475,18 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                 );
 
                 setState(() {
-                  text_from="";
-                  amount_form=0;
-                  _tec_from.text="";
+                  text_from = "";
+                  amount_form = 0;
+                  _tec_from.text = "";
                 });
 
                 // 刷新积分
-                ApiBounty.getBountyScore(DL_TepkLoginToken.getEntity().getToken(),
-                    AccountMgr().currentAccount)
+                ApiBounty.getBountyScore(
+                        DL_TepkLoginToken.getEntity().getToken(),
+                        AccountMgr().currentAccount)
                     .then((currentAccount) {
                   if (mounted) setState(() {});
                 });
-
               } else {
                 // 请求失败
                 showToast(hjr?.msg ?? "请求失败");
@@ -463,6 +496,32 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
         );
       },
     );
+  }
+
+  void onClickHelp() {
+
+    MessageDialog.showMsgDialog(
+      context,
+      title: "关于手续费",
+      btnRight: "知道了",
+      onClickBtnRight: (dialog) {
+        dialog.dismiss();
+      },
+      extend: Container(
+        padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+        child: RichText(
+          text: TextSpan(
+            text:
+            "「1」用积分兑换ERC20-EPK时，通过以太网转账会产生ETH手续费；\n\n「2」手续费数量是根据以太坊gas费用和Uniswap中的币价计算出要扣除多少ERC20-EPK。",
+            style: TextStyle(
+              color: Color(0xff333333),
+              fontSize: 14.0,
+            ),
+          ),
+        ),
+      ),
+    );
+
   }
 }
 
@@ -474,8 +533,8 @@ class BountyHeader extends SliverPersistentHeaderDelegate {
   BountyHeader(this._min, this._max, this.center, this.bottom);
 
   @override
-  Widget build(BuildContext context, double shrinkOffset,
-      bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     double alpha = 1 - shrinkOffset / (maxExtent - minExtent);
     alpha = min(max(alpha, 0), 1);
 

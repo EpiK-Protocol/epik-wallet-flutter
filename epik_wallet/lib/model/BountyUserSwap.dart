@@ -16,9 +16,9 @@ class BountyUserSwapRecord {
   int bounty_id; //1,
   String miner_id; //"241b7750-e601-54ad-9145-33837529dbbb",
   double amount; //100,
-  double erc20_epk;//120,
+  double erc20_epk; //120,
   double fee;
-  String status; //confirm",
+  String status; //pending已提交,paid已通过,faild失败
   String tx_hash; //""
 
   String created_at_local;
@@ -36,10 +36,23 @@ class BountyUserSwapRecord {
       status = json["status"] ?? "";
       tx_hash = json["tx_hash"] ?? "";
 
-      DateTime dt_created = DateTime.tryParse(created_at) ?? DateTime.now();
-      created_at_local = DateUtil.formatDate(dt_created,format: DataFormats.full);
+      DateTime dt_created = DateUtil.getDateTime(created_at,isUtc: false) ?? DateTime.now();
+      created_at_local =
+          DateUtil.formatDate(dt_created, format: DataFormats.full);
     } catch (e) {
       print(e);
+    }
+  }
+
+  String getStatusStr() {
+    if (status == "pending") {
+      return "已提交";
+    } else if (status == "paid") {
+      return "已通过";
+    } else if (status == "faild") {
+      return "失败";
+    } else {
+      return "";
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:epikwallet/utils/data/date_util.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 
 class MiningProfit {
@@ -24,8 +25,10 @@ class MiningProfit {
       erc20_epk = StringUtils.parseDouble(json["erc20_epk"], 0);
       hash = json["hash"] ?? "";
       created_at = json["created_at"] ?? "";
-      DateTime dt = DateTime.tryParse(created_at);
-      if (dt != null) created_at_ms = dt.millisecondsSinceEpoch;
+      DateTime dt = DateUtil.getDateTime(created_at,isUtc: false);
+      if (dt != null) {
+        created_at_ms = dt.millisecondsSinceEpoch;
+      }
     } catch (e) {
       print(e);
     }

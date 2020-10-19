@@ -1,3 +1,5 @@
+import 'package:epikwallet/utils/Dlog.dart';
+import 'package:epikwallet/utils/data/date_util.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 
@@ -41,6 +43,12 @@ class BountyTask {
   BountyStateType status = BountyStateType.AVAILABLE;
   BountyFilterType type = BountyFilterType.ALL;
 
+  /// 公示结束时间
+  String publicity_time;
+
+  /// 公示结束时间毫秒
+  int _publicity_time_ms;
+
   String _reward;
 
   /// 奖励区间
@@ -71,9 +79,30 @@ class BountyTask {
 
       type = BountyFilterTypeEx.requestTypeToLocal(json["type"] ?? "");
       status = BountyStateTypeEx.requestTypeToLocal(json["status"] ?? "");
+
+      publicity_time = json["publicity_time"];
+      DateTime _dt = DateUtil.getDateTime(publicity_time,isUtc: false);
+      _publicity_time_ms = _dt?.millisecondsSinceEpoch ?? 0;
     } catch (e) {
       print(e);
     }
+  }
+
+  int getCountdownTimeNum(){
+    return _publicity_time_ms - DateUtil.getNowDateMs();
+  }
+
+  String getCountdownString() {
+    // 公示状态
+    if(status == BountyStateType.PUBLICITY)
+    {
+      int msTime = getCountdownTimeNum();
+      // 倒计时大于0
+      if (msTime >= 0)
+        return "(剩余: ${DateUtil.getCountdownString(msTime)})";
+    }
+
+    return "";
   }
 }
 

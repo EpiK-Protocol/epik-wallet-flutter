@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/logic/api/api_bounty.dart';
 import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
@@ -60,7 +58,7 @@ class BountyExchangeRecordListviewState
 
     setLoadingWidgetVisible(true);
 
-    hasMore=false;
+    hasMore = false;
     page = 0;
     ApiBounty.getUserSwaplist(
             DL_TepkLoginToken.getEntity().getToken(), page, pageSize)
@@ -78,12 +76,12 @@ class BountyExchangeRecordListviewState
           hjr?.jsonMap["list"] ?? [],
           (json) => BountyUserSwapRecord.fromJson(json));
 
-      //todo test
-      int size = datalist.length + data.length;
-      for (int i = size; i < size + 20; i++) {
-        data.add((BountyUserSwapRecord.fromJson(jsonDecode(
-            '{"id":1,"created_at":"2020-10-10T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","miner_id":"241b7750-e601-54ad-9145-33837529dbbb","amount":100,"erc20_epk":120,"fee":0,"status":"pending","tx_hash":"$i"}'))));
-      }
+      // test
+      //      int size = datalist.length + data.length;
+      //      for (int i = size; i < size + 20; i++) {
+      //        data.add((BountyUserSwapRecord.fromJson(jsonDecode(
+      //            '{"id":1,"created_at":"2020-10-10T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","miner_id":"241b7750-e601-54ad-9145-33837529dbbb","amount":100,"erc20_epk":120,"fee":0,"status":"pending","tx_hash":"$i"}'))));
+      //      }
     }
 
     if (data != null) {
@@ -154,7 +152,7 @@ class BountyExchangeRecordListviewState
           delegate: SliverChildBuilderDelegate(
             (_, index) {
 //              return itemWidgetBuild(context, index);
-              return buildItemWidget(context, index);
+return buildItemWidget(context, index);
             },
             childCount: datalist.length + 1,
           ),
@@ -191,7 +189,10 @@ class BountyExchangeRecordListviewState
       }
       return buildLoadMoreWidget(context, index);
     } else {
-      return itemWidgetBuild(context, index);
+      return InkWell(
+        onTap: () => onItemClick(index),
+        child: itemWidgetBuild(context, index),
+      );
     }
   }
 
@@ -199,7 +200,7 @@ class BountyExchangeRecordListviewState
     var item = datalist[position];
     return Container(
       width: double.infinity,
-      height: 115,
+      height: 135,
       padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
       color: Colors.white,
       child: Stack(
@@ -229,7 +230,7 @@ class BountyExchangeRecordListviewState
             right: 10,
             top: 0,
             child: Text(
-              "手续费: ${StringUtils.formatNumAmount(item.fee, point: 8)} ERC2-EPK",
+              item.getStatusStr(),
               style: TextStyle(
                 fontSize: 15,
                 color: Color(0xff333333),
@@ -251,33 +252,30 @@ class BountyExchangeRecordListviewState
           ),
           Positioned(
             right: 10,
-            top: 40,
+            top: 37,
             child: Text(
-              item.created_at_local,
+              "手续费: ${StringUtils.formatNumAmount(item.fee, point: 8)} ERC2-EPK",
+              style: TextStyle(
+                fontSize: 15,
+                color: Color(0xff333333),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            top: 70,
+            child: Text(
+              "时间:${item.created_at_local}",
               style: TextStyle(
                 fontSize: 12,
                 color: Color(0xff333333),
               ),
             ),
           ),
-//          Positioned(
-//            left: 0,
-//            right: 10,
-//            top: 70,
-//            child: Text(
-//              "Hash:0x576C3F273bE7d218A6Eb040D421b51237945ce10",
-//              maxLines: 1,
-//              overflow: TextOverflow.ellipsis,
-//              style: TextStyle(
-//                fontSize: 12,
-//                color: Color(0xff333333),
-//              ),
-//            ),
-//          ),
           Positioned(
             left: 0,
             right: 10,
-            top: 70,
+            top: 90,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -316,16 +314,16 @@ class BountyExchangeRecordListviewState
       padding: const EdgeInsets.all(5.0),
       child: ((moreLoading || hasMore) && isLoading)
           ? new CircularProgressIndicator(
-        strokeWidth: 2,
-      )
+              strokeWidth: 2,
+            )
           : Container(
-        child: needNoMoreTipe
-            ? Text(
-          "没有更多了",
-          style: TextStyle(fontSize: 14, color: Color(0xff999999)),
-        )
-            : null,
-      ),
+              child: needNoMoreTipe
+                  ? Text(
+                      "没有更多了",
+                      style: TextStyle(fontSize: 14, color: Color(0xff999999)),
+                    )
+                  : null,
+            ),
     );
   }
 
@@ -341,7 +339,7 @@ class BountyExchangeRecordListviewState
     if (isLoading) {
       return;
     }
-    hasMore=false;
+    hasMore = false;
     page = 0;
     isLoading = true;
     HttpJsonRes httpjsonres = await ApiBounty.getUserSwaplist(

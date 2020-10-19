@@ -30,4 +30,7 @@ enum EventTag {
   UPLOAD_UNISWAPINFO,
   // 服务配置已更新
   UPDATE_SERVER_CONFIG,
+
+  // bounty奖励的公示列表重新编辑过
+  BOUNTY_EDITED_USER_LIST,
 }

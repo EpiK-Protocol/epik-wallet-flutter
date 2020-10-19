@@ -16,11 +16,14 @@ class ApiBounty {
     HttpJsonRes hjr = await HttpUtil.instance.requestJson(true, url, null, headers: headers);
     if(hjr!=null && hjr.code==0)
     {
-//      "score":0,
-//  "swap_rate":1,
+//  "score":0, // 积分数
+//  "swap_rate":0.1, // 兑换比例 1积分=0.1epk
+//  "swap_fee": 5,// 手续费
+//  "swap_min":10, // 最小兑换数 积分
       account?.bounty_score = StringUtils.parseDouble(hjr.jsonMap["score"], 0);
       account?.bounty_swap_rate = StringUtils.parseDouble(hjr.jsonMap["swap_rate"], 1);
       account?.bounty_swap_fee = StringUtils.parseDouble(hjr.jsonMap["swap_fee"], 0);
+      account?.bounty_swap_min = StringUtils.parseDouble(hjr.jsonMap["swap_min"], 0);
     }
     return account;
   }

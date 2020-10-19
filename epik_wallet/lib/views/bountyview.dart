@@ -63,6 +63,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
   @override
   void onCreate() {
     eventMgr.add(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventcallback_refresh);
+    eventMgr.add(EventTag.BOUNTY_EDITED_USER_LIST, eventcallback_refresh);
     refresh();
   }
 
@@ -70,6 +71,8 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
   void dispose() {
     eventMgr.remove(
         EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventcallback_refresh);
+    eventMgr.remove(
+        EventTag.BOUNTY_EDITED_USER_LIST, eventcallback_refresh);
     super.dispose();
   }
 
@@ -508,7 +511,8 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
   }
 
   onClickBountyHelp() {
-    // todo 点击帮助
+    //  点击帮助
+    ViewGT.openOutUrl("https://shimo.im/docs/QyrgXG9vRGxhQRXt/ ");
   }
 
   onClickTab(int index) {

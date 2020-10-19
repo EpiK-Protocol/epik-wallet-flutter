@@ -220,8 +220,12 @@ class WalletAccount {
   double bounty_swap_rate=1;
   // 赏金任务的兑换手续费 ERC20-EPK
   double bounty_swap_fee=0;
+  // 赏金任务最小兑换数量
+  double bounty_swap_min=1;
   // 挖矿的已报名才有的ID
   String mining_id = "";
+  // 挖矿的已报名用户绑定的微信
+  String mining_weixin = "";
 
   WalletAccount();
 

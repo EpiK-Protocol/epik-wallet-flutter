@@ -44,6 +44,8 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
   // 已报名才有ID
   String mining_id = "";
 
+  String mining_weixin = "";
+
   //等待审核pending/ 已经通过confirmed/ 拒绝rejected
   String mining_status;
 
@@ -98,10 +100,12 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
     isLoading = false;
     if (httpjsonres != null && httpjsonres.code == 0) {
       mining_id = httpjsonres.jsonMap["id"];
+      mining_weixin = httpjsonres.jsonMap["weixin"];
       mining_status =
           httpjsonres.jsonMap["status"]; //等待审核pending/ 已经通过confirmed/ 拒绝reject
 
       AccountMgr()?.currentAccount?.mining_id = mining_id;
+      AccountMgr()?.currentAccount?.mining_weixin = mining_weixin;
 
       Map testnet = httpjsonres.jsonMap["testnet"];
       total_supply = StringUtils.parseDouble(testnet["total_supply"], 0);
@@ -111,11 +115,10 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
           testnet["top_list"], (json) => MiningRank.fromJson(json));
       datalist = temp ?? [];
 
-      if(datalist.length==0)
-      {
-        headerList=[ListPageDefState(ListPageDefStateType.EMPTY)];
-      }else{
-        headerList=[];
+      if (datalist.length == 0) {
+        headerList = [ListPageDefState(ListPageDefStateType.EMPTY)];
+      } else {
+        headerList = [];
       }
 
       closeStateLayout();
@@ -177,7 +180,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
     return Container(
       margin: EdgeInsets.only(top: 0),
       padding: EdgeInsets.all(15),
-      height: 223,
+      height: StringUtils.isEmpty(mining_weixin) ? 223 : 250,
       width: double.infinity,
       child: Card(
         color: ResColor.main,
@@ -189,6 +192,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
         elevation: 10,
         child: Stack(
           children: <Widget>[
+            //背景图
             Positioned(
               left: 0,
               right: 0,
@@ -199,6 +203,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                 fit: BoxFit.cover,
               ),
             ),
+            //背景颜色遮罩
             Positioned(
               left: 0,
               right: 0,
@@ -208,6 +213,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                 color: Colors.black26,
               ),
             ),
+            // 总奖励 | 已发奖励
             Positioned(
               left: 0,
               right: 0,
@@ -291,20 +297,53 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                 ),
               ),
             ),
+            // 按钮
             getActionBtn(),
+            // 微信号
+            if(StringUtils.isNotEmpty(mining_weixin))
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 20,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 18,
+                    height: 18,
+                    margin: EdgeInsets.fromLTRB(4, 2, 4, 0),
+                    child: ImageIcon(
+                      AssetImage("assets/img/ic_wechat.png"),
+                      size: 18,
+                      color: Color(0xff88c42a),
+                    ),
+                  ),
+                  Text(
+                    "${mining_weixin}",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white54,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // ID
             Positioned(
               left: 0,
               right: 0,
               bottom: 0,
               child: InkWell(
                 onTap: () {
-                  DeviceUtils.copyText(mining_id);
-                  showToast("已复制ID");
+                  if (StringUtils.isNotEmpty(mining_id)) {
+                    DeviceUtils.copyText(mining_id);
+                    showToast("已复制ID");
+                  }
                 },
                 child: Container(
                   height: 20,
                   child: Text(
-                    (StringUtils.isEmpty(mining_id))?"":"ID: ${mining_id}",
+                    (StringUtils.isEmpty(mining_id)) ? "" : "ID: ${mining_id}",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white54,
@@ -508,7 +547,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
       return Positioned(
         left: 90,
         right: 90,
-        bottom: 20,
+        top: 120,
         child: FlatButton(
           highlightColor: Colors.white24,
           splashColor: Colors.white24,
@@ -533,7 +572,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
       return Positioned(
         left: 15,
         right: 15,
-        bottom: 33,
+        top: 133,
         child: Container(
           child: Text(
             text,
