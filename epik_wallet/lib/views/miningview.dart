@@ -364,6 +364,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
   Widget getRankItem(MiningRank data, int index) {
     return Container(
       padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
+      color: mining_id == data.id ? Colors.grey[100]:Colors.transparent,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[

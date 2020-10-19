@@ -1,4 +1,5 @@
 import 'package:epikwallet/base/base_inner_widget.dart';
+import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
@@ -8,7 +9,6 @@ import 'package:epikwallet/views/viewgoto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 
 class WalletMenu extends BaseInnerWidget {
   @override
@@ -268,38 +268,61 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
   }
 
   clickWallet(WalletAccount lks) {
-     dlog("clickWallet");
-     if(lks == AccountMgr().currentAccount)
-     {
-       clickAppBarBack();
-       return;
-     }
+    dlog("clickWallet");
+    if (lks == AccountMgr().currentAccount) {
+      clickAppBarBack();
+      return;
+    }
 
-    showLoadDialog("",onShow: (){
-
-      AccountMgr().setCurrentAccount(lks);
-
-      closeLoadDialog();
-
-      Future.delayed(Duration(milliseconds: 200)).then((value) => clickAppBarBack());
+    showLoadDialog("", onShow: () {
+      AccountMgr().setCurrentAccount(lks).then((ok) {
+        if (ok) {
+          closeLoadDialog();
+          Future.delayed(Duration(milliseconds: 200))
+              .then((value) => clickAppBarBack());
+        } else {
+          closeLoadDialog();
+          MessageDialog.showMsgDialog(
+            context,
+            title: "无效钱包",
+            msg: "检测【${lks.account}】为无效钱包，是否清除？",
+            btnLeft: "暂不",
+            btnRight: "确定清除",
+            btnRightColor: Colors.red,
+            onClickBtnLeft: (dialog){dialog.dismiss();},
+            onClickBtnRight: (dialog){
+              dialog.dismiss();
+              AccountMgr().delAccount(lks);
+              data = AccountMgr().account_list;
+              if(data.length>0)
+              {
+                setState(() {
+                });
+              }else{
+                Future.delayed(Duration(milliseconds: 200))
+                    .then((value) => clickAppBarBack());
+              }
+            },
+          );
+        }
+      });
     });
-
   }
 
   clickCopy(WalletAccount lks) {
-     dlog("clickCopy");
+    dlog("clickCopy");
     DeviceUtils.copyText(lks.hd_eth_address);
     ToastUtils.showToast("已复制到剪切板");
   }
 
   clickImport() {
-     dlog("clickImport");
+    dlog("clickImport");
     clickAppBarBack();
     ViewGT.showImportWalletView(context);
   }
 
   clickCreate() {
-     dlog("clickCreate");
+    dlog("clickCreate");
     clickAppBarBack();
     ViewGT.showCreateWalletView(context);
   }

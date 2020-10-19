@@ -118,16 +118,16 @@ class AccountMgr {
     }
 
     if (nextAccount == null) {
-      print("没有账号了");
+//      print("没有账号了");
       _currentAccount = null;
       save();
       eventMgr.send(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, account);
     } else if (_currentAccount != nextAccount) {
       // 下一个账号 与当前账号不同
-      print("下一个账号 与当前账号不同");
+//      print("下一个账号 与当前账号不同");
       await setCurrentAccount(nextAccount);
     } else {
-      print("aaaaaa");
+//      print("aaaaaa");
       save();
       eventMgr.send(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, account);
     }

@@ -426,8 +426,9 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
   }
 
   Widget buildWidget(BuildContext context) {
+    Widget widget = null;
     if (_BountyPageState == BountyPageState.needwallet) {
-      return Container(
+      widget = Container(
         alignment: Alignment.center,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -465,7 +466,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
         ),
       );
     } else if (_BountyPageState == BountyPageState.needmining) {
-      return Container(
+      widget = Container(
         alignment: Alignment.center,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -503,22 +504,22 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
         ),
       );
     } else if (_BountyPageState == null) {
-      return Container();
+      widget= Container();
+    }else{
+      widget = new ListPage(
+        datalist,
+        itemWidgetCreator: (context, position) {
+          return InkWell(
+            onTap: () => onItemClick(position),
+            child: itemWidgetBuild(context, position),
+          );
+        },
+        pullRefreshCallback: _pullRefreshCallback,
+        needLoadMore: needLoadMore,
+        onLoadMore: onLoadMore,
+        key: key_scroll,
+      );
     }
-
-    Widget view = new ListPage(
-      datalist,
-      itemWidgetCreator: (context, position) {
-        return InkWell(
-          onTap: () => onItemClick(position),
-          child: itemWidgetBuild(context, position),
-        );
-      },
-      pullRefreshCallback: _pullRefreshCallback,
-      needLoadMore: needLoadMore,
-      onLoadMore: onLoadMore,
-      key: key_scroll,
-    );
 
     return Container(
       padding: EdgeInsets.fromLTRB(0,  BaseFuntion.topbarheight+90, 0, 0),
@@ -533,7 +534,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
           tileMode: TileMode.clamp,
         ),
       ),
-      child: view,
+      child: widget,
     );
   }
 
