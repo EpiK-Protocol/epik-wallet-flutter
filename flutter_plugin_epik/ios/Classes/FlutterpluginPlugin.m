@@ -39,14 +39,14 @@
             }
         }else if ([@"hd_hd_newSeed" isEqualToString:call.method]) {
             NSData *seed = EPIK_HdNewSeed(&err);
-            FlutterStandardTypedData *data = [FlutterStandardTypedData typedDataWithBytes:seed];
             if (!err){
+                FlutterStandardTypedData *data = [FlutterStandardTypedData typedDataWithBytes:seed];
                 resultSync(data);
             }
         }else if ([@"hd_hd_seedFromMnemonic" isEqualToString:call.method]) {
             NSData *seed = EPIK_HdSeedFromMnemonic(arguments[@"mnemonic"], &err);
-            FlutterStandardTypedData *data = [FlutterStandardTypedData typedDataWithBytes:seed];
             if (!err){
+                FlutterStandardTypedData *data = [FlutterStandardTypedData typedDataWithBytes:seed];
                 resultSync(data);
             }
         }else if ([@"hd_wallet_accounts" isEqualToString:call.method]) {
@@ -91,8 +91,8 @@
         }else if ([@"hd_wallet_signHash" isEqualToString:call.method]) {
             if (self->_hdWallet){
                 NSData *sign = [self->_hdWallet signHash:arguments[@"address"] hash:[arguments[@"hash"] data] error:&err];
-                FlutterStandardTypedData *data = [FlutterStandardTypedData typedDataWithBytes:sign];
                 if (!err) {
+                    FlutterStandardTypedData *data = [FlutterStandardTypedData typedDataWithBytes:sign];
                     resultSync(data);
                 }
             }else{
@@ -101,8 +101,8 @@
         }else if ([@"hd_wallet_signText" isEqualToString:call.method]) {
             if (self->_hdWallet){
                 NSData *sign = [self->_hdWallet signText:arguments[@"address"] text:arguments[@"text"] error:&err];
-                FlutterStandardTypedData *data = [FlutterStandardTypedData typedDataWithBytes:sign];
                 if (!err) {
+                    FlutterStandardTypedData *data = [FlutterStandardTypedData typedDataWithBytes:sign];
                     resultSync(data);
                 }
             }else{
