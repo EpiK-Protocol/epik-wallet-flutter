@@ -55,9 +55,11 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
   @override
   void initStateConfig() {
     super.initStateConfig();
-    setTopBarVisible(true);
-    setAppBarVisible(true);
-    setTopBarBackColor(Colors.white);
+    setTopBarVisible(false);
+    setAppBarVisible(false);
+    setAppBarBackColor(Colors.transparent);
+    setTopBarBackColor(Colors.transparent);
+    isTopFloatWidgetShow = true;
   }
 
   @override
@@ -71,8 +73,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
   void dispose() {
     eventMgr.remove(
         EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventcallback_refresh);
-    eventMgr.remove(
-        EventTag.BOUNTY_EDITED_USER_LIST, eventcallback_refresh);
+    eventMgr.remove(EventTag.BOUNTY_EDITED_USER_LIST, eventcallback_refresh);
     super.dispose();
   }
 
@@ -85,7 +86,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
   refresh() {
     if (AccountMgr().currentAccount == null) {
       _BountyPageState = BountyPageState.needwallet;
-      setAppBarVisible(false);
+//      setAppBarVisible(false);
       closeStateLayout();
       isLoading = false;
       return;
@@ -100,7 +101,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
       if (errCode == 0 && DL_TepkLoginToken.getEntity().hasToken()) {
         // 有token
         _BountyPageState = BountyPageState.bounty;
-        setAppBarVisible(true);
+//        setAppBarVisible(true);
         this.page = 0;
         ApiBounty.getBountyTaskList(DL_TepkLoginToken.getEntity().getToken(),
                 page, this.pageSize, state, _DataFilterType)
@@ -117,12 +118,12 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
         isLoading = false;
         _BountyPageState = null;
         setErrorWidgetVisible(true);
-        setAppBarVisible(true);
+//        setAppBarVisible(true);
       } else {
         // 没有token 需要挖矿报名
         isLoading = false;
         _BountyPageState = BountyPageState.needmining;
-        setAppBarVisible(false);
+//        setAppBarVisible(false);
         closeStateLayout();
       }
     });
@@ -135,7 +136,6 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
       // 解析数据列表
       data = JsonArray.parseList<BountyTask>(
           hjr?.jsonMap["list"] ?? [], (json) => BountyTask.fromJson(json));
-
     }
 
     if (data != null) {
@@ -169,16 +169,34 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
     return;
   }
 
+  @override
+  Widget getTopFloatWidget() {
+    if (_BountyPageState == BountyPageState.bounty)
+      return Positioned(
+        left: 0,
+        right: 0,
+        top: 0,
+        child: Column(
+          children: <Widget>[
+            getTopBar(),
+            getAppBar(),
+          ],
+        ),
+      );
+
+    return Container();
+  }
+
   ///导航栏 appBar 可以重写
   Widget getAppBar() {
     return Container(
       width: double.infinity,
-      color: Colors.white,
+      color: Colors.transparent,
       child: Column(
         children: <Widget>[
           Container(
             height: BaseFuntion.appbarheight_def,
-            padding: EdgeInsets.fromLTRB(38, 0, 10, 0),
+            padding: EdgeInsets.fromLTRB(38, 0, 15, 0),
             child: Row(
               children: <Widget>[
                 Padding(
@@ -266,7 +284,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
           Container(
             width: double.infinity,
             height: BaseFuntion.appbarheight_def,
-            padding: EdgeInsets.fromLTRB(15, 0, 20, 0),
+            padding: EdgeInsets.fromLTRB(20, 0, 25, 0),
             child: Row(
               children: <Widget>[
                 Expanded(
@@ -347,7 +365,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
                   ),
                 ),
                 Container(
-                  width: 20,
+                  width: 15,
                 ),
                 Container(
                   height: 30,
@@ -502,7 +520,21 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
       key: key_scroll,
     );
 
-    return view;
+    return Container(
+      padding: EdgeInsets.fromLTRB(0,  BaseFuntion.topbarheight+90, 0, 0),
+      decoration: BoxDecoration(
+        gradient: const RadialGradient(
+          colors: [
+            Color(0xfff7e6f0),
+            Colors.white,
+          ],
+          center: Alignment.center,
+          radius: 1,
+          tileMode: TileMode.clamp,
+        ),
+      ),
+      child: view,
+    );
   }
 
   onClickBountyExchange() {
@@ -563,7 +595,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
 
     // 刷新积分
     ApiBounty.getBountyScore(DL_TepkLoginToken.getEntity().getToken(),
-        AccountMgr().currentAccount)
+            AccountMgr().currentAccount)
         .then((currentAccount) {
       if (mounted) setState(() {});
     });
@@ -609,16 +641,17 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
     BountyTask item = datalist[position];
 
     return Container(
-      padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+      padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
       child: Card(
         color: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
         ),
-        elevation: 5,
-        shadowColor: item?.status == null
-            ? Colors.black26
-            : item.status.getColorTagShadow(),
+        elevation: 10,
+        shadowColor: Colors.black26,
+//        shadowColor: item?.status == null
+//            ? Colors.black26
+//            : item.status.getColorTagShadow(),
         clipBehavior: Clip.antiAlias,
         child: Stack(
           children: <Widget>[

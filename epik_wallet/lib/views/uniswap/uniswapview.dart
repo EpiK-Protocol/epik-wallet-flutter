@@ -164,8 +164,8 @@ class UniswapViewState extends BaseWidgetState<UniswapView> with TickerProviderS
     return Container(
       padding: EdgeInsets.fromLTRB(0, BaseFuntion.topbarheight+getAppBarHeight(), 0, 0),
       decoration: BoxDecoration(
-        gradient:RadialGradient(
-          colors: [Color(0xfff7e6f0),Colors.white,],
+        gradient:const RadialGradient(
+          colors:  [Color(0xfff7e6f0),Colors.white,],
           center: Alignment.center,
           radius:1,
           tileMode: TileMode.clamp,
