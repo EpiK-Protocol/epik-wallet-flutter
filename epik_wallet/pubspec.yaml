@@ -177,7 +177,7 @@ dependencies:
   charts_flutter: ^0.9.0
 
   # 扩展NestedScrollView 解决一些坑 https://github.com/fluttercandies/extended_nested_scroll_view/blob/master/README-ZH.md
-  #extended_nested_scroll_view: ^1.0.1
+  extended_nested_scroll_view: ^1.0.1
 
   path_provider: 1.6.14
 

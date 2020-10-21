@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/logic/api/api_bounty.dart';
 import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
@@ -76,12 +78,12 @@ class BountyExchangeRecordListviewState
           hjr?.jsonMap["list"] ?? [],
           (json) => BountyUserSwapRecord.fromJson(json));
 
-      // test
-      //      int size = datalist.length + data.length;
-      //      for (int i = size; i < size + 20; i++) {
-      //        data.add((BountyUserSwapRecord.fromJson(jsonDecode(
-      //            '{"id":1,"created_at":"2020-10-10T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","miner_id":"241b7750-e601-54ad-9145-33837529dbbb","amount":100,"erc20_epk":120,"fee":0,"status":"pending","tx_hash":"$i"}'))));
-      //      }
+//       test
+      int size = datalist.length + data.length;
+      for (int i = size; i < size + 20; i++) {
+        data.add((BountyUserSwapRecord.fromJson(jsonDecode(
+            '{"id":1,"created_at":"2020-10-10T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","miner_id":"241b7750-e601-54ad-9145-33837529dbbb","amount":100,"erc20_epk":120,"fee":0,"status":"pending","tx_hash":"$i"}'))));
+      }
     }
 
     if (data != null) {
@@ -152,7 +154,7 @@ class BountyExchangeRecordListviewState
           delegate: SliverChildBuilderDelegate(
             (_, index) {
 //              return itemWidgetBuild(context, index);
-return buildItemWidget(context, index);
+              return buildItemWidget(context, index);
             },
             childCount: datalist.length + 1,
           ),
@@ -200,110 +202,203 @@ return buildItemWidget(context, index);
     var item = datalist[position];
     return Container(
       width: double.infinity,
-      height: 135,
+//      height: 135,
       padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
       color: Colors.white,
-      child: Stack(
-        children: <Widget>[
-          // 底部分割线
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: 1,
-            child: Container(
-              color: Color(0xffeeeeee),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            top: 0,
-            child: Text(
-              "- " + StringUtils.formatNumAmount(item.amount, point: 8) + " 积分",
-              style: TextStyle(
-                fontSize: 15,
-                color: Color(0xff333333),
-              ),
-            ),
-          ),
-          Positioned(
-            right: 10,
-            top: 0,
-            child: Text(
-              item.getStatusStr(),
-              style: TextStyle(
-                fontSize: 15,
-                color: Color(0xff333333),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            top: 37,
-            child: Text(
-              "+ " +
-                  StringUtils.formatNumAmount(item.erc20_epk, point: 8) +
-                  " ERC2-EPK",
-              style: TextStyle(
-                fontSize: 15,
-                color: Color(0xff333333),
-              ),
-            ),
-          ),
-          Positioned(
-            right: 10,
-            top: 37,
-            child: Text(
-              "手续费: ${StringUtils.formatNumAmount(item.fee, point: 8)} ERC2-EPK",
-              style: TextStyle(
-                fontSize: 15,
-                color: Color(0xff333333),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            top: 70,
-            child: Text(
-              "时间:${item.created_at_local}",
-              style: TextStyle(
-                fontSize: 12,
-                color: Color(0xff333333),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 10,
-            top: 90,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Expanded(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
                   child: Text(
-                    "txhash:${item.tx_hash}",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Color(0xff333333),
-                    ),
+                "- " +
+                    StringUtils.formatNumAmount(item.amount, point: 8) +
+                    " 积分",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Color(0xff333333),
+                ),
+              )),
+              Text(
+                item.getStatusStr(),
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Color(0xff333333),
+                ),
+              ),
+            ],
+          ),
+          Container(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  "+ " +
+                      StringUtils.formatNumAmount(item.erc20_epk, point: 8) +
+                      " ERC2-EPK",
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Color(0xff333333),
                   ),
                 ),
-                Container(
-                  width: 12,
-                  margin: EdgeInsets.fromLTRB(5, 3, 0, 0),
-                  child: Icon(
-                    Icons.redo,
-                    color: Colors.blue,
-                    size: 12,
-                  ),
-                )
-              ],
+              ),
+              Text(
+                "手续费: ${StringUtils.formatNumAmount(item.fee, point: 8)} ERC2-EPK",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Color(0xff333333),
+                ),
+              ),
+            ],
+          ),
+          Container(height: 10),
+          Text(
+            "时间:${item.created_at_local}",
+            style: TextStyle(
+              fontSize: 12,
+              color: Color(0xff333333),
             ),
+          ),
+
+          if (StringUtils.isNotEmpty(item?.tx_hash))
+            Container(
+              padding: EdgeInsets.only(top: 5),
+              child:   Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      "txhash:${item.tx_hash}",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Color(0xff333333),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 12,
+                    margin: EdgeInsets.fromLTRB(5, 3, 0, 0),
+                    child: Icon(
+                      Icons.redo,
+                      color: Colors.blue,
+                      size: 12,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          Container(
+            margin: EdgeInsets.only(top: 14),
+            height: 1,
+            color: Color(0xffeeeeee),
           ),
         ],
       ),
+//      child: Stack(
+//        children: <Widget>[
+//          // 底部分割线
+//          Positioned(
+//            left: 0,
+//            right: 0,
+//            bottom: 0,
+//            height: 1,
+//            child: Container(
+//              color: Color(0xffeeeeee),
+//            ),
+//          ),
+//          Positioned(
+//            left: 0,
+//            top: 0,
+//            child: Text(
+//              "- " + StringUtils.formatNumAmount(item.amount, point: 8) + " 积分",
+//              style: TextStyle(
+//                fontSize: 15,
+//                color: Color(0xff333333),
+//              ),
+//            ),
+//          ),
+//          Positioned(
+//            right: 10,
+//            top: 0,
+//            child: Text(
+//              item.getStatusStr(),
+//              style: TextStyle(
+//                fontSize: 15,
+//                color: Color(0xff333333),
+//              ),
+//            ),
+//          ),
+//          Positioned(
+//            left: 0,
+//            top: 37,
+//            child: Text(
+//              "+ " +
+//                  StringUtils.formatNumAmount(item.erc20_epk, point: 8) +
+//                  " ERC2-EPK",
+//              style: TextStyle(
+//                fontSize: 15,
+//                color: Color(0xff333333),
+//              ),
+//            ),
+//          ),
+//          Positioned(
+//            right: 10,
+//            top: 37,
+//            child: Text(
+//              "手续费: ${StringUtils.formatNumAmount(item.fee, point: 8)} ERC2-EPK",
+//              style: TextStyle(
+//                fontSize: 15,
+//                color: Color(0xff333333),
+//              ),
+//            ),
+//          ),
+//          Positioned(
+//            left: 0,
+//            top: 70,
+//            child: Text(
+//              "时间:${item.created_at_local}",
+//              style: TextStyle(
+//                fontSize: 12,
+//                color: Color(0xff333333),
+//              ),
+//            ),
+//          ),
+//          Positioned(
+//            left: 0,
+//            right: 10,
+//            top: 90,
+//            child: Row(
+//              crossAxisAlignment: CrossAxisAlignment.start,
+//              children: <Widget>[
+//                Expanded(
+//                  child: Text(
+//                    "txhash:${item.tx_hash}",
+//                    maxLines: 1,
+//                    overflow: TextOverflow.ellipsis,
+//                    style: TextStyle(
+//                      fontSize: 12,
+//                      color: Color(0xff333333),
+//                    ),
+//                  ),
+//                ),
+//                Container(
+//                  width: 12,
+//                  margin: EdgeInsets.fromLTRB(5, 3, 0, 0),
+//                  child: Icon(
+//                    Icons.redo,
+//                    color: Colors.blue,
+//                    size: 12,
+//                  ),
+//                )
+//              ],
+//            ),
+//          ),
+//        ],
+//      ),
     );
   }
 

@@ -36,7 +36,8 @@ class BountyUserSwapRecord {
       status = json["status"] ?? "";
       tx_hash = json["tx_hash"] ?? "";
 
-      DateTime dt_created = DateUtil.getDateTime(created_at,isUtc: false) ?? DateTime.now();
+      DateTime dt_created =
+          DateUtil.getDateTime(created_at, isUtc: false) ?? DateTime.now();
       created_at_local =
           DateUtil.formatDate(dt_created, format: DataFormats.full);
     } catch (e) {
@@ -51,6 +52,8 @@ class BountyUserSwapRecord {
       return "已通过";
     } else if (status == "faild") {
       return "失败";
+    } else if (status == "reject") {
+      return "已拒绝";
     } else {
       return "";
     }
