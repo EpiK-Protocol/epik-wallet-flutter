@@ -12,6 +12,7 @@ import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart' as ensv;
 
 class BountyExchangeRecordListview extends BaseInnerWidget {
   int index = 0;
@@ -79,11 +80,11 @@ class BountyExchangeRecordListviewState
           (json) => BountyUserSwapRecord.fromJson(json));
 
 //       test
-      int size = datalist.length + data.length;
-      for (int i = size; i < size + 20; i++) {
-        data.add((BountyUserSwapRecord.fromJson(jsonDecode(
-            '{"id":1,"created_at":"2020-10-10T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","miner_id":"241b7750-e601-54ad-9145-33837529dbbb","amount":100,"erc20_epk":120,"fee":0,"status":"pending","tx_hash":"$i"}'))));
-      }
+//      int size = datalist.length + data.length;
+//      for (int i = size; i < size + 20; i++) {
+//        data.add((BountyUserSwapRecord.fromJson(jsonDecode(
+//            '{"id":1,"created_at":"2020-10-10T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","miner_id":"241b7750-e601-54ad-9145-33837529dbbb","amount":100,"erc20_epk":120,"fee":0,"status":"pending","tx_hash":"$i"}'))));
+//      }
     }
 
     if (data != null) {
@@ -148,7 +149,7 @@ class BountyExchangeRecordListviewState
       key: PageStorageKey<String>("bountyrecord_exchange${this.widget.index}"),
       slivers: <Widget>[
         SliverOverlapInjector(
-          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+          handle: ensv.NestedScrollView.sliverOverlapAbsorberHandleFor(context),
         ),
         SliverList(
           delegate: SliverChildBuilderDelegate(

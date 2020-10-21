@@ -11,11 +11,12 @@ import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/bounty/bountyexchangerecordlistview.dart';
 import 'package:epikwallet/views/bounty/bountyrewardrecordlistview.dart';
+import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart'
+    as ensv;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
 
 class BountyExchangeView extends BaseWidget {
   @override
@@ -35,6 +36,9 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
   TextEditingController _tec_from;
   String text_from = "";
   double amount_form = 0;
+
+  Key key_0 = GlobalKey();
+  Key key_1 = GlobalKey();
 
   @override
   void initStateConfig() {
@@ -74,13 +78,21 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
     if (_tec_from == null)
       _tec_from = new TextEditingController(text: text_from);
 
-    return NestedScrollView(
+    return ensv.NestedScrollView(
+      innerScrollPositionKeyBuilder: () {
+        if (pageIndex == 0)
+          return key_0;
+        else
+          return key_1;
+      },
+      //    return NestedScrollView(
       controller: scrollController,
       // 头部-----------
       headerSliverBuilder: (context, innerScrolled) => <Widget>[
         SliverOverlapAbsorber(
           // 传入 handle 值，直接通过 `sliverOverlapAbsorberHandleFor` 获取即可
-          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+//          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+          handle: ensv.NestedScrollView.sliverOverlapAbsorberHandleFor(context),
           sliver: SliverPersistentHeader(
             delegate: BountyHeader(
               50,
@@ -167,7 +179,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                           top: 80,
                           child: Text(
 //                            "当前兑换比例：1积分 = ${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1)}ERC20-EPK",
-                            "当前兑换比例：${StringUtils.formatNumAmount(1/(AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1))} 积分 = 1 ERC20-EPK",
+                            "当前兑换比例：${StringUtils.formatNumAmount(1 / (AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1))} 积分 = 1 ERC20-EPK",
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               fontSize: 12,
@@ -407,16 +419,32 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
       body: TabBarView(
         controller: _tabController,
         children: <Widget>[
-          Builder(
-            builder: (context) {
-              return BountyRewardRecordListview(0);
-            },
+          ensv.NestedScrollViewInnerScrollPositionKeyWidget(
+            key_0,
+            Builder(
+              builder: (context) {
+                return BountyRewardRecordListview(0);
+              },
+            ),
           ),
-          Builder(
-            builder: (context) {
-              return BountyExchangeRecordListview(1);
-            },
+          ensv.NestedScrollViewInnerScrollPositionKeyWidget(
+            key_1,
+            Builder(
+              builder: (context) {
+                return BountyExchangeRecordListview(1);
+              },
+            ),
           ),
+//          Builder(
+//            builder: (context) {
+//              return BountyRewardRecordListview(0);
+//            },
+//          ),
+//          Builder(
+//            builder: (context) {
+//              return BountyExchangeRecordListview(1);
+//            },
+//          ),
         ],
       ),
     );
@@ -443,7 +471,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
     }
 
     double min = AccountMgr()?.currentAccount?.bounty_swap_min ?? 1;
-    if(amount_form < min){
+    if (amount_form < min) {
       showToast("最少兑换数量为${StringUtils.formatNumAmount(min)}积分");
       return;
     }
@@ -499,7 +527,6 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
   }
 
   void onClickHelp() {
-
     MessageDialog.showMsgDialog(
       context,
       title: "关于手续费",
@@ -512,7 +539,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
         child: RichText(
           text: TextSpan(
             text:
-            "「1」用积分兑换ERC20-EPK时，通过以太网转账会产生ETH手续费；\n\n「2」手续费数量是根据以太坊gas费用和Uniswap中的币价计算出要扣除多少ERC20-EPK。",
+                "「1」用积分兑换ERC20-EPK时，通过以太网转账会产生ETH手续费；\n\n「2」手续费数量是根据以太坊gas费用和Uniswap中的币价计算出要扣除多少ERC20-EPK。",
             style: TextStyle(
               color: Color(0xff333333),
               fontSize: 14.0,
@@ -521,7 +548,6 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
         ),
       ),
     );
-
   }
 }
 

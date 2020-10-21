@@ -10,6 +10,7 @@ import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart' as ensv;
 
 class BountyRewardRecordListview extends BaseInnerWidget {
   int index = 0;
@@ -78,11 +79,11 @@ class BountyRewardRecordListviewState
           (json) => BountyUserRewardRecord.fromJson(json));
 
       // test
-      //      int size = datalist.length + data.length;
-      //      for (int i = size; i < size + 20; i++) {
-      //        data.add((BountyUserRewardRecord.fromJson(jsonDecode(
-      //            '{"id":1,"created_at":"2020-10-10T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","bounty_id":1,"title":"案件水电费","miner_id":"241b7750-e601-54ad-9145-33837529dbbb","bonus":${i},"status":"done","description":"asdfa"}'))));
-      //      }
+//            int size = datalist.length + data.length;
+//            for (int i = size; i < size + 20; i++) {
+//              data.add((BountyUserRewardRecord.fromJson(jsonDecode(
+//                  '{"id":1,"created_at":"2020-10-10T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","bounty_id":1,"title":"案件水电费","miner_id":"241b7750-e601-54ad-9145-33837529dbbb","bonus":${i},"status":"done","description":"asdfa"}'))));
+//            }
     }
 
     if (data != null) {
@@ -147,7 +148,7 @@ class BountyRewardRecordListviewState
       key: PageStorageKey<String>("bountyrecord_reward${this.widget.index}"),
       slivers: <Widget>[
         SliverOverlapInjector(
-          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+          handle: ensv.NestedScrollView.sliverOverlapAbsorberHandleFor(context),
         ),
         SliverList(
           delegate: SliverChildBuilderDelegate(
