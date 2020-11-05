@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import 'NavigatorManger.dart';
 import 'common_function.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 
 abstract class BaseWidget extends StatefulWidget {
   BaseWidgetState baseWidgetState;

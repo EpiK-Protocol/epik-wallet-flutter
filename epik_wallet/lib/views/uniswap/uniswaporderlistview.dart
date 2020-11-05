@@ -1,8 +1,9 @@
 import 'package:epikwallet/base/_base_widget.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
-import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/list_view.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,7 +25,13 @@ class UniswaporderlistViewState extends BaseWidgetState<UniswaporderlistView> {
 
   void initStateConfig() {
     super.initStateConfig();
-    setAppBarTitle("交易记录");
+//    setAppBarTitle("交易记录");
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setAppBarTitle(ResString.get(context, RSID.usolv_1));
   }
 
   void onCreate() {
@@ -95,7 +102,7 @@ class UniswaporderlistViewState extends BaseWidgetState<UniswaporderlistView> {
                     Container(
                       width: double.infinity,
                       child: Text(
-                        "提交时间：${uorder.getTime()}",
+                        ResString.get(context, RSID.usolv_2)+uorder.getTime(),//"提交时间：${uorder.getTime()}",
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.black87,
@@ -158,8 +165,12 @@ class UniswaporderlistViewState extends BaseWidgetState<UniswaporderlistView> {
     String hash = data[position].hash;
     DeviceUtils.copyText(hash);
 //    https://cn.etherscan.com/address/0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D
-  String url = "https://cn.etherscan.com/tx/$hash";
-  ViewGT.showGeneralWebView(context, "详情", url);
+    String url = "https://cn.etherscan.com/tx/$hash";
+    ViewGT.showGeneralWebView(
+      context,
+      ResString.get(context, RSID.usolv_3),//"详情",
+      url,
+    );
   }
 
   Future<void> _pullRefreshCallback() async {

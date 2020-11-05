@@ -3,6 +3,8 @@ import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
@@ -104,7 +106,9 @@ class UniswapExchangeViewState
   Widget buildWidget(BuildContext context) {
     Color exchanegBtnColor =
         (amount_form != 0 && calc_amounts != null) ? color_btn_2 : color_btn_1;
-    String btn_text = (amount_form != 0 && calc_amounts != null) ? "兑换" : "预估";
+    String btn_text = (amount_form != 0 && calc_amounts != null)
+        ? ResString.get(context, RSID.usv_2)
+        : ResString.get(context, RSID.usev_1); //"兑换" : "预估";
 
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
@@ -147,7 +151,15 @@ class UniswapExchangeViewState
                       width: double.infinity,
                       margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
                       child: Text(
-                        "手续费 : ${StringUtils.formatNumAmount(StringUtils.parseDouble(widget.walletAccount.eth_suggestGas, 0) * 9, point: 8, supply0: false)} eth",
+                        ResString.get(context, RSID.usev_2, replace: [
+                          StringUtils.formatNumAmount(
+                              StringUtils.parseDouble(
+                                      widget.walletAccount.eth_suggestGas, 0) *
+                                  9,
+                              point: 8,
+                              supply0: false)
+                        ]),
+//                        "手续费 : ${StringUtils.formatNumAmount(StringUtils.parseDouble(widget.walletAccount.eth_suggestGas, 0) * 9, point: 8, supply0: false)} eth",
                         style: TextStyle(
                           color: Colors.black45,
                           fontSize: 12,
@@ -158,7 +170,13 @@ class UniswapExchangeViewState
                       width: double.infinity,
                       margin: EdgeInsets.fromLTRB(20, 5, 20, 0),
                       child: Text(
-                        "滑点 : ${StringUtils.formatNumAmount((slippage_calc ?? 0.01) * 100, point: 2, supply0: false)}%",
+                        ResString.get(context, RSID.usev_3, replace: [
+                          StringUtils.formatNumAmount(
+                              (slippage_calc ?? 0.01) * 100,
+                              point: 2,
+                              supply0: false)
+                        ]),
+//                        "滑点 : ${StringUtils.formatNumAmount((slippage_calc ?? 0.01) * 100, point: 2, supply0: false)}%",
                         style: TextStyle(
                           color: Colors.black45,
                           fontSize: 12,
@@ -222,7 +240,7 @@ class UniswapExchangeViewState
                   onClickReadme();
                 },
                 child: Text(
-                  "使用说明(新手必读)",
+                  ResString.get(context, RSID.uspv_3), //"使用说明(新手必读)",
                   style: TextStyle(
                     color: ResColor.main_1,
                     fontSize: 14,
@@ -268,7 +286,7 @@ class UniswapExchangeViewState
                 ),
                 Text(
                   (widget.walletAccount != null)
-                      ? "余额:${getBalance(cs_from) ?? "--"}"
+                      ? "${ResString.get(context, RSID.usev_4)}${getBalance(cs_from) ?? "--"}" //余额
                       : "",
                   style: TextStyle(
                     color: Colors.black54,
@@ -341,7 +359,7 @@ class UniswapExchangeViewState
                       });
                     },
                     child: Text(
-                      "全部",
+                      ResString.get(context, RSID.usev_5), //"全部",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: color_btn_1,
@@ -412,7 +430,7 @@ class UniswapExchangeViewState
                 ),
                 Text(
                   (widget.walletAccount != null)
-                      ? "余额:${getBalance(cs_to) ?? "--"}"
+                      ? "${ResString.get(context, RSID.usev_4)}${getBalance(cs_to) ?? "--"}" //余额:
                       : "",
                   style: TextStyle(
                     color: Colors.black54,
@@ -430,7 +448,9 @@ class UniswapExchangeViewState
                   child: Container(
                     margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                     child: Text(
-                      StringUtils.isNotEmpty(text_to) ? text_to : "需要预估数量",
+                      StringUtils.isNotEmpty(text_to)
+                          ? text_to
+                          : ResString.get(context, RSID.usev_6), //"需要预估数量",
                       style: TextStyle(
                           fontSize: 16,
                           color: StringUtils.isNotEmpty(text_to)
@@ -541,17 +561,20 @@ class UniswapExchangeViewState
     }
 
     if (StringUtils.isEmpty(text_from)) {
-      showToast("请输入${cs_from.symbol}数量");
+//      showToast("请输入${cs_from.symbol}数量");
+      showToast(ResString.get(context, RSID.usev_7, replace: [cs_from.symbol]));
       return;
     }
 
     if (amount_form == 0) {
-      showToast("${cs_from.symbol}数量不能为0");
+//      showToast("${cs_from.symbol}数量不能为0");
+      showToast("${cs_from.symbol}${ResString.get(context, RSID.usev_8)}");
       return;
     }
 
     closeInput();
-    showLoadDialog("正在预估数量...", onShow: () async {
+    //"正在预估数量..."
+    showLoadDialog(ResString.get(context, RSID.usev_9), onShow: () async {
       widget.walletAccount.uploadSuggestGas(); //预估的同时 刷新gas
       Amounts amounts = await widget.walletAccount.hdwallet
           .uniswapGetAmountsOut(
@@ -572,7 +595,8 @@ class UniswapExchangeViewState
           });
         }
       } else {
-        showToast("请求失败,请稍后重试");
+//        showToast("请求失败,请稍后重试");
+        showToast(ResString.get(context, RSID.request_failed_retry));
       }
       closeLoadDialog();
     });
@@ -620,8 +644,8 @@ class UniswapExchangeViewState
 
     final YYDialog yydialog = MessageDialog.showMsgDialog(
       context,
-      title: "EpiK提醒您",
-      btnRight: "知道了",
+      title: ResString.get(context, RSID.uspv_13), //"EpiK提醒您",
+      btnRight: ResString.get(context, RSID.isee), //"知道了",
       onClickBtnRight: (dialog) {
         dialog.dismiss();
       },
@@ -629,8 +653,8 @@ class UniswapExchangeViewState
         padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
         child: RichText(
           text: TextSpan(
-            text:
-                "「1」本页兑换交易是基于Uniswap的ERC20-EPK与USDT交易\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
+            text: ResString.get(context, RSID.usev_10_1),
+            // "「1」本页兑换交易是基于Uniswap的ERC20-EPK与USDT交易\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
             style: TextStyle(
               color: Color(0xff333333),
               fontSize: 14.0,
@@ -646,10 +670,11 @@ class UniswapExchangeViewState
                 recognizer: recognizer_1,
               ),
               TextSpan(
-                text: "\n\n「4」新手操作说明请点击",
+                text: ResString.get(
+                    context, RSID.usev_10_2), //"\n\n「4」新手操作说明请点击",
               ),
               TextSpan(
-                text: "这里",
+                text: ResString.get(context, RSID.usev_10_3), // "这里",
                 style: TextStyle(
                   color: Colors.blue,
                   fontSize: 14.0,
@@ -665,8 +690,8 @@ class UniswapExchangeViewState
 
     recognizer_1.onTap = () async {
       yydialog.dismiss();
-      ViewGT.showGeneralWebView(
-          context, "合约", "https://cn.etherscan.com/address/${address}");
+      ViewGT.showGeneralWebView(context, ResString.get(context, RSID.uspv_14),
+          "https://cn.etherscan.com/address/${address}");
     };
 
     recognizer_2.onTap = () async {
@@ -688,12 +713,14 @@ class UniswapExchangeViewState
     }
 
     if (StringUtils.isEmpty(text_from)) {
-      showToast("请输入${cs_from.symbol}数量");
+//      showToast("请输入${cs_from.symbol}数量");
+      showToast(ResString.get(context, RSID.usev_7, replace: [cs_from.symbol]));
       return;
     }
 
     if (amount_form == 0) {
-      showToast("${cs_from.symbol}数量不能为0");
+//      showToast("${cs_from.symbol}数量不能为0");
+      showToast("${cs_from.symbol}${ResString.get(context, RSID.usev_8)}");
       return;
     }
 
@@ -713,63 +740,66 @@ class UniswapExchangeViewState
 
         await Future.delayed(Duration(milliseconds: 200));
 
-        showLoadDialog("正在提交到以太坊网络，请耐心等待", onShow: () async {
-          ResultObj<String> ret =
-              await widget.walletAccount.hdwallet.uniswapExactTokenForTokens(
-            widget.walletAccount.hd_eth_address, //地址
-            cs_from.symbolToNetWork, // from币种
-            cs_to.symbolToNetWork, // to币种
-            text_from.trim(), // from数量
-            "${calc_amounts.AmountOut_d * (1 - slippage)}",
-            // , // to 期望兑换到的最少数量
-            "${DateTime.now().toUtc().millisecondsSinceEpoch / 1000 + 20 * 60}", // 最晚成交时间 时间戳 秒
-          );
+        showLoadDialog(
+          ResString.get(context, RSID.usev_11),//"正在提交到以太坊网络，请耐心等待",
+          onShow: () async {
+            ResultObj<String> ret =
+                await widget.walletAccount.hdwallet.uniswapExactTokenForTokens(
+              widget.walletAccount.hd_eth_address, //地址
+              cs_from.symbolToNetWork, // from币种
+              cs_to.symbolToNetWork, // to币种
+              text_from.trim(), // from数量
+              "${calc_amounts.AmountOut_d * (1 - slippage)}",
+              // , // to 期望兑换到的最少数量
+              "${DateTime.now().toUtc().millisecondsSinceEpoch / 1000 + 20 * 60}", // 最晚成交时间 时间戳 秒
+            );
 
-          // ret = 0xe966bbd1e089becc1d0d23bf8ae145ba3b25ad9b482dbd22b6368bca239e35e2
-          print("uniswapExactTokenForTokens ${ret?.data}");
+            // ret = 0xe966bbd1e089becc1d0d23bf8ae145ba3b25ad9b482dbd22b6368bca239e35e2
+            print("uniswapExactTokenForTokens ${ret?.data}");
 //        showToast("请求失败,请稍后重试");
-          closeLoadDialog();
+            closeLoadDialog();
 
-          if (StringUtils.isNotEmpty(ret?.data)) {
-            widget?.walletAccount?.uhMgr?.addOrder(UniswapOrder(
-              hash: ret?.data,
-              state: 0,
-              // 等待
-              type: 0,
-              // 兑换
-              time: DateTime.now().toUtc().millisecondsSinceEpoch,
+            if (StringUtils.isNotEmpty(ret?.data)) {
+              widget?.walletAccount?.uhMgr?.addOrder(UniswapOrder(
+                hash: ret?.data,
+                state: 0,
+                // 等待
+                type: 0,
+                // 兑换
+                time: DateTime.now().toUtc().millisecondsSinceEpoch,
 
-              ///utc时间 毫秒
-              token_a: cs_from.symbol,
-              token_b: cs_to.symbol,
-              amount_a: text_from,
-              amount_b: text_to,
-            ));
-            widget?.walletAccount?.uhMgr?.save();
+                ///utc时间 毫秒
+                token_a: cs_from.symbol,
+                token_b: cs_to.symbol,
+                amount_a: text_from,
+                amount_b: text_to,
+              ));
+              widget?.walletAccount?.uhMgr?.save();
 
-            setState(() {
-              text_from = "";
-              _tec_from.text = "";
-              amount_form = 0;
-              text_to = "0.0";
-            });
+              setState(() {
+                text_from = "";
+                _tec_from.text = "";
+                amount_form = 0;
+                text_to = "0.0";
+              });
 
 //            DeviceUtils.copyText(ret);
 
-            MessageDialog.showMsgDialog(
-              context,
-              title: "兑换",
-              msg: "已提交到以太坊\n稍后可在交易记录中查询结果",
-              msgAlign: TextAlign.center,
-              btnRight: "确定",
-              onClickBtnRight: (dialog) {
-                dialog.dismiss();
-              },
-            );
-          } else {
-            showToast(ret?.errorMsg ?? "请求失败,请稍后重试");
-          }
-        });
+              MessageDialog.showMsgDialog(
+                context,
+                title:ResString.get(context, RSID.usv_2),// "兑换",
+                msg: ResString.get(context, RSID.usev_12),//"已提交到以太坊\n稍后可在交易记录中查询结果",
+                msgAlign: TextAlign.center,
+                btnRight: ResString.get(context, RSID.confirm),//"确定",
+                onClickBtnRight: (dialog) {
+                  dialog.dismiss();
+                },
+              );
+            } else {
+              showToast(ret?.errorMsg ??ResString.get(context, RSID.request_failed_retry));// "请求失败,请稍后重试");
+            }
+          },
+        );
       },
     );
   }

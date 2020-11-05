@@ -1,3 +1,6 @@
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
+import 'package:epikwallet/main.dart';
 import 'package:epikwallet/utils/data/date_util.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 
@@ -47,13 +50,13 @@ class BountyUserSwapRecord {
 
   String getStatusStr() {
     if (status == "pending") {
-      return "已提交";
+      return ResString.get(appContext, RSID.bus_1);//"已提交";
     } else if (status == "paid") {
-      return "已通过";
+      return ResString.get(appContext, RSID.bus_2);//"已通过";
     } else if (status == "faild") {
-      return "失败";
+      return ResString.get(appContext, RSID.bus_3);//"失败";
     } else if (status == "reject") {
-      return "已拒绝";
+      return ResString.get(appContext, RSID.bus_4);//"已拒绝";
     } else {
       return "";
     }

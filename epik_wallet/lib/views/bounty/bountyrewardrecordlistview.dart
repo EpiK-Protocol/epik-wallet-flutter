@@ -1,6 +1,6 @@
-import 'dart:convert';
-
 import 'package:epikwallet/base/base_inner_widget.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/api/api_bounty.dart';
 import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
 import 'package:epikwallet/model/BountyUserReward.dart';
@@ -8,9 +8,10 @@ import 'package:epikwallet/utils/JsonUtils.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
+import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart'
+    as ensv;
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart' as ensv;
 
 class BountyRewardRecordListview extends BaseInnerWidget {
   int index = 0;
@@ -60,7 +61,7 @@ class BountyRewardRecordListviewState
 
     setLoadingWidgetVisible(true);
 
-    hasMore=false;
+    hasMore = false;
     page = 0;
     ApiBounty.getUserTaskList(
             DL_TepkLoginToken.getEntity().getToken(), page, pageSize)
@@ -229,7 +230,8 @@ class BountyRewardRecordListviewState
             right: 10,
             top: 0,
             child: Text(
-              item.description ?? "完成任务",
+              item.description ?? ResString.get(context, RSID.brrlv_1),
+              //"完成任务",
               style: TextStyle(
                 fontSize: 15,
                 color: Color(0xff333333),
@@ -240,7 +242,9 @@ class BountyRewardRecordListviewState
             left: 0,
             bottom: 10,
             child: Text(
-              "+ " + StringUtils.formatNumAmount(item.bonus, point: 8) + " 积分",
+              "+ " +
+                  StringUtils.formatNumAmount(item.bonus, point: 8) +
+                  ResString.get(context, RSID.berlv_1), //" 积分",
               style: TextStyle(
                 fontSize: 15,
                 color: Color(0xff333333),
@@ -275,7 +279,7 @@ class BountyRewardRecordListviewState
           : Container(
               child: needNoMoreTipe
                   ? Text(
-                      "没有更多了",
+                      ResString.get(context, RSID.no_more), //"没有更多了",
                       style: TextStyle(fontSize: 14, color: Color(0xff999999)),
                     )
                   : null,
@@ -289,7 +293,7 @@ class BountyRewardRecordListviewState
     if (isLoading) {
       return;
     }
-    hasMore=false;
+    hasMore = false;
     page = 0;
     isLoading = true;
     HttpJsonRes httpjsonres = await ApiBounty.getUserTaskList(

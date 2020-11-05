@@ -1,4 +1,5 @@
 import 'package:epikwallet/base/base_inner_widget.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
@@ -7,6 +8,7 @@ import 'package:epikwallet/views/viewgoto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 
 class TransactionView extends BaseInnerWidget {
   TransactionView(Key key) : super(key: key) {}
@@ -62,10 +64,10 @@ class TransactionViewState extends BaseInnerWidgetState<TransactionView> {
 
   @override
   Widget buildWidget(BuildContext context) {
-
-    if(AccountMgr().currentAccount==null)
-    {
-      return Text("请先登录钱包");
+    if (AccountMgr().currentAccount == null) {
+      return Text(
+        ResString.get(context, RSID.main_tv_1), //"请先登录钱包",
+      );
     }
 
     // 暂时把uniswap嵌入到这里显示

@@ -1,6 +1,7 @@
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 
 class FixPasswordView extends BaseWidget {
   WalletAccount walletaccount;
@@ -94,7 +96,7 @@ class _FixPasswordViewState extends BaseWidgetState<FixPasswordView> {
             Padding(
               padding: EdgeInsets.fromLTRB(15, 6, 15, 10),
               child: Text(
-                "修改EpiK Portal钱包密码",
+                ResString.get(context, RSID.fpv_1), //"修改EpiK Portal钱包密码",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 20,
@@ -104,7 +106,8 @@ class _FixPasswordViewState extends BaseWidgetState<FixPasswordView> {
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
               child: Text(
-                "请备份好您的密码！EpiK Portal不存储用户密码，无法提供找回或重置的服务。",
+                ResString.get(context, RSID.iwv_2),
+                //"请备份好您的密码！EpiK Portal不存储用户密码，无法提供找回或重置的服务。",
                 style: TextStyle(
                   color: Colors.redAccent,
                   fontSize: 13,
@@ -114,51 +117,63 @@ class _FixPasswordViewState extends BaseWidgetState<FixPasswordView> {
             Padding(
               padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
               child: Text(
-                "新的钱包密码",
+                ResString.get(context, RSID.fpv_3), //"新的钱包密码",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 15,
                 ),
               ),
             ),
-            getInputWidget(keyword_1, "请输入钱包密码", _controllerKeyword_1, (text) {
-              dlog(text); // 当输入内容变更时,如何处理
-              setState(() {
-                text = _controllerKeyword_1.text;
-                text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
-                dlog(text);
-                keyword_1 = text;
-              });
-            }, () {
-              setState(() {
-                keyword_1 = "";
-                _controllerKeyword_1 = null;
-              });
-            }),
+            getInputWidget(
+              keyword_1,
+              ResString.get(context, RSID.iwv_9), //"请输入钱包密码",
+              _controllerKeyword_1,
+              (text) {
+                dlog(text); // 当输入内容变更时,如何处理
+                setState(() {
+                  text = _controllerKeyword_1.text;
+                  text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
+                  dlog(text);
+                  keyword_1 = text;
+                });
+              },
+              () {
+                setState(() {
+                  keyword_1 = "";
+                  _controllerKeyword_1 = null;
+                });
+              },
+            ),
             Container(
               padding: EdgeInsets.fromLTRB(15, 5, 15, 10),
               alignment: Alignment.centerRight,
               child: Text(
-                "*建议大小写字母、符号、数字组合 8位以上",
+                ResString.get(context, RSID.iwv_10), //"*建议大小写字母、符号、数字组合 8位以上",
                 style: TextStyle(
                   color: ResColor.black_50,
                   fontSize: 10,
                 ),
               ),
             ),
-            getInputWidget(keyword_2, "请确认钱包密码", _controllerKeyword_2, (text) {
-              dlog(text); // 当输入内容变更时,如何处理
-              setState(() {
-                text = _controllerKeyword_2.text;
-                text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
-                keyword_2 = text;
-              });
-            }, () {
-              setState(() {
-                keyword_2 = "";
-                _controllerKeyword_2 = null;
-              });
-            }),
+            getInputWidget(
+              keyword_2,
+              ResString.get(context, RSID.iwv_11), //"请确认钱包密码",
+              _controllerKeyword_2,
+              (text) {
+                dlog(text); // 当输入内容变更时,如何处理
+                setState(() {
+                  text = _controllerKeyword_2.text;
+                  text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
+                  keyword_2 = text;
+                });
+              },
+              () {
+                setState(() {
+                  keyword_2 = "";
+                  _controllerKeyword_2 = null;
+                });
+              },
+            ),
             Container(
               margin: EdgeInsets.fromLTRB(15, 50, 15, 0),
               height: 44,
@@ -174,7 +189,7 @@ class _FixPasswordViewState extends BaseWidgetState<FixPasswordView> {
                           clickNext();
                         },
                         child: Text(
-                          "确定修改密码",
+                          ResString.get(context, RSID.fpv_4), //  "确定修改密码",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15,
@@ -293,22 +308,26 @@ class _FixPasswordViewState extends BaseWidgetState<FixPasswordView> {
 
   bool checkPassword() {
     if (StringUtils.isEmpty(keyword_1)) {
-      showToast("请输入密码");
+//      showToast("请输入密码");
+      showToast(ResString.get(context, RSID.iwv_9));
       return false;
     }
 
     if (StringUtils.isEmpty(keyword_2)) {
-      showToast("请输入确认密码");
+//      showToast("请输入确认密码");
+      showToast(ResString.get(context, RSID.iwv_14));
       return false;
     }
 
     if (keyword_1 != keyword_2) {
-      showToast("两次输入的密码必须一致");
+//      showToast("两次输入的密码必须一致");
+      showToast(ResString.get(context, RSID.iwv_15));
       return false;
     }
 
     if (keyword_1.length < 8) {
-      showToast("密码至少需要8位");
+//      showToast("密码至少需要8位");
+      showToast(ResString.get(context, RSID.iwv_16));
       return false;
     }
 
@@ -324,10 +343,14 @@ class _FixPasswordViewState extends BaseWidgetState<FixPasswordView> {
 
     MessageDialog.showMsgDialog(
       context,
-      title: "提示",
-      msg: "您确定已牢记新的密码并修改钱包密码吗?",
-      btnLeft: "取消",
-      btnRight: "确定",
+      title: ResString.get(context, RSID.tip),
+      // "提示",
+      msg: ResString.get(context, RSID.fpv_5),
+      // "您确定已牢记新的密码并修改钱包密码吗?",
+      btnLeft: ResString.get(context, RSID.cancel),
+      // 取消,
+      btnRight: ResString.get(context, RSID.confirm),
+      //"确定",
       onClickBtnLeft: (dialog) {
         dialog.dismiss();
       },

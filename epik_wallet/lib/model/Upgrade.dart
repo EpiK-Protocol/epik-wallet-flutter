@@ -1,3 +1,6 @@
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
+import 'package:epikwallet/main.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:package_info/package_info.dart';
@@ -33,7 +36,6 @@ class Upgrade {
       }
       latest_version_num = version2Num(latest_version);
       required_version_num = version2Num(required_version);
-
     } catch (e) {
       print("Upgrade.fromJson error");
       print(e);
@@ -53,9 +55,15 @@ class Upgrade {
 //    needUpgrade = true;
 //    needRequired= true;
 
-    if(StringUtils.isEmpty(description))
-    {
-      description = "有新版本V${latest_version}${needRequired?"需要升级\n如不升级可能会影响正常功能":"可以升级\n是否现在升级?"}";
+    if (StringUtils.isEmpty(description)) {
+//      description = "有新版本V${latest_version}${needRequired?"需要升级\n如不升级可能会影响正常功能":"可以升级\n是否现在升级?"}";
+      description =
+          ResString.get(appContext, RSID.upgrade_des,replace: ["V$latest_version"]);
+      if (needRequired) {
+        description+=ResString.get(appContext, RSID.upgrade_des_1);
+      } else {
+        description+=ResString.get(appContext, RSID.upgrade_des_2);
+      }
     }
   }
 
@@ -67,19 +75,15 @@ class Upgrade {
       // 1.0.0  ==  1 00 00
 
       int num = 0;
-      List<String> array =version.split(".");
-      if(array!=null && array.length>0)
-      {
-        String numString ="";
-        for(int i = 0 ; i < array.length;i++)
-        {
-          if(i==0)
-          {
+      List<String> array = version.split(".");
+      if (array != null && array.length > 0) {
+        String numString = "";
+        for (int i = 0; i < array.length; i++) {
+          if (i == 0) {
             numString += array[i];
-          }else{
+          } else {
             String ss = array[i];
-            if(ss.length==1)
-              ss = "0"+ss;
+            if (ss.length == 1) ss = "0" + ss;
             numString += ss;
           }
         }

@@ -1,4 +1,5 @@
 import 'package:epikwallet/base/_base_widget.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/res_color.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 
 class ExportEpikPrivateKeyView extends BaseWidget {
   WalletAccount walletaccount;
@@ -24,7 +26,14 @@ class _ExportEpikPrivateKeyViewState
   @override
   void initStateConfig() {
     super.initStateConfig();
-    setAppBarTitle("导出tEPK私钥");
+//    setAppBarTitle("导出tEPK私钥");
+  }
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setAppBarTitle(ResString.get(context, RSID.eepkv_1));
   }
 
   SystemUiOverlayStyle oldSystemUiOverlayStyle;
@@ -38,7 +47,6 @@ class _ExportEpikPrivateKeyViewState
 
     refresh();
   }
-
 
   @override
   void dispose() {
@@ -54,8 +62,8 @@ class _ExportEpikPrivateKeyViewState
       children: <Widget>[
         Container(
           width: double.infinity,
-          margin:  EdgeInsets.fromLTRB(30, 30,30,30),
-          padding: EdgeInsets.fromLTRB(20, 20,20,20),
+          margin: EdgeInsets.fromLTRB(30, 30, 30, 30),
+          padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
           decoration: BoxDecoration(
             color: ResColor.main.withOpacity(0.1),
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -77,10 +85,11 @@ class _ExportEpikPrivateKeyViewState
             splashColor: Colors.white24,
             onPressed: () {
               DeviceUtils.copyText(PrivateKey);
-              showToast("已复制私钥");
+//              showToast("已复制私钥");
+              showToast(ResString.get(context, RSID.eepkv_2));
             },
             child: Text(
-              "复制私钥",
+              ResString.get(context, RSID.eepkv_3),//"复制私钥",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,

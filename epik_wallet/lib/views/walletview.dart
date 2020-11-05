@@ -2,7 +2,8 @@ import 'dart:math' as math;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
-import 'package:epikwallet/dialog/message_dialog.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
@@ -241,7 +242,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
 //                  ),
                   DiffScaleText(
                     text: balance,
-                    textStyle:TextStyle(
+                    textStyle: TextStyle(
                       color: Colors.white,
                       fontSize: 40,
                       fontFamily: "DIN_Condensed_Bold",
@@ -253,8 +254,10 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    "≈ " + StringUtils.formatNumAmount(
-                        AccountMgr().currentAccount.total_btc, point: 8),
+                    "≈ " +
+                        StringUtils.formatNumAmount(
+                            AccountMgr().currentAccount.total_btc,
+                            point: 8),
                     style: TextStyle(
                       color: ResColor.white_40,
                       fontSize: 18,
@@ -315,31 +318,31 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                     child: ClipOval(
                       child: ca?.icon_url?.startsWith("http")
                           ? CachedNetworkImage(
-                        imageUrl: ca.icon_url,
-                        width: 48,
-                        height: 48,
-                        fit: BoxFit.contain,
-                        placeholder: (context, url) {
-                          return Container(
-                            color: ResColor.black_10,
-                          );
-                        },
-                        errorWidget: (context, url, error) {
-                          return Container(
-                            color: ResColor.black_10,
-                            child: Icon(
-                              Icons.broken_image,
-                              size: 24,
-                              color: ResColor.white_80,
-                            ),
-                          );
-                        },
-                      )
+                              imageUrl: ca.icon_url,
+                              width: 48,
+                              height: 48,
+                              fit: BoxFit.contain,
+                              placeholder: (context, url) {
+                                return Container(
+                                  color: ResColor.black_10,
+                                );
+                              },
+                              errorWidget: (context, url, error) {
+                                return Container(
+                                  color: ResColor.black_10,
+                                  child: Icon(
+                                    Icons.broken_image,
+                                    size: 24,
+                                    color: ResColor.white_80,
+                                  ),
+                                );
+                              },
+                            )
                           : Image(
-                        image: AssetImage(ca.icon_url),
-                        width: 48,
-                        height: 48,
-                      ),
+                              image: AssetImage(ca.icon_url),
+                              width: 48,
+                              height: 48,
+                            ),
                     ),
                   ),
                   Positioned(
@@ -347,19 +350,19 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                     bottom: 0,
                     child: ca.networkType != null
                         ? Container(
-                        width: 15,
-                        height: 15,
-                        padding: EdgeInsets.all(1),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(10)),
-                        ),
-                        child: Image(
-                          image: AssetImage(ca.networkType.iconUrl),
-                          width: 13,
-                          height: 13,
-                        ))
+                            width: 15,
+                            height: 15,
+                            padding: EdgeInsets.all(1),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),
+                            child: Image(
+                              image: AssetImage(ca.networkType.iconUrl),
+                              width: 13,
+                              height: 13,
+                            ))
                         : Container(),
                   ),
                 ],
@@ -378,7 +381,10 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        ca.balance.isNotEmpty ?StringUtils.formatNumAmount( ca.getBalanceDouble(),point: 8,supply0: false) : "--",
+                        ca.balance.isNotEmpty
+                            ? StringUtils.formatNumAmount(ca.getBalanceDouble(),
+                                point: 8, supply0: false)
+                            : "--",
                         style: TextStyle(
                           fontSize: 25,
                           color: Colors.black,
@@ -463,7 +469,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
         children: <Widget>[
           Padding(
             padding:
-            EdgeInsets.only(top: getAppBarHeight() + getTopBarHeight()),
+                EdgeInsets.only(top: getAppBarHeight() + getTopBarHeight()),
           ),
           Container(
             width: double.infinity,
@@ -500,8 +506,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Transform(
-                transform: Matrix4.identity()
-                  ..rotateZ(math.pi), // 旋转的角度
+                transform: Matrix4.identity()..rotateZ(math.pi), // 旋转的角度
                 origin: Offset(12, 12), // 旋转的中心点
                 child: Icon(
                   Icons.format_quote,
@@ -512,7 +517,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
               Padding(
                 padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
                 child: Text(
-                  "没有钱包",
+                  ResString.get(context, RSID.main_wv_1), //"没有钱包",
                   style: TextStyle(
                     fontSize: 20,
                     color: Color(0xff1A1C1F),
@@ -551,7 +556,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                     ),
                     Expanded(
                       child: Text(
-                        "创建钱包",
+                        ResString.get(context, RSID.main_wv_2), //"创建钱包",
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 16,
@@ -574,8 +579,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Transform(
-                transform: Matrix4.identity()
-                  ..rotateZ(math.pi), // 旋转的角度
+                transform: Matrix4.identity()..rotateZ(math.pi), // 旋转的角度
                 origin: Offset(12, 12), // 旋转的中心点
                 child: Icon(
                   Icons.format_quote,
@@ -586,7 +590,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
               Padding(
                 padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
                 child: Text(
-                  "已有钱包",
+                  ResString.get(context, RSID.main_wv_3), //"已有钱包",
                   style: TextStyle(
                     fontSize: 20,
                     color: Color(0xff1A1C1F),
@@ -625,7 +629,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                     ),
                     Expanded(
                       child: Text(
-                        "导入钱包",
+                        ResString.get(context, RSID.main_wv_4), //"导入钱包",
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 16,
@@ -680,7 +684,8 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
       isLoading = false;
       data_list_item = AccountMgr().currentAccount.currencyList;
       balance = StringUtils.formatNumAmount(
-          AccountMgr().currentAccount.total_usd, point: 2);
+          AccountMgr().currentAccount.total_usd,
+          point: 2);
       closeStateLayout();
     });
   }
@@ -699,7 +704,8 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
       isLoading = false;
       data_list_item = AccountMgr().currentAccount.currencyList;
       balance = StringUtils.formatNumAmount(
-          AccountMgr().currentAccount.total_usd, point: 2);
+          AccountMgr().currentAccount.total_usd,
+          point: 2);
     });
   }
 

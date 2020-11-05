@@ -1,5 +1,7 @@
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
@@ -39,7 +41,7 @@ class UniswapViewState extends BaseWidgetState<UniswapView> with TickerProviderS
     setTopBarBackColor(Colors.transparent);
     isTopFloatWidgetShow = true;
 
-    setAppBarRightTitle("交易记录");
+//    setAppBarRightTitle("交易记录");
 
     _tabController = new TabController(
         initialIndex: pageIndex, length: 2, vsync: this);
@@ -51,6 +53,12 @@ class UniswapViewState extends BaseWidgetState<UniswapView> with TickerProviderS
       });
       print("tabbar indexIsChanging -> ${_tabController.indexIsChanging}");
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setAppBarTitle(ResString.get(context, RSID.usv_1));
   }
 
   @override
@@ -117,7 +125,7 @@ class UniswapViewState extends BaseWidgetState<UniswapView> with TickerProviderS
                   onClickTab(0);
                 },
                 child: Text(
-                  "兑换",
+                  ResString.get(context, RSID.usv_2),//"兑换",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: pageIndex == 0 ? Colors.black : Colors.black54,
@@ -134,7 +142,7 @@ class UniswapViewState extends BaseWidgetState<UniswapView> with TickerProviderS
                   onClickTab(1);
                 },
                 child:Text(
-                  "资金池",
+                  ResString.get(context, RSID.usv_3),//"资金池",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: pageIndex == 1 ? Colors.black : Colors.black54,

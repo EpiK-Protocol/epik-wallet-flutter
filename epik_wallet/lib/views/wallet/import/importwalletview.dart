@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 
 class ImportWalletView extends BaseWidget {
   @override
@@ -25,9 +27,7 @@ class ImportWalletView extends BaseWidget {
 
 class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
     with TickerProviderStateMixin {
-  List<String> tabItems = [
-    "助记词" /*, "私钥"*/
-  ];
+  List<String> tabItems;
   TabController _tabController;
   int _selectedIndex = 0;
 
@@ -67,6 +67,11 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
 
   @override
   Widget buildWidget(BuildContext context) {
+    if (tabItems == null)
+      tabItems = [
+        ResString.get(context, RSID.iwv_3) /*, "私钥"*/
+      ];
+
     if (_tabController == null) {
       _tabController = new TabController(
           initialIndex: _selectedIndex, length: tabItems.length, vsync: this);
@@ -124,7 +129,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
             Padding(
               padding: EdgeInsets.fromLTRB(15, 6, 15, 10),
               child: Text(
-                "导入EpiK Portal钱包",
+                ResString.get(context, RSID.iwv_1), // "导入EpiK Portal钱包",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 20,
@@ -134,7 +139,8 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
               child: Text(
-                "请备份好您的密码！EpiK Portal不存储用户密码，无法提供找回或重置的服务。",
+                ResString.get(context, RSID.iwv_2),
+                //"请备份好您的密码！EpiK Portal不存储用户密码，无法提供找回或重置的服务。",
                 style: TextStyle(
                   color: Colors.redAccent,
                   fontSize: 13,
@@ -199,8 +205,10 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
                   contentPadding: EdgeInsets.fromLTRB(15, 15, 15, 15),
-                  hintText:
-                      _selectedIndex == 0 ? "请输入助记词(12个英文单词)按空格隔开" : "请输入私钥",
+                  hintText: _selectedIndex == 0
+                      ? ResString.get(context, RSID.iwv_4)
+                      : ResString.get(context, RSID.iwv_5),
+                  //"请输入助记词(12个英文单词)按空格隔开" : "请输入私钥",
                   hintStyle: TextStyle(color: ResColor.white_80, fontSize: 16),
                 ),
                 cursorWidth: 2.0,
@@ -221,72 +229,91 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
             Padding(
               padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
               child: Text(
-                "钱包名称",
+                ResString.get(context, RSID.iwv_6), //"钱包名称",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 15,
                 ),
               ),
             ),
-            getInputWidget(accountName, "请输入钱包名称", _controllerAccount, (text) {
-              dlog(text); // 当输入内容变更时,如何处理
-              setState(() {
+            getInputWidget(
+              accountName,
+              ResString.get(context, RSID.iwv_7), //"请输入钱包名称",
+              _controllerAccount,
+              (text) {
+                dlog(text); // 当输入内容变更时,如何处理
+                setState(() {
 //              text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
-                dlog(text);
-                accountName = text.trim();
-              });
-            }, () {
-              setState(() {
-                accountName = "";
-                _controllerAccount = null;
-              });
-            }, isPassword: false),
+                  dlog(text);
+                  accountName = text.trim();
+                });
+              },
+              () {
+                setState(() {
+                  accountName = "";
+                  _controllerAccount = null;
+                });
+              },
+              isPassword: false,
+            ),
             Padding(
               padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
               child: Text(
-                "钱包密码",
+                ResString.get(context, RSID.iwv_8), // "钱包密码",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 15,
                 ),
               ),
             ),
-            getInputWidget(keyword_1, "请输入钱包密码", _controllerKeyword_1, (text) {
-              dlog(text); // 当输入内容变更时,如何处理
-              setState(() {
-                text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
-                dlog(text);
-                keyword_1 = text;
-              });
-            }, () {
-              setState(() {
-                keyword_1 = "";
-                _controllerKeyword_1 = null;
-              });
-            }),
+            getInputWidget(
+              keyword_1,
+              ResString.get(context, RSID.iwv_9), //"请输入钱包密码",
+              _controllerKeyword_1,
+              (text) {
+                dlog(text); // 当输入内容变更时,如何处理
+                setState(() {
+                  text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
+                  dlog(text);
+                  keyword_1 = text;
+                });
+              },
+              () {
+                setState(() {
+                  keyword_1 = "";
+                  _controllerKeyword_1 = null;
+                });
+              },
+            ),
             Container(
               padding: EdgeInsets.fromLTRB(15, 5, 15, 10),
               alignment: Alignment.centerRight,
               child: Text(
-                "*建议大小写字母、符号、数字组合 8位以上",
+                ResString.get(context, RSID.iwv_10), //"*建议大小写字母、符号、数字组合 8位以上",
                 style: TextStyle(
                   color: ResColor.black_50,
                   fontSize: 10,
                 ),
               ),
             ),
-            getInputWidget(keyword_2, "请确认钱包密码", _controllerKeyword_2, (text) {
-              dlog(text); // 当输入内容变更时,如何处理
-              setState(() {
-                text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
-                keyword_2 = text;
-              });
-            }, () {
-              setState(() {
-                keyword_2 = "";
-                _controllerKeyword_2 = null;
-              });
-            }),
+            getInputWidget(
+              keyword_2,
+              ResString.get(context, RSID.iwv_11), //"请确认钱包密码",
+              _controllerKeyword_2,
+              (text) {
+                dlog(text); // 当输入内容变更时,如何处理
+                setState(() {
+                  text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
+                  keyword_2 = text;
+                });
+              },
+              () {
+                setState(() {
+                  keyword_2 = "";
+                  _controllerKeyword_2 = null;
+                });
+              },
+            ),
             Container(
               margin: EdgeInsets.fromLTRB(15, 50, 15, 0),
               height: 44,
@@ -302,7 +329,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
                           clickNext();
                         },
                         child: Text(
-                          "开始导入",
+                          ResString.get(context, RSID.iwv_12), // "开始导入",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15,
@@ -327,7 +354,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
                 padding: EdgeInsets.all(10),
                 alignment: Alignment.center,
                 child: Text(
-                  "没有钱包？去创建",
+                  ResString.get(context, RSID.iwv_13), //"没有钱包？去创建",
                   style: TextStyle(
                     fontSize: 13,
                     color: ResColor.black_50,
@@ -438,27 +465,32 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
 
   bool checkPassword() {
     if (StringUtils.isEmpty(accountName)) {
-      showToast("请输入钱包名称");
+//      showToast("请输入钱包名称");
+      showToast(ResString.get(context, RSID.iwv_7));
       return false;
     }
 
     if (StringUtils.isEmpty(keyword_1)) {
-      showToast("请输入密码");
+//      showToast("请输入密码");
+      showToast(ResString.get(context, RSID.iwv_9));
       return false;
     }
 
     if (StringUtils.isEmpty(keyword_2)) {
-      showToast("请输入确认密码");
+//      showToast("请输入确认密码");
+      showToast(ResString.get(context, RSID.iwv_14));
       return false;
     }
 
     if (keyword_1 != keyword_2) {
-      showToast("两次输入的密码必须一致");
+//      showToast("两次输入的密码必须一致");
+      showToast(ResString.get(context, RSID.iwv_15));
       return false;
     }
 
     if (keyword_1.length < 8) {
-      showToast("密码至少需要8位");
+//      showToast("密码至少需要8位");
+      showToast(ResString.get(context, RSID.iwv_16));
       return false;
     }
 
@@ -467,7 +499,10 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
 
   bool checkImportString() {
     if (StringUtils.isEmpty(importString)) {
-      showToast(_selectedIndex == 0 ? "请输入助记词" : "请输入私钥");
+//      showToast(_selectedIndex == 0 ? "请输入助记词" : "请输入私钥");
+      showToast(_selectedIndex == 0
+          ? ResString.get(context, RSID.iwv_17)
+          : ResString.get(context, RSID.iwv_5));
       return false;
     }
 
@@ -475,12 +510,14 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
       // 助记词
       List<String> words = importString.split(" ");
       if (words == null || words.length != 12) {
-        showToast("请输入助记词(12个英文单词)按空格隔开");
+//        showToast("请输入助记词(12个英文单词)按空格隔开");
+        showToast(ResString.get(context, RSID.iwv_4));
         return false;
       }
     } else {
       if (importString.length != 64) {
-        showToast("私钥格式不正确");
+//        showToast("私钥格式不正确");
+        showToast(ResString.get(context, RSID.iwv_18));
         return false;
       }
     }
@@ -526,7 +563,8 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
       HD.seedFromMnemonic(importString).then((Uint8List seed) {
         if (seed == null || seed.length == 0) {
           // 验证助记词失败
-          showToast("导入失败，助记词不能正确解析");
+//          showToast("导入失败，助记词不能正确解析");
+          showToast(ResString.get(context, RSID.iwv_19));
           closeLoadDialog();
           return;
         }
@@ -538,10 +576,12 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
         AccountMgr().setCurrentAccount(waccount).then((ok) {
           if (ok) {
             closeLoadDialog();
-            Future.delayed(Duration(milliseconds: 300)).then((value) => finish());
+            Future.delayed(Duration(milliseconds: 300))
+                .then((value) => finish());
           } else {
             closeLoadDialog();
-            showToast("导入失败钱包失败");
+//            showToast("导入失败钱包失败");
+            showToast(ResString.get(context, RSID.iwv_20));
           }
         });
       });

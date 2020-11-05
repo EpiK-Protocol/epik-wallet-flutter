@@ -1,3 +1,5 @@
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
@@ -65,7 +67,7 @@ class BottomDialog {
                 Align(
                   alignment: FractionalOffset.center,
                   child: Text(
-                    "钱包密码",
+                    ResString.get(context, RSID.dlg_bd_1),//"钱包密码",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 15,
@@ -124,7 +126,7 @@ class BottomDialog {
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                hintText: "请输入钱包密码",
+                hintText: ResString.get(context, RSID.dlg_bd_2),//"请输入钱包密码",
                 hintStyle: TextStyle(color: Color(0xff999999), fontSize: 16),
               ),
               cursorWidth: 2.0,
@@ -160,7 +162,8 @@ class BottomDialog {
               splashColor: Colors.white24,
               onPressed: () {
                 if (StringUtils.isEmpty(password)) {
-                  ToastUtils.showToast("请输入密码");
+//                  ToastUtils.showToast("请输入密码");
+                ToastUtils.showToast(ResString.get(context, RSID.dlg_bd_3));
                   return;
                 }
 
@@ -169,7 +172,8 @@ class BottomDialog {
                   callback(password);
                 } else {
                   if (verifyText != password) {
-                    ToastUtils.showToast("密码不正确");
+//                    ToastUtils.showToast("密码不正确");
+                    ToastUtils.showToast(ResString.get(context, RSID.dlg_bd_4));
                   } else {
                     Navigator.pop(context);
                     callback(password);
@@ -177,7 +181,7 @@ class BottomDialog {
                 }
               },
               child: Text(
-                "确定",
+                ResString.get(context, RSID.confirm),//"确定",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 15,
@@ -319,7 +323,7 @@ class BottomDialog {
                 callback(_text);
               },
               child: Text(
-                "确定",
+                ResString.get(context, RSID.confirm),//"确定",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 15,

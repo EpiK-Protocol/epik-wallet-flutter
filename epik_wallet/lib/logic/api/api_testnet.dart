@@ -55,13 +55,14 @@ class ApiTestNet {
 //  "epik_address":"",
 //  "erc20_address":"",
 //  "epik_signature":"",
-//  "erc20_signature":""
+//  "erc20_signature":"",
+//  "platform":"weixin/telegram"
 //  }
 //  ###
 
   ///  EPIK测试网活动报名
   static Future<HttpJsonRes> signup(String weixin, epik_address, erc20_address,
-      epik_signature, erc20_signature) {
+      epik_signature, erc20_signature,platform) {
     String url = ServiceInfo.HOST + "/testnet/signup";
     Map<String, dynamic> params = new Map();
     params["weixin"] = weixin;
@@ -69,6 +70,7 @@ class ApiTestNet {
     params["erc20_address"] = erc20_address;
     params["epik_signature"] = epik_signature;
     params["erc20_signature"] = erc20_signature;
+    params["platform"]=platform;
     Dlog.p("signup", params.toString());
     String json = jsonEncode(params);
     Dlog.p("signup", json);

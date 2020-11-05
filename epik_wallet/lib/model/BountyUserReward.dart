@@ -1,3 +1,6 @@
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
+import 'package:epikwallet/main.dart';
 import 'package:epikwallet/utils/data/date_util.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 
@@ -32,7 +35,7 @@ class BountyUserRewardRecord {
       bonus = StringUtils.parseDouble(json["bonus"], 0);
       status = json["status"] ?? "";
       title = json["title"] ?? "";
-      description = json["description"] ?? "完成任务";
+      description = json["description"] ?? ResString.get(appContext, RSID.bur_1);// "完成任务";
 
       DateTime dt_created = DateUtil.getDateTime(created_at,isUtc: false) ?? DateTime.now();
       created_at_local =

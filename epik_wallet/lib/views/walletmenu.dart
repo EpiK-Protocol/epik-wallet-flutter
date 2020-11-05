@@ -1,5 +1,7 @@
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
@@ -37,8 +39,14 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
     setTopBarBackColor(Colors.white);
     setAppBarBackColor(Colors.white);
     setAppBarContentColor(Colors.black);
-    setAppBarTitle("钱包");
     setBackIconHinde(isHinde: false);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+//    setAppBarTitle("钱包");
+    setAppBarTitle(ResString.get(context, RSID.main_mw_1));
   }
 
   @override
@@ -103,7 +111,7 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
                     clickImport();
                   },
                   child: Text(
-                    "导入钱包",
+                    ResString.get(context, RSID.main_wv_4), //"导入钱包",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 13,
@@ -124,7 +132,7 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
                     clickCreate();
                   },
                   child: Text(
-                    "创建钱包",
+                    ResString.get(context, RSID.main_wv_2), //"创建钱包",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 13,
@@ -186,7 +194,7 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
                                   end: Alignment.topLeft,
                                 )),
                             child: Text(
-                              "当前钱包",
+                              ResString.get(context, RSID.main_mw_2), //"当前钱包",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 10,
@@ -284,21 +292,26 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
           closeLoadDialog();
           MessageDialog.showMsgDialog(
             context,
-            title: "无效钱包",
-            msg: "检测【${lks.account}】为无效钱包，是否清除？",
-            btnLeft: "暂不",
-            btnRight: "确定清除",
+            title: ResString.get(context, RSID.main_mw_3),
+            //"无效钱包",
+            msg: ResString.get(context, RSID.main_mw_6,
+                replace: ["${lks.account}"]),
+            //"检测【${lks.account}】为无效钱包，是否清除？",
+            btnLeft: ResString.get(context, RSID.main_mw_4),
+            //"暂不",
+            btnRight: ResString.get(context, RSID.main_mw_5),
+            //"确定清除",
             btnRightColor: Colors.red,
-            onClickBtnLeft: (dialog){dialog.dismiss();},
-            onClickBtnRight: (dialog){
+            onClickBtnLeft: (dialog) {
+              dialog.dismiss();
+            },
+            onClickBtnRight: (dialog) {
               dialog.dismiss();
               AccountMgr().delAccount(lks);
               data = AccountMgr().account_list;
-              if(data.length>0)
-              {
-                setState(() {
-                });
-              }else{
+              if (data.length > 0) {
+                setState(() {});
+              } else {
                 Future.delayed(Duration(milliseconds: 200))
                     .then((value) => clickAppBarBack());
               }
@@ -312,7 +325,8 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
   clickCopy(WalletAccount lks) {
     dlog("clickCopy");
     DeviceUtils.copyText(lks.hd_eth_address);
-    ToastUtils.showToast("已复制到剪切板");
+//    ToastUtils.showToast("已复制到剪切板");
+    ToastUtils.showToast(ResString.get(context, RSID.copied));
   }
 
   clickImport() {

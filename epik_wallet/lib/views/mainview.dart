@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/Upgrade.dart';
@@ -101,7 +103,8 @@ class _MainViewState extends BaseWidgetState<MainView> {
             DateTime.now().difference(lastPopTime) > Duration(seconds: 1)) {
           //两次点击间隔超过1秒则重新计时
           lastPopTime = DateTime.now();
-          ToastUtils.showToast("再按一次退出");
+//          ToastUtils.showToast("再按一次退出");
+          ToastUtils.showToast(ResString.get(context, RSID.doubleclickquit));
           return new Future.value(false);
         }
         return new Future.value(true);
@@ -115,19 +118,27 @@ class _MainViewState extends BaseWidgetState<MainView> {
     return [
       BottomNavigationBarItem(
         icon: Icon(Icons.bubble_chart),
-        title: Text('挖矿'),
+        title: Text(
+          ResString.get(context, RSID.mainview_1), //'挖矿',
+        ),
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.account_balance_wallet),
-        title: Text('钱包'),
+        title: Text(
+          ResString.get(context, RSID.mainview_2), //'钱包',
+        ),
       ),
       BottomNavigationBarItem(
         icon: Icon(OMIcons.swapHorizontalCircle),
-        title: Text('交易'),
+        title: Text(
+          ResString.get(context, RSID.mainview_3), //'交易',
+        ),
       ),
       BottomNavigationBarItem(
         icon: Icon(OMIcons.assignmentTurnedIn),
-        title: Text('赏金'),
+        title: Text(
+          ResString.get(context, RSID.mainview_4), //'赏金',
+        ),
       ),
     ];
   }
@@ -243,11 +254,16 @@ class _MainViewState extends BaseWidgetState<MainView> {
   showUpgradeDialog(Upgrade upgrade) {
     MessageDialog.showMsgDialog(
       context,
-      title: "版本升级提示",
+      title: ResString.get(context, RSID.upgrade_tip),
+      //"版本升级提示",
       msg: upgrade.description,
       msgAlign: TextAlign.center,
-      btnLeft: upgrade.needRequired ? null : "取消",
-      btnRight: "升级",
+      btnLeft: upgrade.needRequired
+          ? null
+          : ResString.get(context, RSID.upgrade_cancel),
+      // "取消",
+      btnRight: ResString.get(context, RSID.upgrade_confirm),
+      //"升级",
       touchOutClose: !upgrade.needRequired,
       backClose: !upgrade.needRequired,
       onClickBtnLeft: (dialog) {

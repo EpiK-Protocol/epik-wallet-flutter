@@ -1,14 +1,15 @@
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/model/CreateAccountModel.dart';
-import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/views/wallet/create/createwalletview.dart';
 import 'package:epikwallet/views/wallet/create/verifymnemonicview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 
 class CreateMnemonicView extends BaseWidget {
   CreateAccountModel _CreateAccountModel;
@@ -74,7 +75,7 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
             Padding(
               padding: EdgeInsets.fromLTRB(15, 6, 15, 10),
               child: Text(
-                "备份助记词",
+                ResString.get(context, RSID.cmv_1),//"备份助记词",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 20,
@@ -84,7 +85,7 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
               child: Text(
-                "请备份好您的助记词，不要截图、拍照，不要泄漏给他人！\nEpiK Portal不存储用户数据，无法提供找回或重置的服务。",
+                ResString.get(context, RSID.cmv_2),// "请备份好您的助记词，不要截图、拍照，不要泄漏给他人！\nEpiK Portal不存储用户数据，无法提供找回或重置的服务。",
                 style: TextStyle(
                   color: Colors.redAccent,
                   fontSize: 13,
@@ -96,7 +97,7 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
               child: Row(
                 children: <Widget>[
                   Text(
-                    "您的助记词",
+                    ResString.get(context, RSID.cmv_3),// "您的助记词",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 15,
@@ -135,7 +136,7 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
                           clickLastSetp();
                         },
                         child: Text(
-                          "上一步",
+                          ResString.get(context, RSID.last_step),// "上一步",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15,
@@ -159,7 +160,7 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
                           clickNextSetp();
                         },
                         child: Text(
-                          "我已备份",
+                          ResString.get(context, RSID.cmv_4),// "我已备份",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15,

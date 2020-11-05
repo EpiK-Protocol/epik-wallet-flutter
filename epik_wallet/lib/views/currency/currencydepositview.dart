@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 
 // 充币
 class CurrencyDepositView extends BaseWidget {
@@ -36,7 +38,7 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
 
   @override
   void initStateConfig() {
-    setAppBarTitle("收款");
+//    setAppBarTitle("收款");
 
     switch (widget.currencysymbol) {
       case CurrencySymbol.tEPK:
@@ -50,7 +52,13 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
         }
     }
 //    url_qrcode = "http://qr.topscan.com/api.php?text=" + address;
-    url_qrcode= "https://wenhairu.com/static/api/qr/?size=300&text="+address;
+    url_qrcode = "https://wenhairu.com/static/api/qr/?size=300&text=" + address;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setAppBarTitle(ResString.get(context, RSID.deposit));
   }
 
   SystemUiOverlayStyle oldSystemUiOverlayStyle;
@@ -156,7 +164,7 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
           onClickSave();
         },
         child: Text(
-          "保存二维码到相册",
+          ResString.get(context, RSID.cdv_1), //"保存二维码到相册",
           style: TextStyle(
             color: Colors.white,
             fontSize: 13,
@@ -172,7 +180,7 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
     subviews.add(Container(
       padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
       child: Text(
-        "钱包地址",
+        ResString.get(context, RSID.cdv_2), //"钱包地址",
         style: TextStyle(
           color: Colors.black54,
           fontSize: 14,
@@ -200,10 +208,10 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
         splashColor: Colors.white24,
         onPressed: () {
           DeviceUtils.copyText(address);
-          showToast("已复制钱包地址");
+          showToast(ResString.get(context, RSID.cdv_3)); //"已复制钱包地址");
         },
         child: Text(
-          "复制钱包地址",
+          ResString.get(context, RSID.cdv_4), // "复制钱包地址",
           style: TextStyle(
             color: Colors.white,
             fontSize: 13,
@@ -244,7 +252,7 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
     try {
       FileInfo fileinfo = DefaultCacheManager().getFileFromMemory(url_qrcode);
       if (fileinfo == null || fileinfo.file == null) {
-        showToast("请稍等...二维码正在加载");
+        showToast(ResString.get(context, RSID.cdv_5)); //"请稍等...二维码正在加载");
         return;
       }
 
@@ -268,9 +276,9 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
       String result = await ImageGallerySaver.saveImage(data); //这个是核心的保存图片的插件
       print(result); //保存图片的路径
       if (StringUtils.isNotEmpty(result))
-        showToast("二维码已保存到相册");
+        showToast(ResString.get(context, RSID.cdv_6)); //"二维码已保存到相册");
       else
-        showToast("保存失败");
+        showToast(ResString.get(context, RSID.cdv_7)); //"保存失败");
       return;
     } catch (e) {
       print("onClickSave error");

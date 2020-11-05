@@ -3,10 +3,11 @@ import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
 import 'package:epikwallet/model/currencytype.dart';
-import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
@@ -34,8 +35,8 @@ class UniswapPoolRemoveViewState
 
   CurrencySymbol cs_A, cs_B;
   double amount_ratio = 0;
-  double amount_A=0;
-  double amount_B=0;
+  double amount_A = 0;
+  double amount_B = 0;
 
   double price_changes = 0.1;
 
@@ -44,7 +45,7 @@ class UniswapPoolRemoveViewState
     cs_A = CurrencySymbol.EPKerc20;
     cs_B = CurrencySymbol.USDT;
 
-    setAppBarTitle("撤回流动资金");
+//    setAppBarTitle("撤回流动资金");
     print(widget.uniswapinfo.price_EPK_USDT);
     print(widget.uniswapinfo.price_USDT_EPK);
 
@@ -53,6 +54,12 @@ class UniswapPoolRemoveViewState
     setAppBarBackColor(Colors.transparent);
     setTopBarBackColor(Colors.transparent);
     isTopFloatWidgetShow = true;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setAppBarTitle(ResString.get(context, RSID.usprv_1));
   }
 
   @override
@@ -78,7 +85,7 @@ class UniswapPoolRemoveViewState
         child: Row(
           children: <Widget>[
             Text(
-              "撤回金额",
+              ResString.get(context, RSID.usprv_2), //"撤回金额",
               style: TextStyle(
                 color: Colors.black87,
                 fontSize: 16,
@@ -178,10 +185,8 @@ class UniswapPoolRemoveViewState
               children: <Widget>[
                 Expanded(
                   child: Text(
-                    StringUtils.formatNumAmount(
-                        amount_A,
-                        point: 8,
-                        supply0: false),
+                    StringUtils.formatNumAmount(amount_A,
+                        point: 8, supply0: false),
                     style: TextStyle(
                       color: Colors.black87,
                       fontSize: 16,
@@ -202,10 +207,8 @@ class UniswapPoolRemoveViewState
               children: <Widget>[
                 Expanded(
                   child: Text(
-                    StringUtils.formatNumAmount(
-                        amount_B,
-                        point: 8,
-                        supply0: false),
+                    StringUtils.formatNumAmount(amount_B,
+                        point: 8, supply0: false),
                     style: TextStyle(
                       color: Colors.black87,
                       fontSize: 16,
@@ -227,8 +230,8 @@ class UniswapPoolRemoveViewState
       Container(
         width: double.infinity,
         margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
-        child:  Text(
-          "手续费 : ${widget.walletAccount.eth_suggestGas} eth",
+        child: Text(
+          ResString.get(context, RSID.uspav_2,replace: [widget.walletAccount.eth_suggestGas]),//"手续费 : ${widget.walletAccount.eth_suggestGas} eth",
           style: TextStyle(
             color: Colors.black45,
             fontSize: 12,
@@ -257,7 +260,6 @@ class UniswapPoolRemoveViewState
           ),
         ),
       ),
-
       Container(
         margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
         width: double.infinity,
@@ -269,7 +271,7 @@ class UniswapPoolRemoveViewState
             onClickRemove();
           },
           child: Text(
-            "确定撤回",
+            ResString.get(context, RSID.usprv_3), //"确定撤回",
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white,
@@ -329,30 +331,45 @@ class UniswapPoolRemoveViewState
     );
   }
 
-  calcAmount()
-  {
-    amount_A = widget.uniswapinfo.epk_d*widget.uniswapinfo.share_d*amount_ratio;
-    amount_B = widget.uniswapinfo.usdt_d*widget.uniswapinfo.share_d*amount_ratio;
+  calcAmount() {
+    amount_A =
+        widget.uniswapinfo.epk_d * widget.uniswapinfo.share_d * amount_ratio;
+    amount_B =
+        widget.uniswapinfo.usdt_d * widget.uniswapinfo.share_d * amount_ratio;
   }
 
-  onClickRemove()
-  {
-    if(amount_A==0 || amount_B==0 || amount_ratio==0)
-    {
-      showToast("请选择要撤回的数量");
+  onClickRemove() {
+    if (amount_A == 0 || amount_B == 0 || amount_ratio == 0) {
+      showToast(ResString.get(context, RSID.usprv_4)); //("请选择要撤回的数量");
       return;
     }
 
-    BottomDialog.showPassWordInputDialog(context, widget.walletAccount.password, (value) async{
-
+    BottomDialog.showPassWordInputDialog(context, widget.walletAccount.password,
+        (value) async {
       await Future.delayed(Duration(milliseconds: 200));
 
-      showLoadDialog("正在提交",touchOutClose: false,backClose: false,onShow: ()async{
-
-        String liquidity = StringUtils.formatNumAmount(widget.uniswapinfo.uni_d*amount_ratio,point: 20,supply0: false).replaceAll(",", "");
-        String amountAMin= StringUtils.formatNumAmount(amount_A*(1-price_changes),point: 8,supply0: false).replaceAll(",", "");
-        String amountBMin= StringUtils.formatNumAmount(amount_B*(1-price_changes),point: 8,supply0: false).replaceAll(",", "");
-        String deadline = "${DateTime.now().toUtc().millisecondsSinceEpoch / 1000 + 20 * 60}";
+      showLoadDialog(
+        ResString.get(context, RSID.uspav_5),//"正在提交",
+        touchOutClose: false,
+        backClose: false,
+        onShow: () async {
+          String liquidity = StringUtils.formatNumAmount(
+                  widget.uniswapinfo.uni_d * amount_ratio,
+                  point: 20,
+                  supply0: false)
+              .replaceAll(",", "");
+          String amountAMin = StringUtils.formatNumAmount(
+                  amount_A * (1 - price_changes),
+                  point: 8,
+                  supply0: false)
+              .replaceAll(",", "");
+          String amountBMin = StringUtils.formatNumAmount(
+                  amount_B * (1 - price_changes),
+                  point: 8,
+                  supply0: false)
+              .replaceAll(",", "");
+          String deadline =
+              "${DateTime.now().toUtc().millisecondsSinceEpoch / 1000 + 20 * 60}";
 
 // test
 //        dlog("uniswapRemoveLiquidity amountAMin=$amountAMin amountBMin=$amountBMin liquidity=$liquidity");
@@ -360,45 +377,65 @@ class UniswapPoolRemoveViewState
 //        closeLoadDialog();
 //        return;
 
-        ResultObj<String>  ret = await widget.walletAccount.hdwallet.uniswapRemoveLiquidity(widget.walletAccount.hd_eth_address, cs_A.symbolToNetWork, cs_B.symbolToNetWork, liquidity, amountAMin, amountBMin, deadline);
+          ResultObj<String> ret = await widget.walletAccount.hdwallet
+              .uniswapRemoveLiquidity(
+                  widget.walletAccount.hd_eth_address,
+                  cs_A.symbolToNetWork,
+                  cs_B.symbolToNetWork,
+                  liquidity,
+                  amountAMin,
+                  amountBMin,
+                  deadline);
 
-        dlog("uniswapRemoveLiquidity ${ret?.data}");
-        closeLoadDialog();
+          dlog("uniswapRemoveLiquidity ${ret?.data}");
+          closeLoadDialog();
 
-        if (StringUtils.isNotEmpty(ret?.data)) {
-
+          if (StringUtils.isNotEmpty(ret?.data)) {
 //          DeviceUtils.copyText(ret?.data);
 
-          widget?.walletAccount?.uhMgr?.addOrder(UniswapOrder(
-            hash: ret?.data,
-            state:0,// 等待
-            type:2,//  撤回
-            time:DateTime.now().toUtc().millisecondsSinceEpoch,///utc时间 毫秒
-            token_a:cs_A.symbol,
-            token_b:cs_B.symbol,
-            amount_a:StringUtils.formatNumAmount(amount_A,point: 8,supply0: false).replaceAll(",", ""),
-            amount_b:StringUtils.formatNumAmount(amount_B,point: 8,supply0: false).replaceAll(",", ""),
-          ));
-          widget?.walletAccount?.uhMgr?.save();
+            widget?.walletAccount?.uhMgr?.addOrder(UniswapOrder(
+              hash: ret?.data,
+              state: 0,
+              // 等待
+              type: 2,
+              //  撤回
+              time: DateTime.now().toUtc().millisecondsSinceEpoch,
 
-          MessageDialog.showMsgDialog(
-            context,
-            title: "撤回资金",
-            msg: "已提交到以太坊\n稍后可在交易记录中查询结果",
-            msgAlign: TextAlign.center,
-            btnRight: "确定",
-            onClickBtnRight: (dialog) async {
-              dialog.dismiss();
-              eventMgr.send(EventTag.UNISWAP_REMOVE,null);
-              await Future.delayed(Duration(milliseconds: 200));
-              finish();
-            },
-          );
-        } else {
-          showToast(ret?.errorMsg ?? "请求失败,请稍后重试");
-        }
-      });
+              ///utc时间 毫秒
+              token_a: cs_A.symbol,
+              token_b: cs_B.symbol,
+              amount_a: StringUtils.formatNumAmount(amount_A,
+                      point: 8, supply0: false)
+                  .replaceAll(",", ""),
+              amount_b: StringUtils.formatNumAmount(amount_B,
+                      point: 8, supply0: false)
+                  .replaceAll(",", ""),
+            ));
+            widget?.walletAccount?.uhMgr?.save();
 
+            MessageDialog.showMsgDialog(
+              context,
+              title: ResString.get(context, RSID.usprv_2),
+              //"撤回资金",
+              msg: ResString.get(context, RSID.usev_12),
+              //"已提交到以太坊\n稍后可在交易记录中查询结果",
+              msgAlign: TextAlign.center,
+              btnRight: ResString.get(context, RSID.confirm),
+              //"确定",
+              onClickBtnRight: (dialog) async {
+                dialog.dismiss();
+                eventMgr.send(EventTag.UNISWAP_REMOVE, null);
+                await Future.delayed(Duration(milliseconds: 200));
+                finish();
+              },
+            );
+          } else {
+            showToast(ret?.errorMsg ??
+                ResString.get(
+                    context, RSID.request_failed_retry)); //"请求失败,请稍后重试");
+          }
+        },
+      );
     });
   }
 }

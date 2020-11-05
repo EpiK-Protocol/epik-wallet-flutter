@@ -1,6 +1,7 @@
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 
 class AccountDetailView extends BaseWidget {
   WalletAccount walletaccount;
@@ -26,10 +28,7 @@ class AccountDetailView extends BaseWidget {
 }
 
 class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
-  List<AccountMenu> menudata = [
-    AccountMenu(Icons.lock_outline, "修改密码", MenuType.FIXPASSWORD),
-    AccountMenu(Icons.security, "导出tEPK私钥", MenuType.PRIVATEKEY),
-  ];
+  List<AccountMenu> menudata;
 
   Color color_icon = Color(0xff41454a);
 
@@ -53,6 +52,21 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
     setBackIconHinde(isHinde: false);
     setAppBarContentColor(Colors.white);
     setAppBarBackColor(Colors.transparent);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+//    menudata = [
+//      AccountMenu(Icons.lock_outline, "修改密码", MenuType.FIXPASSWORD),
+//      AccountMenu(Icons.security, "导出tEPK私钥", MenuType.PRIVATEKEY),
+//    ];
+    menudata = [
+      AccountMenu(Icons.lock_outline, ResString.get(context, RSID.adv_1),
+          MenuType.FIXPASSWORD),
+      AccountMenu(Icons.security, ResString.get(context, RSID.eepkv_1),
+          MenuType.PRIVATEKEY),
+    ];
   }
 
   SystemUiOverlayStyle oldSystemUiOverlayStyle;
@@ -263,7 +277,7 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
                         ),
                       ),
                       Text(
-                        "删除钱包",
+                        ResString.get(context, RSID.adv_2), //"删除钱包",
                         style: TextStyle(
                           fontSize: 15,
                           color: Colors.black,
@@ -283,17 +297,24 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
   clickCopy(WalletAccount wa) {
     dlog("clickCopy");
     DeviceUtils.copyText(wa.hd_eth_address);
-    ToastUtils.showToast("已复制到剪切板");
+//    ToastUtils.showToast("已复制到剪切板");
+    ToastUtils.showToast(ResString.get(context, RSID.copied));
   }
 
   clickFixName() {
     BottomDialog.showTextInputDialog(
-        context, "修改钱包名称", widget.walletaccount.account, "请输入钱包名称", 20, (text) {
-      setState(() {
-        widget.walletaccount.account = text;
-      });
-      AccountMgr().save();
-    });
+      context,
+      ResString.get(context, RSID.adv_3), //"修改钱包名称",
+      widget.walletaccount.account,
+      ResString.get(context, RSID.iwv_7), //"请输入钱包名称",
+      20,
+      (text) {
+        setState(() {
+          widget.walletaccount.account = text;
+        });
+        AccountMgr().save();
+      },
+    );
   }
 
   clickDel() {
@@ -304,7 +325,7 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
         //点击确定回调
 
         showLoadDialog(
-          "正在删除钱包...",
+          ResString.get(context, RSID.adv_4), //"正在删除钱包...",
           touchOutClose: false,
           backClose: false,
           onShow: () {

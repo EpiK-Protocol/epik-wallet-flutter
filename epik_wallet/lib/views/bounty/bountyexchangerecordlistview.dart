@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:epikwallet/base/base_inner_widget.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/api/api_bounty.dart';
 import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
 import 'package:epikwallet/model/BountyUserSwap.dart';
@@ -216,7 +218,7 @@ class BountyExchangeRecordListviewState
                   child: Text(
                 "- " +
                     StringUtils.formatNumAmount(item.amount, point: 8) +
-                    " 积分",
+                    ResString.get(context, RSID.berlv_1),//" 积分",
                 style: TextStyle(
                   fontSize: 15,
                   color: Color(0xff333333),
@@ -246,7 +248,7 @@ class BountyExchangeRecordListviewState
                 ),
               ),
               Text(
-                "手续费: ${StringUtils.formatNumAmount(item.fee, point: 8)} ERC2-EPK",
+                ResString.get(context, RSID.berlv_2,replace: [StringUtils.formatNumAmount(item.fee, point: 8)]),//"手续费: ${StringUtils.formatNumAmount(item.fee, point: 8)} ERC2-EPK",
                 style: TextStyle(
                   fontSize: 15,
                   color: Color(0xff333333),
@@ -256,7 +258,7 @@ class BountyExchangeRecordListviewState
           ),
           Container(height: 10),
           Text(
-            "时间:${item.created_at_local}",
+            ResString.get(context, RSID.berlv_3)+item.created_at_local,//"时间:${item.created_at_local}",
             style: TextStyle(
               fontSize: 12,
               color: Color(0xff333333),
@@ -415,7 +417,7 @@ class BountyExchangeRecordListviewState
           : Container(
               child: needNoMoreTipe
                   ? Text(
-                      "没有更多了",
+                ResString.get(context, RSID.no_more),//"没有更多了",
                       style: TextStyle(fontSize: 14, color: Color(0xff999999)),
                     )
                   : null,
@@ -428,7 +430,7 @@ class BountyExchangeRecordListviewState
     DeviceUtils.copyText(hash);
 //    https://cn.etherscan.com/address/0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D
     String url = "https://cn.etherscan.com/tx/$hash";
-    ViewGT.showGeneralWebView(context, "详情", url);
+    ViewGT.showGeneralWebView(context, ResString.get(context, RSID.berlv_4), url);
   }
 
   Future<void> _pullRefreshCallback() async {

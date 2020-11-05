@@ -1,4 +1,7 @@
 import 'package:epikwallet/base/base_inner_widget.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
+import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_testnet.dart';
 import 'package:epikwallet/model/MiningRank.dart';
@@ -45,6 +48,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
   String mining_id = "";
 
   String mining_weixin = "";
+  String mining_platform = "";
 
   //等待审核pending/ 已经通过confirmed/ 拒绝rejected
   String mining_status;
@@ -56,11 +60,17 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
 
   @override
   void initStateConfig() {
-    setAppBarTitle("预挖排行");
+//    setAppBarTitle("预挖排行");
     isTopBarShow = true; //状态栏是否显示
     isAppBarShow = true; //导航栏是否显示
 
     key_scroll = GlobalKey();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setAppBarTitle(ResString.get(context, RSID.main_mv_1));
   }
 
   @override
@@ -101,11 +111,18 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
     if (httpjsonres != null && httpjsonres.code == 0) {
       mining_id = httpjsonres.jsonMap["id"];
       mining_weixin = httpjsonres.jsonMap["weixin"];
+      mining_platform =
+          httpjsonres.jsonMap["platform"];
       mining_status =
           httpjsonres.jsonMap["status"]; //等待审核pending/ 已经通过confirmed/ 拒绝reject
 
+      if(StringUtils.isEmpty(mining_platform))
+        mining_platform = BingAccountPlatform.WEIXIN;
+      dlog("platform = $mining_platform");
+
       AccountMgr()?.currentAccount?.mining_id = mining_id;
-      AccountMgr()?.currentAccount?.mining_weixin = mining_weixin;
+      AccountMgr()?.currentAccount?.mining_bind_account = mining_weixin;
+      AccountMgr()?.currentAccount?.mining_account_platform = mining_platform;
 
       Map testnet = httpjsonres.jsonMap["testnet"];
       total_supply = StringUtils.parseDouble(testnet["total_supply"], 0);
@@ -228,7 +245,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            "预挖总奖励",
+                            ResString.get(context, RSID.main_mv_2), //"预挖总奖励",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -267,7 +284,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            "已发放奖励",
+                            ResString.get(context, RSID.main_mv_3), //"已发放奖励",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -300,34 +317,40 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
             // 按钮
             getActionBtn(),
             // 微信号
-            if(StringUtils.isNotEmpty(mining_weixin))
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 20,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 18,
-                    height: 18,
-                    margin: EdgeInsets.fromLTRB(4, 2, 4, 0),
-                    child: ImageIcon(
-                      AssetImage("assets/img/ic_wechat.png"),
-                      size: 18,
-                      color: Color(0xff88c42a),
+            if (StringUtils.isNotEmpty(mining_weixin))
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 20,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 18,
+                      height: 18,
+                      margin: EdgeInsets.fromLTRB(4, 2, 4, 0),
+                      child: mining_platform == BingAccountPlatform.WEIXIN
+                          ? ImageIcon(
+                              AssetImage("assets/img/ic_wechat.png"),
+                              size: 18,
+                              color: Color(0xff88c42a),
+                            )
+                          : Image(
+                              image: AssetImage("assets/img/ic_telgram.png"),
+                              width: 18,
+                              height: 18,
+                            ),
                     ),
-                  ),
-                  Text(
-                    "${mining_weixin}",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white54,
+                    Text(
+                      "${mining_weixin}",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white54,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
             // ID
             Positioned(
               left: 0,
@@ -337,7 +360,8 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                 onTap: () {
                   if (StringUtils.isNotEmpty(mining_id)) {
                     DeviceUtils.copyText(mining_id);
-                    showToast("已复制ID");
+                    showToast(
+                        ResString.get(context, RSID.main_mv_4)); //"已复制ID");
                   }
                 },
                 child: Container(
@@ -364,7 +388,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
   Widget getRankItem(MiningRank data, int index) {
     return Container(
       padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
-      color: mining_id == data.id ? Colors.grey[100]:Colors.transparent,
+      color: mining_id == data.id ? Colors.grey[100] : Colors.transparent,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -388,7 +412,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
                   children: <Widget>[
                     Container(
                       child: Text(
-                        "累计奖励: ",
+                        ResString.get(context, RSID.main_mv_5), //"累计奖励: ",
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black87,
@@ -513,32 +537,32 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
   }
 
   Widget getActionBtn() {
-    String text = "报名";
+    String text = ResString.get(context, RSID.main_mv_6); //"报名";
     bool canClick = true;
 
     switch (mining_status) {
       //等待审核
       case "pending":
         {
-          text = "审核中";
+          text = ResString.get(context, RSID.main_mv_7); //"审核中";
           canClick = false;
           break;
         }
       case "confirmed":
         {
-          text = "预挖奖励";
+          text = ResString.get(context, RSID.main_mv_8); //"预挖奖励";
           canClick = true;
           break;
         }
       case "rejected":
         {
-          text = "报名已被拒绝";
+          text = ResString.get(context, RSID.main_mv_9); // "报名已被拒绝";
           canClick = false;
           break;
         }
       default:
         {
-          text = "报名";
+          text = ResString.get(context, RSID.main_mv_6); // "报名";
           canClick = true;
           break;
         }

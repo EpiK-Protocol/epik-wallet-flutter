@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/utils/CupertinoLocalizationsDelegate.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 //import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 
 final String fontFamily_def = "Miui-Light";
@@ -26,6 +28,11 @@ void main() {
         SystemUiOverlayStyle(statusBarColor: Colors.transparent);
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
   }
+}
+
+final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
+BuildContext get appContext{
+  return navigatorKey?.currentState?.overlay?.context;
 }
 
 class MyApp extends StatefulWidget {
@@ -66,6 +73,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       //隐藏debug标签
 //      navigatorObservers: [AppAnalysis()],//umeng自动统计
@@ -87,9 +95,11 @@ class _MyAppState extends State<MyApp> {
         //此处 国际化
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
+        // 本地字符串
+        ResStringDelegate.delegate,
       ],
       supportedLocales: [
-        //此处 国际化
+        //此处国际化顺序  按顺序优先使用
         const Locale('zh', 'CH'),
         const Locale('en', 'US'),
       ],
@@ -101,7 +111,8 @@ class _MyAppState extends State<MyApp> {
               DateTime.now().difference(lastPopTime) > Duration(seconds: 1)) {
             //两次点击间隔超过1秒则重新计时
             lastPopTime = DateTime.now();
-            ToastUtils.showToast("再按一次退出");
+//            ToastUtils.showToast("再按一次退出");
+            ToastUtils.showToast(ResString.get(context, RSID.doubleclickquit));
             return new Future.value(false);
           }
           return new Future.value(true);

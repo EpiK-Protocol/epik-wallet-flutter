@@ -1,4 +1,5 @@
 import 'package:epikwallet/base/_base_widget.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/string_utils.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:qrcode/qrcode.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 
 /// 二维码扫描
 class QrcodeScanView extends BaseWidget {
@@ -34,7 +36,7 @@ class _QrcodeScanViewState extends BaseWidgetState<QrcodeScanView>
     isTopBarShow = false; //状态栏是否显示
     isAppBarShow = false; //导航栏是否显示
     super.initState();
-    setAppBarTitle("扫一扫");
+//    setAppBarTitle("扫一扫");
 
     _captureController.onCapture((data) {
       if (working) return;
@@ -70,6 +72,12 @@ class _QrcodeScanViewState extends BaseWidgetState<QrcodeScanView>
                 }
               });
     _animationController.forward();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setAppBarTitle(ResString.get(context, RSID.qsv_1));
   }
 
   @override

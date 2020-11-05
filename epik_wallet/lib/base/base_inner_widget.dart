@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'common_function.dart';
 import 'package:flutter/src/foundation/key.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 
 ///通常是和 viewpager 联合使用  ， 类似于Android 中的 fragment
 /// 不过生命周期 还需要在容器父类中根据tab切换来完善

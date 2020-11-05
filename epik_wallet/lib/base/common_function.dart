@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/dialog/loading_dialog.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
@@ -11,7 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:provider/provider.dart';
-
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'buildConfig.dart';
 
 /// base 类 常用的一些工具类 ， 放在这里就可以了
@@ -42,7 +43,7 @@ abstract class BaseFuntion {
   String _appBarRightTitle;
   double _appBarRightTextSize = 15.0;
 
-  String _errorContentMesage = "网络错误";
+  String _errorContentMesage;//"网络错误";
 
   String _errImgPath = "assets/img/ic_content_neterror.png";
 
@@ -50,7 +51,7 @@ abstract class BaseFuntion {
 
   bool _isEmptyWidgetVisible = false;
 
-  String _emptyWidgetContent = "暂无数据";
+  String _emptyWidgetContent;//"暂无数据";
 
   String _emptyImgPath = "assets/img/ic_content_empty.png"; //自己根据需求变更
   bool _isBackIconShow = true;
@@ -67,13 +68,18 @@ abstract class BaseFuntion {
   void initBaseCommon(State state) {
     _stateBaseFunction = state;
     _contextBaseFunction = state.context;
-    _appBarTitle = getWidgetName();
+    _appBarTitle = BuildConfig.isDebug ? getWidgetName() : "";
     if (BuildConfig.isDebug) {
       _appBarRightTitle = ""; //标题二
     }
   }
 
   Widget getBaseView(BuildContext context) {
+    if (_errorContentMesage == null)
+      _errorContentMesage = ResString.get(context, RSID.net_error);
+    if (_emptyWidgetContent == null)
+      _emptyWidgetContent = ResString.get(context, RSID.content_empty);
+
     return Stack(
       children: <Widget>[
         Column(
@@ -192,11 +198,11 @@ abstract class BaseFuntion {
         child:
             // 圆形进度条
             new CircularProgressIndicator(
-              strokeWidth: 2.0,
+          strokeWidth: 2.0,
           valueColor: new AlwaysStoppedAnimation<Color>(ResColor.progress),
 //          backgroundColor: Colors.blue,
 //          // value: 0.2,
-                ),
+        ),
 
 //        Container(
 //          alignment: Alignment.center,
@@ -313,13 +319,11 @@ abstract class BaseFuntion {
 
   ///返回appbar高度，也就是导航栏高度
   double getAppBarHeight() {
-    if(appbarheight==0)
-      appbarheight = appbarheight_def; //kToolbarHeight;
+    if (appbarheight == 0) appbarheight = appbarheight_def; //kToolbarHeight;
     return appbarheight;
   }
 
-  setAppBarHeight(double h)
-  {
+  setAppBarHeight(double h) {
     appbarheight = h;
   }
 
@@ -719,7 +723,7 @@ abstract class BaseFuntion {
                               Container(height: 45, color: Colors.transparent)),
                       Container(
                         padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
-                        child: Text("拍照",
+                        child: Text(ResString.get(context, RSID.takephoto), //"拍照",
                             style: TextStyle(
                                 fontSize: 18, color: Color(0xff666666))),
                       ),
@@ -752,7 +756,7 @@ abstract class BaseFuntion {
                               Container(height: 45, color: Colors.transparent)),
                       Container(
                         padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
-                        child: Text("相册",
+                        child: Text(ResString.get(context, RSID.gallery), //"相册",
                             style: TextStyle(
                                 fontSize: 18, color: Color(0xff666666))),
                       ),

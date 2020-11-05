@@ -3,6 +3,9 @@ import 'dart:math';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
+import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_bounty.dart';
 import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
@@ -48,7 +51,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
     setTopBarBackColor(Colors.white);
     setAppBarBackColor(Colors.white);
 //    isTopFloatWidgetShow = true;
-    setAppBarTitle("积分兑换");
+//    setAppBarTitle("积分兑换");
 
     _tabController =
         new TabController(initialIndex: pageIndex, length: 2, vsync: this);
@@ -69,7 +72,14 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
     });
   }
 
-//  @override
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setAppBarTitle(ResString.get(context, RSID.bexv_1));//"积分兑换");
+  }
+
+
+  //  @override
 //  Widget getTopFloatWidget() {
 //    return getAppBar();
 //  }
@@ -163,7 +173,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                                 ),
                               ),
                               Text(
-                                "积分",
+                                ResString.get(context, RSID.main_bv_1),//"积分",
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.white,
@@ -179,7 +189,8 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                           top: 80,
                           child: Text(
 //                            "当前兑换比例：1积分 = ${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1)}ERC20-EPK",
-                            "当前兑换比例：${StringUtils.formatNumAmount(1 / (AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1))} 积分 = 1 ERC20-EPK",
+//                            "当前兑换比例：${StringUtils.formatNumAmount(1 / (AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1))} 积分 = 1 ERC20-EPK",
+                            ResString.get(context, RSID.bexv_2,replace: [StringUtils.formatNumAmount(1 / (AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1))]),//
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               fontSize: 12,
@@ -192,7 +203,11 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                           right: 20,
                           top: 100,
                           child: Text(
-                            "当前绑定微信：${AccountMgr()?.currentAccount?.mining_weixin}",
+//                            "当前绑定微信：${AccountMgr()?.currentAccount?.mining_weixin}",
+                           AccountMgr()?.currentAccount?.mining_account_platform==BingAccountPlatform.WEIXIN?
+                            ResString.get(context, RSID.bexv_3)+AccountMgr()?.currentAccount?.mining_bind_account:
+                           ResString.get(context, RSID.bexv_16)+AccountMgr()?.currentAccount?.mining_bind_account
+                            ,
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               fontSize: 12,
@@ -206,7 +221,8 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                           right: 0,
                           top: 120,
                           child: Text(
-                            "当前以太坊收币账户：${AccountMgr()?.currentAccount?.hd_eth_address}",
+//                            "当前以太坊收币账户：${AccountMgr()?.currentAccount?.hd_eth_address}",
+                            ResString.get(context, RSID.bexv_4)+"${AccountMgr()?.currentAccount?.hd_eth_address}",//
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               fontSize: 12,
@@ -245,7 +261,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                                     focusedBorder: InputBorder.none,
                                     contentPadding:
                                         EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                    hintText: "请输入兑换数量",
+                                    hintText: ResString.get(context, RSID.bexv_5),//"请输入兑换数量",
                                     hintStyle: TextStyle(
                                         color: Colors.white70, fontSize: 16),
                                   ),
@@ -275,7 +291,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                                     onClickExchange();
                                   },
                                   child: Text(
-                                    "兑换",
+                                    ResString.get(context, RSID.bexv_6),//"兑换",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: Colors.white,
@@ -309,7 +325,8 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                           right: 20,
                           top: 205,
                           child: Text(
-                            "最少兑换数量：${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_min ?? 1)} 积分",
+//                            "最少兑换数量：${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_min ?? 1)} 积分",
+                            ResString.get(context, RSID.bexv_7,replace: ["${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_min ?? 1)}"]),//
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               fontSize: 12,
@@ -330,7 +347,8 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
                                 Text(
-                                  "预估手续费：${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_fee ?? "0")} ERC20-EPK",
+//                                  "预估手续费：${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_fee ?? "0")} ERC20-EPK",
+                                  ResString.get(context, RSID.bexv_8,replace: ["${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_fee ?? "0")}"]),//
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontSize: 12,
@@ -373,7 +391,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                             onClickTab(0);
                           },
                           child: Text(
-                            "奖励记录",
+                            ResString.get(context, RSID.bexv_9),//"奖励记录",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: pageIndex == 0
@@ -393,7 +411,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                             onClickTab(1);
                           },
                           child: Text(
-                            "兑换记录",
+                            ResString.get(context, RSID.bexv_10),//"兑换记录",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: pageIndex == 1
@@ -466,13 +484,14 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
     closeInput();
 
     if (amount_form == 0) {
-      showToast("请输入兑换数量");
+      showToast(ResString.get(context, RSID.bexv_5));//"请输入兑换数量");
       return;
     }
 
     double min = AccountMgr()?.currentAccount?.bounty_swap_min ?? 1;
     if (amount_form < min) {
-      showToast("最少兑换数量为${StringUtils.formatNumAmount(min)}积分");
+//      showToast("最少兑换数量为${StringUtils.formatNumAmount(min)}积分");
+    showToast(ResString.get(context, RSID.bexv_7,replace: [StringUtils.formatNumAmount(min)]));
       return;
     }
 
@@ -482,7 +501,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
       (password) {
         //点击确定回调
         showLoadDialog(
-          "正在提交兑换...",
+          ResString.get(context, RSID.bexv_11),//"正在提交兑换...",
           touchOutClose: false,
           backClose: false,
           onShow: () {
@@ -494,9 +513,9 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                 // 请求成功
                 MessageDialog.showMsgDialog(
                   context,
-                  title: "积分兑换",
-                  msg: "积分兑换已提交，\n请稍后刷新查看钱包余额。",
-                  btnRight: "确定",
+                  title: ResString.get(context, RSID.bexv_12),//"积分兑换",
+                  msg: ResString.get(context, RSID.bexv_13),//"积分兑换已提交，\n请稍后刷新查看钱包余额。",
+                  btnRight: ResString.get(context, RSID.confirm),//"确定",
                   onClickBtnRight: (dialog) {
                     dialog.dismiss();
                   },
@@ -517,7 +536,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                 });
               } else {
                 // 请求失败
-                showToast(hjr?.msg ?? "请求失败");
+                showToast(hjr?.msg ?? ResString.get(context, RSID.request_failed));//"请求失败");
               }
             });
           },
@@ -529,8 +548,8 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
   void onClickHelp() {
     MessageDialog.showMsgDialog(
       context,
-      title: "关于手续费",
-      btnRight: "知道了",
+      title:ResString.get(context, RSID.bexv_14),// "关于手续费",
+      btnRight:ResString.get(context, RSID.isee),// "知道了",
       onClickBtnRight: (dialog) {
         dialog.dismiss();
       },
@@ -539,7 +558,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
         child: RichText(
           text: TextSpan(
             text:
-                "「1」用积分兑换ERC20-EPK时，通过以太网转账会产生ETH手续费；\n\n「2」手续费数量是根据以太坊gas费用和Uniswap中的币价计算出要扣除多少ERC20-EPK。",
+            ResString.get(context, RSID.bexv_15),// "「1」用积分兑换ERC20-EPK时，通过以太网转账会产生ETH手续费；\n\n「2」手续费数量是根据以太坊gas费用和Uniswap中的币价计算出要扣除多少ERC20-EPK。",
             style: TextStyle(
               color: Color(0xff333333),
               fontSize: 14.0,

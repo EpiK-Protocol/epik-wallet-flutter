@@ -65,11 +65,11 @@ class ViewGT {
     showView(context, GeneralWebView(title, url));
   }
 
-  /// 打开外部网页
+  /// 打开外部网页 必须trim ios有空格就打不开
   static Future<bool> openOutUrl(String url) async {
     Dlog.p("ViewGT", "openOutUrl  $url");
     try {
-      if (await canLaunch(url)) {
+      if (await canLaunch(url.trim())) {
         await launch(url);
         return true;
       }

@@ -6,6 +6,8 @@ import 'package:crypto/crypto.dart';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_testnet.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
@@ -33,10 +35,17 @@ class MiningSignupView extends BaseWidget {
   }
 }
 
-class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
+class _MiningSignupViewState extends BaseWidgetState<MiningSignupView>
+    with TickerProviderStateMixin {
   TextEditingController _controllerWechat;
   String wechat = "";
+  TextEditingController _controllerTelegram;
+  String telegram = "";
   bool agreement = false;
+
+  List<String> tabItems;
+  TabController _tabController;
+  int _selectedIndex = 0;
 
   @override
   void initStateConfig() {
@@ -47,13 +56,50 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setAppBarTitle(ResString.get(context, RSID.msv_1)); //"预挖报名",
+    tabItems = [
+      ResString.get(context, RSID.msv_13),
+      ResString.get(context, RSID.msv_14),
+    ];
+  }
+
+  @override
+  void dispose() {
+    if (_tabController != null) _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget buildWidget(BuildContext context) {
+    if (_tabController == null) {
+      _tabController = new TabController(
+          initialIndex: _selectedIndex, length: tabItems.length, vsync: this);
+      _tabController.addListener(() {
+        // tabbar 监听
+        setState(() {
+          _selectedIndex = _tabController.index;
+        });
+      });
+    }
+
     if (_controllerWechat == null)
       _controllerWechat = new TextEditingController.fromValue(TextEditingValue(
         text: wechat,
         selection: new TextSelection.fromPosition(
           TextPosition(
               affinity: TextAffinity.downstream, offset: wechat.length),
+        ),
+      ));
+
+    if (_controllerTelegram == null)
+      _controllerTelegram =
+          new TextEditingController.fromValue(TextEditingValue(
+        text: telegram,
+        selection: new TextSelection.fromPosition(
+          TextPosition(
+              affinity: TextAffinity.downstream, offset: telegram.length),
         ),
       ));
 
@@ -68,59 +114,136 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.fromLTRB(15, 6, 15, 10),
-              child: Text(
-                "预挖报名",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20,
-                ),
+//            Padding(
+//              padding: EdgeInsets.fromLTRB(15, 6, 15, 10),
+//              child: Text(
+//                ResString.get(context, RSID.msv_1), //"预挖报名",
+//                style: TextStyle(
+//                  color: Colors.black,
+//                  fontSize: 20,
+//                ),
+//              ),
+//            ),
+            Container(
+              height: 30,
+              width: double.infinity,
+              alignment: Alignment.center,
+              margin: EdgeInsets.fromLTRB(15, 6, 15, 10),
+              child: TabBar(
+                onTap: (int index) {
+//                  dlog('Selected......$index');
+                },
+                //设置未选中时的字体颜色，tabs里面的字体样式优先级最高
+                unselectedLabelColor: Color(0xff999999),
+                //设置选中时的字体颜色，tabs里面的字体样式优先级最高
+                labelColor: Color(0xff393E45),
+                //选中下划线的颜色
+                indicatorColor: Color(0xff393E45),
+                //选中下划线的长度，label时跟文字内容长度一样，tab时跟一个Tab的长度一样
+                indicatorSize: TabBarIndicatorSize.label,
+                //选中下划线的高度，值越大高度越高，默认为2。0
+                indicatorWeight: 2.0,
+                controller: _tabController,
+                labelPadding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                tabs: tabItems.map((text) {
+                  return Text(text);
+                }).toList(),
+                isScrollable: true,
               ),
             ),
-            InkWell(
-              onTap: () {
-                DeviceUtils.copyText(ServiceInfo.server_wechat);
-                showToast("已复制客服微信号\n请在微信添加好友",length:Toast.LENGTH_LONG);
-                try {
-                  url_launcher.launch("weixin://");
-                } catch (e) {
-                  print(e);
-                }
-              },
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
-                child: Text.rich(
-                  TextSpan(
-                    style: TextStyle(
-                      color: ResColor.black_50,
-                      fontSize: 13,
-                    ),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: "报名前请先使用要绑定的微信号添加客服微信",
-                      ),
-                      TextSpan(
-                        text: "${ServiceInfo.server_wechat}",
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 13,
-                          decoration: TextDecoration.underline,
+            _selectedIndex == 0
+                ? InkWell(
+                    // 微信绑定
+                    onTap: () {
+                      DeviceUtils.copyText(ServiceInfo.server_wechat);
+//                showToast("已复制客服微信号\n请在微信添加好友",length:Toast.LENGTH_LONG);
+                      showToast(ResString.get(context, RSID.msv_2),
+                          length: Toast.LENGTH_LONG);
+                      try {
+                        url_launcher.launch("weixin://");
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
+                      child: Text.rich(
+                        TextSpan(
+                          style: TextStyle(
+                            color: ResColor.black_50,
+                            fontSize: 13,
+                          ),
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: ResString.get(context,
+                                  RSID.msv_3), //"报名前请先使用要绑定的微信号添加客服微信",
+                            ),
+                            TextSpan(
+                              text: "${ServiceInfo.server_wechat}",
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 13,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                            TextSpan(
+                              text: ResString.get(context,
+                                  RSID.msv_4), //"为好友，成功报名后将显示UUID发送给客服微信。",
+                            ),
+                          ],
                         ),
                       ),
-                      TextSpan(
-                        text: "为好友，成功报名后将显示UUID发送给客服微信。",
+                    ),
+                  )
+                : InkWell(
+                    // Telegram 电报绑定
+                    onTap: () {
+//                      DeviceUtils.copyText(ServiceInfo.server_wechat);
+//                      showToast(ResString.get(context, RSID.msv_2),
+//                          length: Toast.LENGTH_LONG);
+                      try {
+                        url_launcher.launch(ServiceInfo.server_telegram);
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
+                      child: Text.rich(
+                        TextSpan(
+                          style: TextStyle(
+                            color: ResColor.black_50,
+                            fontSize: 13,
+                          ),
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: ResString.get(
+                                  context, RSID.msv_15), //"报名前请先使用要绑定的电报号加入",
+                            ),
+                            TextSpan(
+                              text: ResString.get(context, RSID.msv_16),
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 13,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                            TextSpan(
+                              text: ResString.get(context,
+                                  RSID.msv_17), //"，成功报名后将显示的UUID发送给电报群中的管理员。",
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            ),
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
               child: Text(
-                "本次测试活动由铭识协议基金会监督，最终解释权归铭识协议基金会所有 ，参与本次活动视为接受以下规定： 铭识协议基金会保留在测试中任何时刻修改、完善和增加测试活动或测试规则的权力，并在测试期间及测试结束后任何时刻均有权取消包括且不限于试图或有嫌疑利用、欺诈、恶意攻击网络的参赛者参赛权益和已获得挖矿奖励。辱骂、威胁主办方，铭识协议基金会保留取消参赛者参赛权益和已获得挖矿奖励的权力。",
+                ResString.get(context, RSID.msv_5),
+                // "本次测试活动由铭识协议基金会监督，最终解释权归铭识协议基金会所有 ，参与本次活动视为接受以下规定： 铭识协议基金会保留在测试中任何时刻修改、完善和增加测试活动或测试规则的权力，并在测试期间及测试结束后任何时刻均有权取消包括且不限于试图或有嫌疑利用、欺诈、恶意攻击网络的参赛者参赛权益和已获得挖矿奖励。辱骂、威胁主办方，铭识协议基金会保留取消参赛者参赛权益和已获得挖矿奖励的权力。",
                 style: TextStyle(
                   color: ResColor.black_50,
                   fontSize: 13,
@@ -130,7 +253,9 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
             Padding(
               padding: EdgeInsets.fromLTRB(15, 25, 15, 15),
               child: Text(
-                "绑定微信号",
+                _selectedIndex == 0
+                    ? ResString.get(context, RSID.msv_6)
+                    : ResString.get(context, RSID.msv_18), // "绑定微信号",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 15,
@@ -138,27 +263,45 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
               ),
             ),
             getInputWidget(
-              wechat,
-              "请输入微信号",
-              _controllerWechat,
+              _selectedIndex == 0 ? wechat : telegram,
+              _selectedIndex == 0
+                  ? ResString.get(context, RSID.msv_7)
+                  : ResString.get(context, RSID.msv_19), //"请输入微信号",
+              _selectedIndex == 0 ? _controllerWechat : _controllerTelegram,
               (text) {
                 setState(() {
-                  wechat = _controllerWechat.text ?? "";
-                  dlog(wechat);
+                  if (_selectedIndex == 0) {
+                    wechat = _controllerWechat.text ?? "";
+                    dlog(wechat);
+                  } else {
+                    telegram = _controllerTelegram.text ?? "";
+                    dlog(telegram);
+                  }
                 });
               },
               () {
                 setState(() {
-                  wechat = "";
-                  _controllerWechat = null;
+                  if (_selectedIndex == 0) {
+                    wechat = "";
+                    _controllerWechat = null;
+                  } else {
+                    telegram = "";
+                    _controllerTelegram = null;
+                  }
                 });
               },
               isPassword: false,
-              icon: ImageIcon(
-                AssetImage("assets/img/ic_wechat.png"),
-                size: 20,
-                color: Colors.white,
-              ),
+              icon: _selectedIndex == 0
+                  ? ImageIcon(
+                      AssetImage("assets/img/ic_wechat.png"),
+                      size: 20,
+                      color: Colors.white,
+                    )
+                  : Image(
+                      image: AssetImage("assets/img/ic_telgram.png"),
+                      width: 20,
+                      height: 20,
+                    ),
               inputFormatters: [
                 WhitelistingTextInputFormatter(RegExpUtil.re_noChs)
               ],
@@ -178,7 +321,7 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
                           clickNext();
                         },
                         child: Text(
-                          "报名",
+                          ResString.get(context, RSID.msv_8), // "报名",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15,
@@ -217,7 +360,7 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
                     ),
                     Container(width: 5),
                     Text(
-                      '已读上述',
+                      ResString.get(context, RSID.msv_9_1), // '已读上述',
                       maxLines: 1,
                       style: TextStyle(color: Color(0xff1A1C1F), fontSize: 16),
                     ),
@@ -226,7 +369,7 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
                         //todo
                       },
                       child: Text(
-                        '活动说明',
+                        ResString.get(context, RSID.msv_9_2), //'活动说明',
                         maxLines: 1,
                         style: TextStyle(
                           color: Color(0xff1A1C1F),
@@ -256,7 +399,7 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
     ValueChanged<String> onChanged,
     VoidCallback onClean, {
     bool isPassword = true,
-    ImageIcon icon,
+    Widget icon,
     List<TextInputFormatter> inputFormatters,
   }) {
     if (inputFormatters == null) inputFormatters = [];
@@ -353,26 +496,36 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
   clickNext() {
     closeInput();
 
-    if (StringUtils.isEmpty(wechat)) {
-      showToast("请输入微信号");
-      return;
+    if (_selectedIndex == 0) {
+      if (StringUtils.isEmpty(wechat)) {
+        showToast(ResString.get(context, RSID.msv_7)); //"请输入微信号");
+        return;
+      }
+    } else {
+      if (StringUtils.isEmpty(telegram)) {
+        showToast(ResString.get(context, RSID.msv_19)); //"请输入微信号");
+        return;
+      }
     }
+
     if (!agreement) {
-      showToast("请确认已读活动说明");
+      showToast(ResString.get(context, RSID.msv_10)); //"请确认已读活动说明");
       return;
     }
 
     showLoadDialog("", touchOutClose: false, backClose: false,
         onShow: () async {
       try {
-        String weixin,
+        String useraccount,
             epik_address,
             erc20_address,
             epik_signature,
-            erc20_signature;
+            erc20_signature,
+            platform;
 
-        //weixin
-        weixin = wechat.trim();
+        //weixin telegram
+        useraccount = _selectedIndex == 0 ? wechat.trim() : telegram.trim();
+        platform = _selectedIndex == 0 ? "weixin" : "telegram";
 
         //epik_address
         epik_address = AccountMgr().currentAccount.epik_tEPK_address;
@@ -381,7 +534,7 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
         erc20_address = AccountMgr().currentAccount.hd_eth_address;
 
         //epik_signature
-        Digest digest = sha256.convert(utf8.encode(weixin));
+        Digest digest = sha256.convert(utf8.encode(useraccount));
         Uint8List epik_signature_byte = await AccountMgr()
             .currentAccount
             .epikWallet
@@ -396,8 +549,13 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
 //          .signText(erc20_address, weixin);
         erc20_signature = hex.encode(erc20_signature_byte);
 
-        HttpJsonRes httpjsonres = await ApiTestNet.signup(weixin, epik_address,
-            erc20_address, epik_signature, erc20_signature);
+        HttpJsonRes httpjsonres = await ApiTestNet.signup(
+            useraccount,
+            epik_address,
+            erc20_address,
+            epik_signature,
+            erc20_signature,
+            platform);
 
         closeLoadDialog();
 
@@ -407,9 +565,14 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
           DeviceUtils.copyText(id);
           MessageDialog.showMsgDialog(
             context,
-            title: "预挖报名",
-            msg: "已报名，请将UUID:$id发送给微信客服，然后等待审核。UUID已经复制到剪切板。",
-            btnRight: "知道了",
+            title: ResString.get(context, RSID.msv_1),
+            // "预挖报名",
+            msg: ResString.get(
+                context, (httpjsonres.code == 0 ? RSID.msv_11 : RSID.msv_20),
+                replace: [id]),
+            //"已报名，请将UUID:$id发送给微信客服，然后等待审核。UUID已经复制到剪切板。",
+            btnRight: ResString.get(context, RSID.isee),
+            // "知道了",
             onClickBtnRight: (YYDialog dialog) {
               dialog.dismiss();
             },
@@ -419,11 +582,12 @@ class _MiningSignupViewState extends BaseWidgetState<MiningSignupView> {
             },
           );
         } else {
-          showToast(httpjsonres.msg ?? "报名失败");
+          showToast(httpjsonres.msg ??
+              ResString.get(context, RSID.msv_12)); //"报名失败");
         }
       } catch (e) {
         print(e);
-        showToast("报名失败ERROR");
+        showToast("${ResString.get(context, RSID.msv_12)}ERROR");
         closeLoadDialog();
       }
     });

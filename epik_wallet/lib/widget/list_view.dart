@@ -1,3 +1,6 @@
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
+import 'package:epikwallet/main.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:flutter/material.dart';
@@ -211,7 +214,7 @@ class ListPageState extends State<ListPage> {
           : Container(
               child: widget.needNoMoreTipe
                   ? Text(
-                      "没有更多了",
+                ResString.get(context, RSID.no_more),//"没有更多了",
                       style: TextStyle(fontSize: 14, color: Color(0xff999999)),
                     )
                   : null,
@@ -248,13 +251,13 @@ class ListPageDefStateWidgetHeader {
     switch (state.type) {
       case ListPageDefStateType.EMPTY:
         return getEmptyWidgetHeader(
-          state.msg ?? "暂无数据",
+          state.msg ?? ResString.get(appContext, RSID.content_empty),//"暂无数据",
           state.img ?? "assets/img/ic_content_empty.png",
           onClickEmptyWidget: state.onClick,
         );
       case ListPageDefStateType.ERROR:
         return getErrorWidgetHeader(
-          state.msg??"网络错误",
+          state.msg??ResString.get(appContext, RSID.net_error),//"网络错误",
           state.img??"assets/img/ic_content_neterror.png",
           onClickErrorWidget: state.onClick,
         );

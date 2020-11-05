@@ -190,6 +190,12 @@ class EpikWalletUtils {
   }
 }
 
+class BingAccountPlatform
+{
+  static final String WEIXIN="weixin";
+  static final String TELEGRAM="telegram";
+}
+
 class WalletAccount {
   // 本地商户名
   String account = "";
@@ -224,8 +230,9 @@ class WalletAccount {
   double bounty_swap_min=1;
   // 挖矿的已报名才有的ID
   String mining_id = "";
-  // 挖矿的已报名用户绑定的微信
-  String mining_weixin = "";
+  // 挖矿的已报名用户绑定的微信\telegram
+  String mining_bind_account = "";
+  String mining_account_platform = "";
 
   WalletAccount();
 

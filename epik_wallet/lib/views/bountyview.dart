@@ -1,5 +1,6 @@
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_bounty.dart';
 import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 
 class BountyView extends BaseInnerWidget {
   BountyView(Key key) : super(key: key) {}
@@ -211,7 +213,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
                   ),
                 ),
                 Text(
-                  "积分",
+                  ResString.get(context, RSID.main_bv_1), //"积分",
                   style: TextStyle(
                     fontSize: 15,
                     color: Colors.black,
@@ -233,7 +235,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Text(
-                            "兑换",
+                            ResString.get(context, RSID.main_bv_2), //"兑换",
                             style: TextStyle(
                               fontSize: 15,
                               color: Colors.black,
@@ -262,7 +264,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Text(
-                            "说明",
+                            ResString.get(context, RSID.main_bv_3), //"说明",
                             style: TextStyle(
                               fontSize: 15,
                               color: Colors.black,
@@ -305,7 +307,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
                                 onClickTab(0);
                               },
                               child: Text(
-                                "全部",
+                                ResString.get(context, RSID.main_bv_4), //"全部",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: pageIndex == 0
@@ -325,7 +327,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
                                 onClickTab(1);
                               },
                               child: Text(
-                                "可认领",
+                                ResString.get(context, RSID.main_bv_5), //"可认领",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: pageIndex == 1
@@ -345,7 +347,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
                                 onClickTab(2);
                               },
                               child: Text(
-                                "已完成",
+                                ResString.get(context, RSID.main_bv_6), //"已完成",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: pageIndex == 2
@@ -434,7 +436,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              "需要有钱包才能进行",
+              ResString.get(context, RSID.main_bv_7), //"需要有钱包才能进行",
               style: TextStyle(
                 color: Colors.black54,
                 fontSize: 20,
@@ -450,7 +452,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
                 eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX, 1);
               },
               child: Text(
-                "去创建钱包",
+                ResString.get(context, RSID.main_bv_8), //"去创建钱包",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
@@ -471,15 +473,16 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text(
-              "需要先参与挖矿报名才能进行",
-              style: TextStyle(
-                color: Colors.black54,
-                fontSize: 20,
-              ),
-            ),
             Container(
-              height: 10,
+              margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
+              child:   Text(
+                ResString.get(context, RSID.main_bv_9), //"需要先参与挖矿报名才能进行",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 20,
+                ),
+              ),
             ),
             FlatButton(
               highlightColor: Colors.white24,
@@ -488,7 +491,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
                 eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX, 0);
               },
               child: Text(
-                "去报名挖矿",
+                ResString.get(context, RSID.main_bv_10), //"去报名挖矿",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
@@ -545,7 +548,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
 
   onClickBountyHelp() {
     //  点击帮助
-    ViewGT.openOutUrl("https://shimo.im/docs/QyrgXG9vRGxhQRXt/ ");
+    ViewGT.openOutUrl("https://shimo.im/docs/QyrgXG9vRGxhQRXt/");
   }
 
   onClickTab(int index) {
@@ -680,7 +683,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
                   Row(
                     children: <Widget>[
                       Text(
-                        "负责人:",
+                        ResString.get(context, RSID.main_bv_11), //"负责人:",
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.black54,
@@ -709,7 +712,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
                   ),
                   Container(height: 5),
                   Text(
-                    "奖励区间: ${item.reward}",
+                    "${ResString.get(context, RSID.main_bv_12)} ${item.reward}",//奖励区间:
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.black54,

@@ -1,6 +1,7 @@
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/buildConfig.dart';
 import 'package:epikwallet/base/common_function.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/main.dart';
 import 'package:epikwallet/model/CreateAccountModel.dart';
 import 'package:epikwallet/utils/res_color.dart';
@@ -11,6 +12,7 @@ import 'package:epikwallet/widget/text/diff_scale_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 
 class SelectedText {
   String text = "";
@@ -76,7 +78,7 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
             Padding(
               padding: EdgeInsets.fromLTRB(15, 6, 15, 10),
               child: Text(
-                "验证助记词",
+                ResString.get(context, RSID.vmv_1), //"验证助记词",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 20,
@@ -86,7 +88,8 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
               child: Text(
-                "为了安全起见，按照顺序填写助记词以确认该助记词是否有效。",
+                ResString.get(context, RSID.vmv_2),
+                // "为了安全起见，按照顺序填写助记词以确认该助记词是否有效。",
                 style: TextStyle(
                   color: ResColor.black_50,
                   fontSize: 13,
@@ -98,7 +101,7 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
               child: Row(
                 children: <Widget>[
                   Text(
-                    "填写助记词",
+                    ResString.get(context, RSID.vmv_3), // "填写助记词",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 15,
@@ -113,7 +116,7 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
               child: Row(
                 children: <Widget>[
                   Text(
-                    "按助记词顺序点击下面词组：",
+                    ResString.get(context, RSID.vmv_4), //  "按助记词顺序点击下面词组：",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 15,
@@ -137,17 +140,23 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
                         onPressed: () {
                           clickNextSetp();
                         },
-                        onLongPress: BuildConfig.isDebug?(){
-                          setState(() {
-                            mnemonic_list_source.forEach((element) {element.isSelected=true;});
-                            mnemonic_list=[];
-                            widget._CreateAccountModel.mnemonic_list.forEach((element) {
-                              mnemonic_list.add(SelectedText(element,true));
-                            });
-                          });
-                        }:null,
+                        onLongPress: BuildConfig.isDebug
+                            ? () {
+                                setState(() {
+                                  mnemonic_list_source.forEach((element) {
+                                    element.isSelected = true;
+                                  });
+                                  mnemonic_list = [];
+                                  widget._CreateAccountModel.mnemonic_list
+                                      .forEach((element) {
+                                    mnemonic_list
+                                        .add(SelectedText(element, true));
+                                  });
+                                });
+                              }
+                            : null,
                         child: Text(
-                          "验证助记词",
+                          ResString.get(context, RSID.vmv_1), //"验证助记词",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15,
@@ -172,7 +181,7 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
                 padding: EdgeInsets.all(10),
                 alignment: Alignment.center,
                 child: Text(
-                  "忘记助记词，重新创建",
+                  ResString.get(context, RSID.vmv_5), //  "忘记助记词，重新创建",
                   style: TextStyle(
                     fontSize: 13,
                     color: ResColor.black_50,
@@ -342,7 +351,8 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
   bool checkParams() {
     if (mnemonic_list == null ||
         mnemonic_list.length < mnemonic_list_source.length) {
-      showToast("请按助记词顺序点击词组填满数字区域");
+//      showToast("请按助记词顺序点击词组填满数字区域");
+      showToast(ResString.get(context, RSID.vmv_6));
       return false;
     }
 
@@ -350,7 +360,8 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
     dlog(widget._CreateAccountModel.mnemonic_string);
     dlog("mnemonic_string= $mnemonic_string");
     if (mnemonic_string != widget._CreateAccountModel.mnemonic_string) {
-      showToast("填入的助记词顺序不正确");
+//      showToast("填入的助记词顺序不正确");
+      showToast(ResString.get(context, RSID.vmv_7));
       return false;
     }
 

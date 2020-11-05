@@ -1,5 +1,7 @@
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/api/api_bounty.dart';
 import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
 import 'package:epikwallet/model/BountyTask.dart';
@@ -40,11 +42,17 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
   double amountCount = 0;
 
   void initStateConfig() {
-    setAppBarTitle("编辑奖励");
+//    setAppBarTitle("编辑奖励");
     resizeToAvoidBottomPadding = true;
     input_text = widget?.bountyTask?.result ?? "";
     makeLineNum();
     onInputChange(input_text);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setAppBarTitle(ResString.get(context, RSID.bdv_5));
   }
 
   Widget buildWidget(BuildContext context) {
@@ -118,7 +126,8 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
                                 enabledBorder: InputBorder.none,
                                 focusedBorder: InputBorder.none,
                                 contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                hintText: "微信号,积分数量 (请按此格式输入,逗号分隔)\n",
+                                hintText: ResString.get(context, RSID.bev_1),
+                                //"微信号,积分数量 (请按此格式输入,逗号分隔)\n",
                                 hintStyle: TextStyle(
                                   fontSize: 16,
                                   color: Colors.black54,
@@ -190,7 +199,9 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
                               children: <Widget>[
                                 Expanded(
                                   child: Text(
-                                    "总人数\n$userCount", // todo
+                                    ResString.get(context, RSID.bev_2) +
+                                        "${userCount}",
+                                    // "总人数\n$userCount", // todo
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 16,
@@ -205,7 +216,8 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    "总积分\n${StringUtils.formatNumAmount(amountCount, point: 8, supply0: false)}", //TODO
+                                    ResString.get(context, RSID.bev_3) +
+                                        "${StringUtils.formatNumAmount(amountCount, point: 8, supply0: false)}", //TODO 总积分
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 16,
@@ -230,7 +242,8 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
                                   onClickPost();
                                 },
                                 child: Text(
-                                  "提交奖励分配方案进行公示",
+                                  ResString.get(context, RSID.bev_4),
+                                  //"提交奖励分配方案进行公示",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: Colors.white,
@@ -295,16 +308,20 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
 
   onClickPost() {
     if (userlist == null || userlist.length == 0) {
-      showToast("请输入奖励分配方案");
+      showToast(ResString.get(context, RSID.bev_5)); //"请输入奖励分配方案");
       return;
     }
 
     MessageDialog.showMsgDialog(
       context,
-      title: "提示",
-      msg: "您确认要提交当前奖励分配方案并进行公示吗？",
-      btnLeft: "取消",
-      btnRight: "确定",
+      title: ResString.get(context, RSID.tip),
+      //"提示",
+      msg: ResString.get(context, RSID.bev_6),
+      //"您确认要提交当前奖励分配方案并进行公示吗？",
+      btnLeft: ResString.get(context, RSID.cancel),
+      // "取消",
+      btnRight: ResString.get(context, RSID.confirm),
+      //"确定",
       onClickBtnLeft: (dialog) => dialog.dismiss(),
       onClickBtnRight: (dialog) {
         dialog.dismiss();
@@ -315,7 +332,7 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
 
   postData(List<BountyTaskUser> data) {
     showLoadDialog(
-      "正在提交...",
+      ResString.get(context, RSID.bev_7), //"正在提交...",
       touchOutClose: false,
       backClose: false,
       onShow: () async {
@@ -331,14 +348,15 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
             widget.bountyTask.result = result;
             widget.bountyTask.status = BountyStateType.PUBLICITY;
 
-            showToast("奖励分配方案已提交并公示");
+            showToast(ResString.get(context, RSID.bev_8)); //"奖励分配方案已提交并公示");
 
-            eventMgr.send(EventTag.BOUNTY_EDITED_USER_LIST,null);
+            eventMgr.send(EventTag.BOUNTY_EDITED_USER_LIST, null);
 
             finish();
           } else {
             // 提交失败
-            showToast(httpjsonres.msg ?? "提交失败");
+            showToast(httpjsonres.msg ??
+                ResString.get(context, RSID.request_failed_retry)); //"提交失败");
           }
         });
       },

@@ -1,6 +1,9 @@
 import 'dart:convert';
 
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/api/api_testnet.dart';
+import 'package:epikwallet/main.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
 import 'package:epikwallet/utils/data/date_util.dart';
@@ -225,18 +228,21 @@ class UniswapOrder {
       switch (type) {
         case 1:
           {
-            return "注入资金 $amount_a $token_a + $amount_b $token_b";
+//            return "注入资金 $amount_a $token_a + $amount_b $token_b";
+            return "${ResString.get(appContext, RSID.uhm_1)} $amount_a $token_a + $amount_b $token_b";
           }
           break;
         case 2:
           {
-            return "撤回资金 $amount_a $token_a + $amount_b $token_b";
+//            return "撤回资金 $amount_a $token_a + $amount_b $token_b";
+            return "${ResString.get(appContext, RSID.uhm_2)} $amount_a $token_a + $amount_b $token_b";
           }
           break;
         case 0:
         default:
           {
-            return "$amount_a $token_a 兑换成 $amount_b $token_b";
+//            return "$amount_a $token_a 兑换成 $amount_b $token_b";
+            return "$amount_a $token_a ${ResString.get(appContext, RSID.uhm_3)} $amount_b $token_b";
           }
           break;
       }
@@ -245,11 +251,11 @@ class UniswapOrder {
   }
 
   String timeString;
-  String getTime()
-  {
-    if(timeString==null)
-    {
-      timeString = DateUtil.formatDateMs(time,isUtc: false,format:DataFormats.full);
+
+  String getTime() {
+    if (timeString == null) {
+      timeString =
+          DateUtil.formatDateMs(time, isUtc: false, format: DataFormats.full);
     }
     return timeString;
   }

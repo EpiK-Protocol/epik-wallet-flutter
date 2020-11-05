@@ -2,6 +2,7 @@ import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/data/date_util.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 
 class UniswapPoolView extends BaseInnerWidget {
   // 可能是空
@@ -149,7 +151,7 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
                           onClickAdd();
                         },
                         child: Text(
-                          "注入流动资金",
+                          ResString.get(context, RSID.uspv_1), //"注入流动资金",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
@@ -169,7 +171,7 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
                         children: <Widget>[
                           Expanded(
                             child: Text(
-                              "资金池信息",
+                              ResString.get(context, RSID.uspv_2), //"资金池信息",
                               style: TextStyle(
                                   color: Colors.black87, fontSize: 16),
                             ),
@@ -204,7 +206,7 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
                   onClickReadme();
                 },
                 child: Text(
-                  "使用说明(新手必读)",
+                  ResString.get(context, RSID.uspv_3), //"使用说明(新手必读)",
                   style: TextStyle(
                     color: ResColor.main_1,
                     fontSize: 14,
@@ -223,7 +225,7 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
     Widget child = null;
     if (widget.walletAccount == null) {
       child = Text(
-        "请先登录钱包",
+        ResString.get(context, RSID.uspv_4), //"请先登录钱包",
         style: TextStyle(
           color: Colors.black54,
           fontSize: 16,
@@ -240,7 +242,7 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
       );
     } else if (uniswapinfo == null) {
       child = Text(
-        "请求失败",
+        ResString.get(context, RSID.request_failed), //"请求失败",
         style: TextStyle(
           color: Colors.black54,
           fontSize: 16,
@@ -256,7 +258,9 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
             Row(
               children: <Widget>[
                 Text(
-                  "池中${CurrencySymbol.EPKerc20.symbol}:",
+                  ResString.get(context, RSID.uspv_5,
+                      replace: [CurrencySymbol.EPKerc20.symbol]),
+                  //"池中${CurrencySymbol.EPKerc20.symbol}:",
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 16,
@@ -281,7 +285,9 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
             Row(
               children: <Widget>[
                 Text(
-                  "池中${CurrencySymbol.USDT.symbol}:",
+                  ResString.get(context, RSID.uspv_5,
+                      replace: [CurrencySymbol.USDT.symbol]),
+                  //"池中${CurrencySymbol.USDT.symbol}:",
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 16,
@@ -306,7 +312,7 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
             Row(
               children: <Widget>[
                 Text(
-                  "您所占份额:",
+                  ResString.get(context, RSID.uspv_6), //"您所占份额:",
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 16,
@@ -332,7 +338,7 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
             Row(
               children: <Widget>[
                 Text(
-                  "最后交易时间:",
+                  ResString.get(context, RSID.uspv_7), //"最后交易时间:",
                   style: TextStyle(
                     color: Colors.black54,
                     fontSize: 16,
@@ -369,7 +375,7 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
                         onClickAdd();
                       },
                       child: Text(
-                        "注入",
+                        ResString.get(context, RSID.uspv_8), //"注入",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white,
@@ -395,7 +401,7 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
                         onClickRemove();
                       },
                       child: Text(
-                        "撤回",
+                        ResString.get(context, RSID.uspv_9), //"撤回",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white,
@@ -433,12 +439,12 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
 
   onClickAdd() {
     if (widget.walletAccount == null) {
-      showToast("需要先登录钱包");
+      showToast(ResString.get(context, RSID.uspv_10)); //"需要先登录钱包");
       return;
     }
 
     if (uniswapinfo == null) {
-      showToast("缺少资金池信息");
+      showToast(ResString.get(context, RSID.uspv_11)); //"缺少资金池信息");
       return;
     }
 
@@ -447,12 +453,12 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
 
   onClickRemove() {
     if (widget.walletAccount == null) {
-      showToast("需要先登录钱包");
+      showToast(ResString.get(context, RSID.uspv_10)); //"需要先登录钱包");
       return;
     }
 
     if (uniswapinfo?.Share == "0") {
-      showToast("您没有可撤回的资金");
+      showToast(ResString.get(context, RSID.uspv_12)); //"您没有可撤回的资金");
       return;
     }
 
@@ -469,8 +475,8 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
 
     final YYDialog yydialog = MessageDialog.showMsgDialog(
       context,
-      title: "EpiK提醒您",
-      btnRight: "知道了",
+      title: ResString.get(context, RSID.uspv_13), //"EpiK提醒您",
+      btnRight: ResString.get(context, RSID.isee), // "知道了",
       onClickBtnRight: (dialog) {
         dialog.dismiss();
       },
@@ -478,8 +484,8 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
         padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
         child: RichText(
           text: TextSpan(
-            text:
-                "「1」本页资金池交易是基于Uniswap的ERC20-EPK与USDT的流动性支持\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
+            text: ResString.get(context, RSID.uspv_15_1),
+            // "「1」本页资金池交易是基于Uniswap的ERC20-EPK与USDT的流动性支持\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
             style: TextStyle(
               color: Color(0xff333333),
               fontSize: 14.0,
@@ -495,10 +501,11 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
                 recognizer: recognizer_1,
               ),
               TextSpan(
-                text: "\n\n「4」新手操作说明请点击",
+                text:
+                    ResString.get(context, RSID.uspv_15_2), // "\n\n「4」新手操作说明请点击",
               ),
               TextSpan(
-                text: "这里",
+                text: ResString.get(context, RSID.uspv_15_3), //"这里",
                 style: TextStyle(
                   color: Colors.blue,
                   fontSize: 14.0,
@@ -515,7 +522,10 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
     recognizer_1.onTap = () async {
       yydialog.dismiss();
       ViewGT.showGeneralWebView(
-          context, "合约", "https://cn.etherscan.com/address/${address}");
+        context,
+        ResString.get(context, RSID.uspv_14), //"合约",
+        "https://cn.etherscan.com/address/${address}",
+      );
     };
 
     recognizer_2.onTap = () async {

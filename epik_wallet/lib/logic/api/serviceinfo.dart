@@ -31,7 +31,13 @@ class ServiceInfo {
 
   static final String schemename = "epikwallet";
 
-  static final String server_wechat = "fengyunbzb";
+  static String get server_wechat{
+    return  serverConfig?.SignWeixin ?? "Sigrid_EpiK";//"fengyunbzb";
+  }
+
+  static String get server_telegram{
+    return  serverConfig?.SignTele ?? "https://t.me/EpikProtocol";
+  }
 
   static String get HOST {
     return serverConfig?.WalletAPI ?? _HOST;

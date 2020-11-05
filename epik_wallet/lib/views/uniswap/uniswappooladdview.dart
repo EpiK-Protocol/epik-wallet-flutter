@@ -3,11 +3,12 @@ import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
-import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
@@ -49,7 +50,7 @@ class UniswapPoolAddViewState extends BaseWidgetState<UniswapPoolAddView> {
     cs_A = CurrencySymbol.EPKerc20;
     cs_B = CurrencySymbol.USDT;
 
-    setAppBarTitle("注入流动资金");
+//    setAppBarTitle("注入流动资金");
     print(widget.uniswapinfo.price_EPK_USDT);
     print(widget.uniswapinfo.price_USDT_EPK);
 
@@ -58,6 +59,12 @@ class UniswapPoolAddViewState extends BaseWidgetState<UniswapPoolAddView> {
     setAppBarBackColor(Colors.transparent);
     setTopBarBackColor(Colors.transparent);
     isTopFloatWidgetShow = true;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setAppBarTitle(ResString.get(context, RSID.uspv_1));
   }
 
   @override
@@ -238,7 +245,11 @@ class UniswapPoolAddViewState extends BaseWidgetState<UniswapPoolAddView> {
                     Container(
                       padding: EdgeInsets.fromLTRB(20, 10, 20, 20),
                       child: Text(
-                        "当前为预估价格，如果价格波动超过${StringUtils.formatNumAmount(price_changes * 100, point: 2, supply0: false)}%，您的交易将会撤销。",
+                        ResString.get(context, RSID.uspav_1, replace: [
+                          StringUtils.formatNumAmount(price_changes * 100,
+                              point: 2, supply0: false)
+                        ]),
+                        //"当前为预估价格，如果价格波动超过${StringUtils.formatNumAmount(price_changes * 100, point: 2, supply0: false)}%，您的交易将会撤销。",
                         style: TextStyle(
                           color: Colors.black45,
                           fontSize: 12,
@@ -257,8 +268,10 @@ class UniswapPoolAddViewState extends BaseWidgetState<UniswapPoolAddView> {
                     Container(
                       width: double.infinity,
                       margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                      child:  Text(
-                        "手续费 : ${widget.walletAccount.eth_suggestGas} eth",
+                      child: Text(
+                        ResString.get(context, RSID.uspav_2,
+                            replace: [widget.walletAccount.eth_suggestGas]),
+//                        "手续费 : ${widget.walletAccount.eth_suggestGas} eth",
                         style: TextStyle(
                           color: Colors.black45,
                           fontSize: 12,
@@ -298,7 +311,7 @@ class UniswapPoolAddViewState extends BaseWidgetState<UniswapPoolAddView> {
                           onClickAdd();
                         },
                         child: Text(
-                          "确定注入",
+                          ResString.get(context, RSID.uspav_3), //"确定注入",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
@@ -353,70 +366,94 @@ class UniswapPoolAddViewState extends BaseWidgetState<UniswapPoolAddView> {
   }
 
   onClickAdd() {
-    if(amount_A==0 || amount_B==0)
-    {
-      showToast("请输入数量");
+    if (amount_A == 0 || amount_B == 0) {
+      showToast(ResString.get(context, RSID.uspav_4)); //"请输入数量");
       return;
     }
 
     closeInput();
 
-    BottomDialog.showPassWordInputDialog(context, widget.walletAccount.password, (value) async{
-
+    BottomDialog.showPassWordInputDialog(context, widget.walletAccount.password,
+        (value) async {
       await Future.delayed(Duration(milliseconds: 200));
 
-     showLoadDialog("正在提交",touchOutClose: false,backClose: false,onShow: ()async{
-       String amountAMin= StringUtils.formatNumAmount(amount_A*(1-price_changes),point: 8,supply0: false).replaceAll(",", "");
-       String amountBMin= StringUtils.formatNumAmount(amount_B*(1-price_changes),point: 8,supply0: false).replaceAll(",", "");
-       String deadline = "${DateTime.now().toUtc().millisecondsSinceEpoch / 1000 + 20 * 60}";
-       ResultObj<String>  ret = await widget.walletAccount.hdwallet.uniswapAddLiquidity(widget.walletAccount.hd_eth_address, cs_A.symbolToNetWork, cs_B.symbolToNetWork, text_A, text_B, amountAMin, amountBMin, deadline);
+      showLoadDialog(
+        ResString.get(context, RSID.uspav_5),//"正在提交",
+        touchOutClose: false,
+        backClose: false,
+        onShow: () async {
+          String amountAMin = StringUtils.formatNumAmount(
+                  amount_A * (1 - price_changes),
+                  point: 8,
+                  supply0: false)
+              .replaceAll(",", "");
+          String amountBMin = StringUtils.formatNumAmount(
+                  amount_B * (1 - price_changes),
+                  point: 8,
+                  supply0: false)
+              .replaceAll(",", "");
+          String deadline =
+              "${DateTime.now().toUtc().millisecondsSinceEpoch / 1000 + 20 * 60}";
+          ResultObj<String> ret = await widget.walletAccount.hdwallet
+              .uniswapAddLiquidity(
+                  widget.walletAccount.hd_eth_address,
+                  cs_A.symbolToNetWork,
+                  cs_B.symbolToNetWork,
+                  text_A,
+                  text_B,
+                  amountAMin,
+                  amountBMin,
+                  deadline);
 
-       dlog("uniswapAddLiquidity ${ret?.data}");
-       closeLoadDialog();
+          dlog("uniswapAddLiquidity ${ret?.data}");
+          closeLoadDialog();
 
-       if (StringUtils.isNotEmpty(ret?.data)) {
-
+          if (StringUtils.isNotEmpty(ret?.data)) {
 //         DeviceUtils.copyText(ret);
 
-         widget?.walletAccount?.uhMgr?.addOrder(UniswapOrder(
-           hash: ret?.data,
-           state:0,// 等待
-           type:1,//  注入
-           time:DateTime.now().toUtc().millisecondsSinceEpoch,///utc时间 毫秒
-           token_a:cs_A.symbol,
-           token_b:cs_B.symbol,
-           amount_a:text_A,
-           amount_b:text_B,
-         ));
-         widget?.walletAccount?.uhMgr?.save();
+            widget?.walletAccount?.uhMgr?.addOrder(UniswapOrder(
+              hash: ret?.data,
+              state: 0,
+              // 等待
+              type: 1,
+              //  注入
+              time: DateTime.now().toUtc().millisecondsSinceEpoch,
 
-         setState(() {
-           amount_B = 0;
-           text_B = "0";
-           _tec_B.text = text_B;
-           amount_A = 0;
-           text_A = "0";
-           _tec_A.text = text_A;
-         });
+              ///utc时间 毫秒
+              token_a: cs_A.symbol,
+              token_b: cs_B.symbol,
+              amount_a: text_A,
+              amount_b: text_B,
+            ));
+            widget?.walletAccount?.uhMgr?.save();
 
-         MessageDialog.showMsgDialog(
-           context,
-           title: "注入资金",
-           msg: "已提交到以太坊\n稍后可在交易记录中查询结果",
-           msgAlign: TextAlign.center,
-           btnRight: "确定",
-           onClickBtnRight: (dialog) async {
-             dialog.dismiss();
-             eventMgr.send(EventTag.UNISWAP_ADD,null);
-             await Future.delayed(Duration(milliseconds: 200));
-             finish();
-           },
-         );
-       } else {
-         showToast(ret?.errorMsg ?? "请求失败,请稍后重试");
-       }
-     });
+            setState(() {
+              amount_B = 0;
+              text_B = "0";
+              _tec_B.text = text_B;
+              amount_A = 0;
+              text_A = "0";
+              _tec_A.text = text_A;
+            });
 
+            MessageDialog.showMsgDialog(
+              context,
+              title:ResString.get(context, RSID.uspav_6),// "注入资金",
+              msg: ResString.get(context, RSID.usev_12),//"已提交到以太坊\n稍后可在交易记录中查询结果",
+              msgAlign: TextAlign.center,
+              btnRight:ResString.get(context, RSID.confirm),// "确定",
+              onClickBtnRight: (dialog) async {
+                dialog.dismiss();
+                eventMgr.send(EventTag.UNISWAP_ADD, null);
+                await Future.delayed(Duration(milliseconds: 200));
+                finish();
+              },
+            );
+          } else {
+            showToast(ret?.errorMsg ?? ResString.get(context, RSID.request_failed_retry));//"请求失败,请稍后重试");
+          }
+        },
+      );
     });
   }
 }

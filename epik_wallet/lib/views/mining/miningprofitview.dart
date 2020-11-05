@@ -1,4 +1,5 @@
 import 'package:epikwallet/base/_base_widget.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/logic/api/api_testnet.dart';
 import 'package:epikwallet/model/MiningProfit.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
@@ -10,6 +11,7 @@ import 'package:epikwallet/widget/list_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 
 class MiningProfitView extends BaseWidget {
   String mining_id;
@@ -33,7 +35,13 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
   void initStateConfig() {
     isTopBarShow = true; //状态栏是否显示
     isAppBarShow = true; //导航栏是否显示
-    setAppBarTitle("预挖收益");
+//    setAppBarTitle("预挖收益");
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setAppBarTitle(ResString.get(context, RSID.mpv_1));
   }
 
   @override
@@ -163,7 +171,7 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            "挖出数量\ntEPK",
+                            ResString.get(context, RSID.mpv_2), //"挖出数量\ntEPK",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.white,
@@ -195,7 +203,7 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            "奖励数量\nERC20-EPK",
+                            ResString.get(context, RSID.mpv_3), //"奖励数量\nERC20-EPK",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.white,

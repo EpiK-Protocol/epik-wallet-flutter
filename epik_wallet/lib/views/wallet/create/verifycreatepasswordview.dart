@@ -1,5 +1,6 @@
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
+import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/model/CreateAccountModel.dart';
@@ -11,6 +12,7 @@ import 'package:epikwallet/views/wallet/create/createwalletview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 class VerifyCreatePasswordView extends BaseWidget {
@@ -71,7 +73,7 @@ class _VerifyCreatePasswordViewState
             Padding(
               padding: EdgeInsets.fromLTRB(15, 6, 15, 10),
               child: Text(
-                "验证钱包密码",
+                ResString.get(context, RSID.vcpv_1), //"验证钱包密码",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 20,
@@ -81,7 +83,7 @@ class _VerifyCreatePasswordViewState
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
               child: Text(
-                "为了安全起见，请再次输入钱包密码。",
+                ResString.get(context, RSID.vcpv_2), //"为了安全起见，请再次输入钱包密码。",
                 style: TextStyle(
                   color: ResColor.black_50,
                   fontSize: 13,
@@ -91,26 +93,32 @@ class _VerifyCreatePasswordViewState
             Padding(
               padding: EdgeInsets.fromLTRB(15, 25, 15, 15),
               child: Text(
-                "钱包密码",
+                ResString.get(context, RSID.iwv_8), //"钱包密码",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 15,
                 ),
               ),
             ),
-            getInputWidget(keyword, "请输入钱包密码", _controllerKeyword, (text) {
-              dlog(text); // 当输入内容变更时,如何处理
-              setState(() {
-                text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
-                dlog(text);
-                keyword = text;
-              });
-            }, () {
-              setState(() {
-                keyword = "";
-                _controllerKeyword = null;
-              });
-            }),
+            getInputWidget(
+              keyword,
+              ResString.get(context, RSID.iwv_9), //"请输入钱包密码",
+              _controllerKeyword,
+              (text) {
+                dlog(text); // 当输入内容变更时,如何处理
+                setState(() {
+                  text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
+                  dlog(text);
+                  keyword = text;
+                });
+              },
+              () {
+                setState(() {
+                  keyword = "";
+                  _controllerKeyword = null;
+                });
+              },
+            ),
             Container(
               margin: EdgeInsets.fromLTRB(15, 50, 15, 0),
               height: 44,
@@ -126,7 +134,7 @@ class _VerifyCreatePasswordViewState
                           clickNext();
                         },
                         child: Text(
-                          "下一步",
+                          ResString.get(context, RSID.next_step), //"下一步",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15,
@@ -152,7 +160,7 @@ class _VerifyCreatePasswordViewState
                 padding: EdgeInsets.all(10),
                 alignment: Alignment.center,
                 child: Text(
-                  "忘记密码？重新创建",
+                  ResString.get(context, RSID.vcpv_3), // "忘记密码？重新创建",
                   style: TextStyle(
                     fontSize: 13,
                     color: ResColor.black_50,
@@ -261,12 +269,14 @@ class _VerifyCreatePasswordViewState
 
   bool checkPassword() {
     if (StringUtils.isEmpty(keyword)) {
-      showToast("请输入密码");
+//      showToast("请输入密码");
+      showToast(ResString.get(context, RSID.iwv_9));
       return false;
     }
 
     if (keyword != widget._CreateAccountModel.password) {
-      showToast("密码不正确");
+//      showToast("密码不正确");
+      showToast(ResString.get(context, RSID.vcpv_4));
       return false;
     }
 
@@ -304,13 +314,12 @@ class _VerifyCreatePasswordViewState
       AccountMgr().addAccount(walletaccount);
       AccountMgr().setCurrentAccount(walletaccount).then((ok) {
         if (ok) {
-          print("test_1");
           closeLoadDialog();
-          print("test_2");
           Future.delayed(Duration(milliseconds: 500)).then((value) => finish());
         } else {
-          AccountMgr().delAccount(walletaccount).then((_){
-            showToast("创建钱包失败");
+          AccountMgr().delAccount(walletaccount).then((_) {
+//            showToast("创建钱包失败");
+            showToast(ResString.get(context, RSID.vcpv_5));
             closeLoadDialog();
           });
         }
