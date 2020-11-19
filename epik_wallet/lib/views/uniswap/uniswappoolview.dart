@@ -47,6 +47,8 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
   void initStateConfig() {
     super.initStateConfig();
     bodyBackgroundColor = Colors.transparent;
+
+    setAppBarHeight(60);
   }
 
   @override
@@ -121,12 +123,11 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
       padding: EdgeInsets.all(0),
       child: Container(
         constraints: BoxConstraints(
-          minHeight: getScreenHeight() -
-              BaseFuntion.topbarheight -
-              BaseFuntion.appbarheight_def,
+          minHeight: getScreenHeight(), //- BaseFuntion.topbarheight - BaseFuntion.appbarheight_def,
         ),
         child: Column(
           children: <Widget>[
+            Container(height: appbarheight + BaseFuntion.topbarheight),
             Container(
               width: double.infinity,
               margin: EdgeInsets.fromLTRB(20, 20, 20, 0),

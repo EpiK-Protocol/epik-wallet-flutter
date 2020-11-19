@@ -97,7 +97,6 @@ class _MainViewState extends BaseWidgetState<MainView> {
     return WillPopScope(
       onWillPop: () async {
         if (closeRightDrawer()) return new Future.value(false);
-        ;
 
         if (lastPopTime == null ||
             DateTime.now().difference(lastPopTime) > Duration(seconds: 1)) {

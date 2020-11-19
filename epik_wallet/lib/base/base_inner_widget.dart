@@ -1,33 +1,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'common_function.dart';
 import 'package:flutter/src/foundation/key.dart';
-import 'package:epikwallet/localstring/resstringid.dart';
+
+import 'common_function.dart';
 
 ///通常是和 viewpager 联合使用  ， 类似于Android 中的 fragment
 /// 不过生命周期 还需要在容器父类中根据tab切换来完善
 abstract class BaseInnerWidget extends StatefulWidget {
-  BaseInnerWidgetState baseInnerWidgetState;
   int index;
 
-
-  BaseInnerWidget({Key key}):super(key: key);
+  BaseInnerWidget({Key key}) : super(key: key);
 
   @override
   BaseInnerWidgetState createState() {
-    baseInnerWidgetState = getState();
     index = setIndex();
-    return baseInnerWidgetState;
+    return getState();
   }
 
   ///作为内部页面 ， 设置是第几个页面 ，也就是在list中的下标 ， 方便 生命周期的完善
   int setIndex();
 
   BaseInnerWidgetState getState();
-
-  String getStateName() {
-    return baseInnerWidgetState.getWidgetName();
-  }
 }
 
 abstract class BaseInnerWidgetState<T extends BaseInnerWidget> extends State<T>
@@ -40,7 +33,7 @@ abstract class BaseInnerWidgetState<T extends BaseInnerWidget> extends State<T>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     initBaseCommon(this);
-    print("baseinnerwidget --- initState ---" + getWidgetName() );
+    print("baseinnerwidget --- initState ---" + getWidgetName());
     setBackIconHinde();
     initStateConfig();
     onCreate();
@@ -114,8 +107,7 @@ abstract class BaseInnerWidgetState<T extends BaseInnerWidget> extends State<T>
     dlog("state --> : $_state");
   }
 
-  closeInput()
-  {
+  closeInput() {
     FocusScope.of(context).requestFocus(new FocusNode());
   }
 }

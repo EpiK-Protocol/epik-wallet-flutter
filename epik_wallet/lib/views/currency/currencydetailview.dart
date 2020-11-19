@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
@@ -22,7 +23,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:epikwallet/localstring/resstringid.dart';
 
 class CurrencyDetailView extends BaseWidget {
   CurrencyAsset currencyAsset;
@@ -48,7 +48,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
 
   double header_alpha = 0;
 
-  String balance="　";
+  String balance = "　";
 
   ColorTween header_colortween =
       ColorTween(begin: Colors.white, end: Colors.black);
@@ -75,18 +75,16 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   );
 
   @override
-  void initStateConfig() {
+  void initStateConfig() async {
     isTopBarShow = false; //状态栏是否显示
     isAppBarShow = false; //导航栏是否显示
     isTopFloatWidgetShow = true;
     setAppBarTitle(widget.currencyAsset.symbol);
     setBackIconHinde(isHinde: false);
 
-    Future.delayed(Duration(milliseconds: 200)).then((_){
-      setState(() {
-        balance = StringUtils.formatNumAmount(widget.currencyAsset.balance,point:8,supply0: false );
-      });
-    });
+    await Future.delayed(Duration(milliseconds: 200));
+    balance = StringUtils.formatNumAmount(widget.currencyAsset.balance,
+        point: 8, supply0: false);
   }
 
   SystemUiOverlayStyle oldSystemUiOverlayStyle;
@@ -122,13 +120,15 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   Widget getTopFloatWidget() {
     return InkWell(
       child: getAppBar(),
-      onTap: () {
-        if (key_scroll != null && !isLoading) {
-          key_scroll.currentState.scrollController.animateTo(0,
-              duration: Duration(milliseconds: 200), curve: Curves.easeIn);
-        }
-      },
+      onTap: onTapAppBar,
     );
+  }
+
+  onTapAppBar() {
+    if (key_scroll != null && !isLoading) {
+      key_scroll.currentState.scrollController.animateTo(0,
+          duration: Duration(milliseconds: 200), curve: Curves.easeIn);
+    }
   }
 
   @override
@@ -421,7 +421,8 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                                   height: double.infinity,
                                   alignment: Alignment.center,
                                   child: Text(
-                                    ResString.get(context, RSID.withdraw), //"转账",
+                                    ResString.get(context, RSID.withdraw),
+                                    //"转账",
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.white,
@@ -453,7 +454,8 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                                   height: double.infinity,
                                   alignment: Alignment.center,
                                   child: Text(
-                                    ResString.get(context, RSID.deposit), //"收款",
+                                    ResString.get(context, RSID.deposit),
+                                    //"收款",
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.white,
@@ -582,7 +584,9 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
             left: 0,
             top: 0,
             child: Text(
-              ResString.get(context, item.isWithdraw ?RSID.withdraw:RSID.deposit), //  item.isWithdraw ? "转账" : "收款",
+              ResString.get(
+                  context, item.isWithdraw ? RSID.withdraw : RSID.deposit),
+              //  item.isWithdraw ? "转账" : "收款",
               style: TextStyle(
                 fontSize: 15,
                 color: Color(0xff333333),
@@ -660,7 +664,9 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
             left: 0,
             top: 0,
             child: Text(
-              ResString.get(context, item.isWithdraw ?RSID.withdraw:RSID.deposit), //item.isWithdraw ? "转账" : "收款",
+              ResString.get(
+                  context, item.isWithdraw ? RSID.withdraw : RSID.deposit),
+              //item.isWithdraw ? "转账" : "收款",
               style: TextStyle(
                 fontSize: 15,
                 color: Color(0xff333333),
@@ -762,7 +768,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
       _ListPageDefState.type =
           data_list_item.length > 0 ? null : ListPageDefStateType.EMPTY;
     } else {
-      showToast(ResString.get(context, RSID.request_failed));//"请求失败);
+      showToast(ResString.get(context, RSID.request_failed)); //"请求失败);
       if (page == 0) {
         _ListPageDefState.type = ListPageDefStateType.ERROR;
       }
@@ -786,8 +792,8 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     }
     page = 0;
     isLoading = true;
-    var data = await EpikWalletUtils.getOrderList(AccountMgr().currentAccount,
-            widget.currencyAsset.cs, page, pageSize);
+    var data = await EpikWalletUtils.getOrderList(
+        AccountMgr().currentAccount, widget.currencyAsset.cs, page, pageSize);
     dataCallback(data);
   }
 

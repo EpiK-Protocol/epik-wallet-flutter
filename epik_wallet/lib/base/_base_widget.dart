@@ -2,31 +2,23 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 //import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 
 import 'NavigatorManger.dart';
 import 'common_function.dart';
-import 'package:epikwallet/localstring/resstringid.dart';
 
 abstract class BaseWidget extends StatefulWidget {
-  BaseWidgetState baseWidgetState;
-
   @override
   BaseWidgetState createState() {
-    baseWidgetState = getState();
-    return baseWidgetState;
+    return getState();
   }
 
   BaseWidgetState getState();
-
-  String getStateName() {
-    return baseWidgetState.getWidgetName();
-  }
 }
 
 abstract class BaseWidgetState<T extends BaseWidget> extends State<T>
     with WidgetsBindingObserver, BaseFuntion {
-
   final GlobalKey<ScaffoldState> key_ScaffoldState = GlobalKey();
 
   //平台信息
@@ -46,13 +38,10 @@ abstract class BaseWidgetState<T extends BaseWidget> extends State<T>
     if (mounted) {}
     super.initState();
 
-
 //    UmengAnalyticsPlugin.pageStart(getWidgetName());
   }
 
-  void initStateConfig() {
-
-  }
+  void initStateConfig() {}
 
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -99,7 +88,7 @@ abstract class BaseWidgetState<T extends BaseWidget> extends State<T>
   void dispose() {
     // TODO: implement dispose
     onDestory();
-//    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     _onResumed = false;
     _onPause = false;
 

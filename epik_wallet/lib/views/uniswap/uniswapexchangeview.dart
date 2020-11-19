@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
@@ -7,11 +9,15 @@ import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
+import 'package:epikwallet/logic/api/api_testnet.dart';
+import 'package:epikwallet/main.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/currencytype.dart';
+import 'package:epikwallet/utils/JsonUtils.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
+import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
@@ -21,6 +27,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
+import 'package:flutter_k_chart/flutter_k_chart.dart';
+import 'package:flutter_k_chart/utils/data_util.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UniswapExchangeView extends BaseInnerWidget {
@@ -68,6 +76,9 @@ class UniswapExchangeViewState
 
     cs_A = CurrencySymbol.EPKerc20;
     cs_B = CurrencySymbol.USDT;
+
+    setAppBarHeight(60);
+
   }
 
   @override
@@ -97,9 +108,16 @@ class UniswapExchangeViewState
     super.dispose();
   }
 
+  List<String> infoNames =[];
+
   refresh() {
+
+    infoNames=ResString.get(appContext,RSID.usev_13).split(",");
+
     widget.walletAccount.uploadSuggestGas();
     widget.walletAccount.uploadUniswapInfo();
+
+    getKlineData(7);
   }
 
   @override
@@ -110,17 +128,18 @@ class UniswapExchangeViewState
         ? ResString.get(context, RSID.usv_2)
         : ResString.get(context, RSID.usev_1); //"兑换" : "预估";
 
-    return SingleChildScrollView(
+    Widget scroll = SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.all(0),
       child: Container(
         constraints: BoxConstraints(
-          minHeight: getScreenHeight() -
-              BaseFuntion.topbarheight -
-              BaseFuntion.appbarheight_def,
+          minHeight:
+              getScreenHeight(), //-BaseFuntion.topbarheight - BaseFuntion.appbarheight_def,
         ),
         child: Column(
           children: <Widget>[
+            Container(height: appbarheight + BaseFuntion.topbarheight),
+            getKlineWidget(),
             Container(
               width: double.infinity,
               margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -234,7 +253,7 @@ class UniswapExchangeViewState
               ),
             ),
             Container(
-              padding: EdgeInsets.fromLTRB(40, 20, 40, 0),
+              padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
               child: InkWell(
                 onTap: () {
                   onClickReadme();
@@ -252,6 +271,18 @@ class UniswapExchangeViewState
           ],
         ),
       ),
+    );
+
+    return Stack(
+      children: [
+        Positioned(
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+          child: scroll,
+        ),
+      ],
     );
   }
 
@@ -741,7 +772,7 @@ class UniswapExchangeViewState
         await Future.delayed(Duration(milliseconds: 200));
 
         showLoadDialog(
-          ResString.get(context, RSID.usev_11),//"正在提交到以太坊网络，请耐心等待",
+          ResString.get(context, RSID.usev_11), //"正在提交到以太坊网络，请耐心等待",
           onShow: () async {
             ResultObj<String> ret =
                 await widget.walletAccount.hdwallet.uniswapExactTokenForTokens(
@@ -787,20 +818,149 @@ class UniswapExchangeViewState
 
               MessageDialog.showMsgDialog(
                 context,
-                title:ResString.get(context, RSID.usv_2),// "兑换",
-                msg: ResString.get(context, RSID.usev_12),//"已提交到以太坊\n稍后可在交易记录中查询结果",
+                title: ResString.get(context, RSID.usv_2),
+                // "兑换",
+                msg: ResString.get(context, RSID.usev_12),
+                //"已提交到以太坊\n稍后可在交易记录中查询结果",
                 msgAlign: TextAlign.center,
-                btnRight: ResString.get(context, RSID.confirm),//"确定",
+                btnRight: ResString.get(context, RSID.confirm),
+                //"确定",
                 onClickBtnRight: (dialog) {
                   dialog.dismiss();
                 },
               );
             } else {
-              showToast(ret?.errorMsg ??ResString.get(context, RSID.request_failed_retry));// "请求失败,请稍后重试");
+              showToast(ret?.errorMsg ??
+                  ResString.get(
+                      context, RSID.request_failed_retry)); // "请求失败,请稍后重试");
             }
           },
         );
       },
     );
+  }
+
+  // kline------
+
+  bool loadkline = false;
+  List<KLineEntity> data_kline = [];
+
+  void getKlineData(int days) async {
+    loadkline = true;
+    setState(() {});
+
+    DateTime dt_end = DateTime.now();
+    DateTime dt_start = dt_end.subtract(Duration(days: days));
+    HttpJsonRes hjr = await ApiTestNet.getUniswapEpkKline(dt_start, dt_end);
+
+    // 服务器返回的时间是东8区时间， -8为UTC  再+本地
+    int time_offset =
+        (-8 + dt_end.timeZoneOffset.inHours) * Duration.secondsPerHour;
+    // print("time_offset = $time_offset");
+
+    if (hjr.code == 0 && hjr?.jsonMap?.containsKey("klines") == true) {
+      List list = hjr.jsonMap["klines"];
+      data_kline = JsonArray.parseList<KLineEntity>(list,
+          (json) => KLineEntity.fromJson(json).setTimeOffset(time_offset));
+      DataUtil.calculate(data_kline);
+    }
+    loadkline = false;
+    setState(() {});
+  }
+
+  Widget getKlineWidget() {
+    List<Widget> views = [
+      Container(
+        height: double.infinity,
+        width: double.infinity,
+        child: KChartWidget(
+          data_kline,
+          isLine: false,
+          mainState: MainState.NONE,
+          volState: VolState.NONE,
+          secondaryState: SecondaryState.NONE,
+          fractionDigits: 6,
+          infoNames: infoNames,
+        ),
+      ),
+    ];
+
+    if (loadkline) {
+      views.add(BackdropFilter(
+        filter: ImageFilter.blur(sigmaY: 2, sigmaX: 2),
+        child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            alignment: Alignment.center,
+            color: Colors.white10,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.0,
+              valueColor: new AlwaysStoppedAnimation<Color>(ResColor.progress),
+            )),
+      ));
+    } else {
+      if (data_kline == null || data_kline.length == 0) {
+        views.add(
+          Align(
+            child: Container(
+              width: 50,
+              height: 50,
+              child: FlatButton(
+                highlightColor: Colors.white24,
+                splashColor: Colors.white24,
+                onPressed: () {
+                  getKlineData(7);
+                },
+                child: Icon(
+                  Icons.refresh,
+                  size: 20,
+                  color: color_btn_1,
+                ),
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(50)),
+                  // side:BorderSide(color:Colors.lightBlueAccent[100],width: 0.1 ),
+                ),
+              ),
+            ),
+          ),
+        );
+      } else {
+        views.add(
+          Align(
+            alignment: Alignment.bottomRight,
+            child: InkWell(
+              onTap: () {
+                // getKlineData(7);
+                refresh();
+              },
+              child: Container(
+                width: 20,
+                height: 20,
+                margin: EdgeInsets.only(left: 10, right: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white54,
+                  borderRadius: BorderRadius.all(Radius.circular(50)),
+                ),
+                child: Icon(
+                  Icons.refresh,
+                  size: 14,
+                  color: color_btn_1,
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+    }
+
+    Widget content = Container(
+      width: double.infinity,
+      height: 200,
+      child: Stack(
+        children: views,
+      ),
+    );
+    return content;
   }
 }

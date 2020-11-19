@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
@@ -85,11 +87,17 @@ class UniswapViewState extends BaseWidgetState<UniswapView> with TickerProviderS
       left: 0,
       right: 0,
       top: 0,
-      child: Column(
-        children: <Widget>[
-          getTopBar(),
-          getAppBar(),
-        ],
+      height: appbarheight+BaseFuntion.topbarheight,
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX:2,sigmaY: 2),
+          child: Column(
+            children: <Widget>[
+              getTopBar(),
+              getAppBar(),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -170,7 +178,7 @@ class UniswapViewState extends BaseWidgetState<UniswapView> with TickerProviderS
   @override
   Widget buildWidget(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(0, BaseFuntion.topbarheight+getAppBarHeight(), 0, 0),
+      // padding: EdgeInsets.fromLTRB(0, BaseFuntion.topbarheight+getAppBarHeight(), 0, 0),
       decoration: BoxDecoration(
         gradient:const RadialGradient(
           colors:  [Color(0xfff7e6f0),Colors.white,],

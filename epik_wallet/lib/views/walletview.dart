@@ -12,6 +12,7 @@ import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
+import 'package:epikwallet/views/currency/currencydetailview.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/list_view.dart';
 import 'package:epikwallet/widget/text/diff_scale_text.dart';

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/dialog/loading_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
@@ -12,7 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:provider/provider.dart';
-import 'package:epikwallet/localstring/resstringid.dart';
+
 import 'buildConfig.dart';
 
 /// base 类 常用的一些工具类 ， 放在这里就可以了
@@ -43,7 +44,7 @@ abstract class BaseFuntion {
   String _appBarRightTitle;
   double _appBarRightTextSize = 15.0;
 
-  String _errorContentMesage;//"网络错误";
+  String _errorContentMesage; //"网络错误";
 
   String _errImgPath = "assets/img/ic_content_neterror.png";
 
@@ -51,7 +52,7 @@ abstract class BaseFuntion {
 
   bool _isEmptyWidgetVisible = false;
 
-  String _emptyWidgetContent;//"暂无数据";
+  String _emptyWidgetContent; //"暂无数据";
 
   String _emptyImgPath = "assets/img/ic_content_empty.png"; //自己根据需求变更
   bool _isBackIconShow = true;
@@ -263,13 +264,14 @@ abstract class BaseFuntion {
     if (_stateBaseFunction != null) {
       if (_stateBaseFunction is BaseWidgetState) {
         (_stateBaseFunction as BaseWidgetState).closeInput();
-      } else if (_stateBaseFunction is BaseWidgetState) {
-        (_stateBaseFunction as BaseWidgetState).closeInput();
       }
     }
     if (Navigator.canPop(_contextBaseFunction)) {
       print("finish pop $_contextBaseFunction");
       Navigator.pop<T>(_contextBaseFunction, result);
+
+      _stateBaseFunction =null;
+      _contextBaseFunction = null;
     } else {
       //说明已经没法回退了 ， 可以关闭了
       print("finish $_contextBaseFunction");
@@ -638,6 +640,8 @@ abstract class BaseFuntion {
   ///页面注销方法
   void onDestory() {
     dlog("destory");
+    _stateBaseFunction = null;
+    _contextBaseFunction = null;
     isDestory = true;
   }
 
@@ -723,7 +727,8 @@ abstract class BaseFuntion {
                               Container(height: 45, color: Colors.transparent)),
                       Container(
                         padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
-                        child: Text(ResString.get(context, RSID.takephoto), //"拍照",
+                        child: Text(
+                            ResString.get(context, RSID.takephoto), //"拍照",
                             style: TextStyle(
                                 fontSize: 18, color: Color(0xff666666))),
                       ),
@@ -756,7 +761,8 @@ abstract class BaseFuntion {
                               Container(height: 45, color: Colors.transparent)),
                       Container(
                         padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
-                        child: Text(ResString.get(context, RSID.gallery), //"相册",
+                        child: Text(
+                            ResString.get(context, RSID.gallery), //"相册",
                             style: TextStyle(
                                 fontSize: 18, color: Color(0xff666666))),
                       ),

@@ -101,20 +101,20 @@ Map<RSID, String> map_en = {
 
   //----------------------------------------views.*
   //MainView 首页框架 Homepage view
-  RSID.mainview_1: "Mine",//"挖矿",
+  RSID.mainview_1: "Mining",//"挖矿",
   RSID.mainview_2: "Wallet",//"钱包",
   RSID.mainview_3: "Trade",//"交易",
   RSID.mainview_4: "Bounty",//"赏金",
 
   //MiningView 首页_挖矿 Homepage mine
-  RSID.main_mv_1: "Pre-mine ranking",//"预挖排行",
+  RSID.main_mv_1: "Pre-mining ranking",//"预挖排行",
   RSID.main_mv_2: "Total bonus",//"预挖总奖励",
   RSID.main_mv_3: "Bonus granted",//"已发放奖励",
   RSID.main_mv_4: "Copied ID",//"已复制ID",
   RSID.main_mv_5: "Bonus acumulated: ",//"累计奖励: ",
   RSID.main_mv_6: "Register",//"报名",
   RSID.main_mv_7: "Under review",//"审核中",
-  RSID.main_mv_8: "Pre-mine bonus",//"预挖奖励",
+  RSID.main_mv_8: "Pre-mining bonus",//"预挖奖励",
   RSID.main_mv_9: "Register rejected",//"报名已被拒绝",
 
   //WalletView 首页_钱包 Homapage wallet
@@ -149,13 +149,13 @@ Map<RSID, String> map_en = {
   RSID.main_bv_12: "Incentive interval:",//"奖励区间:",
 
   //----------------------------------------views.mining.*
-  //MiningProfitView 预挖收益 Pre-mine profit
-  RSID.mpv_1: "Pre-mine profit",//"预挖收益",
+  //MiningProfitView 预挖收益 Pre-mining profit
+  RSID.mpv_1: "Pre-mining profit",//"预挖收益",
   RSID.mpv_2: "mined\ntEPK",//"挖出数量\ntEPK",
   RSID.mpv_3: "granted\nERC20-EPK",//"奖励数量\nERC20-EPK",
 
-//MiningSignupView 预挖报名 Register for pre-mine
-  RSID.msv_1: "Register for pre-mine",//"预挖报名",
+//MiningSignupView 预挖报名 Register for pre-mining
+  RSID.msv_1: "Register for pre-mining",//"预挖报名",
   RSID.msv_2: "Already copied the customer service WeChat account\nPlease add a friend in WeChat account",//"已复制客服微信号\n请在微信添加好友",
   RSID.msv_3: "Before registering, please use the WeChat account you want to bind to add customer service WeChat account ",//"报名前请先使用要绑定的微信号添加客服微信",
   RSID.msv_4: ". After successful registration, the UUID will be displayed and sent to customer service WeChat account.",//"为好友，成功报名后将显示UUID发送给客服微信。",
@@ -230,7 +230,7 @@ Map<RSID, String> map_en = {
   RSID.uspv_14: "Contract",//"合约",
   RSID.uspv_15_1:
       "1.This page is based on Uniswap's ERC20-EPK and USDT's liquidity support \n\n2.The underlying layer is deployed on the ethereum public chain, and both swap and pooling operations will incur ETH fees.\n\n3.The official smart contract address is: ", //"「1」本页资金池交易是基于Uniswap的ERC20-EPK与USDT的流动性支持\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
-  RSID.uspv_15_2: "4.For instructions for beginners, please click ",//"\n\n「4」新手操作说明请点击",
+  RSID.uspv_15_2: "\n\n4.For instructions for beginners, please click ",//"\n\n「4」新手操作说明请点击",
   RSID.uspv_15_3: "here",//"这里",
   //UniswapExchangeView
   RSID.usev_1: "Estimate",//"预估",
@@ -244,10 +244,11 @@ Map<RSID, String> map_en = {
   RSID.usev_9: "Estimating the amount...",//"正在预估数量...",
   RSID.usev_10_1:
   "1.This page is based on Uniswap's ERC20-EPK and USDT's liquidity support \n\n2.The underlying layer is deployed on the ethereum public chain, and both swap and pooling operations will incur ETH fees.\n\n3.The official smart contract address is: ",//"「1」本页兑换交易是基于Uniswap的ERC20-EPK与USDT交易\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
-  RSID.usev_10_2: "4.For instructions for beginners, please click ",//"\n\n「4」新手操作说明请点击",
+  RSID.usev_10_2: "\n\n4.For instructions for beginners, please click ",//"\n\n「4」新手操作说明请点击",
   RSID.usev_10_3: "here",//"这里",
   RSID.usev_11: "Being submitted to the Ethernet network, please be patient!",//"正在提交到以太坊网络，请耐心等待",
   RSID.usev_12: "Submitted to Ethereum \nThe results will be available later in the transaction history.",//"已提交到以太坊\n稍后可在交易记录中查询结果",
+  RSID.usev_13: "Date,Open,High,Low,Close,Change,Change%",//Amount ["时间", "开", "高", "低", "收", "涨跌额", "涨幅",/* "成交量"*/];
   //UniswapPoolAddView 注入资金
   RSID.uspav_1: "The current price is estimated. If the price fluctuates more than %s%, your transaction will be cancelled",//"当前为预估价格，如果价格波动超过%s%，您的交易将会撤销。",
   RSID.uspav_2: "Fee : %s eth",//"手续费 : %s eth",

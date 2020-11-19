@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:epikwallet/base/_base_widget.dart';
-import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/utils/res_color.dart';
-import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/mainview.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,7 +22,7 @@ class _SplashViewState extends BaseWidgetState<SplashView>
 
   AnimationController controller;
 
-  bool localImage=true;
+  bool localImage = true;
   String netImageUrl;
 
   @override
@@ -40,11 +38,10 @@ class _SplashViewState extends BaseWidgetState<SplashView>
 //    }
 
     timer = Timer(Duration(seconds: 2), () {
-      ViewGT.showView(context, MainView(),model: ViewPushModel.PushReplacement);
       timer = null;
+      startNextView();
     });
   }
-
 
   @override
   void dispose() {
@@ -75,7 +72,7 @@ class _SplashViewState extends BaseWidgetState<SplashView>
                 bottom: 0,
                 left: 0,
                 right: 0,
-                child: localImage? getLocalImage():getNetImage(),
+                child: localImage ? getLocalImage() : getNetImage(),
               ),
             ],
           ),
@@ -90,16 +87,14 @@ class _SplashViewState extends BaseWidgetState<SplashView>
     );
   }
 
-  Widget getLocalImage()
-  {
+  Widget getLocalImage() {
     return Image(
-        image: AssetImage("assets/img/bg_splash.png"),
-        fit: BoxFit.fitHeight,
+      image: AssetImage("assets/img/bg_splash.png"),
+      fit: BoxFit.fitHeight,
     );
   }
 
-  Widget getNetImage()
-  {
+  Widget getNetImage() {
     return CachedNetworkImage(
       imageUrl: netImageUrl,
       fit: BoxFit.cover,
@@ -120,8 +115,7 @@ class _SplashViewState extends BaseWidgetState<SplashView>
               height: 15,
               child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor:
-                  AlwaysStoppedAnimation(ResColor.black_10)),
+                  valueColor: AlwaysStoppedAnimation(ResColor.black_10)),
             )
           ],
         );
@@ -132,7 +126,11 @@ class _SplashViewState extends BaseWidgetState<SplashView>
   clickToLogin() {
     if (timer != null && timer.isActive) {
       timer.cancel();
-      ViewGT.showView(context, MainView(),model: ViewPushModel.PushReplacement);
+      startNextView();
     }
+  }
+
+  startNextView() {
+    ViewGT.showView(context, MainView(),model: ViewPushModel.PushReplacement);
   }
 }

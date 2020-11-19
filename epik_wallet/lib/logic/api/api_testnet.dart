@@ -133,4 +133,25 @@ class ApiTestNet {
     String url ="https://tx.epik-protocol.io/api?module=transaction&action=getstatus&txhash=${order.hash}";
     return HttpUtil.instance.requestJson(true, url, null);
   }
+
+  static Future<HttpJsonRes> getUniswapEpkKline(DateTime start, DateTime end)
+  {
+    DateTime dt0 = DateTime.now();
+    Dlog.p("cccmax", "本地 ${dt0.toIso8601String()}  isutc=${dt0.isUtc}");
+    // UTC时间
+    String time =
+        DateUtil.formatDate(dt0.toUtc(), format: "yyyy-MM-ddTHH:mm:ss") + "Z";
+    Dlog.p("cccmax", "转UTC "+time);
+    // 本地北京时间
+    DateTime dt = DateTime.tryParse(time).toLocal();
+    Dlog.p("cccmax", "转本地 ${dt.toIso8601String()}  isutc=${dt.isUtc}");
+
+
+    //https://explorer.epik-protocol.io/api/wallet/kline?start=2020-11-10T18:00:00Z&end=2020-11-15T14:00:00Z
+    String url = ServiceInfo.HOST+"/wallet/kline";
+    Map<String, dynamic> params = new Map();
+    params["start"] = DateUtil.formatDate(start.toUtc(), format: "yyyy-MM-ddTHH:mm:ss") + "Z";
+    params["end"] = DateUtil.formatDate(end.toUtc(), format: "yyyy-MM-ddTHH:mm:ss") + "Z";
+    return HttpUtil.instance.requestJson(true, url, params);
+  }
 }

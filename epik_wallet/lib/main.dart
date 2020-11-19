@@ -1,19 +1,19 @@
 import 'dart:io';
 
 import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/utils/CupertinoLocalizationsDelegate.dart';
+import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/sp_utils/sp_utils.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
-import 'package:epikwallet/views/mainview.dart';
 import 'package:epikwallet/views/splashview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:epikwallet/localstring/resstringid.dart';
 //import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 
 final String fontFamily_def = "Miui-Light";
@@ -31,7 +31,8 @@ void main() {
 }
 
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
-BuildContext get appContext{
+
+BuildContext get appContext {
   return navigatorKey?.currentState?.overlay?.context;
 }
 
@@ -66,7 +67,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> initOther() async {
     await SpUtils().init(); // 初始化存储工具
     await ServiceInfo.loadConfig(); //加载本地缓存的配置
-    await AccountMgr().load();// 加载钱包账户
+    await AccountMgr().load(); // 加载钱包账户
     ServiceInfo.requestConfig(); //请求新的服务配置
   }
 
@@ -106,17 +107,7 @@ class _MyAppState extends State<MyApp> {
 
 //      home: MainView(),
       home: WillPopScope(
-        onWillPop: () async {
-          if (lastPopTime == null ||
-              DateTime.now().difference(lastPopTime) > Duration(seconds: 1)) {
-            //两次点击间隔超过1秒则重新计时
-            lastPopTime = DateTime.now();
-//            ToastUtils.showToast("再按一次退出");
-            ToastUtils.showToast(ResString.get(context, RSID.doubleclickquit));
-            return new Future.value(false);
-          }
-          return new Future.value(true);
-        },
+        onWillPop: onWillPop,
 //        child: MainView(),
         child: hasDataInit
             ? SplashView()
@@ -126,13 +117,28 @@ class _MyAppState extends State<MyApp> {
                 ),
               ),
       ),
-      builder: (context, widget) {
-        return MediaQuery(
-          //设置文字大小不随系统设置改变
-          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-          child: widget,
-        );
-      },
+      builder: transitionBuilder,
+    );
+  }
+
+  Future<bool> onWillPop() async {
+    if (lastPopTime == null ||
+        DateTime.now().difference(lastPopTime) > Duration(seconds: 1)) {
+      //两次点击间隔超过1秒则重新计时
+      lastPopTime = DateTime.now();
+//            ToastUtils.showToast("再按一次退出");
+      ToastUtils.showToast(ResString.get(appContext, RSID.doubleclickquit));
+      return new Future.value(false);
+    }
+    return new Future.value(true);;
+  }
+
+  Widget transitionBuilder(BuildContext context,Widget widget)
+  {
+    return MediaQuery(
+      //设置文字大小不随系统设置改变
+      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+      child: widget,
     );
   }
 }

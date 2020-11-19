@@ -248,6 +248,7 @@ Map<RSID, String> map_zh = {
   RSID.usev_10_3: "这里",
   RSID.usev_11: "正在提交到以太坊网络，请耐心等待",
   RSID.usev_12: "已提交到以太坊\n稍后可在交易记录中查询结果",
+  RSID.usev_13: "时间,开,高,低,收,涨跌额,涨幅",//["时间", "开", "高", "低", "收", "涨跌额", "涨幅",/* "成交量"*/];
   //UniswapPoolAddView 注入资金
   RSID.uspav_1: "当前为预估价格，如果价格波动超过%s%，您的交易将会撤销。",
   RSID.uspav_2: "手续费 : %s eth",
@@ -336,4 +337,5 @@ Map<RSID, String> map_zh = {
   RSID.bus_2: "已通过",
   RSID.bus_3: "失败",
   RSID.bus_4: "已拒绝",
+
 };

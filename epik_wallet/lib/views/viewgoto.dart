@@ -40,11 +40,22 @@ enum ViewPushModel {
 
 class ViewGT {
   ///打开新页面 model
-  static showView(BuildContext context, Widget view,
-      {ViewPushModel model = ViewPushModel.Push}) {
-    MaterialPageRoute route = MaterialPageRoute(builder: (context) {
-      return view;
-    });
+  static showView(
+    BuildContext context,
+    Widget view, {
+    WidgetBuilder builder,
+    RouteSettings routeSettings,
+    ViewPushModel model = ViewPushModel.Push,
+    bool maintainState = true,
+  }) {
+    MaterialPageRoute route = MaterialPageRoute(
+      builder: builder ??
+          (context) {
+            return view;
+          },
+      maintainState: maintainState,
+      settings: routeSettings,
+    );
 
     switch (model) {
       case ViewPushModel.PushReplacement:
