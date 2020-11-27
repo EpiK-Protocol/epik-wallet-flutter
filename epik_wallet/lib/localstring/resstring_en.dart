@@ -113,7 +113,7 @@ Map<RSID, String> map_en = {
   RSID.main_mv_4: "Copied ID",//"已复制ID",
   RSID.main_mv_5: "Bonus acumulated: ",//"累计奖励: ",
   RSID.main_mv_6: "Register",//"报名",
-  RSID.main_mv_7: "Under review",//"审核中",
+  RSID.main_mv_7: "Under Review\n(Normally take less than 24 hours to approve)",//"审核中",
   RSID.main_mv_8: "Pre-mining bonus",//"预挖奖励",
   RSID.main_mv_9: "Register rejected",//"报名已被拒绝",
 

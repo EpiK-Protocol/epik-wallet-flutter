@@ -113,7 +113,7 @@ Map<RSID, String> map_zh = {
   RSID.main_mv_4: "已复制ID",
   RSID.main_mv_5: "累计奖励: ",
   RSID.main_mv_6: "报名",
-  RSID.main_mv_7: "审核中",
+  RSID.main_mv_7: "审核中\n(一般在24小时内完成)",
   RSID.main_mv_8: "预挖奖励",
   RSID.main_mv_9: "报名已被拒绝",
 

@@ -1,6 +1,8 @@
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/api/api_testnet.dart';
+import 'package:epikwallet/main.dart';
 import 'package:epikwallet/model/MiningProfit.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
 import 'package:epikwallet/utils/data/date_util.dart';
@@ -11,7 +13,6 @@ import 'package:epikwallet/widget/list_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:epikwallet/localstring/resstringid.dart';
 
 class MiningProfitView extends BaseWidget {
   String mining_id;
@@ -116,11 +117,7 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
   }
 
   String amountFormat(double amount) {
-    if (amount > 10000) {
-      String ret = "${StringUtils.formatNumAmount(amount / 10000, point: 2)}w";
-      return ret;
-    }
-    return StringUtils.formatNumAmount(amount, point: 0);
+    return StringUtils.formatNumAmountLocaleUnit(amount, appContext, point: 2);
   }
 
   Widget buildHeaderWidget(Object item, int position) {
@@ -203,7 +200,8 @@ class _MiningProfitViewState extends BaseWidgetState<MiningProfitView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            ResString.get(context, RSID.mpv_3), //"奖励数量\nERC20-EPK",
+                            ResString.get(context, RSID.mpv_3),
+                            //"奖励数量\nERC20-EPK",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.white,

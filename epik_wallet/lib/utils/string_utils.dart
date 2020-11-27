@@ -1,3 +1,6 @@
+import 'package:epikwallet/utils/Dlog.dart';
+import 'package:flutter/cupertino.dart';
+
 class StringUtils {
   static bool isEmpty(String text, {bool trim = false}) {
     return text == null || (trim ? text.trim().isEmpty : text.isEmpty);
@@ -100,25 +103,23 @@ class StringUtils {
     return result;
   }
 
-  static String formatNumAmount(num, {int point: 2, bool supply0=false}) {
+  static String formatNumAmount(num, {int point: 2, bool supply0 = false}) {
     if (num != null) {
-      double dnum= double.parse(num.toString()) ;
+      double dnum = double.parse(num.toString());
       String str = dnum.toString();
-      if(str.contains("e")){
+      if (str.contains("e")) {
         str = dnum.toStringAsFixed(20);
       }
-      if(dnum==0)
-        str="0";
+      if (dnum == 0) str = "0";
       // 分开截取
       List<String> sub = str.split('.');
       // 处理值
       List val = List.from(sub[0].split(''));
       // 处理点
-      if(sub.length>1 && sub[1].length>point)
-      {
-        sub[1] = sub[1].substring(0,point);
+      if (sub.length > 1 && sub[1].length > point) {
+        sub[1] = sub[1].substring(0, point);
       }
-      List<String> points = sub.length>1 ?List.from(sub[1].split('')): [];
+      List<String> points = sub.length > 1 ? List.from(sub[1].split('')) : [];
       //处理分割符
       for (int index = 0, i = val.length - 1; i >= 0; index++, i--) {
         // 除以三没有余数、不等于零并且不等于1 就加个逗号
@@ -128,8 +129,7 @@ class StringUtils {
         }
       }
       // 处理小数点
-      if(supply0)
-      {
+      if (supply0) {
         // 是否需要补零
         int pointsize = point - points.length;
         if (pointsize > 0) {
@@ -137,9 +137,8 @@ class StringUtils {
             points.add('0');
           }
         }
-      }else{
-        while(points.length>0 && points[points.length-1]=="0")
-        {
+      } else {
+        while (points.length > 0 && points[points.length - 1] == "0") {
           points.removeLast();
         }
       }
@@ -157,5 +156,44 @@ class StringUtils {
     } else {
       return "0.0";
     }
+  }
+
+  /// 格式化金额，中文缩略成w(万),其他语言缩略成M(百万)\K(千)
+  static String formatNumAmountLocaleUnit(num amount, BuildContext context,
+      {int point: 2, bool supply0 = false}) {
+    String languageCode="zh";
+
+    try {
+      Locale _locale = Localizations.localeOf(context);
+      languageCode = _locale.languageCode;
+      // Dlog.p("formatNumAmountLocaleUnit", languageCode);
+    } catch (e, s) {
+      print(e);
+      print(s);
+    }
+
+    double x = 1;
+    String u = "";
+    if (languageCode == "zh") {
+      //中文
+      if (amount > 10000) {
+        x=10000;
+        u="w";
+      }
+    } else {
+      //其他语言
+      if (amount > 1000000) {
+        x = 1000000; // 1,000,000 =  1M
+        u = "M";
+      } else if (amount > 1000) {
+        x = 1000; // 1,000 = 1K
+        u = "K";
+      }
+    }
+
+    String ret =
+        "${StringUtils.formatNumAmount(amount / x, point: point, supply0: supply0)}" +
+            u;
+    return ret;
   }
 }

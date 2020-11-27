@@ -4,6 +4,7 @@ import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_testnet.dart';
+import 'package:epikwallet/main.dart';
 import 'package:epikwallet/model/MiningRank.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
@@ -111,12 +112,11 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
     if (httpjsonres != null && httpjsonres.code == 0) {
       mining_id = httpjsonres.jsonMap["id"];
       mining_weixin = httpjsonres.jsonMap["weixin"];
-      mining_platform =
-          httpjsonres.jsonMap["platform"];
+      mining_platform = httpjsonres.jsonMap["platform"];
       mining_status =
           httpjsonres.jsonMap["status"]; //等待审核pending/ 已经通过confirmed/ 拒绝reject
 
-      if(StringUtils.isEmpty(mining_platform))
+      if (StringUtils.isEmpty(mining_platform))
         mining_platform = BingAccountPlatform.WEIXIN;
       dlog("platform = $mining_platform");
 
@@ -151,11 +151,7 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
   }
 
   String amountFormat(double amount) {
-    if (amount > 10000) {
-      String ret = "${StringUtils.formatNumAmount(amount / 10000, point: 2)}w";
-      return ret;
-    }
-    return StringUtils.formatNumAmount(amount, point: 0);
+    return StringUtils.formatNumAmountLocaleUnit(amount, appContext, point: 2);
   }
 
   @override
