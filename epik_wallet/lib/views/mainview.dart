@@ -20,6 +20,7 @@ import 'package:epikwallet/views/transactionview.dart';
 import 'package:epikwallet/views/walletmenu.dart';
 import 'package:epikwallet/views/walletview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -45,6 +46,12 @@ class _MainViewState extends BaseWidgetState<MainView> {
     isTopBarShow = false; //状态栏是否显示
     isAppBarShow = false; //导航栏是否显示
     super.initState();
+
+    Future.delayed(Duration(milliseconds: 200)).then((value) {
+      // 恢复顶部状态栏和底部按钮栏
+      SystemChrome.setEnabledSystemUIOverlays(
+          [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+    });
 
     keyList = <GlobalKey<BaseInnerWidgetState>>[
       GlobalKey(),
@@ -158,7 +165,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
 
   @override
   void onCreate() {
-    dlog("onCreate");
+    super.onCreate();
     DeviceUtils.setSystemBarStyle(DeviceUtils.system_bar_dark);
 
     eventMgr.add(EventTag.CHANGE_MAINVIEW_INDEX, eventCallback);
@@ -185,14 +192,12 @@ class _MainViewState extends BaseWidgetState<MainView> {
 
   @override
   void onPause() {
-    // TODO: implement onPause
-    dlog("onPause");
+    super.onPause();
   }
 
   @override
   void onResume() {
-    // TODO: implement onResume
-    dlog("onResume");
+    super.onResume();
   }
 
   void _onItemTapped(int index) {

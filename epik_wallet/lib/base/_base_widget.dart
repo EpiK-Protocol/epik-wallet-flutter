@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -79,7 +80,7 @@ abstract class BaseWidgetState<T extends BaseWidget> extends State<T>
     }
     return Scaffold(
       key: key_ScaffoldState,
-      body: getBaseView(context),
+      body:getBaseView(context),
       resizeToAvoidBottomPadding: resizeToAvoidBottomPadding, //输入框抵住键盘 内容不随键盘滚动
     );
   }
@@ -125,5 +126,17 @@ abstract class BaseWidgetState<T extends BaseWidget> extends State<T>
     } catch (e) {
       print(e);
     }
+  }
+
+  @override
+  void onPause() {
+    // TODO: implement onPause
+    dlog("onPause");
+  }
+
+  @override
+  void onResume() {
+    // TODO: implement onResume
+    dlog("onResume");
   }
 }

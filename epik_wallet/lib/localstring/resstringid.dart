@@ -22,6 +22,7 @@ enum RSID {
   net_error,
   takephoto,
   gallery,
+  unknown,
 
   //----------------------------------------dialog.*
   //BottomDialog

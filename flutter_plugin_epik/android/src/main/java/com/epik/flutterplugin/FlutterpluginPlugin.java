@@ -28,7 +28,7 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding)
     {
-        channel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "epikplugin");
+        channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "epikplugin");
         channel.setMethodCallHandler(this);
     }
 
@@ -227,7 +227,7 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
                             map.put("EPK", uniswapinfo.getEPK());
                             map.put("Share", uniswapinfo.getShare());
                             map.put("LastBlockTime", uniswapinfo.getLastBlockTime());
-                            map.put("UNI",uniswapinfo.getUNI());
+                            map.put("UNI", uniswapinfo.getUNI());
                             ret = map;
                             break;
                         }

@@ -7,6 +7,7 @@ import 'package:epikwallet/views/mainview.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 class SplashView extends BaseWidget {
@@ -41,6 +42,9 @@ class _SplashViewState extends BaseWidgetState<SplashView>
       timer = null;
       startNextView();
     });
+
+    // 隐藏底部按钮栏
+    SystemChrome.setEnabledSystemUIOverlays ([SystemUiOverlay.top]);
   }
 
   @override

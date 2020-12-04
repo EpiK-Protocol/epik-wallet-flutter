@@ -191,7 +191,7 @@
             }
         }else if ([@"hd_wallet_uniswapaddliquidity" isEqualToString:call.method]) {
             if (self->_hdWallet){
-                NSString *txhash = [self->_hdWallet uniswapAddLiquidity:arguments[@"address"] tokenA:arguments[@"tokenA"] tokenB:arguments[@"tokenB"] amountADesired:arguments[@"amountADesired"] amountBDesired:arguments[@"amountBdesired"] amountAMin:arguments[@"amountAMin"] amountBMin:arguments[@"amountBMin"] deadline:arguments[@"deadline"] error:&err];
+                NSString *txhash = [self->_hdWallet uniswapAddLiquidity:arguments[@"address"] tokenA:arguments[@"tokenA"] tokenB:arguments[@"tokenB"] amountADesired:arguments[@"amountADesired"] amountBDesired:arguments[@"amountBDesired"] amountAMin:arguments[@"amountAMin"] amountBMin:arguments[@"amountBMin"] deadline:arguments[@"deadline"] error:&err];
                 if (!err) {
                     resultSync(txhash);
                 }

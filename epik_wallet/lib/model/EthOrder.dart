@@ -1,3 +1,4 @@
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 
 class EthOrder {
@@ -57,5 +58,27 @@ class EthOrder {
   checkSelf(String selfaddress)
   {
     isWithdraw = from==selfaddress;
+  }
+
+  String get numDirection
+  {
+    if(value_d==0)
+      return "";
+    if(isWithdraw && from==to)
+      return "";
+    if(isWithdraw)
+      return "-";
+    else
+      return "+";
+  }
+
+  RSID get actionStrId
+  {
+    // if(value_d==0 || from==to)
+    //   return RSID.unknown;
+    if(isWithdraw)
+      return RSID.withdraw;
+    else
+      return RSID.deposit;
   }
 }

@@ -21,11 +21,20 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+//  flutter run 在arm-v8手机上运行arm-v7的包，在flutter脚本执行前 修改要编译的架构
+//  flutter run 默认编译的是当前连接的手机对应的cpu架构（目前大多是armv8）
+//  "android-arm"  :  "armeabi-v7a"
+//  "android-arm64":  "arm64-v8a"
+//  "android-x86"  :  "x86"
+//  "android-x64"  :  "x86_64"
+//this.project(":app").setProperty("target-platform","android-arm")
+//println("setProperty  target-platform = "+this.project(":app").getProperties().getAt("target-platform"))
+
 apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     lintOptions {
         disable 'InvalidPackage'
@@ -35,7 +44,7 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.epik.wallet"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
 
@@ -43,6 +52,7 @@ android {
             //
             abiFilters("arm64-v8a") //"armeabi", "armeabi-v7a","arm64-v8a", "mips", "x86", "x86_64"
         }
+// 下面的方法 可以让flutter run时 编译上面ndk指定的架构
 //        flutter.so默认只生成64位
 //        在flutterSDK中找到flutter.gradle
 //        .../flutter/packages/flutter_tools/gradle/flutter.gradle

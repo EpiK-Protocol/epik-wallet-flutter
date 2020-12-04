@@ -33,6 +33,7 @@ abstract class BaseFuntion {
   Color _topBarColor = titlebarColor; // Colors.blue;
   Color _appBarColor = titlebarColor; // Colors.blue; //3b92f7
   Color _appBarContentColor = Colors.black;
+  Color navigationColor = Colors.white;//Colors.white
 
   Color bodyBackgroundColor = Colors.white;
 
@@ -269,9 +270,6 @@ abstract class BaseFuntion {
     if (Navigator.canPop(_contextBaseFunction)) {
       print("finish pop $_contextBaseFunction");
       Navigator.pop<T>(_contextBaseFunction, result);
-
-      _stateBaseFunction =null;
-      _contextBaseFunction = null;
     } else {
       //说明已经没法回退了 ， 可以关闭了
       print("finish $_contextBaseFunction");
@@ -331,7 +329,13 @@ abstract class BaseFuntion {
 
   ///返回屏幕宽度
   double getScreenWidth() {
-    return MediaQuery.of(_contextBaseFunction).size.width;
+
+    try {
+      return MediaQuery.of(_contextBaseFunction).size.width;
+    } catch (e, s) {
+      print(s);
+    }
+    return 1;
   }
 
   Widget _getBaseErrorWidget() {
@@ -649,17 +653,22 @@ abstract class BaseFuntion {
     Dlog.p(getWidgetName(), content);
   }
 
+  String _widgetname;
   String getWidgetName() {
-    String className = _contextBaseFunction?.widget?.toString();
+    if(_widgetname==null)
+    {
+      String className = _contextBaseFunction?.widget?.toString();
 //    print("classname : $className");
-    if (className == null) {
-      return "NoViewName";
+      if (className == null) {
+        return "NoViewName";
+      }
+      List<String> array = className.split("-");
+      if (array != null && array.length > 0) {
+        className = array[0];
+      }
+      _widgetname= className;
     }
-    List<String> array = className.split("-");
-    if (array != null && array.length > 0) {
-      className = array[0];
-    }
-    return className;
+    return _widgetname;
   }
 
   ///弹吐司

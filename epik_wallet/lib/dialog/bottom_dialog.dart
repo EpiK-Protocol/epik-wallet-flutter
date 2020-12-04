@@ -8,12 +8,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class BottomDialog {
-  static Future showBottomPop(BuildContext context, Widget widget,
-      {double radius_top = 15, Color bgColor = Colors.white}) {
+  static Future showBottomPop(BuildContext context,
+      Widget widget, {
+        double radius_top = 15,
+        Color bgColor = Colors.white,
+        bool dragClose = true, // 是否可以向下拖拽关闭
+        bool outbackClose = true, // 是否可以外部返回关闭  触摸外部阴影、back按键
+      }) {
     return showModalBottomSheet(
         context: context,
         //可滚动 解除showModalBottomSheet最大显示屏幕一半的限制
         isScrollControlled: true,
+        enableDrag: dragClose,
+        //向下拖拽关闭
         //圆角
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(radius_top)),
@@ -23,14 +30,19 @@ class BottomDialog {
         builder: (BuildContext context) {
           return AnimatedPadding(
             //showModalBottomSheet 键盘弹出时自适应
-            padding: MediaQuery.of(context).viewInsets, //边距（必要）
+            padding: MediaQuery
+                .of(context)
+                .viewInsets, //边距（必要）
             duration: const Duration(milliseconds: 100), //动画时长 （必要）
             child: Container(
               // height: 180,
               constraints: BoxConstraints(
                 minHeight: 90, //设置最小高度（必要）
                 maxHeight:
-                    MediaQuery.of(context).size.height / 1.5, //设置最大高度（必要）
+                MediaQuery
+                    .of(context)
+                    .size
+                    .height / 1.5, //设置最大高度（必要）
               ),
 //              padding: EdgeInsets.only(top: 34, bottom: 48),
 //              decoration: BoxDecoration(
@@ -38,8 +50,19 @@ class BottomDialog {
 //                  color: Colors.white), //圆角
               child: ListView(
                 shrinkWrap: true, //防止状态溢出 自适应大小
+                physics: NeverScrollableScrollPhysics(),
                 children: <Widget>[
-                  widget,
+                  WillPopScope(
+                    onWillPop: () async {
+                      if (outbackClose) {
+                        return true;
+                      } else {
+                        print("bottomdialog WillPopScope false");
+                        return false;
+                      }
+                    },
+                    child: widget,
+                  ),
                 ],
               ),
             ),
@@ -67,7 +90,7 @@ class BottomDialog {
                 Align(
                   alignment: FractionalOffset.center,
                   child: Text(
-                    ResString.get(context, RSID.dlg_bd_1),//"钱包密码",
+                    ResString.get(context, RSID.dlg_bd_1), //"钱包密码",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 15,
@@ -126,7 +149,8 @@ class BottomDialog {
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                hintText: ResString.get(context, RSID.dlg_bd_2),//"请输入钱包密码",
+                hintText: ResString.get(context, RSID.dlg_bd_2),
+                //"请输入钱包密码",
                 hintStyle: TextStyle(color: Color(0xff999999), fontSize: 16),
               ),
               cursorWidth: 2.0,
@@ -163,7 +187,7 @@ class BottomDialog {
               onPressed: () {
                 if (StringUtils.isEmpty(password)) {
 //                  ToastUtils.showToast("请输入密码");
-                ToastUtils.showToast(ResString.get(context, RSID.dlg_bd_3));
+                  ToastUtils.showToast(ResString.get(context, RSID.dlg_bd_3));
                   return;
                 }
 
@@ -181,7 +205,7 @@ class BottomDialog {
                 }
               },
               child: Text(
-                ResString.get(context, RSID.confirm),//"确定",
+                ResString.get(context, RSID.confirm), //"确定",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 15,
@@ -202,9 +226,10 @@ class BottomDialog {
   }
 
   ///普通文本输入弹窗
-  static Future showTextInputDialog( BuildContext context,
-      String title,String oldText, String hint,int maxLength,  ValueChanged<String> callback) {
-    String _text = oldText??"";
+  static Future showTextInputDialog(BuildContext context,
+      String title, String oldText, String hint, int maxLength,
+      ValueChanged<String> callback) {
+    String _text = oldText ?? "";
     TextEditingController tec = TextEditingController(text: _text);
 
     Widget widget = Container(
@@ -323,7 +348,7 @@ class BottomDialog {
                 callback(_text);
               },
               child: Text(
-                ResString.get(context, RSID.confirm),//"确定",
+                ResString.get(context, RSID.confirm), //"确定",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 15,

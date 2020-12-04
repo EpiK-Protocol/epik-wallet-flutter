@@ -25,6 +25,7 @@ Map<RSID, String> map_en = {
   RSID.net_error: "Network error",//"网络错误",
   RSID.takephoto: "Take a photo",//"拍照",
   RSID.gallery: "Album",//"相册",
+  RSID.unknown:"Unknown",//未知
 
   //----------------------------------------dialog.*
   //BottomDialog

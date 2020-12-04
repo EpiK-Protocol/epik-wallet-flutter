@@ -93,13 +93,11 @@ class _GeneralWebViewState extends BaseWidgetState<GeneralWebView> {
 
   @override
   void onPause() {
-    // TODO: implement onPause
-    dlog("onPause");
+    super.onPause();
   }
 
   @override
   void onResume() {
-    // TODO: implement onResume
-    dlog("onResume");
+    super.onResume();
   }
 }

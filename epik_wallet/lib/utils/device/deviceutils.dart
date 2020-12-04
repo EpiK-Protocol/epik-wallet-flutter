@@ -120,17 +120,17 @@ class DeviceUtils {
   }
 
   static const SystemUiOverlayStyle system_bar_light = SystemUiOverlayStyle(
-    systemNavigationBarColor: Color(0xFF000000),
-    systemNavigationBarDividerColor: null,
-    statusBarColor: null,
+    systemNavigationBarColor: Color(0xFFffffff), // 底部虚拟按键、触摸条的背景色
+    systemNavigationBarDividerColor: Color(0xFFffffff),
+    statusBarColor: null, // 顶部状态栏颜色
     systemNavigationBarIconBrightness: Brightness.light,
     statusBarIconBrightness: Brightness.light,
     statusBarBrightness: Brightness.dark,
   );
 
   static const SystemUiOverlayStyle system_bar_dark = SystemUiOverlayStyle(
-    systemNavigationBarColor: Color(0xFF000000),
-    systemNavigationBarDividerColor: null,
+    systemNavigationBarColor: Color(0xFFffffff),
+    systemNavigationBarDividerColor: Color(0xFFffffff),
     statusBarColor: null,
     systemNavigationBarIconBrightness: Brightness.light,
     statusBarIconBrightness: Brightness.dark,
@@ -158,4 +158,5 @@ class DeviceUtils {
     }
     return null;
   }
+
 }

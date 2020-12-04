@@ -25,6 +25,7 @@ Map<RSID, String> map_zh = {
   RSID.net_error: "网络错误",
   RSID.takephoto: "拍照",
   RSID.gallery: "相册",
+  RSID.unknown:"未知",
 
   //----------------------------------------dialog.*
   //BottomDialog

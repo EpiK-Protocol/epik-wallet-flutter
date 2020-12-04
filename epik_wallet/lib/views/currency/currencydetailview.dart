@@ -472,61 +472,6 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                 ],
               ),
             ),
-//            Container(
-//              margin: EdgeInsets.fromLTRB(25, 20, 25, 30),
-//              height: 44,
-//              child: Row(
-//                children: <Widget>[
-//                  Expanded(
-//                    child: Container(
-//                      height: 44,
-//                      child: FlatButton(
-//                        highlightColor: Colors.white24,
-//                        splashColor: Colors.white24,
-//                        onPressed: () {
-//                          // todo
-//                        },
-//                        child: Text(
-//                          "提币",
-//                          style: TextStyle(
-//                            color: Colors.white,
-//                            fontSize: 15,
-//                          ),
-//                        ),
-//                        color: Color(0xff393E45),
-//                        shape: RoundedRectangleBorder(
-//                          borderRadius: BorderRadius.all(Radius.circular(22)),
-//                        ),
-//                      ),
-//                    ),
-//                  ),
-//                  Padding(padding: EdgeInsets.only(left: 25)),
-//                  Expanded(
-//                    child: Container(
-//                      height: 44,
-//                      child: FlatButton(
-//                        highlightColor: Colors.white24,
-//                        splashColor: Colors.white24,
-//                        onPressed: () {
-//                          //todo
-//                        },
-//                        child: Text(
-//                          "充币",
-//                          style: TextStyle(
-//                            color: Colors.white,
-//                            fontSize: 15,
-//                          ),
-//                        ),
-//                        color: Color(0xff1A1C1F),
-//                        shape: RoundedRectangleBorder(
-//                          borderRadius: BorderRadius.all(Radius.circular(22)),
-//                        ),
-//                      ),
-//                    ),
-//                  ),
-//                ],
-//              ),
-//            ),
           ],
         ),
       );
@@ -645,77 +590,100 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   Widget itemWidgetBuild_eth(EthOrder item) {
     return Container(
       width: double.infinity,
-      height: 80,
+      // height: 80,
       padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
       color: Colors.white,
-      child: Stack(
-        children: <Widget>[
-          // 底部分割线
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: 1,
-            child: Container(
-              color: Color(0xffeeeeee),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            top: 0,
-            child: Text(
-              ResString.get(
-                  context, item.isWithdraw ? RSID.withdraw : RSID.deposit),
-              //item.isWithdraw ? "转账" : "收款",
-              style: TextStyle(
-                fontSize: 15,
-                color: Color(0xff333333),
-              ),
-            ),
-          ),
-          Positioned(
-            right: 10,
-            top: 0,
-            child: Container(
-              height: 20,
-              padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Color(0xfff5f5f5),
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-              ),
-              child: Text(
-                ResString.get(context, RSID.completed), //"已完成",
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Color(0xff999999),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  ResString.get(context, item.actionStrId),
+                  //item.isWithdraw ? "转账" : "收款",
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Color(0xff333333),
+                  ),
                 ),
               ),
-            ),
+              Container(
+                height: 20,
+                margin: EdgeInsets.only(right: 10),
+                padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Color(0xfff5f5f5),
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                ),
+                child: Text(
+                  ResString.get(context, RSID.completed), //"已完成",
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Color(0xff999999),
+                  ),
+                ),
+              ),
+            ],
           ),
-          Positioned(
-            left: 0,
-            bottom: 10,
-            child: Text(
-              (item.isWithdraw ? "-" : "+") +
-                  StringUtils.formatNumAmount(item.value_d, point: 8),
-              style: TextStyle(
-                fontSize: 15,
-                color: Color(0xff333333),
+          Container(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  item.numDirection +
+                      StringUtils.formatNumAmount(item.value_d, point: 8),
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Color(0xff333333),
+                  ),
+                ),
+              ),
+              Text(
+                DateUtil.formatDateMs(item.timeStamp,
+                    format: DataFormats.y_mo_d_h_m),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(0xffAAAAAA),
+                ),
+              ),
+            ],
+          ),
+          if (StringUtils.isNotEmpty(item?.hash))
+            Container(
+              padding: EdgeInsets.only(top: 5),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      "txhash:${item.hash}",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Color(0xff333333),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 12,
+                    margin: EdgeInsets.fromLTRB(5, 3, 0, 0),
+                    child: Icon(
+                      Icons.redo,
+                      color: Colors.blue,
+                      size: 12,
+                    ),
+                  )
+                ],
               ),
             ),
-          ),
-          Positioned(
-            right: 10,
-            bottom: 10,
-            child: Text(
-              DateUtil.formatDateMs(item.timeStamp,
-                  format: DataFormats.y_mo_d_h_m),
-              style: TextStyle(
-                fontSize: 12,
-                color: Color(0xffAAAAAA),
-              ),
-            ),
+          Container(
+            margin: EdgeInsets.only(top: 14),
+            height: 1,
+            color: Color(0xffeeeeee),
           ),
         ],
       ),
@@ -823,14 +791,25 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   }
 
   onItemClick(int postision) {
-    if (data_list_item != null &&
-        postision >= 0 &&
-        postision < data_list_item.length &&
-        mounted) {
-      var item = data_list_item[postision];
-      if (item != null) {
-        // todo
+    try {
+      if (data_list_item != null &&
+          postision >= 0 &&
+          postision < data_list_item.length &&
+          mounted) {
+        var item = data_list_item[postision];
+        if (item != null) {
+          if (item is EthOrder) {
+            EthOrder _EthOrder = item;
+            String hash = _EthOrder.hash;
+            DeviceUtils.copyText(hash);
+            String url = "https://cn.etherscan.com/tx/$hash";
+            ViewGT.showGeneralWebView(
+                context, ResString.get(context, RSID.berlv_4), url);
+          }
+        }
       }
+    } catch (e) {
+      print(e);
     }
   }
 
