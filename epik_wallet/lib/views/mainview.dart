@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:epikwallet/base/_base_widget.dart';
@@ -244,12 +245,16 @@ class _MainViewState extends BaseWidgetState<MainView> {
 //      Upgrade upgrade = Upgrade.fromJson(json);
 //      await upgrade.checkVersion();
       if (ServiceInfo.upgrade != null) {
+        log("checkUpgrade");
         Upgrade upgrade = ServiceInfo.upgrade;
         await upgrade.checkVersion();
         if (upgrade.needUpgrade) {
           showUpgradeDialog(upgrade);
         }
-      }
+      }else
+        {
+          log("checkUpgrade ServiceInfo.upgrade = null");
+        }
     } catch (e) {
       print(e);
     }

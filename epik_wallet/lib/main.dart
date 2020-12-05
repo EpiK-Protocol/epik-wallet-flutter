@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:epikwallet/base/buildConfig.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 //import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 
 final String fontFamily_def = "Miui-Light";
@@ -69,6 +71,15 @@ class _MyAppState extends State<MyApp> {
     await ServiceInfo.loadConfig(); //加载本地缓存的配置
     await AccountMgr().load(); // 加载钱包账户
     ServiceInfo.requestConfig(); //请求新的服务配置
+
+    //友盟初始化
+    await UmengAnalyticsPlugin.init(
+      androidKey: '5fca552abed37e4506c2b987',
+      iosKey: '5fca556019bda368eb47c630',
+      channel: Platform.isAndroid ? "android" : "ios",
+      logEnabled:BuildConfig.isDebug, // release模式下 没有日志
+//      pageCollectionMode: "AUTO", // MANUAL手动页面日志,  AUTO自动
+    );
   }
 
   @override
@@ -101,8 +112,8 @@ class _MyAppState extends State<MyApp> {
       ],
       supportedLocales: [
         //此处国际化顺序  按顺序优先使用
-        const Locale('zh', 'CH'),
         const Locale('en', 'US'),
+        const Locale('zh', 'CH'),
       ],
 
 //      home: MainView(),

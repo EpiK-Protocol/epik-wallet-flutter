@@ -164,7 +164,7 @@ dependencies:
   #head_image_cropper: ^2.0.8
 
   # 友盟统计
-  #umeng_analytics_plugin: ^1.0.3
+  umeng_analytics_plugin: ^1.0.3
 
   epikplugin:
     path: ../flutter_plugin_epik

@@ -82,6 +82,7 @@ class ServiceInfo {
       Map<String, dynamic> j_upgrade =
           Platform.isAndroid ? json["Android"] : json["IOS"];
       if (j_upgrade != null && j_upgrade.length > 0) {
+        Dlog.p("Upgrade", "parseConfig +");
         upgrade = Upgrade.fromJson(j_upgrade);
       }
 

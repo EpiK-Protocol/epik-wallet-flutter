@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/main.dart';
@@ -26,7 +28,7 @@ class Upgrade {
   parseJson(Map<String, dynamic> json) {
     try {
       latest_version =
-          StringUtils.parseString(json["LaestVersion"], latest_version);
+          StringUtils.parseString(json["LatestVersion"], latest_version);
       required_version =
           StringUtils.parseString(json["RequiredVersion"], required_version);
       description = StringUtils.parseString(json["description"], "");
