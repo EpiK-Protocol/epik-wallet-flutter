@@ -10,6 +10,7 @@ export 'Bip44Path.dart';
 export 'UniswapInfo.dart';
 export 'Amounts.dart';
 export 'ResultObj.dart';
+export 'ErrorUtils.dart';
 
 
 class EpikPlugin {

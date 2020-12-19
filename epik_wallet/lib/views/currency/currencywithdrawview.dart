@@ -1,8 +1,10 @@
+import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/currencytype.dart';
@@ -17,7 +19,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:epikwallet/localstring/resstringid.dart';
 
 // 提币  转出
 class CurrencyWithdrawView extends BaseWidget {
@@ -59,10 +60,12 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
         }
     }
   }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    setAppBarTitle(widget.currencyAsset.cs.symbol+ResString.get(context, RSID.withdraw));
+    setAppBarTitle(
+        widget.currencyAsset.cs.symbol + ResString.get(context, RSID.withdraw));
   }
 
   SystemUiOverlayStyle oldSystemUiOverlayStyle;
@@ -209,7 +212,8 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                hintText: ResString.get(context, RSID.cwv_3), //"输入地址、长按粘贴地址或点扫描二维码",
+                hintText: ResString.get(context, RSID.cwv_3),
+                //"输入地址、长按粘贴地址或点扫描二维码",
                 hintStyle: TextStyle(color: Colors.black54, fontSize: 16),
               ),
               cursorWidth: 2.0,
@@ -263,10 +267,32 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
                 ),
                 InkWell(
                   onTap: () {
-                    setState(() {
-                      amount = widget.currencyAsset.balance ?? "0";
-                      _controllerAmount = null;
-                    });
+                    amount = widget.currencyAsset.balance ?? "0";
+
+                    if (widget.currencyAsset.cs == CurrencySymbol.ETH) {
+                      //eth转账 gas就是eth 所以全部金额 要减掉gas
+                      try {
+                        String suggestGas =
+                            widget.walletaccount.eth_suggestGas ?? "0";
+                        double _a = StringUtils.parseDouble(amount, 0);
+                        double _gas = StringUtils.parseDouble(suggestGas, 0);
+                        _a -= _gas;
+                        if (_a < 0) _a = 0;
+                        // print("amount=$amount");
+                        // print("_a=$_a");
+                        // print("suggestGas=$suggestGas");
+                        // print("_gas=$_gas");
+                        amount = StringUtils.formatNumAmount(_a,
+                                point: 18, supply0: false)
+                            .replaceAll(",", "");
+                        // print("$amount");
+                      } catch (e) {
+                        print(e);
+                      }
+                    }
+
+                    _controllerAmount = null;
+                    setState(() {});
                   },
                   child: Container(
                     height: 50,
@@ -305,7 +331,8 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                hintText: ResString.get(context, RSID.cwv_6), //"输入金额",
+                hintText: ResString.get(context, RSID.cwv_6),
+                //"输入金额",
                 hintStyle: TextStyle(color: Colors.black54, fontSize: 16),
               ),
               cursorWidth: 2.0,
@@ -327,14 +354,15 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
       ),
     ));
 
-    if(widget.currencyAsset.cs != CurrencySymbol.tEPK)
-    {
+    if (widget.currencyAsset.cs != CurrencySymbol.tEPK) {
       views.add(
         Container(
           width: double.infinity,
           margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
-          child:  Text(
-            ResString.get(context, RSID.cwv_7,replace: [widget.walletaccount.eth_suggestGas]), //"手续费 : ${widget.walletaccount.eth_suggestGas} eth",
+          child: Text(
+            ResString.get(context, RSID.cwv_7,
+                replace: [widget.walletaccount.eth_suggestGas]),
+            //"手续费 : ${widget.walletaccount.eth_suggestGas} eth",
             style: TextStyle(
               color: Colors.black45,
               fontSize: 12,
@@ -456,9 +484,12 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
     dlog("doWithdraw_epik result=$result");
     MessageDialog.showMsgDialog(
       context,
-      title:ResString.get(context, RSID.withdraw), // "转账",
-      msg: ResString.get(context, RSID.cwv_12), //"操作成功!",
-      btnLeft: ResString.get(context, RSID.confirm), //"确定",
+      title: ResString.get(context, RSID.withdraw),
+      // "转账",
+      msg: ResString.get(context, RSID.cwv_12),
+      //"操作成功!",
+      btnLeft: ResString.get(context, RSID.confirm),
+      //"确定",
       onDismiss: (dialog) {
         finish();
       },
@@ -469,7 +500,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
   }
 
   doWithdraw_hd() async {
-    String result = null;
+    ResultObj<String> result = null;
     if (widget.currencyAsset.cs == CurrencySymbol.ETH) {
       result = await widget.walletaccount.hdwallet
           .transfer(from_address, to_address, amount);
@@ -479,17 +510,37 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
     }
     closeLoadDialog();
 
-    if (StringUtils.isEmpty(result)) {
-      showToast(ResString.get(context, RSID.cwv_11)); //"转账失败");
+    if (result?.code != 0) {
+
+      String err="";
+      if(StringUtils.isNotEmpty(result.errorMsg))
+      {
+        err= "ERROR: ${result.errorMsg}";
+      }else{
+        err = ResString.get(context, RSID.cwv_11); //"转账失败");
+      }
+      MessageDialog.showMsgDialog(
+        context,
+        title: ResString.get(context, RSID.cwv_11),
+        msg: err,
+        btnLeft: ResString.get(context, RSID.confirm),
+        onClickBtnLeft: (dialog) {
+          dialog.dismiss();
+        },
+      );
       return;
     }
 
-    dlog("doWithdraw_hd result=$result");
+    dlog("doWithdraw_hd result=${result?.data}");
+
     MessageDialog.showMsgDialog(
       context,
-      title:ResString.get(context, RSID.withdraw), // "转账",
-      msg:ResString.get(context, RSID.cwv_12), // "操作成功!",
-      btnLeft: ResString.get(context, RSID.confirm), //"确定",
+      title: ResString.get(context, RSID.withdraw),
+      // "转账",
+      msg: ResString.get(context, RSID.cwv_12),
+      // "操作成功!",
+      btnLeft: ResString.get(context, RSID.confirm),
+      //"确定",
       onDismiss: (dialog) {
         finish();
       },

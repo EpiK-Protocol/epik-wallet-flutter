@@ -197,32 +197,36 @@ class HdWallet {
     return null;
   }
 
-  Future<String> transfer(String from, String to, String amount) async {
+  Future<ResultObj<String>> transfer(String from, String to, String amount) async {
     try {
-      return await EpikPlugin.channel
+      String ret =  await EpikPlugin.channel
           .invokeMethod("hd_wallet_transfer", <String, dynamic>{
         "from": from,
         "to": to,
         "amount": amount,
       });
+      return ResultObj<String>(data:ret);
     } catch (e) {
       print(e);
+      return ResultObj<String>.fromError(e);
     }
     return null;
   }
 
-  Future<String> transferToken(
+  Future<ResultObj<String>> transferToken(
       String from, String to, String currency, String amount) async {
     try {
-      return await EpikPlugin.channel
+      String ret =  await EpikPlugin.channel
           .invokeMethod("hd_wallet_transferToken", <String, dynamic>{
         "from": from,
         "to": to,
         "currency": currency,
         "amount": amount,
       });
-    } catch (e) {
+      return ResultObj<String>(data:ret);
+    } catch (e,s) {
       print(e);
+      return ResultObj<String>.fromError(e);
     }
     return null;
   }

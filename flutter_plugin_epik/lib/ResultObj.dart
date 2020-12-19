@@ -1,3 +1,4 @@
+import 'package:epikplugin/epikplugin.dart';
 import 'package:flutter/services.dart';
 
 class ResultObj<T> {
@@ -8,23 +9,9 @@ class ResultObj<T> {
   ResultObj({this.data, this.code = 0, this.errorMsg});
 
   ResultObj.fromError(Exception e, {this.code = -1}) {
+    errorMsg="";
     if (e != null) {
-      String err = "";
-      if (e is PlatformException) {
-        err = e.message;
-      } else {
-        err = e.toString();
-      }
-      if (err != null && err.length > 0) {
-        List<String> array = err.split(":");
-        if (array != null) {
-          if (array.length == 1) {
-            errorMsg = array[0];
-          } else {
-            errorMsg = array[1];
-          }
-        }
-      }
+      errorMsg = ErrorUtils.parseErrorMsg(e);
     }
   }
 
