@@ -61,6 +61,8 @@ Map<RSID, String> map_en = {
   RSID.eepkv_1: "Export tEPK private key",//"导出tEPK私钥",
   RSID.eepkv_2: "Copied private key",//"已复制私钥",
   RSID.eepkv_3: "Copy private key",//"复制私钥",
+  RSID.eepkv_4: "Reminder",//导出提示
+  RSID.eepkv_5: "What you are exporting is the private key of the test token tEPK. tEPK is a test token of the test network, which is only used in the test network pre-mining and has no transaction value. Leaking this private key may lead to the loss of test tokens, but it has nothing to do with the ERC-20 assets in the wallet. You need not worry about the safety of the assets in the ERC-20 wallet. Meanwhile, in the proxy miner, the proxy party may need the private key of tEPK for proxy collateral.",
 
   //AccountDetailView 钱包账号详情 Wallet details
   RSID.adv_1: "Change password",//"修改密码",

@@ -1,5 +1,7 @@
 import 'package:epikwallet/base/_base_widget.dart';
+import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/res_color.dart';
@@ -7,7 +9,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:epikwallet/localstring/resstringid.dart';
 
 class ExportEpikPrivateKeyView extends BaseWidget {
   WalletAccount walletaccount;
@@ -28,7 +29,6 @@ class _ExportEpikPrivateKeyViewState
     super.initStateConfig();
 //    setAppBarTitle("导出tEPK私钥");
   }
-
 
   @override
   void didChangeDependencies() {
@@ -89,7 +89,7 @@ class _ExportEpikPrivateKeyViewState
               showToast(ResString.get(context, RSID.eepkv_2));
             },
             child: Text(
-              ResString.get(context, RSID.eepkv_3),//"复制私钥",
+              ResString.get(context, RSID.eepkv_3), //"复制私钥",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -112,6 +112,17 @@ class _ExportEpikPrivateKeyViewState
         .then((value) {
       PrivateKey = value;
       closeStateLayout();
+      Future.delayed(Duration(milliseconds: 500)).then((value) => showTips());
     });
+  }
+
+  showTips() {
+    MessageDialog.showMsgDialog(
+      context,
+      title:ResString.get(context, RSID.eepkv_4),
+      msg:ResString.get(context, RSID.eepkv_5),
+      btnLeft: ResString.get(context, RSID.isee),
+      onClickBtnLeft: (dialog) => dialog.dismiss(),
+    );
   }
 }

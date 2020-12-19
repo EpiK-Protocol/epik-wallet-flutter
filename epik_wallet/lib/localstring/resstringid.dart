@@ -57,6 +57,8 @@ enum RSID {
   eepkv_1,
   eepkv_2,
   eepkv_3,
+  eepkv_4,
+  eepkv_5,
   //AccountDetailView 钱包账号详情
   adv_1,
   adv_2,

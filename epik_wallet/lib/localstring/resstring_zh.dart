@@ -61,6 +61,8 @@ Map<RSID, String> map_zh = {
   RSID.eepkv_1: "导出tEPK私钥",
   RSID.eepkv_2: "已复制私钥",
   RSID.eepkv_3: "复制私钥",
+  RSID.eepkv_4: "温馨提示",//导出提示
+  RSID.eepkv_5: "您正在导出的是测试币 tEPK的私钥，tEPK是测试网测试币，仅在测试网预挖中使用，没有交易价值。泄露此私钥有可能会导致测试币的损失，但与钱包的ERC-20资产无关，用户无需担心ERC-20钱包里的资产安全。同时，在代接矿机中，代接方有可能需要tEPK的私钥来进行代理抵押。",
 
   //AccountDetailView 钱包账号详情
   RSID.adv_1: "修改密码",

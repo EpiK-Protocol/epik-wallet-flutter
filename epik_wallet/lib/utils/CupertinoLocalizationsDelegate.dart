@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show SynchronousFuture;
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class CupertinoLocalizationsDelegate
     extends LocalizationsDelegate<CupertinoLocalizations> {
@@ -135,4 +136,20 @@ class _DefaultCupertinoLocalizations extends CupertinoLocalizations {
   String tabSemanticsLabel({int tabIndex, int tabCount}) {
     return "tab，${(tabIndex+1)}/${tabCount}";
   }
+
+  @override
+  // TODO: implement searchTextFieldPlaceholerLabel
+  String get searchTextFieldPlaceholerLabel => "";
+
+  @override
+  // TODO: implement timerPickerHourLabels
+  List<String> get timerPickerHourLabels => null;
+
+  @override
+  // TODO: implement timerPickerMinuteLabels
+  List<String> get timerPickerMinuteLabels => null;
+
+  @override
+  // TODO: implement timerPickerSecondLabels
+  List<String> get timerPickerSecondLabels => null;
 }
