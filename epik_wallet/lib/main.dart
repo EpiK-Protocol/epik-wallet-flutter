@@ -15,7 +15,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 //import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 
 final String fontFamily_def = "Miui-Light";
@@ -73,13 +72,13 @@ class _MyAppState extends State<MyApp> {
     ServiceInfo.requestConfig(); //请求新的服务配置
 
     //友盟初始化
-    await UmengAnalyticsPlugin.init(
-      androidKey: '5fca552abed37e4506c2b987',
-      iosKey: '5fca556019bda368eb47c630',
-      channel: Platform.isAndroid ? "android" : "ios",
-      logEnabled:BuildConfig.isDebug, // release模式下 没有日志
-//      pageCollectionMode: "AUTO", // MANUAL手动页面日志,  AUTO自动
-    );
+//     await UmengAnalyticsPlugin.init(
+//       androidKey: '5fca552abed37e4506c2b987',
+//       iosKey: '5fca556019bda368eb47c630',
+//       channel: Platform.isAndroid ? "android" : "ios",
+//       logEnabled:BuildConfig.isDebug, // release模式下 没有日志
+// //      pageCollectionMode: "AUTO", // MANUAL手动页面日志,  AUTO自动
+//     );
   }
 
   @override

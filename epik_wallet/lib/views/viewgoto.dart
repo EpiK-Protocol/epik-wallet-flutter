@@ -25,7 +25,6 @@ import 'package:epikwallet/views/wallet/import/importwalletview.dart';
 import 'package:epikwallet/views/web/generalwebview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum ViewPushModel {
@@ -49,8 +48,8 @@ class ViewGT {
     ViewPushModel model = ViewPushModel.Push,
     bool maintainState = true,
   }) {
-    if (view != null)
-      UmengAnalyticsPlugin.event("showview", label:view.toStringShort());
+    // if (view != null)
+    //   UmengAnalyticsPlugin.event("showview", label:view.toStringShort());
 
     MaterialPageRoute route = MaterialPageRoute(
       builder: builder ??
