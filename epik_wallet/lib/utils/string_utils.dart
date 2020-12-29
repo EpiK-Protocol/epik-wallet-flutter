@@ -104,58 +104,66 @@ class StringUtils {
   }
 
   static String formatNumAmount(num, {int point: 2, bool supply0 = false}) {
-    if (num != null) {
-      double dnum = double.parse(num.toString());
-      String str = dnum.toString();
-      if (str.contains("e")) {
-        str = dnum.toStringAsFixed(20);
-      }
-      if (dnum == 0) str = "0";
-      // 分开截取
-      List<String> sub = str.split('.');
-      // 处理值
-      List val = List.from(sub[0].split(''));
-      // 处理点
-      if (sub.length > 1 && sub[1].length > point) {
-        sub[1] = sub[1].substring(0, point);
-      }
-      List<String> points = sub.length > 1 ? List.from(sub[1].split('')) : [];
-      //处理分割符
-      for (int index = 0, i = val.length - 1; i >= 0; index++, i--) {
-        // 除以三没有余数、不等于零并且不等于1 就加个逗号
-        if (index % 3 == 0 && index != 0) // && i != 1
-        {
-          val[i] = val[i] + ',';
+    try{
+      if (num != null) {
+        double dnum = double.parse(num.toString());
+        String str = dnum.toString();
+        if (str.contains("e")) {
+          str = dnum.toStringAsFixed(20);
         }
-      }
-      // 处理小数点
-      if (supply0) {
-        // 是否需要补零
-        int pointsize = point - points.length;
-        if (pointsize > 0) {
-          for (int i = 0; i < pointsize; i++) {
-            points.add('0');
+        if (dnum == 0) str = "0";
+        // 分开截取
+        List<String> sub = str.split('.');
+        // 处理值
+        List val = List.from(sub[0].split(''));
+        // 处理点
+        if (sub.length > 1 && sub[1].length > point) {
+          sub[1] = sub[1].substring(0, point);
+        }
+        List<String> points = sub.length > 1 ? List.from(sub[1].split('')) : [];
+        //处理分割符
+        for (int index = 0, i = val.length - 1; i >= 0; index++, i--) {
+          // 除以三没有余数、不等于零并且不等于1 就加个逗号
+          if (index % 3 == 0 && index != 0) // && i != 1
+              {
+            val[i] = val[i] + ',';
           }
         }
-      } else {
-        while (points.length > 0 && points[points.length - 1] == "0") {
-          points.removeLast();
+        // 处理小数点
+        if (supply0) {
+          // 是否需要补零
+          int pointsize = point - points.length;
+          if (pointsize > 0) {
+            for (int i = 0; i < pointsize; i++) {
+              points.add('0');
+            }
+          }
+        } else {
+          while (points.length > 0 && points[points.length - 1] == "0") {
+            points.removeLast();
+          }
         }
-      }
-      //如果大于长度就截取
-      if (points.length > point) {
-        // 截取数组
-        points = points.sublist(0, point);
-      }
-      // 判断是否有长度
-      if (points.length > 0) {
-        return '${val.join('')}.${points.join('')}';
+        //如果大于长度就截取
+        if (points.length > point) {
+          // 截取数组
+          points = points.sublist(0, point);
+        }
+        // 判断是否有长度
+        if (points.length > 0) {
+          return '${val.join('')}.${points.join('')}';
+        } else {
+          return val.join('');
+        }
       } else {
-        return val.join('');
+        return "0.0";
       }
-    } else {
-      return "0.0";
+    }catch(e,s)
+    {
+      print(e);
+      print(s);
+      return  "0";
     }
+
   }
 
   /// 格式化金额，中文缩略成w(万),其他语言缩略成M(百万)\K(千)

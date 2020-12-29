@@ -83,8 +83,13 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     setBackIconHinde(isHinde: false);
 
     await Future.delayed(Duration(milliseconds: 200));
-    balance = StringUtils.formatNumAmount(widget.currencyAsset.balance,
-        point: 8, supply0: false);
+    if(StringUtils.isNotEmpty(widget?.currencyAsset?.balance)){
+      balance = StringUtils.formatNumAmount(widget.currencyAsset.balance,
+          point: 8, supply0: false);
+    }
+    else{
+      balance = "--";
+    }
   }
 
   SystemUiOverlayStyle oldSystemUiOverlayStyle;
@@ -563,7 +568,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
             left: 0,
             bottom: 10,
             child: Text(
-              (item.isWithdraw ? "-" : "+") +
+              (item.numDirection) +
                   StringUtils.formatNumAmount(item.value_d, point: 8),
               style: TextStyle(
                 fontSize: 15,
@@ -789,9 +794,10 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
 
   /**是否需要加载更多*/
   bool needLoadMore() {
-    if (widget.currencyAsset.cs == CurrencySymbol.tEPK) {
-      return false;
-    } else {
+    // if (widget.currencyAsset.cs == CurrencySymbol.tEPK) {
+    //   return false;
+    // } else
+      {
       bool ret = hasMore && !isLoading;
       dlog("needLoadMore = " + ret.toString());
       return ret;

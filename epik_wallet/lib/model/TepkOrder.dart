@@ -86,4 +86,16 @@ class TepkOrder {
   {
     isWithdraw = from==selfaddress;
   }
+
+  String get numDirection
+  {
+    if(value_d==0)
+      return "";
+    if(isWithdraw && from==to)
+      return "";
+    if(isWithdraw)
+      return "-";
+    else
+      return "+";
+  }
 }
