@@ -508,7 +508,9 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView>
 
     if (_selectedIndex == 0) {
       // 助记词
-      List<String> words = importString.split(" ");
+      List<String> words = importString.split(RegExp(r'\s+'));
+      // print(words);
+      // print(words.length);
       if (words == null || words.length != 12) {
 //        showToast("请输入助记词(12个英文单词)按空格隔开");
         showToast(ResString.get(context, RSID.iwv_4));

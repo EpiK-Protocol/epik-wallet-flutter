@@ -51,7 +51,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   String balance = "　";
 
   ColorTween header_colortween =
-      ColorTween(begin: Colors.white, end: Colors.black);
+  ColorTween(begin: Colors.white, end: Colors.black);
 
   LinearGradient gradient_ff = LinearGradient(
     colors: [Color(0xff2B2F35), Color(0xff1D2023)],
@@ -377,7 +377,8 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Text(
-                              "\$ ${StringUtils.formatNumAmount(widget.currencyAsset.getUsdValue())}",
+                              "\$ ${StringUtils.formatNumAmount(
+                                  widget.currencyAsset.getUsdValue())}",
                               style: TextStyle(
                                 color: ResColor.white,
                                 fontSize: 15,
@@ -570,18 +571,19 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
               ),
             ),
           ),
-//          Positioned(
-//            right: 10,
-//            bottom: 10,
-//            child: Text(
-//              DateUtil.formatDateMs(item.created_at,
-//                  format: DataFormats.y_mo_d_h_m),
-//              style: TextStyle(
-//                fontSize: 12,
-//                color: Color(0xffAAAAAA),
-//              ),
-//            ),
-//          ),
+         Positioned(
+           right: 10,
+           bottom: 10,
+           child:Text(
+               item.time_dt==null?"":
+             DateUtil.formatDate(item.time_dt,
+                 format: DataFormats.y_mo_d_h_m),
+             style: TextStyle(
+               fontSize: 12,
+               color: Color(0xffAAAAAA),
+             ),
+           ),
+         ),
         ],
       ),
     );
@@ -692,6 +694,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
 
   bool hasRefresh = false;
 
+  String lastTime;
   int page = 1;
   int pageSize = 20;
 
@@ -705,20 +708,30 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
 //    setLoadingWidgetVisible(true);
 
     page = 0;
+    lastTime = null;
     setState(() {
       _ListPageDefState.type = ListPageDefStateType.LOADING;
     });
     EpikWalletUtils.getOrderList(AccountMgr().currentAccount,
-            widget.currencyAsset.cs, page, pageSize)
+        widget.currencyAsset.cs, page, pageSize,
+        lastTime: lastTime)
         .then((data) {
       dataCallback(data);
     });
   }
 
+  bool get usePage {
+    return widget?.currencyAsset?.cs != CurrencySymbol.tEPK;
+  }
+
+  bool get isFirstPage {
+    return usePage ? (page == 0) : (lastTime == null);
+  }
+
   dataCallback(List data) {
     if (data != null) {
       // 请求成功
-      if (page == 0) {
+      if (isFirstPage) {
 //        if (data.isEmpty) {
 //          showToast("无数据");
 //        }
@@ -726,18 +739,25 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
       }
       data_list_item.addAll(data);
 
-      if (widget.currencyAsset.cs != CurrencySymbol.tEPK &&
-          data.length >= pageSize) {
+      if (/*widget.currencyAsset.cs != CurrencySymbol.tEPK &&*/
+      data.length >= pageSize) {
         hasMore = true;
-        page += 1;
+        if (usePage) {
+          page += 1;
+        } else {
+          Object lastitem = data?.last;
+          if (lastitem != null && lastitem is TepkOrder) {
+            lastTime = lastitem.time;
+          }
+        }
       } else {
         hasMore = false;
       }
       _ListPageDefState.type =
-          data_list_item.length > 0 ? null : ListPageDefStateType.EMPTY;
+      data_list_item.length > 0 ? null : ListPageDefStateType.EMPTY;
     } else {
       showToast(ResString.get(context, RSID.request_failed)); //"请求失败);
-      if (page == 0) {
+      if (isFirstPage) {
         _ListPageDefState.type = ListPageDefStateType.ERROR;
       }
     }
@@ -759,9 +779,11 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
       return;
     }
     page = 0;
+    lastTime = null;
     isLoading = true;
     var data = await EpikWalletUtils.getOrderList(
-        AccountMgr().currentAccount, widget.currencyAsset.cs, page, pageSize);
+        AccountMgr().currentAccount, widget.currencyAsset.cs, page, pageSize,
+        lastTime: lastTime);
     dataCallback(data);
   }
 
@@ -783,7 +805,8 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     isLoading = true;
 
     List data = await EpikWalletUtils.getOrderList(
-        AccountMgr().currentAccount, widget.currencyAsset.cs, page, pageSize);
+        AccountMgr().currentAccount, widget.currencyAsset.cs, page, pageSize,
+        lastTime: lastTime);
 
     dataCallback(data);
 

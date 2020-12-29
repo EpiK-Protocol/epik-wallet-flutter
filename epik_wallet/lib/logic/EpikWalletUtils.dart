@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
 import 'package:epikwallet/logic/api/api_testnet.dart';
+import 'package:epikwallet/logic/api/api_wallet.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/EthOrder.dart';
@@ -13,6 +14,7 @@ import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
+import 'package:epikwallet/utils/http/httputils.dart';
 
 class EpikWalletUtils {
   static final String TAG = "EpikWalletUtils";
@@ -150,15 +152,31 @@ class EpikWalletUtils {
   }
 
   static Future<List> getOrderList(
-      WalletAccount waccount, CurrencySymbol cs, int page, int pagesize) async {
+      WalletAccount waccount, CurrencySymbol cs, int page, int pagesize,
+      {String lastTime}) async {
     try {
       if (cs == CurrencySymbol.tEPK) {
-        String json = await waccount.epikWallet
-            .messageList(0, waccount.epik_tEPK_address);
-        print("getOrderList EPIK $json");
-        List jsonarray = jsonDecode(json);
-        List<TepkOrder> temp = JsonArray.parseList<TepkOrder>(
-            jsonarray, (json) => TepkOrder.fromJson(json));
+        // 从SDK读取
+        // String json = await waccount.epikWallet
+        //     .messageList(0, waccount.epik_tEPK_address);
+        // print("getOrderList EPIK $json");
+        // List jsonarray = jsonDecode(json);
+        // List<TepkOrder> temp = JsonArray.parseList<TepkOrder>(
+        //     jsonarray, (json) => TepkOrder.fromJson(json));
+        // if (temp != null) {
+        //   temp.forEach((element) {
+        //     element.checkSelf(waccount.epik_tEPK_address);
+        //   });
+        // }
+        // 从api接口读取 使用 lasttime
+        List<TepkOrder> temp;
+        HttpJsonRes hjr = await ApiWallet.getTepkOrderList(
+            waccount.epik_tEPK_address, lastTime, pagesize);
+        if (hjr.code == 0) {
+          temp = JsonArray.parseList<TepkOrder>(
+              JsonArray.obj2List(hjr.jsonMap["list"]),
+              (json) => TepkOrder.fromJsonTepk(json));
+        }
         if (temp != null) {
           temp.forEach((element) {
             element.checkSelf(waccount.epik_tEPK_address);
@@ -190,10 +208,9 @@ class EpikWalletUtils {
   }
 }
 
-class BingAccountPlatform
-{
-  static final String WEIXIN="weixin";
-  static final String TELEGRAM="telegram";
+class BingAccountPlatform {
+  static final String WEIXIN = "weixin";
+  static final String TELEGRAM = "telegram";
 }
 
 class WalletAccount {
@@ -221,15 +238,20 @@ class WalletAccount {
   UniswapHistoryMgr uhMgr;
 
   // 赏金任务的积分
-  double bounty_score=0;
+  double bounty_score = 0;
+
   // 赏金任务的兑换比例
-  double bounty_swap_rate=1;
+  double bounty_swap_rate = 1;
+
   // 赏金任务的兑换手续费 ERC20-EPK
-  double bounty_swap_fee=0;
+  double bounty_swap_fee = 0;
+
   // 赏金任务最小兑换数量
-  double bounty_swap_min=1;
+  double bounty_swap_min = 1;
+
   // 挖矿的已报名才有的ID
   String mining_id = "";
+
   // 挖矿的已报名用户绑定的微信\telegram
   String mining_bind_account = "";
   String mining_account_platform = "";
@@ -282,7 +304,7 @@ class WalletAccount {
     String gas = await hdwallet?.suggestGas();
     if (gas != null) {
       eth_suggestGas = gas;
-      Dlog.p("uploadSuggestGas","$gas");
+      Dlog.p("uploadSuggestGas", "$gas");
     }
     eventMgr.send(EventTag.UPLOAD_SUGGESTGAS, eth_suggestGas);
     return gas;
@@ -292,7 +314,8 @@ class WalletAccount {
     UniswapInfo _uniswapinfo = await hdwallet?.uniswapinfo(hd_eth_address);
     uniswapinfo = _uniswapinfo;
     eventMgr.send(EventTag.UPLOAD_UNISWAPINFO, uniswapinfo);
-    Dlog.p("uploadUniswapInfo", " epk=${uniswapinfo?.EPK}  usdt=${uniswapinfo?.USDT}  share=${uniswapinfo?.Share}  uni=${uniswapinfo.UNI}");
+    Dlog.p("uploadUniswapInfo",
+        " epk=${uniswapinfo?.EPK}  usdt=${uniswapinfo?.USDT}  share=${uniswapinfo?.Share}  uni=${uniswapinfo.UNI}");
     return uniswapinfo;
   }
 }
