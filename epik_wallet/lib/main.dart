@@ -5,8 +5,8 @@ import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
+import 'package:epikwallet/model/Upgrade.dart';
 import 'package:epikwallet/utils/CupertinoLocalizationsDelegate.dart';
-import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/sp_utils/sp_utils.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
@@ -15,6 +15,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:package_info/package_info.dart';
 import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 
 final String fontFamily_def = "Miui-Light";
@@ -71,12 +72,22 @@ class _MyAppState extends State<MyApp> {
     await AccountMgr().load(); // 加载钱包账户
     ServiceInfo.requestConfig(); //请求新的服务配置
 
+    Upgrade.packageinfo = await PackageInfo.fromPlatform();
+
+    // if(Platform.isAndroid)
+    // {
+    //   GeneralWebView.useWF=true;
+    //   wf.WebView.platform = wf.SurfaceAndroidWebView();
+    // }else{
+    //   GeneralWebView.useWF=false;
+    // }
+
     //友盟初始化
     await UmengAnalyticsPlugin.init(
       androidKey: '5fca552abed37e4506c2b987',
       iosKey: '5fca556019bda368eb47c630',
       channel: Platform.isAndroid ? "android" : "ios",
-      logEnabled:BuildConfig.isDebug, // release模式下 没有日志
+      logEnabled: BuildConfig.isDebug, // release模式下 没有日志
 //      pageCollectionMode: "AUTO", // MANUAL手动页面日志,  AUTO自动
     );
   }
@@ -140,11 +151,11 @@ class _MyAppState extends State<MyApp> {
       ToastUtils.showToast(ResString.get(appContext, RSID.doubleclickquit));
       return new Future.value(false);
     }
-    return new Future.value(true);;
+    return new Future.value(true);
+    ;
   }
 
-  Widget transitionBuilder(BuildContext context,Widget widget)
-  {
+  Widget transitionBuilder(BuildContext context, Widget widget) {
     return MediaQuery(
       //设置文字大小不随系统设置改变
       data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),

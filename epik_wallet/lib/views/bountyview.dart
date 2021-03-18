@@ -29,7 +29,7 @@ class BountyView extends BaseInnerWidget {
 
   @override
   int setIndex() {
-    return 3;
+    return 2;
   }
 }
 

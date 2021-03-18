@@ -81,7 +81,7 @@ abstract class BaseWidgetState<T extends BaseWidget> extends State<T>
     return Scaffold(
       key: key_ScaffoldState,
       body:getBaseView(context),
-      resizeToAvoidBottomPadding: resizeToAvoidBottomPadding, //输入框抵住键盘 内容不随键盘滚动
+      resizeToAvoidBottomInset: resizeToAvoidBottomPadding, //输入框抵住键盘 内容不随键盘滚动
     );
   }
 

@@ -12,7 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
-import 'package:provider/provider.dart';
+// import 'package:provider/provider.dart';
 
 import 'buildConfig.dart';
 
@@ -686,9 +686,10 @@ abstract class BaseFuntion {
 
   ///返回 状态管理组件
   _buildProviderWidget(BuildContext context) {
-    return MultiProvider(
-        providers: getProvider() == null ? [] : getProvider(),
-        child: buildWidget(context));
+    // return MultiProvider(
+    //     providers: getProvider() == null ? [] : getProvider(),
+    //     child: buildWidget(context));
+    return buildWidget(context);
   }
 
   String getClassName() {
@@ -704,9 +705,9 @@ abstract class BaseFuntion {
   }
 
   //可以复写
-  List<SingleChildCloneableWidget> getProvider() {
-    return null;
-  }
+  // List<SingleChildCloneableWidget> getProvider() {
+  //   return null;
+  // }
 
   /// 选择图片  拍照 或者 相册
   static showImagePicker(BuildContext context, callback(PickedFile file)) {

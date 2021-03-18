@@ -99,4 +99,11 @@ class Upgrade {
     }
     return 0;
   }
+
+  static PackageInfo packageinfo;
+
+  static bool has_10100(){
+    int currentversion = version2Num(packageinfo.version);
+    return currentversion>=10100;
+  }
 }

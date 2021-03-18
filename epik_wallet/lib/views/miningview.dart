@@ -236,45 +236,46 @@ class MiningViewState extends BaseInnerWidgetState<MiningView> {
               child: Container(
                 child: Row(
                   children: <Widget>[
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            ResString.get(context, RSID.main_mv_2), //"预挖总奖励",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ),
-                          ),
-                          Container(height: 10),
-                          Text(
-                            amountFormat(total_supply),
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 30,
-                              fontFamily: "DIN_Condensed_Bold",
-                            ),
-                          ),
-                          Text(
-                            "ERC20-EPK",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontFamily: "DIN_Condensed_Bold",
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: 2,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[800],
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      ),
-                    ),
+                    //隐藏预挖
+                    // Expanded(
+                    //   child: Column(
+                    //     mainAxisAlignment: MainAxisAlignment.center,
+                    //     children: <Widget>[
+                    //       Text(
+                    //         ResString.get(context, RSID.main_mv_2), //"预挖总奖励",
+                    //         style: TextStyle(
+                    //           color: Colors.white,
+                    //           fontSize: 18,
+                    //         ),
+                    //       ),
+                    //       Container(height: 10),
+                    //       Text(
+                    //         amountFormat(total_supply),
+                    //         style: TextStyle(
+                    //           color: Colors.white,
+                    //           fontSize: 30,
+                    //           fontFamily: "DIN_Condensed_Bold",
+                    //         ),
+                    //       ),
+                    //       Text(
+                    //         "ERC20-EPK",
+                    //         style: TextStyle(
+                    //           color: Colors.white,
+                    //           fontSize: 10,
+                    //           fontFamily: "DIN_Condensed_Bold",
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    // Container(
+                    //   width: 2,
+                    //   height: 70,
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.grey[800],
+                    //     borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    //   ),
+                    // ),
                     Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,

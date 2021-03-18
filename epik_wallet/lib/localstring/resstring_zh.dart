@@ -107,7 +107,8 @@ Map<RSID, String> map_zh = {
   RSID.mainview_1: "挖矿",
   RSID.mainview_2: "钱包",
   RSID.mainview_3: "交易",
-  RSID.mainview_4: "赏金",
+  RSID.mainview_4: "赏金",//"活动",
+  RSID.mainview_5: "智库",
 
   //MiningView 首页_挖矿
   RSID.main_mv_1: "预挖排行",
@@ -125,6 +126,7 @@ Map<RSID, String> map_zh = {
   RSID.main_wv_2: "创建钱包",
   RSID.main_wv_3: "已有钱包",
   RSID.main_wv_4: "导入钱包",
+  RSID.main_wv_5: "主网",
 
   //WalletMenu 首页_钱包侧滑菜单
   RSID.main_mw_1: "钱包",
@@ -237,7 +239,7 @@ Map<RSID, String> map_zh = {
   RSID.uspv_15_3: "这里",
   //UniswapExchangeView
   RSID.usev_1: "预估",
-  RSID.usev_2: "手续费 : %s eth",
+  RSID.usev_2: "手续费 : %s ",
   RSID.usev_3: "滑点 : %s%",
   RSID.usev_4: "余额:",
   RSID.usev_5: "全部",
@@ -251,7 +253,8 @@ Map<RSID, String> map_zh = {
   RSID.usev_10_3: "这里",
   RSID.usev_11: "正在提交到以太坊网络，请耐心等待",
   RSID.usev_12: "已提交到以太坊\n稍后可在交易记录中查询结果",
-  RSID.usev_13: "时间,开,高,低,收,涨跌额,涨幅",//["时间", "开", "高", "低", "收", "涨跌额", "涨幅",/* "成交量"*/];
+  RSID.usev_13: "时间,开,高,低,收,涨跌额,涨幅",//["时间", "开", "高"usev_2
+  // , "低", "收", "涨跌额", "涨幅",/* "成交量"*/];
   //UniswapPoolAddView 注入资金
   RSID.uspav_1: "当前为预估价格，如果价格波动超过%s%，您的交易将会撤销。",
   RSID.uspav_2: "手续费 : %s eth",

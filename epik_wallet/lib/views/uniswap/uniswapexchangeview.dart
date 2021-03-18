@@ -171,12 +171,13 @@ class UniswapExchangeViewState
                       margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
                       child: Text(
                         ResString.get(context, RSID.usev_2, replace: [
-                          StringUtils.formatNumAmount(
-                              StringUtils.parseDouble(
-                                      widget.walletAccount.eth_suggestGas, 0) *
-                                  9,
-                              point: 8,
-                              supply0: false)
+                          // StringUtils.formatNumAmount(
+                          //     StringUtils.parseDouble(
+                          //             widget.walletAccount.eth_suggestGas, 0) *
+                          //         9,
+                          //     point: 8,
+                          //     supply0: false)+" eth"
+                          StringUtils.formatNumAmount((amount_form??0)*0.003,point: 8,supply0: false)+" "+cs_from.symbol//手续费改为
                         ]),
 //                        "手续费 : ${StringUtils.formatNumAmount(StringUtils.parseDouble(widget.walletAccount.eth_suggestGas, 0) * 9, point: 8, supply0: false)} eth",
                         style: TextStyle(

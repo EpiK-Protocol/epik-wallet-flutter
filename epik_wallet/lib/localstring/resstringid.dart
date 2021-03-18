@@ -98,6 +98,7 @@ enum RSID {
   mainview_2,
   mainview_3,
   mainview_4,
+  mainview_5,
   //MiningView 首页_挖矿
   main_mv_1,
   main_mv_2,
@@ -113,6 +114,7 @@ enum RSID {
   main_wv_2,
   main_wv_3,
   main_wv_4,
+  main_wv_5,
   //WalletMenu 首页_钱包侧滑菜单
   main_mw_1,
   main_mw_2,

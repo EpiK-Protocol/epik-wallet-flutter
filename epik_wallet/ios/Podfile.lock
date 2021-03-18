@@ -8,6 +8,11 @@ PODS:
     - Flutter
   - flutter_inappwebview (0.0.1):
     - Flutter
+    - flutter_inappwebview/Core (= 0.0.1)
+    - OrderedSet (~> 5.0)
+  - flutter_inappwebview/Core (0.0.1):
+    - Flutter
+    - OrderedSet (~> 5.0)
   - flutter_vibrate (0.0.1):
     - Flutter
   - fluttertoast (0.0.2):
@@ -19,11 +24,12 @@ PODS:
     - Flutter
   - image_picker (0.0.1):
     - Flutter
+  - OrderedSet (5.0.0)
   - package_info (0.0.1):
     - Flutter
   - path_provider (0.0.1):
     - Flutter
-  - "permission_handler (5.0.1+1)":
+  - "permission_handler (5.1.0+2)":
     - Flutter
   - qrcode (0.0.1):
     - Flutter
@@ -70,6 +76,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - FMDB
+    - OrderedSet
     - UMengAnalytics-NO-IDFA
 
 EXTERNAL SOURCES:
@@ -117,17 +124,18 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
   epikplugin: c50f2c01932c19be5dee4e32a0c47303a40dd2d5
-  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   flutter_custom_dialog: c0d222a3c35af5b57581e54ef8784c94037cd2ec
-  flutter_inappwebview: 69dfbac46157b336ffbec19ca6dfd4638c7bf189
+  flutter_inappwebview: bfd58618f49dc62f2676de690fc6dcda1d6c3721
   flutter_vibrate: c0ca4ac994ff97c3f147f69865458bbc0cc3508b
   fluttertoast: b644586ef3b16f67fae9a1f8754cef6b2d6b634b
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   image_gallery_saver: 259eab68fb271cfd57d599904f7acdc7832e7ef2
   image_picker: 9c3312491f862b28d21ecd8fdf0ee14e601b3f09
+  OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
-  permission_handler: eac8e15b4a1a3fba55b761d19f3f4e6b005d15b6
+  permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
   qrcode: 703d52352679d9b4284555e9a09c2157062f1989
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
@@ -135,9 +143,9 @@ SPEC CHECKSUMS:
   UMengAnalytics-NO-IDFA: 16666e32edce5be44ae5b14aaaa7f3582e09d6ab
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
   video_player: 9cc823b1d9da7e8427ee591e8438bfbcde500e6e
-  wakelock: 0d4a70faf8950410735e3f61fb15d517c8a6efc4
+  wakelock: bfc7955c418d0db797614075aabbc58a39ab5107
   webview_flutter: d2b4d6c66968ad042ad94cbb791f5b72b4678a96
 
-PODFILE CHECKSUM: aababc1291440ed9a4c3481b0e678b47cf423cd8
+PODFILE CHECKSUM: 74b81bb84ecc4213a790ba114c4a51512d90fa91
 
 COCOAPODS: 1.10.0

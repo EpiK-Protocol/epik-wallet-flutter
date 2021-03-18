@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:epikwallet/localstring/LocaleConfig.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 
 class HttpUtil {
@@ -71,11 +72,15 @@ class HttpUtil {
 
 //get请求
   Future<HttpJsonRes> requestJson(
-      bool isGet, String url, Map<String, dynamic> params,
-      {Map<String, dynamic> headers,
-      FormData formData,
-      data,
-      bool needToken = false}) async {
+    bool isGet,
+    String url,
+    Map<String, dynamic> params, {
+    Map<String, dynamic> headers,
+    FormData formData,
+    data,
+    bool needToken = false,
+    bool sendLanguageType = true,
+  }) async {
     HttpJsonRes mHttpJsonRes = new HttpJsonRes();
     Response response;
 
@@ -85,9 +90,15 @@ class HttpUtil {
 //      if (StringUtils.isNotEmpty(AccountMgr().currentAccount.access_token)) {
 //        def_headers["token"] = AccountMgr().currentAccount.access_token;
 //      } else {
-//        print("httputils  requestJson  no token");
+//        print("httputils  requestJson  no token");uspav_2
 //      }
 //    }
+
+    if(sendLanguageType)
+    {
+      // language:zh-cn
+      def_headers["language"] =LocaleConfig.currentIsZh()? "zh-cn":"en-us";
+    }
 
     if (headers != null && headers.length > 0) {
       def_headers.addEntries(headers.entries);

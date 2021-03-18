@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
@@ -7,12 +8,12 @@ import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
+import 'package:epikwallet/model/Upgrade.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
-import 'package:epikwallet/views/currency/currencydetailview.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/list_view.dart';
 import 'package:epikwallet/widget/text/diff_scale_text.dart';
@@ -36,6 +37,8 @@ class WalletView extends BaseInnerWidget {
 }
 
 class _WalletViewState extends BaseInnerWidgetState<WalletView> {
+  bool has_10100 = false;
+
   @override
   void initState() {
     super.initState();
@@ -56,6 +59,14 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     isTopBarShow = false; //状态栏是否显示
     isAppBarShow = false; //导航栏是否显示
     isTopFloatWidgetShow = true;
+    has_10100 = Upgrade.has_10100();
+
+    headerlist= ["header"];
+    if(has_10100)
+    {
+      headerlist.add("exchange_epk");
+      headerlist.add( "hunter_reward");
+    }
   }
 
   @override
@@ -109,6 +120,15 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
+                      if (has_10100)
+                        Text(
+                          "${ResString.get(context, RSID.main_wv_5)} | ",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       Text(
                         AccountMgr().currentAccount.account,
                         style: TextStyle(
@@ -170,6 +190,8 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     });
   }
 
+  List<String> headerlist ;
+
   @override
   Widget buildWidget(BuildContext context) {
     if (noWallet) {
@@ -178,7 +200,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
 
     return new ListPage(
       data_list_item,
-      headerList: ["header"],
+      headerList: headerlist,
       headerCreator: headerBuilder,
 //      itemWidgetCreator: itemWidgetBuild,
       itemWidgetCreator: (context, position) {
@@ -200,38 +222,42 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
   }
 
   Widget headerBuilder(BuildContext context, int position) {
-    if (position == 0 /*&& bannerlist != null && bannerlist.length > 0*/) {
-      if (header_top == 0) header_top = getTopBarHeight() + getAppBarHeight();
-      return Container(
-        margin: EdgeInsets.only(top: header_top),
-        padding: EdgeInsets.all(15),
-        height: 173,
-        width: double.infinity,
-        child: Card(
-          color: ResColor.main,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12.0)),
-          ),
-          elevation: 10,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Row(
+    // ["header","exchange_epk","hunter_reward"]
+    switch (headerlist[position]) {
+      case "header":
+        {
+          if (header_top == 0)
+            header_top = getTopBarHeight() + getAppBarHeight();
+          return Container(
+            margin: EdgeInsets.only(top: header_top),
+            padding: EdgeInsets.all(15),
+            height: 173,
+            width: double.infinity,
+            child: Card(
+              color: ResColor.main,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12.0)),
+              ),
+              elevation: 10,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(top: 5),
-                    child: Text(
-                      r"$ ",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontFamily: "DIN_Condensed_Bold",
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(top: 5),
+                        child: Text(
+                          r"$ ",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontFamily: "DIN_Condensed_Bold",
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
 //                  Text(
 //                    StringUtils.formatNumAmount(
 //                        AccountMgr().currentAccount.total_usd, point: 2),
@@ -241,53 +267,145 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
 //                      fontFamily: "DIN_Condensed_Bold",
 //                    ),
 //                  ),
-                  DiffScaleText(
-                    text: balance,
-                    textStyle: TextStyle(
-                      color: Colors.white,
-                      fontSize: 40,
-                      fontFamily: "DIN_Condensed_Bold",
-                    ),
+                      DiffScaleText(
+                        text: balance,
+                        textStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 40,
+                          fontFamily: "DIN_Condensed_Bold",
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        "≈ " +
+                            StringUtils.formatNumAmount(
+                                AccountMgr().currentAccount.total_btc,
+                                point: 8),
+                        style: TextStyle(
+                          color: ResColor.white_40,
+                          fontSize: 18,
+                          fontFamily: "DIN_Condensed_Bold",
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(5, 2, 0, 0),
+                        child: Text(
+                          "BTC",
+                          style: TextStyle(
+                            color: ResColor.white_40,
+                            fontSize: 13,
+                            fontFamily: "DIN_Condensed_Bold",
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    "≈ " +
-                        StringUtils.formatNumAmount(
-                            AccountMgr().currentAccount.total_btc,
-                            point: 8),
-                    style: TextStyle(
-                      color: ResColor.white_40,
-                      fontSize: 18,
-                      fontFamily: "DIN_Condensed_Bold",
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(5, 2, 0, 0),
-                    child: Text(
-                      "BTC",
-                      style: TextStyle(
-                        color: ResColor.white_40,
-                        fontSize: 13,
-                        fontFamily: "DIN_Condensed_Bold",
+            ),
+          );
+        }
+        break;
+      case "exchange_epk":
+        {
+          return Container(
+            margin: EdgeInsets.fromLTRB(15, 0, 15, 15),
+            height: 50,
+            width: double.infinity,
+            child: Card(
+              clipBehavior: Clip.antiAlias,
+              color: ResColor.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              ),
+              elevation: 10,
+              shadowColor: ResColor.black_20,
+              child: InkWell(
+                onTap: () {
+                  // todo
+                },
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: FractionalOffset(0.5, 0.5),
+                      child: Text(
+                        "ERC20-EPK 兑换 EPK",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: ResColor.black,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    Align(
+                      alignment: FractionalOffset(0.95, 0.5),
+                      child: Icon(
+                        Icons.arrow_forward_ios_outlined,
+                        size: 12,
+                        color: ResColor.black_50,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      );
-    } else {
-      return new Padding(
-        padding: EdgeInsets.all(10.0),
-        child: Text('$position -----header------- '),
-      );
+            ),
+          );
+        }
+        break;
+      case "hunter_reward":
+        {
+          return Container(
+            margin: EdgeInsets.fromLTRB(15, 0, 15, 15),
+            height: 50,
+            width: double.infinity,
+            child: Card(
+              clipBehavior: Clip.antiAlias,
+              color: ResColor.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              ),
+              elevation: 10,
+              shadowColor: ResColor.black_20,
+              child: InkWell(
+                onTap: () {
+                  // todo
+                },
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: FractionalOffset(0.5, 0.5),
+                      child: Text(
+                        "领取赏金猎人奖励",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: ResColor.black,
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: FractionalOffset(0.95, 0.5),
+                      child: Icon(
+                        Icons.arrow_forward_ios_outlined,
+                        size: 12,
+                        color: ResColor.black_50,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+        break;
     }
+
+    return new Padding(
+      padding: EdgeInsets.all(10.0),
+      child: Text('$position -----header------- '),
+    );
   }
 
   Widget itemWidgetBuild(BuildContext context, int position) {

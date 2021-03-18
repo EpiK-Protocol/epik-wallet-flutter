@@ -107,7 +107,8 @@ Map<RSID, String> map_en = {
   RSID.mainview_1: "Mining",//"挖矿",
   RSID.mainview_2: "Wallet",//"钱包",
   RSID.mainview_3: "Trade",//"交易",
-  RSID.mainview_4: "Bounty",//"赏金",
+  RSID.mainview_4: "Bounty",//"赏金",//"Activitys",//活动，
+  RSID.mainview_5: "ThinkTank",//智库
 
   //MiningView 首页_挖矿 Homepage mine
   RSID.main_mv_1: "Pre-mining ranking",//"预挖排行",
@@ -125,6 +126,7 @@ Map<RSID, String> map_en = {
   RSID.main_wv_2: "Create wallet",//"创建钱包",
   RSID.main_wv_3: "Already have a wallet",//"已有钱包",
   RSID.main_wv_4: "Import wallet",//"导入钱包",
+  RSID.main_wv_5: "Main network",//"主网",
 
   //WalletMenu 首页_钱包侧滑菜单
   RSID.main_mw_1: "Wallet",//"钱包",
@@ -237,7 +239,7 @@ Map<RSID, String> map_en = {
   RSID.uspv_15_3: "here",//"这里",
   //UniswapExchangeView
   RSID.usev_1: "Estimate",//"预估",
-  RSID.usev_2: "Fee : %s eth",//"手续费 : %s eth",
+  RSID.usev_2: "Fee : %s ",//"手续费 : %s eth",
   RSID.usev_3: "Slip point : %s%",//"滑点 : %s%",
   RSID.usev_4: "Balance:",//"余额:",
   RSID.usev_5: "All",//"全部",

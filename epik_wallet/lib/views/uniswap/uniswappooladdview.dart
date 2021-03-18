@@ -272,6 +272,7 @@ class UniswapPoolAddViewState extends BaseWidgetState<UniswapPoolAddView> {
                         ResString.get(context, RSID.uspav_2,
                             replace: [widget.walletAccount.eth_suggestGas]),
 //                        "手续费 : ${widget.walletAccount.eth_suggestGas} eth",
+
                         style: TextStyle(
                           color: Colors.black45,
                           fontSize: 12,

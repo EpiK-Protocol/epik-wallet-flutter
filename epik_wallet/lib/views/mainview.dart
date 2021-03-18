@@ -15,6 +15,7 @@ import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/screen/screen_util.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
+import 'package:epikwallet/views/ThinkTankView.dart';
 import 'package:epikwallet/views/bountyview.dart';
 import 'package:epikwallet/views/miningview.dart';
 import 'package:epikwallet/views/transactionview.dart';
@@ -32,9 +33,19 @@ class MainView extends BaseWidget {
   }
 }
 
+enum MainSubViewType {
+  MININGVIEW,
+  WALLETVIEW,
+  TRANSACTIONVIEW,
+  BOUNTYVIEW,
+  THINKTANKVIEW,
+}
+
 class _MainViewState extends BaseWidgetState<MainView> {
-  int currentIndex = 1;
+  int currentIndex = 0;
   int lastIndex = -1;
+
+  List<MainSubViewType> subviewTypes = [];
 
   final GlobalKey<ScaffoldState> key_scaffold = GlobalKey();
   List<GlobalKey<BaseInnerWidgetState>> keyList;
@@ -54,19 +65,40 @@ class _MainViewState extends BaseWidgetState<MainView> {
           [SystemUiOverlay.top, SystemUiOverlay.bottom]);
     });
 
-    keyList = <GlobalKey<BaseInnerWidgetState>>[
-      GlobalKey(),
-      GlobalKey(),
-      GlobalKey(),
-      GlobalKey(),
+    subviewTypes = [
+      if (!Upgrade.has_10100()) MainSubViewType.MININGVIEW,
+      MainSubViewType.WALLETVIEW,
+      MainSubViewType.TRANSACTIONVIEW,
+      MainSubViewType.BOUNTYVIEW,
+      if (Upgrade.has_10100()) MainSubViewType.THINKTANKVIEW,
     ];
 
-    subViews = <BaseInnerWidget>[
-      MiningView(keyList[0]),
-      WalletView(keyList[1]),
-      TransactionView(keyList[2]),
-      BountyView(keyList[3]),
-    ];
+    currentIndex = subviewTypes.indexOf(MainSubViewType.WALLETVIEW);
+
+    keyList = <GlobalKey<BaseInnerWidgetState>>[];
+
+    subViews = <BaseInnerWidget>[];
+
+    subviewTypes.forEach((subtype) {
+      GlobalKey key = GlobalKey();
+      switch (subtype) {
+        case MainSubViewType.MININGVIEW:
+          subViews.add(MiningView(key));
+          return;
+        case MainSubViewType.WALLETVIEW:
+          subViews.add(WalletView(key));
+          return;
+        case MainSubViewType.TRANSACTIONVIEW:
+          subViews.add(TransactionView(key));
+          return;
+        case MainSubViewType.BOUNTYVIEW:
+          subViews.add(BountyView(key));
+          return;
+        case MainSubViewType.THINKTANKVIEW:
+          subViews.add(ThinkTankView(key));
+          return;
+      }
+    });
   }
 
   //上次点击时间
@@ -122,32 +154,45 @@ class _MainViewState extends BaseWidgetState<MainView> {
 
   List<BottomNavigationBarItem> getBottomNavigationBarItems() {
     // 导航按钮
-    return [
-      BottomNavigationBarItem(
-        icon: Icon(Icons.bubble_chart),
-        title: Text(
-          ResString.get(context, RSID.mainview_1), //'挖矿',
-        ),
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.account_balance_wallet),
-        title: Text(
-          ResString.get(context, RSID.mainview_2), //'钱包',
-        ),
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(OMIcons.swapHorizontalCircle),
-        title: Text(
-          ResString.get(context, RSID.mainview_3), //'交易',
-        ),
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(OMIcons.assignmentTurnedIn),
-        title: Text(
-          ResString.get(context, RSID.mainview_4), //'赏金',
-        ),
-      ),
-    ];
+
+    List<BottomNavigationBarItem> ret = [];
+
+    subviewTypes.forEach((subtype) {
+      switch (subtype) {
+        case MainSubViewType.MININGVIEW:
+          ret.add(BottomNavigationBarItem(
+            icon: Icon(Icons.bubble_chart),
+            label: ResString.get(context, RSID.mainview_1), //'挖矿',
+          ));
+          break;
+        case MainSubViewType.WALLETVIEW:
+          ret.add(BottomNavigationBarItem(
+            icon: Icon(Icons.account_balance_wallet),
+            label: ResString.get(context, RSID.mainview_2), //'钱包',
+          ));
+          break;
+        case MainSubViewType.TRANSACTIONVIEW:
+          ret.add(BottomNavigationBarItem(
+            icon: Icon(OMIcons.swapHorizontalCircle),
+            label: ResString.get(context, RSID.mainview_3), //'交易',
+          ));
+          break;
+        case MainSubViewType.BOUNTYVIEW:
+          ret.add(BottomNavigationBarItem(
+            icon: Icon(OMIcons.assignmentTurnedIn),
+            label: ResString.get(context, RSID.mainview_4), //'赏金',
+          ));
+          break;
+        case MainSubViewType.THINKTANKVIEW:
+          ret.add(BottomNavigationBarItem(
+            icon: Icon(Icons.school), //insights awesome psychology
+            label: ResString.get(context, RSID.mainview_5), //'智库',
+          ));
+          break;
+      }
+    });
+
+    return ret;
   }
 
   openRightDrawer() {
@@ -251,10 +296,9 @@ class _MainViewState extends BaseWidgetState<MainView> {
         if (upgrade.needUpgrade) {
           showUpgradeDialog(upgrade);
         }
-      }else
-        {
-          log("checkUpgrade ServiceInfo.upgrade = null");
-        }
+      } else {
+        log("checkUpgrade ServiceInfo.upgrade = null");
+      }
     } catch (e) {
       print(e);
     }
