@@ -11,7 +11,7 @@ description: EpiK Portal
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.9+109
+version: 1.0.9+109  #需要同步写到Upgrade.code_version  ios企业签会改版本号
 
 environment:
   sdk: ">=2.7.0 <3.0.0"

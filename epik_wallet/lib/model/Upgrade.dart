@@ -1,11 +1,11 @@
-import 'dart:developer';
-
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/main.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:package_info/package_info.dart';
+
+String code_version = "1.0.9"; //ios签发固定在1.2.5
 
 class Upgrade {
   /// 当前最新版本
@@ -59,12 +59,12 @@ class Upgrade {
 
     if (StringUtils.isEmpty(description)) {
 //      description = "有新版本V${latest_version}${needRequired?"需要升级\n如不升级可能会影响正常功能":"可以升级\n是否现在升级?"}";
-      description =
-          ResString.get(appContext, RSID.upgrade_des,replace: ["V$latest_version"]);
+      description = ResString.get(appContext, RSID.upgrade_des,
+          replace: ["V$latest_version"]);
       if (needRequired) {
-        description+=ResString.get(appContext, RSID.upgrade_des_1);
+        description += ResString.get(appContext, RSID.upgrade_des_1);
       } else {
-        description+=ResString.get(appContext, RSID.upgrade_des_2);
+        description += ResString.get(appContext, RSID.upgrade_des_2);
       }
     }
   }
@@ -102,8 +102,9 @@ class Upgrade {
 
   static PackageInfo packageinfo;
 
-  static bool has_10100(){
-    int currentversion = version2Num(packageinfo.version);
-    return currentversion>=10100;
+  static bool has_10100() {
+    // int currentversion = version2Num(packageinfo.version);
+    int currentversion = version2Num(code_version);
+    return currentversion >= 10100;
   }
 }
