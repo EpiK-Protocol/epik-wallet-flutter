@@ -9,6 +9,7 @@ import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_bounty.dart';
 import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
+import 'package:epikwallet/main.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
@@ -188,9 +189,10 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                           right: 20,
                           top: 80,
                           child: Text(
+                            //RSID.bexv_2
 //                            "当前兑换比例：1积分 = ${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1)}ERC20-EPK",
 //                            "当前兑换比例：${StringUtils.formatNumAmount(1 / (AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1))} 积分 = 1 ERC20-EPK",
-                            ResString.get(context, RSID.bexv_2,replace: [StringUtils.formatNumAmount(1 / (AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1))]),//
+                            ResString.get(context, RSID.bexv_17,replace: [StringUtils.formatNumAmount(1 / (AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1))]),//
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               fontSize: 12,
@@ -198,31 +200,32 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                             ),
                           ),
                         ),
-                        Positioned(
-                          left: 20,
-                          right: 20,
-                          top: 100,
-                          child: Text(
-//                            "当前绑定微信：${AccountMgr()?.currentAccount?.mining_weixin}",
-                           AccountMgr()?.currentAccount?.mining_account_platform==BingAccountPlatform.WEIXIN?
-                            ResString.get(context, RSID.bexv_3)+AccountMgr()?.currentAccount?.mining_bind_account:
-                           ResString.get(context, RSID.bexv_16)+AccountMgr()?.currentAccount?.mining_bind_account
-                            ,
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ),
+//                         Positioned(
+//                           left: 20,
+//                           right: 20,
+//                           top: 100,
+//                           child: Text(
+// //                            "当前绑定微信：${AccountMgr()?.currentAccount?.mining_weixin}",
+//                            AccountMgr()?.currentAccount?.mining_account_platform==BingAccountPlatform.WEIXIN?
+//                             ResString.get(context, RSID.bexv_3)+AccountMgr()?.currentAccount?.mining_bind_account:
+//                            ResString.get(context, RSID.bexv_16)+AccountMgr()?.currentAccount?.mining_bind_account
+//                             ,
+//                             textAlign: TextAlign.left,
+//                             style: TextStyle(
+//                               fontSize: 12,
+//                               color: Colors.white70,
+//                             ),
+//                           ),
+//                         ),
                         //以太坊地址
                         Positioned(
                           left: 20,
                           right: 0,
-                          top: 120,
+                          top: 100,
                           child: Text(
 //                            "当前以太坊收币账户：${AccountMgr()?.currentAccount?.hd_eth_address}",
-                            ResString.get(context, RSID.bexv_4)+"${AccountMgr()?.currentAccount?.hd_eth_address}",//
+//                             ResString.get(context, RSID.bexv_4)+"${AccountMgr()?.currentAccount?.hd_eth_address}",//
+                            ResString.get(context, RSID.bexv_18)+"${AccountMgr()?.currentAccount?.epik_EPK_address}",//
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               fontSize: 12,
@@ -234,7 +237,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                         Positioned(
                           left: 20,
                           right: 20,
-                          top: 155,
+                          top: 155,//155
                           height: 40,
                           child: Row(
                             children: <Widget>[
@@ -348,7 +351,8 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                               children: <Widget>[
                                 Text(
 //                                  "预估手续费：${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_fee ?? "0")} ERC20-EPK",
-                                  ResString.get(context, RSID.bexv_8,replace: ["${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_fee ?? "0")}"]),//
+//                                   ResString.get(context, RSID.bexv_8,replace: ["${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_fee ?? "0")}"]),//
+                                    ResString.get(context, RSID.bexv_19,replace: ["${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_fee ?? "0")}"]),//
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontSize: 12,
@@ -558,10 +562,12 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
         child: RichText(
           text: TextSpan(
             text:
-            ResString.get(context, RSID.bexv_15),// "「1」用积分兑换ERC20-EPK时，通过以太网转账会产生ETH手续费；\n\n「2」手续费数量是根据以太坊gas费用和Uniswap中的币价计算出要扣除多少ERC20-EPK。",
+            //ResString.get(context, RSID.bexv_15),// "「1」用积分兑换ERC20-EPK时，通过以太网转账会产生ETH手续费；\n\n「2」手续费数量是根据以太坊gas费用和Uniswap中的币价计算出要扣除多少ERC20-EPK。",
+            ResString.get(context, RSID.bexv_20),
             style: TextStyle(
               color: Color(0xff333333),
               fontSize: 14.0,
+              fontFamily: fontFamily_def,
             ),
           ),
         ),

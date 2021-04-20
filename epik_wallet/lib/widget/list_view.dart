@@ -3,6 +3,7 @@ import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/main.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/res_color.dart';
+import 'package:epikwallet/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 
 typedef HeaderWidgetBuild = Widget Function(BuildContext context, int position);
@@ -280,6 +281,7 @@ class ListPageDefStateWidgetHeader {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                if(StringUtils.isNotEmpty(img))
                 Image(
                   image: AssetImage(img),
                   width: 150,
@@ -311,6 +313,7 @@ class ListPageDefStateWidgetHeader {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                if(StringUtils.isNotEmpty(img))
                 Image(
                   image: AssetImage(img),
                   width: 150,

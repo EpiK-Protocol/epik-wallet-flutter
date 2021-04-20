@@ -30,8 +30,8 @@ abstract class BaseFuntion {
 
   static Color titlebarColor = Colors.white;
 
-  Color _topBarColor = titlebarColor; // Colors.blue;
-  Color _appBarColor = titlebarColor; // Colors.blue; //3b92f7
+  Color topBarColor = titlebarColor; // Colors.blue;
+  Color appBarColor = titlebarColor; // Colors.blue; //3b92f7
   Color _appBarContentColor = Colors.black;
   Color navigationColor = Colors.white;//Colors.white
 
@@ -63,6 +63,10 @@ abstract class BaseFuntion {
   FontWeight _fontWidget = FontWeight.w400; //错误页面和空页面的字体粗度
 
   double bottomVsrtical = 0; //作为内部页面距离底部的高度
+
+
+  Color get appBarContentColor=>_appBarContentColor;
+  double get appBarCenterTextSize=>_appBarCenterTextSize;
 
   /// false 输入框抵住键盘 内容不随键盘滚动
   bool resizeToAvoidBottomPadding = false;
@@ -140,7 +144,7 @@ abstract class BaseFuntion {
     return Container(
       height: getTopBarHeight(),
       width: double.infinity,
-      color: _topBarColor,
+      color: topBarColor,
     );
   }
 
@@ -406,7 +410,7 @@ abstract class BaseFuntion {
     return Container(
       height: getAppBarHeight(),
       width: double.infinity,
-      color: _appBarColor,
+      color: appBarColor,
       child: Stack(
         alignment: FractionalOffset(0, 0.5),
         children: <Widget>[
@@ -446,7 +450,7 @@ abstract class BaseFuntion {
     // ignore: invalid_use_of_protected_member
     if (_stateBaseFunction != null && _stateBaseFunction.mounted) {
       _stateBaseFunction.setState(() {
-        _topBarColor = color == null ? _topBarColor : color;
+        topBarColor = color == null ? topBarColor : color;
       });
     }
   }
@@ -478,7 +482,7 @@ abstract class BaseFuntion {
     // ignore: invalid_use_of_protected_member
     if (_stateBaseFunction != null && _stateBaseFunction.mounted) {
       _stateBaseFunction.setState(() {
-        _appBarColor = color == null ? _appBarColor : color;
+        appBarColor = color == null ? appBarColor : color;
       });
     }
   }

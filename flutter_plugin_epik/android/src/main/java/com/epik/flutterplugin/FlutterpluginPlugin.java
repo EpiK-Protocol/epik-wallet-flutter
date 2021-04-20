@@ -15,7 +15,6 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /**
  * FlutterpluginPlugin
@@ -32,11 +31,11 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
         channel.setMethodCallHandler(this);
     }
 
-    public static void registerWith(Registrar registrar)
-    {
-        final MethodChannel channel = new MethodChannel(registrar.messenger(), "epikplugin");
-        channel.setMethodCallHandler(new FlutterpluginPlugin());
-    }
+//    public static void registerWith(Registrar registrar)
+//    {
+//        final MethodChannel channel = new MethodChannel(registrar.messenger(), "epikplugin");
+//        channel.setMethodCallHandler(new FlutterpluginPlugin());
+//    }
 
     hd.Wallet currentHdWallet;
     epik.Wallet currentEpikWallet;
@@ -321,12 +320,12 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
                             ret = currentEpikWallet.import_((String) call.argument("privateKey"));
                             break;
                         }
-                        case "epik_wallet_messageList":
-                        {
-                            ret = currentEpikWallet.messageList((int) call.argument("toHeight"),
-                                    (String) call.argument("addr"));
-                            break;
-                        }
+                        // Deprecated  2021-03-25 从SDK中删除
+                        // case "epik_wallet_messageList":
+                        // {
+                        //   ret = currentEpikWallet.messageList((int) call.argument("toHeight"),(String) call.argument("addr"));
+                        //   break;
+                        // }
                         case "epik_wallet_send":
                         {
                             ret = currentEpikWallet.send((String) call.argument("to"),
@@ -346,6 +345,99 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
                         case "epik_wallet_sign":
                         {
                             ret = currentEpikWallet.sign((String) call.argument("addr"), (byte[]) call.argument("hash"));
+                            break;
+                        }
+                        // 2021-03-25 新增  epik  ------------------------------
+                        case "epik_wallet_createExpert":
+                        {
+                            // 创建领域专家 applicationHash
+                            ret = currentEpikWallet.createExpert((String) call.argument("applicationHash"));
+                            break;
+                        }
+                        case "epik_wallet_expertInfo":
+                        {
+                            // 专家详情
+                            ret = currentEpikWallet.expertInfo((String) call.argument("addr"));
+                            break;
+                        }
+                        case "epik_wallet_expertList":
+                        {
+                            // 专家列表
+                            ret = currentEpikWallet.expertList();
+                            break;
+                        }
+                        case "epik_wallet_messageReceipt":{
+                            // 消息回执
+                            ret = currentEpikWallet.messageReceipt((String) call.argument("cidStr"));
+                            break;
+                        }
+                        case "epik_wallet_voteRescind":{
+                            // 投票撤销
+                            ret = currentEpikWallet.voteRescind((String) call.argument("candidate"),(String) call.argument("amount"));
+                            break;
+                        }
+                        case "epik_wallet_voteSend":{
+                            // 投票
+                            ret = currentEpikWallet.voteSend((String) call.argument("candidate"),(String) call.argument("amount"));
+                            break;
+                        }
+                        case "epik_wallet_voteWithdraw":{
+                            // 投票提现
+                            ret = currentEpikWallet.voteWithdraw((String) call.argument("to"));
+                            break;
+                        }
+                        case "epik_wallet_voterInfo":{
+                            // 投票信息
+                            ret = currentEpikWallet.voterInfo((String) call.argument("addr"));
+                            break;
+                        }
+                        // 2021-04-19 新增  epik  ------------------------------
+                        case "epik_wallet_minerInfo":{
+                            // 矿机信息
+                            ret = currentEpikWallet.minerInfo((String) call.argument("minerID"));
+                            break;
+                        }
+                        case "epik_wallet_minerPledgeAdd":{
+                            // 矿机 基础抵押 添加
+                            ret = currentEpikWallet.minerPledgeAdd((String) call.argument("toMinerID"),(String) call.argument("amount"));
+                            break;
+                        }
+                        case "epik_wallet_minerPledgeWithdraw":{
+                            // 矿机 基础抵押 撤回
+                            ret = currentEpikWallet.minerPledgeWithdraw((String) call.argument("toMinerID"),(String) call.argument("amount"));
+                            break;
+                        }
+                        case "epik_wallet_retrievePledgeAdd":{
+                            // 矿机 访问抵押 添加
+                            ret = currentEpikWallet.retrievePledgeAdd((String) call.argument("toMinerID"),(String) call.argument("amount"));
+                            break;
+                        }
+                        case "epik_wallet_retrievePledgeWithdraw":{
+                            // 矿机 访问抵押 撤回
+                            ret = currentEpikWallet.retrievePledgeWithdraw((String) call.argument("toMinerID"),(String) call.argument("amount"));
+                            break;
+                        }
+                        // 2021-03-25 新增  hd  ------------------------------
+                        case "hd_wallet_accelerateTx":
+                        {
+                            // AccelerateTx 加速交易
+                            String srcTxHash = call.argument("srcTxHash");
+                            double gasRate = (double) call.argument("gasRate");
+                            ret = currentHdWallet.accelerateTx(srcTxHash,gasRate);
+                            break;
+                        }
+                        case "hd_wallet_cancelTx":
+                        {
+                            // CancelTx 取消交易
+                            String srcTxHash = call.argument("srcTxHash");
+                            ret = currentHdWallet.cancelTx(srcTxHash);
+                            break;
+                        }
+                        case "hd_wallet_receipt":
+                        {
+                            // receipt
+                            String txHash = call.argument("txHash");
+                            ret = currentHdWallet.receipt(txHash);
                             break;
                         }
                         default:

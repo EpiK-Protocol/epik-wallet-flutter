@@ -15,6 +15,8 @@ import 'package:epikwallet/utils/JsonUtils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
+import 'package:epikwallet/utils/sp_utils/sp_utils.dart';
+import 'package:epikwallet/utils/string_utils.dart';
 
 class EpikWalletUtils {
   static final String TAG = "EpikWalletUtils";
@@ -31,14 +33,14 @@ class EpikWalletUtils {
       // ETH address
       String eth_address = await hdwallet.derive(hdwallet_eth_path);
 
-      // epik 钱包,   tEPK = epikWallet.balance
+      // epik 钱包,   EPK = epikWallet.balance
       EpikWallet epikWallet =
           await Epik.newWalletFromSeed(hdwallet.seed, t: "bls");
 
       //    EPK-ERC20 = hd.tokenbalance("EPK")
       //    USDT = hd.tokenbalance("USDT")
       waccount.hd_eth_address = eth_address;
-      waccount.epik_tEPK_address = epikWallet.address;
+      waccount.epik_EPK_address = epikWallet.address;
       waccount.hdwallet = hdwallet;
       waccount.epikWallet = epikWallet;
 
@@ -64,20 +66,20 @@ class EpikWalletUtils {
   static Future<Map<CurrencySymbol, String>> requestBalance(
       WalletAccount waccount) async {
     Dlog.p("requestBalance", "hd_eth_address ${waccount.hd_eth_address}");
-    Dlog.p("requestBalance", "epik_tEPK_address ${waccount.epik_tEPK_address}");
+    Dlog.p("requestBalance", "epik_EPK_address ${waccount.epik_EPK_address}");
     Future eth = waccount.hdwallet.balance(waccount.hd_eth_address);
     Future usdt =
         waccount.hdwallet.tokenBalance(waccount.hd_eth_address, "USDT");
     Future epk_erc20 =
         waccount.hdwallet.tokenBalance(waccount.hd_eth_address, "EPK");
-    Future tepk = waccount.epikWallet.balance(waccount.epik_tEPK_address);
-    Future prices = ApiTestNet.getPriceList();
-    List values = await Future.wait([eth, usdt, epk_erc20, tepk, prices]);
+    Future epk = waccount.epikWallet.balance(waccount.epik_EPK_address);
+    Future prices = ApiWallet.getPriceList();
+    List values = await Future.wait([eth, usdt, epk_erc20, epk, prices]);
     Map<CurrencySymbol, String> map = {
       CurrencySymbol.ETH: values[0] ?? "",
       CurrencySymbol.USDT: values[1] ?? "",
       CurrencySymbol.EPKerc20: values[2] ?? "",
-      CurrencySymbol.tEPK: values[3] ?? "",
+      CurrencySymbol.EPK: values[3] ?? "",
     };
     //todo test
 //    Map<CurrencySymbol, String> map = {
@@ -151,11 +153,15 @@ class EpikWalletUtils {
     return map;
   }
 
-  static Future<List> getOrderList(
+  static Future<Map<String, dynamic>> getOrderList(
       WalletAccount waccount, CurrencySymbol cs, int page, int pagesize,
-      {String lastTime}) async {
+      {String lastTime, int epkHeight}) async {
+    Map<String, dynamic> ret = {
+      "list": null,
+      "epkHeight": 0,
+    };
     try {
-      if (cs == CurrencySymbol.tEPK) {
+      if (cs == CurrencySymbol.EPK) {
         // 从SDK读取
         // String json = await waccount.epikWallet
         //     .messageList(0, waccount.epik_tEPK_address);
@@ -171,7 +177,7 @@ class EpikWalletUtils {
         // 从api接口读取 使用 lasttime
         List<TepkOrder> temp;
         HttpJsonRes hjr = await ApiWallet.getTepkOrderList(
-            waccount.epik_tEPK_address, lastTime, pagesize);
+            waccount.epik_EPK_address, lastTime, pagesize);
         if (hjr.code == 0) {
           temp = JsonArray.parseList<TepkOrder>(
               JsonArray.obj2List(hjr.jsonMap["list"]),
@@ -179,16 +185,21 @@ class EpikWalletUtils {
         }
         if (temp != null) {
           temp.forEach((element) {
-            element.checkSelf(waccount.epik_tEPK_address);
+            element.checkSelf(waccount.epik_EPK_address);
           });
         }
-        return temp ?? [];
+        // print("getTepkOrderList tempsize=${temp.length}");
+        ret["list"] = temp ?? [];
+        ret["epkHeight"] = hjr.jsonMap["endHeight"] ?? 0;
+        return ret;
       } else {
+        page += 1; //0是全部数据  1是开始分页
         String address = waccount.hd_eth_address;
 //        String address = "0xe9fc6bf283383c17a1377d76df3a2b0a82ad854e"; //todo test
+//         print("getOrderList ETH page=$page pagesize=$pagesize");
         String json = await waccount.hdwallet
             .transactions(address, cs.symbolToNetWork, page, pagesize, false);
-        print("getOrderList ETH $json");
+        // print("getOrderList ETH $json");
         Map jsonmap = jsonDecode(json);
         List jsonarray = JsonArray.obj2List(jsonmap["result"], def: []);
         List<EthOrder> temp = JsonArray.parseList<EthOrder>(
@@ -198,13 +209,15 @@ class EpikWalletUtils {
             element.checkSelf(address);
           });
         }
-        return temp ?? [];
+        // print("getOrderList ETH tempsize=${temp.length}");
+        ret["list"] = temp ?? [];
+        return ret;
       }
     } catch (e) {
       print("getOrderList error");
       print(e);
     }
-    return null;
+    return ret;
   }
 }
 
@@ -226,8 +239,8 @@ class WalletAccount {
   // hd钱包 eth 地址
   String hd_eth_address = "";
 
-  // epik钱包 tEPK 地址
-  String epik_tEPK_address = "";
+  // epik钱包 EPK 地址
+  String epik_EPK_address = "";
 
   HdWallet hdwallet;
   EpikWallet epikWallet;
@@ -256,6 +269,34 @@ class WalletAccount {
   String mining_bind_account = "";
   String mining_account_platform = "";
 
+  Map<String, dynamic> tokenMap = {};
+
+  String get dappTokenKey {
+    return epik_EPK_address?.hashCode?.toString() ?? "";
+  }
+
+  loadDappTokens() {
+    Map<String, dynamic> temp = {};
+    try {
+      String text = SpUtils.getString("DappTokens_${dappTokenKey}");
+      if (StringUtils.isNotEmpty(text) && text.startsWith("{")) {
+        try {
+          temp = jsonDecode(text);
+        } catch (e, s) {
+          print(e);
+        }
+      }
+    } catch (e, s) {
+      print(e);
+    }
+    tokenMap = temp ?? {};
+  }
+
+  saveDappTokens() {
+    SpUtils.putString(
+        "DappTokens_${dappTokenKey}", jsonEncode(tokenMap ?? "{}"));
+  }
+
   WalletAccount();
 
   WalletAccount.fromJson(Map<String, dynamic> json) {
@@ -265,7 +306,7 @@ class WalletAccount {
       password = json['password'];
       mnemonic = json['mnemonic'] ?? "";
       hd_eth_address = json['hd_eth_address'];
-      epik_tEPK_address = json['epik_tEPK_address'];
+      epik_EPK_address = json['epik_tEPK_address'];
     } catch (e) {
       print(e);
     }
@@ -277,7 +318,7 @@ class WalletAccount {
     data['password'] = this.password;
     data['mnemonic'] = this.mnemonic;
     data['hd_eth_address'] = this.hd_eth_address;
-    data['epik_tEPK_address'] = this.epik_tEPK_address;
+    data['epik_tEPK_address'] = this.epik_EPK_address;
     return data;
   }
 

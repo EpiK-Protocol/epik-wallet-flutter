@@ -2,6 +2,8 @@ import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/model/BountyTask.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
+import 'package:epikwallet/model/Dapp.dart';
+import 'package:epikwallet/model/Expert.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/views/bounty/bountydetailview.dart';
@@ -10,9 +12,17 @@ import 'package:epikwallet/views/bounty/bountyexchangeview.dart';
 import 'package:epikwallet/views/currency/currencydepositview.dart';
 import 'package:epikwallet/views/currency/currencydetailview.dart';
 import 'package:epikwallet/views/currency/currencywithdrawview.dart';
+import 'package:epikwallet/views/epk_exchange/BountyDappTakeRecordView.dart';
+import 'package:epikwallet/views/epk_exchange/BountyDappTakeView.dart';
+import 'package:epikwallet/views/epk_exchange/Erc20ToEpkRecordView.dart';
+import 'package:epikwallet/views/epk_exchange/Erc20ToEpkView.dart';
+import 'package:epikwallet/views/epk_exchange/BountyDappListView.dart';
 import 'package:epikwallet/views/mining/miningprofitview.dart';
 import 'package:epikwallet/views/mining/miningsignupview.dart';
 import 'package:epikwallet/views/qrcode/qrcodescanview.dart';
+import 'package:epikwallet/views/thinktank/ApplyExpertView.dart';
+import 'package:epikwallet/views/thinktank/ExpertInfoView.dart';
+import 'package:epikwallet/views/uniswap/transactionview2.dart';
 import 'package:epikwallet/views/uniswap/uniswaporderlistview.dart';
 import 'package:epikwallet/views/uniswap/uniswappooladdview.dart';
 import 'package:epikwallet/views/uniswap/uniswappoolremoveview.dart';
@@ -40,14 +50,14 @@ enum ViewPushModel {
 
 class ViewGT {
   ///打开新页面 model
-  static showView(
+  static Future showView(
     BuildContext context,
     Widget view, {
     WidgetBuilder builder,
     RouteSettings routeSettings,
     ViewPushModel model = ViewPushModel.Push,
     bool maintainState = true,
-  }) {
+  }) async {
     // if (view != null)
     //   UmengAnalyticsPlugin.event("showview", label:view.toStringShort());
 
@@ -62,15 +72,12 @@ class ViewGT {
 
     switch (model) {
       case ViewPushModel.PushReplacement:
-        Navigator.pushReplacement(context, route);
-        break;
+        return Navigator.pushReplacement(context, route);
       case ViewPushModel.PushAndRemoveUntil:
-        Navigator.pushAndRemoveUntil(context, route, (route) => route == null);
-        break;
+        return Navigator.pushAndRemoveUntil(context, route, (route) => route == null);
       case ViewPushModel.Push:
       default:
-        Navigator.push(context, route);
-        break;
+       return  Navigator.push(context, route);
     }
   }
 
@@ -117,14 +124,14 @@ class ViewGT {
   }
 
   /// 挖矿报名
-  static showMiningSignupView(BuildContext context) {
-    showView(context, MiningSignupView());
-  }
+  // static showMiningSignupView(BuildContext context) {
+  //   showView(context, MiningSignupView());
+  // }
 
   /// 挖矿奖励
-  static showMiningProfitView(BuildContext context, String mining_id) {
-    showView(context, MiningProfitView(mining_id));
-  }
+  // static showMiningProfitView(BuildContext context, String mining_id) {
+  //   showView(context, MiningProfitView(mining_id));
+  // }
 
   /// 充币
   static showCurrencyDepositView(BuildContext context,
@@ -187,5 +194,43 @@ class ViewGT {
 
   static showBountyEditView(BuildContext context, BountyTask bt) {
     if (bt != null) showView(context, BountyEditView(bt));
+  }
+
+  static showApplyExpertView(BuildContext context)
+  {
+    showView(context, ApplyExpertView());
+  }
+
+  static Future showExpertInfoView(BuildContext context,Expert expert)
+  {
+   return  showView(context, ExpertInfoView(expert));
+  }
+
+  static showErc20ToEpkView(BuildContext context)
+  {
+    showView(context, Erc20ToEpkView());
+  }
+  static showTakeBountyView(BuildContext context)
+  {
+    showView(context, BountyDappListView());
+  }
+
+  static showErc20ToEpkRecordView(BuildContext context)
+  {
+    showView(context, Erc20ToEpkRecordView());
+  }
+
+  static showBountyDappTakeView(BuildContext context, Dapp dapp)
+  {
+    showView(context, BountyDappTakeView(dapp));
+  }
+
+  static showBountyDappTakeRecordView(BuildContext context, Dapp dapp){
+    showView(context, BountyDappTakeRecordView(dapp));
+  }
+
+  static showTransactionView2(BuildContext context)
+  {
+    showView(context, TransactionView2());
   }
 }

@@ -108,7 +108,7 @@ class _ExportEpikPrivateKeyViewState
   refresh() {
     setLoadingWidgetVisible(true);
     widget.walletaccount.epikWallet
-        .export(widget.walletaccount.epik_tEPK_address)
+        .export(widget.walletaccount.epik_EPK_address)
         .then((value) {
       PrivateKey = value;
       closeStateLayout();

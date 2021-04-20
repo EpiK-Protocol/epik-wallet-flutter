@@ -33,4 +33,7 @@ enum EventTag {
 
   // bounty奖励的公示列表重新编辑过
   BOUNTY_EDITED_USER_LIST,
+
+  //绑定社交账号
+  BIND_SOCIAL_ACCCOUNT,
 }

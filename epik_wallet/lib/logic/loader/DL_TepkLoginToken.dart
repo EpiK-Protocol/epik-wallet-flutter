@@ -1,5 +1,5 @@
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
-import 'package:epikwallet/logic/api/api_testnet.dart';
+import 'package:epikwallet/logic/api/api_mainnet.dart';
 import 'package:epikwallet/logic/loader/DataLoader.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
@@ -43,7 +43,10 @@ class DL_TepkLoginToken extends DataLoader<String> {
 
   @override
   void requestData(bool readCache, JResponse callback) {
-    ApiTestNet.login(account).then((httpjsonres) {
+    // ApiTestNet.login(account).then((httpjsonres) {
+    //   callback(httpjsonres, false);
+    // });
+    ApiMainNet.login(account).then((httpjsonres) {
       callback(httpjsonres, false);
     });
   }
@@ -59,9 +62,15 @@ class DL_TepkLoginToken extends DataLoader<String> {
 
     if (hjr != null && hjr.code == 0) {
       String token = StringUtils.parseString(hjr.jsonMap["token"], "");
+      String mining_id = StringUtils.parseString(hjr.jsonMap['id'], "");
       Dlog.p(TAG, "parseData  token=${token}");
+      Dlog.p(TAG, "parseData  mining_id=${mining_id}");
       if (StringUtils.isNotEmpty(token)) {
         access_token = token;
+      }
+      if(StringUtils.isNotEmpty(mining_id))
+      {
+        account.mining_id = mining_id;
       }
     }
     requestComplete(code, msg, 0, 0, null);
@@ -82,7 +91,8 @@ class DL_TepkLoginToken extends DataLoader<String> {
    *            true 重新在线获取，false 如果本地有token 就用本地的
    * @param dlcallback
    */
-  void getTokenOnline(bool request, OnRequestComplete<String> onRequestComplete) {
+  void getTokenOnline(
+      bool request, OnRequestComplete<String> onRequestComplete) {
     if (hasToken() && !request) {
       onRequestComplete(this, 0, "", 0, 0, null);
     } else {

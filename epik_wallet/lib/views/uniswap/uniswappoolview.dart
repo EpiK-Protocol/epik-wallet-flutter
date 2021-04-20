@@ -4,6 +4,7 @@ import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
+import 'package:epikwallet/main.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/data/date_util.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
@@ -490,6 +491,7 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
             style: TextStyle(
               color: Color(0xff333333),
               fontSize: 14.0,
+              fontFamily: fontFamily_def,
             ),
             children: <TextSpan>[
               TextSpan(

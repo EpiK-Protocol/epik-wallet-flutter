@@ -1,8 +1,15 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:convert/convert.dart';
+import 'package:crypto/crypto.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_bounty.dart';
+import 'package:epikwallet/logic/api/api_testnet.dart';
 import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
 import 'package:epikwallet/logic/loader/DataLoader.dart';
 import 'package:epikwallet/model/BountyTask.dart';
@@ -11,13 +18,14 @@ import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/string_utils.dart';
+import 'package:epikwallet/views/account/BindSocialAccountView.dart';
+import 'package:epikwallet/views/mainview.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/list_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:epikwallet/localstring/resstringid.dart';
 
 class BountyView extends BaseInnerWidget {
   BountyView(Key key) : super(key: key) {}
@@ -68,6 +76,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
   void onCreate() {
     eventMgr.add(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventcallback_refresh);
     eventMgr.add(EventTag.BOUNTY_EDITED_USER_LIST, eventcallback_refresh);
+    eventMgr.add(EventTag.BIND_SOCIAL_ACCCOUNT, eventcallback_refresh);
     refresh();
   }
 
@@ -76,6 +85,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
     eventMgr.remove(
         EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventcallback_refresh);
     eventMgr.remove(EventTag.BOUNTY_EDITED_USER_LIST, eventcallback_refresh);
+    eventMgr.remove(EventTag.BIND_SOCIAL_ACCCOUNT, eventcallback_refresh);
     super.dispose();
   }
 
@@ -98,8 +108,14 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
 
     setLoadingWidgetVisible(true);
 
+    // ApiTestNet.getHome().then((value) {
+    //   if (value) {
+    //     if (mounted) setState(() {});
+    //   }
+    // });
+
     DL_TepkLoginToken.getEntity().getTokenOnline(false,
-        (DataLoader dataloader, errCode, msg, p, ps, List pagedata) {
+        (DataLoader dataloader, errCode, msg, p, ps, List pagedata) async {
       if (errCode == 0 && DL_TepkLoginToken.getEntity().hasToken()) {
         // 有token
         _BountyPageState = BountyPageState.bounty;
@@ -115,18 +131,12 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
             .then((currentAccount) {
           if (mounted) setState(() {});
         });
-      } else if (errCode < 0) {
+      } else {
         // 网络请求错误
         isLoading = false;
         _BountyPageState = null;
         setErrorWidgetVisible(true);
 //        setAppBarVisible(true);
-      } else {
-        // 没有token 需要挖矿报名
-        isLoading = false;
-        _BountyPageState = BountyPageState.needmining;
-//        setAppBarVisible(false);
-        closeStateLayout();
       }
     });
   }
@@ -449,7 +459,8 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
               highlightColor: Colors.white24,
               splashColor: Colors.white24,
               onPressed: () {
-                eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX, 1);
+                eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX,
+                    main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
               },
               child: Text(
                 ResString.get(context, RSID.main_bv_8), //"去创建钱包",
@@ -475,8 +486,9 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
           children: <Widget>[
             Container(
               margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
-              child:   Text(
-                ResString.get(context, RSID.main_bv_9), //"需要先参与挖矿报名才能进行",
+              child: Text(
+                ResString.get(context, RSID.main_bv_13),
+                //RSID.main_bv_9"需要先参与挖矿报名才能进行",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.black54,
@@ -488,10 +500,11 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
               highlightColor: Colors.white24,
               splashColor: Colors.white24,
               onPressed: () {
-                eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX, 0);
+                // ViewGT.showView(context, BindSocialAccountView());
               },
               child: Text(
-                ResString.get(context, RSID.main_bv_10), //"去报名挖矿",
+                ResString.get(context, RSID.main_bv_14),
+                //RSID.main_bv_10 "去报名挖矿",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
@@ -507,8 +520,8 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
         ),
       );
     } else if (_BountyPageState == null) {
-      widget= Container();
-    }else{
+      widget = Container();
+    } else {
       widget = new ListPage(
         datalist,
         itemWidgetCreator: (context, position) {
@@ -525,7 +538,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
     }
 
     return Container(
-      padding: EdgeInsets.fromLTRB(0,  BaseFuntion.topbarheight+90, 0, 0),
+      padding: EdgeInsets.fromLTRB(0, BaseFuntion.topbarheight + 90, 0, 0),
       decoration: BoxDecoration(
         gradient: const RadialGradient(
           colors: [
@@ -712,7 +725,8 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
                   ),
                   Container(height: 5),
                   Text(
-                    "${ResString.get(context, RSID.main_bv_12)} ${item.reward}",//奖励区间:
+                    "${ResString.get(context, RSID.main_bv_12)} ${item.reward}",
+                    //奖励区间:
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.black54,

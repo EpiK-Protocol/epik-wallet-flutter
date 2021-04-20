@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/api/api_testnet.dart';
+import 'package:epikwallet/logic/api/api_wallet.dart';
 import 'package:epikwallet/main.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
@@ -91,7 +92,7 @@ class UniswapHistoryMgr {
   }
 
   Future requestState(UniswapOrder order) async {
-    HttpJsonRes httpJsonRes = await ApiTestNet.checkUniswapOrder(order);
+    HttpJsonRes httpJsonRes = await ApiWallet.checkUniswapOrder(order);
     if (httpJsonRes != null &&
         httpJsonRes.jsonMap != null &&
         httpJsonRes.jsonMap.length > 0) {

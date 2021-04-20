@@ -5,6 +5,8 @@ import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
+import 'package:epikwallet/logic/api/serviceinfo.dart';
+import 'package:epikwallet/main.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/EthOrder.dart';
 import 'package:epikwallet/model/TepkOrder.dart';
@@ -51,7 +53,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   String balance = "　";
 
   ColorTween header_colortween =
-  ColorTween(begin: Colors.white, end: Colors.black);
+      ColorTween(begin: Colors.white, end: Colors.black);
 
   LinearGradient gradient_ff = LinearGradient(
     colors: [Color(0xff2B2F35), Color(0xff1D2023)],
@@ -83,11 +85,10 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     setBackIconHinde(isHinde: false);
 
     await Future.delayed(Duration(milliseconds: 200));
-    if(StringUtils.isNotEmpty(widget?.currencyAsset?.balance)){
+    if (StringUtils.isNotEmpty(widget?.currencyAsset?.balance)) {
       balance = StringUtils.formatNumAmount(widget.currencyAsset.balance,
           point: 8, supply0: false);
-    }
-    else{
+    } else {
       balance = "--";
     }
   }
@@ -382,8 +383,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Text(
-                              "\$ ${StringUtils.formatNumAmount(
-                                  widget.currencyAsset.getUsdValue())}",
+                              "\$ ${StringUtils.formatNumAmount(widget.currencyAsset.getUsdValue())}",
                               style: TextStyle(
                                 color: ResColor.white,
                                 fontSize: 15,
@@ -516,79 +516,111 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   Widget itemWidgetBuild_tepk(TepkOrder item) {
     return Container(
       width: double.infinity,
-      height: 80,
+      // height: 80,
       padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
       color: Colors.white,
-      child: Stack(
-        children: <Widget>[
-          // 底部分割线
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: 1,
-            child: Container(
-              color: Color(0xffeeeeee),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            top: 0,
-            child: Text(
-              ResString.get(
-                  context, item.isWithdraw ? RSID.withdraw : RSID.deposit),
-              //  item.isWithdraw ? "转账" : "收款",
-              style: TextStyle(
-                fontSize: 15,
-                color: Color(0xff333333),
-              ),
-            ),
-          ),
-          Positioned(
-            right: 10,
-            top: 0,
-            child: Container(
-              height: 20,
-              padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Color(0xfff5f5f5),
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-              ),
-              child: Text(
-                ResString.get(context, RSID.completed), //"已完成",
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Color(0xff999999),
+      child:  Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                          ResString.get(
+                              context, item.isWithdraw ? RSID.withdraw : RSID.deposit),
+                          //  item.isWithdraw ? "转账" : "收款",
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Color(0xff333333),
+                  ),
                 ),
               ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            bottom: 10,
-            child: Text(
-              (item.numDirection) +
-                  StringUtils.formatNumAmount(item.value_d, point: 8),
-              style: TextStyle(
-                fontSize: 15,
-                color: Color(0xff333333),
+              Container(
+                height: 20,
+                margin: EdgeInsets.only(right: 10),
+                padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Color(0xfff5f5f5),
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                ),
+                child: Text(
+                  ResString.get(context, RSID.completed), //"已完成",
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Color(0xff999999),
+                  ),
+                ),
               ),
-            ),
+              Container(
+                width: 12,
+                margin: EdgeInsets.fromLTRB(0, 2, 0, 0),
+                child: Icon(
+                  Icons.redo,
+                  color: Colors.blue,
+                  size: 12,
+                ),
+              )
+            ],
           ),
-         Positioned(
-           right: 10,
-           bottom: 10,
-           child:Text(
-               item.time_dt==null?"":
-             DateUtil.formatDate(item.time_dt,
-                 format: DataFormats.y_mo_d_h_m),
-             style: TextStyle(
-               fontSize: 12,
-               color: Color(0xffAAAAAA),
-             ),
-           ),
-         ),
+          Container(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                          (item.numDirection) +
+                              StringUtils.formatNumAmount(item.value_d, point: 8),
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Color(0xff333333),
+                  ),
+                ),
+              ),
+              Text(
+                DateUtil.formatDateMs(item.time_ts*1000,
+                    format: DataFormats.y_mo_d_h_m),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(0xffAAAAAA),
+                ),
+              ),
+            ],
+          ),
+
+          Container(
+            height: 5,
+          ),
+
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                // width: 40,
+                padding: EdgeInsets.only(right: 5),
+                child:  Text(
+                  item.isWithdraw ? "To:" : "From:",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Color(0xff333333),
+                  ),
+                ),
+              ),
+              Expanded(child:Text(
+                item.isWithdraw ? item.to : item.from,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(0xff333333),
+                ),
+              ),
+              ),
+            ],
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 14),
+            height: 1,
+            color: Color(0xffeeeeee),
+          ),
         ],
       ),
     );
@@ -633,6 +665,15 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                   ),
                 ),
               ),
+              Container(
+                width: 12,
+                margin: EdgeInsets.fromLTRB(0, 2, 0, 0),
+                child: Icon(
+                  Icons.redo,
+                  color: Colors.blue,
+                  size: 12,
+                ),
+              )
             ],
           ),
           Container(height: 10),
@@ -658,35 +699,36 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
               ),
             ],
           ),
-          if (StringUtils.isNotEmpty(item?.hash))
-            Container(
-              padding: EdgeInsets.only(top: 5),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    child: Text(
-                      "txhash:${item.hash}",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Color(0xff333333),
-                      ),
-                    ),
+
+          Container(
+            height: 5,
+          ),
+
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                // width: 40,
+                padding: EdgeInsets.only(right: 5),
+                child:  Text(
+                  item.isWithdraw ? "To:" : "From:",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Color(0xff333333),
                   ),
-                  Container(
-                    width: 12,
-                    margin: EdgeInsets.fromLTRB(5, 3, 0, 0),
-                    child: Icon(
-                      Icons.redo,
-                      color: Colors.blue,
-                      size: 12,
-                    ),
-                  )
-                ],
+                ),
               ),
-            ),
+              Expanded(child:Text(
+                item.isWithdraw ? item.to : item.from,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(0xff333333),
+                ),
+              ),
+              ),
+            ],
+          ),
+
           Container(
             margin: EdgeInsets.only(top: 14),
             height: 1,
@@ -699,7 +741,8 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
 
   bool hasRefresh = false;
 
-  String lastTime;
+  // String lastTime;
+  int lastEpkEndHeight=0;
   int page = 1;
   int pageSize = 20;
 
@@ -713,27 +756,30 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
 //    setLoadingWidgetVisible(true);
 
     page = 0;
-    lastTime = null;
+    // lastTime = null;
+    lastEpkEndHeight=0;
     setState(() {
       _ListPageDefState.type = ListPageDefStateType.LOADING;
     });
+    //lastTime: lastTime,
     EpikWalletUtils.getOrderList(AccountMgr().currentAccount,
-        widget.currencyAsset.cs, page, pageSize,
-        lastTime: lastTime)
+            widget.currencyAsset.cs, page, pageSize,
+            epkHeight: lastEpkEndHeight,)
         .then((data) {
       dataCallback(data);
     });
   }
 
   bool get usePage {
-    return widget?.currencyAsset?.cs != CurrencySymbol.tEPK;
+    return widget?.currencyAsset?.cs != CurrencySymbol.EPK;
   }
 
   bool get isFirstPage {
-    return usePage ? (page == 0) : (lastTime == null);
+    return usePage ? (page == 0) : (lastEpkEndHeight == 0);
   }
 
-  dataCallback(List data) {
+  dataCallback(Map<String,dynamic> retmap) {
+    List data = retmap["list"];
     if (data != null) {
       // 请求成功
       if (isFirstPage) {
@@ -745,21 +791,22 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
       data_list_item.addAll(data);
 
       if (/*widget.currencyAsset.cs != CurrencySymbol.tEPK &&*/
-      data.length >= pageSize) {
+          data.length >= pageSize) {
         hasMore = true;
         if (usePage) {
           page += 1;
         } else {
           Object lastitem = data?.last;
           if (lastitem != null && lastitem is TepkOrder) {
-            lastTime = lastitem.time;
+            // lastTime = lastitem.time; //
+            lastEpkEndHeight =  retmap["epkHeight"]??0;
           }
         }
       } else {
         hasMore = false;
       }
       _ListPageDefState.type =
-      data_list_item.length > 0 ? null : ListPageDefStateType.EMPTY;
+          data_list_item.length > 0 ? null : ListPageDefStateType.EMPTY;
     } else {
       showToast(ResString.get(context, RSID.request_failed)); //"请求失败);
       if (isFirstPage) {
@@ -784,11 +831,11 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
       return;
     }
     page = 0;
-    lastTime = null;
+    lastEpkEndHeight=0;//lastTime = null;
     isLoading = true;
     var data = await EpikWalletUtils.getOrderList(
         AccountMgr().currentAccount, widget.currencyAsset.cs, page, pageSize,
-        lastTime: lastTime);
+        epkHeight: lastEpkEndHeight,);//lastTime: lastTime
     dataCallback(data);
   }
 
@@ -797,7 +844,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     // if (widget.currencyAsset.cs == CurrencySymbol.tEPK) {
     //   return false;
     // } else
-      {
+    {
       bool ret = hasMore && !isLoading;
       dlog("needLoadMore = " + ret.toString());
       return ret;
@@ -810,11 +857,11 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     dlog("onLoadMore  ");
     isLoading = true;
 
-    List data = await EpikWalletUtils.getOrderList(
+    Map<String,dynamic> retmap = await EpikWalletUtils.getOrderList(
         AccountMgr().currentAccount, widget.currencyAsset.cs, page, pageSize,
-        lastTime: lastTime);
+        epkHeight:lastEpkEndHeight,);//lastTime: lastTime
 
-    dataCallback(data);
+    dataCallback(retmap);
 
     return hasMore;
   }
@@ -831,7 +878,15 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
             EthOrder _EthOrder = item;
             String hash = _EthOrder.hash;
             DeviceUtils.copyText(hash);
-            String url = "https://cn.etherscan.com/tx/$hash";
+            String url = ServiceInfo.ether_tx_web + hash;
+            ViewGT.showGeneralWebView(
+                context, ResString.get(context, RSID.berlv_4), url);
+          }else if(item is TepkOrder)
+          {
+            TepkOrder _TepkOrder = item;
+            String cid = _TepkOrder.cid;
+            DeviceUtils.copyText(cid);
+            String url = ServiceInfo.epik_msg_web + cid;
             ViewGT.showGeneralWebView(
                 context, ResString.get(context, RSID.berlv_4), url);
           }

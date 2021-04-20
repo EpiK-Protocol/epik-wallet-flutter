@@ -57,7 +57,7 @@ class EthOrder {
 
   checkSelf(String selfaddress)
   {
-    isWithdraw = from==selfaddress;
+    isWithdraw = from?.toLowerCase()==selfaddress?.toLowerCase();
   }
 
   String get numDirection

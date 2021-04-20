@@ -1,3 +1,15 @@
+
+
+import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/main.dart';
+
+extension RSID_ex on RSID {
+  String get text {
+    return ResString.get(appContext, this);
+  }
+}
+
+
 enum RSID {
   //base
   doubleclickquit,
@@ -99,6 +111,7 @@ enum RSID {
   mainview_3,
   mainview_4,
   mainview_5,
+  mainview_6,
   //MiningView 首页_挖矿
   main_mv_1,
   main_mv_2,
@@ -137,6 +150,8 @@ enum RSID {
   main_bv_10,
   main_bv_11,
   main_bv_12,
+  main_bv_13,
+  main_bv_14,
 
   //----------------------------------------views.mining.*
   //MiningProfitView 预挖收益
@@ -298,6 +313,10 @@ enum RSID {
   bexv_14,
   bexv_15,
   bexv_16,
+  bexv_17,
+  bexv_18,
+  bexv_19,
+  bexv_20,
 
   //----------------------------------------logic.*
   //UniswapHistoryMgr.dart

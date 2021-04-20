@@ -3,6 +3,7 @@ import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
+import 'package:epikwallet/views/mainview.dart';
 import 'package:epikwallet/views/uniswap/uniswapview.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:flutter/cupertino.dart';
@@ -206,7 +207,7 @@ class TransactionViewState extends BaseInnerWidgetState<TransactionView> {
 
   onClickUniswap() {
     if (AccountMgr().currentAccount == null) {
-      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX, 1);
+      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX,  main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
       return;
     }
 

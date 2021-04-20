@@ -10,6 +10,7 @@ import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
 import 'package:epikwallet/logic/api/api_testnet.dart';
+import 'package:epikwallet/logic/api/api_wallet.dart';
 import 'package:epikwallet/main.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/currencytype.dart';
@@ -20,6 +21,7 @@ import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
+import 'package:epikwallet/views/mainview.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -588,7 +590,7 @@ class UniswapExchangeViewState
 
   calcToAmount() {
     if (widget?.walletAccount?.hdwallet == null) {
-      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX, 1);
+      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX,  main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
       return;
     }
 
@@ -690,6 +692,7 @@ class UniswapExchangeViewState
             style: TextStyle(
               color: Color(0xff333333),
               fontSize: 14.0,
+              fontFamily: fontFamily_def,
             ),
             children: <TextSpan>[
               TextSpan(
@@ -740,7 +743,7 @@ class UniswapExchangeViewState
 
   onClickExchange() {
     if (widget?.walletAccount?.hdwallet == null) {
-      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX, 1);
+      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX,  main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
       return;
     }
 
@@ -852,7 +855,7 @@ class UniswapExchangeViewState
 
     DateTime dt_end = DateTime.now();
     DateTime dt_start = dt_end.subtract(Duration(days: days));
-    HttpJsonRes hjr = await ApiTestNet.getUniswapEpkKline(dt_start, dt_end);
+    HttpJsonRes hjr = await ApiWallet.getUniswapEpkKline(dt_start, dt_end);
 
     // 服务器返回的时间是东8区时间， -8为UTC  再+本地
     int time_offset =

@@ -123,6 +123,7 @@ abstract class BaseWidgetState<T extends BaseWidget> extends State<T>
   closeInput() {
     try {
       FocusScope.of(context).requestFocus(new FocusNode());
+      dlog("closeInput");
     } catch (e) {
       print(e);
     }
@@ -138,5 +139,6 @@ abstract class BaseWidgetState<T extends BaseWidget> extends State<T>
   void onResume() {
     // TODO: implement onResume
     dlog("onResume");
+    DeviceUtils.changeNavigationColor(navigationColor);
   }
 }

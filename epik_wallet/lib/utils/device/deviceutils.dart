@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
 /// 安卓和ios设备信息获取类，相关信息 可见文章 https://blog.csdn.net/weixin_34389926/article/details/88834125
 class DeviceUtils {
@@ -120,21 +121,36 @@ class DeviceUtils {
   }
 
   static const SystemUiOverlayStyle system_bar_light = SystemUiOverlayStyle(
-    systemNavigationBarColor: Color(0xFFffffff), // 底部虚拟按键、触摸条的背景色
-    systemNavigationBarDividerColor: Color(0xFFffffff),
-    statusBarColor: null, // 顶部状态栏颜色
-    systemNavigationBarIconBrightness: Brightness.light,
+    //顶部状态栏
+    statusBarColor: null,
+    //Android M 6.0 api23 状态栏背景色
     statusBarIconBrightness: Brightness.light,
+    //Android M 6.0 状态栏图标文字黑白
     statusBarBrightness: Brightness.dark,
+    //ios 状态栏 黑白
+    //底部导航栏
+    systemNavigationBarColor: Color(0xFFffffff),
+    //Android O 8.0 api26 底部虚拟按键背景色
+    systemNavigationBarDividerColor: Color(0xFFffffff),
+    //Android P 9.0 api28  底部虚拟按键与app的分割线颜色
+    systemNavigationBarIconBrightness:
+        Brightness.dark, //Android O 8.0 api26 底部虚拟按键图标黑白
   );
 
   static const SystemUiOverlayStyle system_bar_dark = SystemUiOverlayStyle(
-    systemNavigationBarColor: Color(0xFFffffff),
-    systemNavigationBarDividerColor: Color(0xFFffffff),
     statusBarColor: null,
-    systemNavigationBarIconBrightness: Brightness.light,
+    //Android M 6.0 api23 状态栏背景色
     statusBarIconBrightness: Brightness.dark,
+    //Android M 6.0 状态栏图标文字黑白
     statusBarBrightness: Brightness.light,
+    //ios 状态栏 黑白
+
+    systemNavigationBarColor: Color(0xFFffffff),
+    //Android O 8.0 api26 底部虚拟按键背景色
+    systemNavigationBarDividerColor: Color(0xFFffffff),
+    //Android P 9.0 api28  底部虚拟按键与app的分割线颜色
+    systemNavigationBarIconBrightness:
+        Brightness.dark, //Android O 8.0 api26 底部虚拟按键图标黑白
   );
 
   static SystemUiOverlayStyle system_bar_current;
@@ -144,19 +160,26 @@ class DeviceUtils {
     SystemChrome.setSystemUIOverlayStyle(style);
   }
 
-  static copyText(String text)
-  {
+  static copyText(String text) {
     Clipboard.setData(ClipboardData(text: text));
   }
 
-  static Future<String> readClipboard() async
-  {
-    var text = await Clipboard.getData(Clipboard.kTextPlain);
-    if(text!=null && text is String)
-    {
-      return text.toString();
+  static Future<String> readClipboard() async {
+    ClipboardData clipboarddata = await Clipboard.getData(Clipboard.kTextPlain);
+    if (clipboarddata != null) {
+      return clipboarddata.text;
     }
     return null;
   }
 
+  ///设置android 底部系统导航栏背景色
+  static changeNavigationColor(Color color, {bool animate = false}) async {
+    try {
+      await FlutterStatusbarcolor.setNavigationBarColor(color,
+          animate: animate);
+    } on PlatformException catch (e) {
+      debugPrint("changeNavigationColor error");
+      debugPrint(e.toString());
+    }
+  }
 }

@@ -41,9 +41,9 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
 //    setAppBarTitle("收款");
 
     switch (widget.currencysymbol) {
-      case CurrencySymbol.tEPK:
+      case CurrencySymbol.EPK:
         {
-          address = widget.walletaccount.epik_tEPK_address;
+          address = widget.walletaccount.epik_EPK_address;
           break;
         }
       default:

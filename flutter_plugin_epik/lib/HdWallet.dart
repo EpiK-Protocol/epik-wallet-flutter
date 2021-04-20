@@ -367,9 +367,54 @@ class HdWallet {
   /// uniswap gas price
   Future<String> suggestGasPrice() async {
     try {
-      return await EpikPlugin.channel.invokeMethod("hd_wallet_suggestgasprice");
+      return await EpikPlugin.channel.invokeMethod("hd_wallet_suggestgasprice",);
     } catch (e) {
       print(e);
+    }
+    return null;
+  }
+
+  // 2021-03-25 新增  hd  ------------------------------
+
+  /// AccelerateTx 加速交易
+  Future<ResultObj<String>> accelerateTx(String srcTxHash, double gasRate) async {
+    try {
+      String ret =await EpikPlugin.channel.invokeMethod("hd_wallet_accelerateTx",<String, dynamic>{
+        "srcTxHash": srcTxHash,
+        "gasRate": gasRate,
+      });
+      return ResultObj<String>(data:ret);
+    } catch (e,s) {
+      print(e);
+      return ResultObj<String>.fromError(e);
+    }
+    return null;
+  }
+
+  /// CancelTx 取消交易
+  Future<String> cancelTx(String srcTxHash) async {
+    try {
+      return await EpikPlugin.channel.invokeMethod("hd_wallet_cancelTx",<String, dynamic>{
+        "srcTxHash": srcTxHash,
+      });
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  /// receipt查询交易结果
+  /// ResultObj.data
+  /// success交易成功、failed交易失败、pending交易等待中
+  Future<ResultObj<String>> receipt(String txHash) async {
+    try {
+      String ret = await EpikPlugin.channel.invokeMethod("hd_wallet_receipt",<String, dynamic>{
+          "txHash": txHash,
+        });
+      return ResultObj<String>(data:ret);
+    } catch (e,s) {
+      print(e);
+      return ResultObj<String>.fromError(e);
     }
     return null;
   }

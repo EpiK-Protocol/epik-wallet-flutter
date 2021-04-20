@@ -1,20 +1,29 @@
+import 'dart:async';
+import 'dart:ui';
+
+import 'package:epikplugin/epikplugin.dart';
+import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
+import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
+import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
+import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class BottomDialog {
-  static Future showBottomPop(BuildContext context,
-      Widget widget, {
-        double radius_top = 15,
-        Color bgColor = Colors.white,
-        bool dragClose = true, // 是否可以向下拖拽关闭
-        bool outbackClose = true, // 是否可以外部返回关闭  触摸外部阴影、back按键
-      }) {
+  static Future showBottomPop(
+    BuildContext context,
+    Widget widget, {
+    double radius_top = 15,
+    Color bgColor = Colors.white,
+    bool dragClose = true, // 是否可以向下拖拽关闭
+    bool outbackClose = true, // 是否可以外部返回关闭  触摸外部阴影、back按键
+  }) {
     return showModalBottomSheet(
         context: context,
         //可滚动 解除showModalBottomSheet最大显示屏幕一半的限制
@@ -30,19 +39,15 @@ class BottomDialog {
         builder: (BuildContext context) {
           return AnimatedPadding(
             //showModalBottomSheet 键盘弹出时自适应
-            padding: MediaQuery
-                .of(context)
-                .viewInsets, //边距（必要）
+            // padding: MediaQuery.of(context).viewInsets, //边距（必要） //键盘高度
+            padding: EdgeInsets.all(0),
             duration: const Duration(milliseconds: 100), //动画时长 （必要）
             child: Container(
               // height: 180,
               constraints: BoxConstraints(
                 minHeight: 90, //设置最小高度（必要）
                 maxHeight:
-                MediaQuery
-                    .of(context)
-                    .size
-                    .height / 1.5, //设置最大高度（必要）
+                    MediaQuery.of(context).size.height / 1.5, //设置最大高度（必要）
               ),
 //              padding: EdgeInsets.only(top: 34, bottom: 48),
 //              decoration: BoxDecoration(
@@ -226,8 +231,12 @@ class BottomDialog {
   }
 
   ///普通文本输入弹窗
-  static Future showTextInputDialog(BuildContext context,
-      String title, String oldText, String hint, int maxLength,
+  static Future showTextInputDialog(
+      BuildContext context,
+      String title,
+      String oldText,
+      String hint,
+      int maxLength,
       ValueChanged<String> callback) {
     String _text = oldText ?? "";
     TextEditingController tec = TextEditingController(text: _text);
@@ -360,6 +369,303 @@ class BottomDialog {
               ),
             ),
           ),
+        ],
+      ),
+    );
+
+    return showBottomPop(context, widget,
+        radius_top: 15, bgColor: Colors.white);
+  }
+
+  /// 交易枷锁 成功后在callback中返回新的交易hash
+  static Future showEthAccelerateTx(
+      BuildContext context, WalletAccount walletaccount, String txHash,
+      {String oldText = "", ValueChanged<String> callback}) {
+    String _text = oldText ?? "";
+    TextEditingController tec =
+        new TextEditingController.fromValue(TextEditingValue(
+      text: _text,
+      selection: new TextSelection.fromPosition(
+        TextPosition(affinity: TextAffinity.downstream, offset: _text.length),
+      ),
+    ));
+
+    String password = "";
+    TextEditingController tec_password = TextEditingController(text: password);
+
+    List<String> list_gasrate = ["1.1", "1.2", "1.3", "1.4", "1.5"];
+
+    GlobalKey<LoadingButtonState> lbtnkey = GlobalKey();
+
+    Widget widget = Container(
+      padding: EdgeInsets.fromLTRB(0, 5, 0, 20),
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
+            height: 44,
+            width: double.infinity,
+            child: Stack(
+              children: <Widget>[
+                Align(
+                  alignment: FractionalOffset.center,
+                  child: Text(
+                    "加速交易",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: FractionalOffset.centerRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      // 关闭
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      width: 44,
+                      height: 44,
+                      color: Colors.transparent,
+                      child: Icon(
+                        Icons.close,
+                        color: Color(0xff666666),
+                        size: 14,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            height: 44,
+            padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+            child: TextField(
+              autofocus: true,
+              //自动获取焦点， 自动弹出输入法
+              controller: tec,
+              textAlign: TextAlign.left,
+              keyboardType: TextInputType.text,
+              //获取焦点时,启用的键盘类型
+              maxLines: 1,
+              // 输入框最大的显示行数
+              maxLengthEnforced: true,
+              //是否允许输入的字符长度超过限定的字符长度
+              obscureText: false,
+              //是否是密码
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(20),
+                FilteringTextInputFormatter.allow(RegExpUtil.re_float),
+              ],
+              // 这里限制长度 不会有数量提示
+              decoration: InputDecoration(
+                // 以下属性可用来去除TextField的边框
+                border: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                hintText: "输入加速交易的Gas比例",
+                hintStyle: TextStyle(color: Color(0xff999999), fontSize: 16),
+              ),
+              cursorWidth: 2.0,
+              //光标宽度
+              cursorRadius: Radius.circular(2),
+              //光标圆角弧度
+              cursorColor: Colors.black,
+              //光标颜色
+              style: TextStyle(fontSize: 16, color: Color(0xff333333)),
+              onChanged: (text) {
+                _text = text;
+              },
+              onSubmitted: (value) {
+                // 当用户确定已经完成编辑时触发
+              }, // 是否隐藏输入的内容
+            ),
+          ),
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: Colors.blue,
+            indent: 25,
+            endIndent: 25,
+          ),
+          Container(
+            padding: EdgeInsets.fromLTRB(20, 5, 20, 10),
+            child: Row(
+              children: list_gasrate.map((e) {
+                return Expanded(
+                    child: LoadingButton(
+                  height: 24,
+                  text: e,
+                  textstyle: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                  margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                  bg_borderradius: BorderRadius.circular(4),
+                  onclick: (lbtn) {
+                    tec.text = e;
+                    _text = e;
+                    tec.selection = new TextSelection.fromPosition(
+                      TextPosition(
+                          affinity: TextAffinity.downstream,
+                          offset: _text.length),
+                    );
+                  },
+                ));
+              }).toList(),
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            height: 44,
+            padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+            child: TextField(
+              autofocus: true,
+              //自动获取焦点， 自动弹出输入法
+              controller: tec_password,
+              textAlign: TextAlign.left,
+              keyboardType: TextInputType.text,
+              //获取焦点时,启用的键盘类型
+              maxLines: 1,
+              // 输入框最大的显示行数
+              maxLengthEnforced: true,
+              //是否允许输入的字符长度超过限定的字符长度
+              obscureText: true,
+              //是否是密码
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(20),
+              ],
+              // 这里限制长度 不会有数量提示
+              decoration: InputDecoration(
+                // 以下属性可用来去除TextField的边框
+                border: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                hintText: ResString.get(context, RSID.dlg_bd_2),
+                //"请输入钱包密码",
+                hintStyle: TextStyle(color: Color(0xff999999), fontSize: 16),
+              ),
+              cursorWidth: 2.0,
+              //光标宽度
+              cursorRadius: Radius.circular(2),
+              //光标圆角弧度
+              cursorColor: Colors.black,
+              //光标颜色
+              style: TextStyle(fontSize: 16, color: Color(0xff333333)),
+              onChanged: (text) {
+                text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
+                password = text;
+              },
+              onSubmitted: (value) {
+                // 当用户确定已经完成编辑时触发
+              }, // 是否隐藏输入的内容
+            ),
+          ),
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: Colors.blue,
+            indent: 25,
+            endIndent: 25,
+          ),
+          LoadingButton(
+            key: lbtnkey,
+            margin: EdgeInsets.fromLTRB(25, 30, 25, 0),
+            height: 44,
+            color_bg: ResColor.main,
+            disabledColor: ResColor.main,
+            progress_color: Colors.white,
+            progress_size: 20,
+            padding: EdgeInsets.all(0),
+            text: RSID.confirm.text,
+            textstyle: const TextStyle(
+              color: ResColor.white,
+              fontSize: 15,
+            ),
+            loading: false,
+            onclick: (lbtn) async {
+              double _gasrate = StringUtils.parseDouble(_text, 0);
+
+              if (_gasrate == null ) {
+                ToastUtils.showToastCenter("请输入加速Gas比例");
+                return;
+              }
+              if( _gasrate < 1)
+              {
+                ToastUtils.showToastCenter("Gas比例需要>1");
+                return;
+              }
+              if (password != walletaccount.password) {
+                ToastUtils.showToastCenter("密码错误");
+                return;
+              }
+
+              //关闭输入法
+              try {
+                FocusScope.of(context)
+                    .requestFocus(new FocusNode());
+              } catch (e) {
+                print(e);
+              }
+
+              // 提交加速请求
+              lbtn.setLoading(true);
+
+              ResultObj<String> resultobj =
+              await walletaccount.hdwallet.accelerateTx(txHash, _gasrate);
+
+              lbtn.setLoading(false);
+
+              if (resultobj.code != 0) {
+
+                Navigator.of(context).pop();
+                Future.delayed(Duration(milliseconds: 200)).then((value){
+                  MessageDialog.showMsgDialog(
+                    context,
+                    title: RSID.tip.text,
+                    msg: "ERROR: ${resultobj?.errorMsg ?? RSID.request_failed.text}",
+                    btnLeft: RSID.confirm.text,
+                    onClickBtnLeft: (dialog) {
+                      dialog.dismiss();
+                    },
+                  );
+                });
+              }else{
+
+                Navigator.of(context).pop();
+                Future.delayed(Duration(milliseconds: 200)).then((value){
+                  MessageDialog.showMsgDialog(
+                    context,
+                    title: RSID.tip.text,
+                    msg: "加速交易已提交",
+                    btnLeft: RSID.confirm.text,
+                    onClickBtnLeft: (dialog) {
+                      dialog.dismiss();
+                    },
+                    onDismiss: (dialog) {
+                      if(callback!=null){
+                        callback(resultobj.data);
+                      }
+                    },
+                  );
+                });
+
+              }
+            },
+          )
         ],
       ),
     );

@@ -5,7 +5,7 @@ import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:package_info/package_info.dart';
 
-String code_version = "1.0.9"; //ios签发固定在1.2.5
+String code_version = "1.1.0"; //ios签发固定在1.2.5
 
 class Upgrade {
   /// 当前最新版本
@@ -46,7 +46,8 @@ class Upgrade {
 
   Future checkVersion() async {
     PackageInfo packageinfo = await PackageInfo.fromPlatform();
-    int currentversion = version2Num(packageinfo.version);
+    // int currentversion = version2Num(packageinfo.version);
+    int currentversion = version2Num(code_version);
     Dlog.p("Upgrade",
         "checkVersion currentversion=$currentversion latest_version_num=$latest_version_num required_version_num=$required_version_num");
     needUpgrade = currentversion < latest_version_num;

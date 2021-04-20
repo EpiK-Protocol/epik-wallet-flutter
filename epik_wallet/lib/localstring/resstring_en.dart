@@ -58,7 +58,7 @@ Map<RSID, String> map_en = {
   RSID.iwv_20: "Wallet import failed",//"导入失败钱包失败",
 
   //ExportEpikPrivateKeyView 导出私钥  Export private key
-  RSID.eepkv_1: "Export tEPK private key",//"导出tEPK私钥",
+  RSID.eepkv_1: "Export EPK private key",//"导出tEPK私钥",
   RSID.eepkv_2: "Copied private key",//"已复制私钥",
   RSID.eepkv_3: "Copy private key",//"复制私钥",
   RSID.eepkv_4: "Reminder",//导出提示
@@ -107,8 +107,9 @@ Map<RSID, String> map_en = {
   RSID.mainview_1: "Mining",//"挖矿",
   RSID.mainview_2: "Wallet",//"钱包",
   RSID.mainview_3: "Trade",//"交易",
-  RSID.mainview_4: "Bounty",//"赏金",//"Activitys",//活动，
-  RSID.mainview_5: "ThinkTank",//智库
+  RSID.mainview_4: "Activitys",//活动，//"Bounty",//"赏金",//
+  RSID.mainview_5: "Expert",//专家
+  RSID.mainview_6: "Minner",
 
   //MiningView 首页_挖矿 Homepage mine
   RSID.main_mv_1: "Pre-mining ranking",//"预挖排行",
@@ -152,11 +153,13 @@ Map<RSID, String> map_en = {
   RSID.main_bv_10: "To sign up for mining ",//"去报名挖矿",
   RSID.main_bv_11: "Person in charge:",//"负责人:",
   RSID.main_bv_12: "Incentive interval:",//"奖励区间:",
+  RSID.main_bv_13: "You need to bind a social account to participate in the activity",
+  RSID.main_bv_14: "To bind",
 
   //----------------------------------------views.mining.*
   //MiningProfitView 预挖收益 Pre-mining profit
   RSID.mpv_1: "Pre-mining profit",//"预挖收益",
-  RSID.mpv_2: "mined\ntEPK",//"挖出数量\ntEPK",
+  RSID.mpv_2: "mined\nEPK",//"挖出数量\ntEPK",
   RSID.mpv_3: "granted\nERC20-EPK",//"奖励数量\nERC20-EPK",
 
 //MiningSignupView 预挖报名 Register for pre-mining
@@ -318,6 +321,10 @@ Map<RSID, String> map_en = {
   RSID.bexv_15:
   "1.An ETH fee is incurred for transfers over Ethernet when redeeming scores for ERC20-EPK.\n\n2.The amount of fees is based on how much ERC20-EPK to deduct based on the ethereum gas fee and the token price in Uniswap.",//"「1」用积分兑换ERC20-EPK时，通过以太网转账会产生ETH手续费；\n\n「2」手续费数量是根据以太坊gas费用和Uniswap中的币价计算出要扣除多少ERC20-EPK。",
   RSID.bexv_16: "Currently Telegram bound：",
+  RSID.bexv_17: "Current swap ratio: %s scores = 1 EPK",//"当前兑换比例：%s 积分 = 1 EPK",
+  RSID.bexv_18: "Current EPK receiving account:",//"当前EPK收币账户：",
+  RSID.bexv_19: "Estimatedfee: %s EPK",//"预估手续费：%s EPK",
+  RSID.bexv_20: "When redeeming scores for EPK, you need to deduct the handling charge.",//"用积分兑换EPK时，需要扣除手续费",
 
   //----------------------------------------logic.*
   //UniswapHistoryMgr.dart

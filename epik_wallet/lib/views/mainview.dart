@@ -15,6 +15,7 @@ import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/screen/screen_util.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
+import 'package:epikwallet/views/MinnerView.dart';
 import 'package:epikwallet/views/ThinkTankView.dart';
 import 'package:epikwallet/views/bountyview.dart';
 import 'package:epikwallet/views/miningview.dart';
@@ -34,18 +35,19 @@ class MainView extends BaseWidget {
 }
 
 enum MainSubViewType {
-  MININGVIEW,
+  // MININGVIEW,
   WALLETVIEW,
   TRANSACTIONVIEW,
   BOUNTYVIEW,
   THINKTANKVIEW,
+  MINNER,
 }
+
+List<MainSubViewType> main_subviewTypes = [];
 
 class _MainViewState extends BaseWidgetState<MainView> {
   int currentIndex = 0;
   int lastIndex = -1;
-
-  List<MainSubViewType> subviewTypes = [];
 
   final GlobalKey<ScaffoldState> key_scaffold = GlobalKey();
   List<GlobalKey<BaseInnerWidgetState>> keyList;
@@ -65,26 +67,27 @@ class _MainViewState extends BaseWidgetState<MainView> {
           [SystemUiOverlay.top, SystemUiOverlay.bottom]);
     });
 
-    subviewTypes = [
-      if (!Upgrade.has_10100()) MainSubViewType.MININGVIEW,
+    main_subviewTypes = [
+      // MainSubViewType.MININGVIEW,
       MainSubViewType.WALLETVIEW,
-      MainSubViewType.TRANSACTIONVIEW,
+      MainSubViewType.MINNER,
+      // MainSubViewType.TRANSACTIONVIEW,
+      MainSubViewType.THINKTANKVIEW,
       MainSubViewType.BOUNTYVIEW,
-      if (Upgrade.has_10100()) MainSubViewType.THINKTANKVIEW,
     ];
 
-    currentIndex = subviewTypes.indexOf(MainSubViewType.WALLETVIEW);
+    currentIndex = main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW);
 
     keyList = <GlobalKey<BaseInnerWidgetState>>[];
 
     subViews = <BaseInnerWidget>[];
 
-    subviewTypes.forEach((subtype) {
+    main_subviewTypes.forEach((subtype) {
       GlobalKey key = GlobalKey();
       switch (subtype) {
-        case MainSubViewType.MININGVIEW:
-          subViews.add(MiningView(key));
-          return;
+        // case MainSubViewType.MININGVIEW:
+        //   subViews.add(MiningView(key));
+        //   return;
         case MainSubViewType.WALLETVIEW:
           subViews.add(WalletView(key));
           return;
@@ -96,6 +99,9 @@ class _MainViewState extends BaseWidgetState<MainView> {
           return;
         case MainSubViewType.THINKTANKVIEW:
           subViews.add(ThinkTankView(key));
+          return;
+        case MainSubViewType.MINNER:
+          subViews.add(MinnerView(key));
           return;
       }
     });
@@ -157,14 +163,14 @@ class _MainViewState extends BaseWidgetState<MainView> {
 
     List<BottomNavigationBarItem> ret = [];
 
-    subviewTypes.forEach((subtype) {
+    main_subviewTypes.forEach((subtype) {
       switch (subtype) {
-        case MainSubViewType.MININGVIEW:
-          ret.add(BottomNavigationBarItem(
-            icon: Icon(Icons.bubble_chart),
-            label: ResString.get(context, RSID.mainview_1), //'挖矿',
-          ));
-          break;
+        // case MainSubViewType.MININGVIEW:
+        //   ret.add(BottomNavigationBarItem(
+        //     icon: Icon(Icons.bubble_chart),
+        //     label: ResString.get(context, RSID.mainview_1), //'挖矿',
+        //   ));
+        //   break;
         case MainSubViewType.WALLETVIEW:
           ret.add(BottomNavigationBarItem(
             icon: Icon(Icons.account_balance_wallet),
@@ -187,6 +193,12 @@ class _MainViewState extends BaseWidgetState<MainView> {
           ret.add(BottomNavigationBarItem(
             icon: Icon(Icons.school), //insights awesome psychology
             label: ResString.get(context, RSID.mainview_5), //'智库',
+          ));
+          break;
+        case MainSubViewType.MINNER:
+          ret.add(BottomNavigationBarItem(
+            icon: Icon(Icons.bubble_chart),
+            label: ResString.get(context, RSID.mainview_6), //'矿工',
           ));
           break;
       }

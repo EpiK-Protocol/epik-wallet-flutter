@@ -167,7 +167,7 @@ class StringUtils {
   }
 
   /// 格式化金额，中文缩略成w(万),其他语言缩略成M(百万)\K(千)
-  static String formatNumAmountLocaleUnit(num amount, BuildContext context,
+  static String formatNumAmountLocaleUnit(double amount, BuildContext context,
       {int point: 2, bool supply0 = false}) {
     String languageCode="zh";
 
@@ -204,4 +204,28 @@ class StringUtils {
             u;
     return ret;
   }
+
+  ///100000123456789012345678 ->  100000.123456789012345678
+  static String bigNumDownsizing(String num,{int bit=18})
+  {
+    num = num?.trim();
+    if(num!=null&& num.length>bit && num.contains(".")==false)
+    {
+      List<String> list =  num.split("");
+      int index = list.length-18;
+      list.insert(index, ".");
+      if(index==0)
+        list.insert(0,"0");
+      String ret = list.join();
+      return ret;
+    }
+    return num;
+  }
+
+  static double bigNumDownsizingDouble(String num,{int bit=18})
+  {
+    String text =  bigNumDownsizing(num,bit: 18);
+    return parseDouble(text, 0);
+  }
+
 }

@@ -1,7 +1,7 @@
 import 'package:epikwallet/model/prices.dart';
 
 enum CurrencySymbol {
-  tEPK,
+  EPK,
   EPKerc20,
   ETH,
   USDT,
@@ -10,7 +10,7 @@ enum CurrencySymbol {
 extension aaaa on CurrencySymbol {
   String get iconUrl {
     switch (this) {
-      case CurrencySymbol.tEPK:
+      case CurrencySymbol.EPK:
         return "assets/img/ic_epk.png";
       case CurrencySymbol.EPKerc20:
         return "assets/img/ic_epk.png";
@@ -36,7 +36,7 @@ extension aaaa on CurrencySymbol {
   }
 
   CurrencySymbol get networkType {
-    if (this != CurrencySymbol.tEPK) return CurrencySymbol.ETH;
+    if (this != CurrencySymbol.EPK) return CurrencySymbol.ETH;
     return null;
   }
 
@@ -52,7 +52,7 @@ extension aaaa on CurrencySymbol {
 
     if (priceslist != null) {
       switch (this) {
-        case CurrencySymbol.tEPK:
+        case CurrencySymbol.EPK:
           return Prices(price: "0", dPrice: 0);
         case CurrencySymbol.EPKerc20:
           return find(priceslist, "ERC20_EPK") ?? Prices(price: "0", dPrice: 0);

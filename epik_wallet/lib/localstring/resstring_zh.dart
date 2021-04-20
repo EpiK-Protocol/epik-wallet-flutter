@@ -58,11 +58,11 @@ Map<RSID, String> map_zh = {
   RSID.iwv_20: "导入失败钱包失败",
 
   //ExportEpikPrivateKeyView 导出私钥
-  RSID.eepkv_1: "导出tEPK私钥",
+  RSID.eepkv_1: "导出EPK私钥",
   RSID.eepkv_2: "已复制私钥",
   RSID.eepkv_3: "复制私钥",
   RSID.eepkv_4: "温馨提示",//导出提示
-  RSID.eepkv_5: "您正在导出的是测试币 tEPK的私钥，tEPK是测试网测试币，仅在测试网预挖中使用，没有交易价值。泄露此私钥有可能会导致测试币的损失，但与钱包的ERC-20资产无关，用户无需担心ERC-20钱包里的资产安全。同时，在代接矿机中，代接方有可能需要tEPK的私钥来进行代理抵押。",
+  RSID.eepkv_5: "您正在导出的是测试币 EPK的私钥，EPK是测试网测试币，仅在测试网预挖中使用，没有交易价值。泄露此私钥有可能会导致测试币的损失，但与钱包的ERC-20资产无关，用户无需担心ERC-20钱包里的资产安全。同时，在代接矿机中，代接方有可能需要EPK的私钥来进行代理抵押。",
 
   //AccountDetailView 钱包账号详情
   RSID.adv_1: "修改密码",
@@ -107,8 +107,9 @@ Map<RSID, String> map_zh = {
   RSID.mainview_1: "挖矿",
   RSID.mainview_2: "钱包",
   RSID.mainview_3: "交易",
-  RSID.mainview_4: "赏金",//"活动",
-  RSID.mainview_5: "智库",
+  RSID.mainview_4: "活动",//"赏金",
+  RSID.mainview_5: "专家",
+  RSID.mainview_6: "矿工",
 
   //MiningView 首页_挖矿
   RSID.main_mv_1: "预挖排行",
@@ -152,11 +153,13 @@ Map<RSID, String> map_zh = {
   RSID.main_bv_10: "去报名挖矿",
   RSID.main_bv_11: "负责人:",
   RSID.main_bv_12: "奖励区间:",
+  RSID.main_bv_13: "参加活动需要绑定社交账号",
+  RSID.main_bv_14: "去绑定",
 
   //----------------------------------------views.mining.*
   //MiningProfitView 预挖收益
   RSID.mpv_1: "预挖收益",
-  RSID.mpv_2: "挖出数量\ntEPK",
+  RSID.mpv_2: "挖出数量\nEPK",
   RSID.mpv_3: "奖励数量\nERC20-EPK",
 
   //MiningSignupView 预挖报名
@@ -319,6 +322,10 @@ Map<RSID, String> map_zh = {
   RSID.bexv_15:
       "「1」用积分兑换ERC20-EPK时，通过以太网转账会产生ETH手续费；\n\n「2」手续费数量是根据以太坊gas费用和Uniswap中的币价计算出要扣除多少ERC20-EPK。",
   RSID.bexv_16: "当前绑定Telegram：",
+  RSID.bexv_17: "当前兑换比例：%s 积分 = 1 EPK",
+  RSID.bexv_18: "当前EPK收币账户：",
+  RSID.bexv_19: "预估手续费：%s EPK",
+  RSID.bexv_20: "用积分兑换EPK时，需要扣除手续费",
 
   //----------------------------------------logic.*
   //UniswapHistoryMgr.dart

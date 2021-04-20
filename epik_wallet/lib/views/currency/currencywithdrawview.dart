@@ -49,9 +49,9 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
     resizeToAvoidBottomPadding = true;
 
     switch (widget.currencyAsset.cs) {
-      case CurrencySymbol.tEPK:
+      case CurrencySymbol.EPK:
         {
-          from_address = widget.walletaccount.epik_tEPK_address;
+          from_address = widget.walletaccount.epik_EPK_address;
           break;
         }
       default:
@@ -354,7 +354,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
       ),
     ));
 
-    if (widget.currencyAsset.cs != CurrencySymbol.tEPK) {
+    if (widget.currencyAsset.cs != CurrencySymbol.EPK) {
       views.add(
         Container(
           width: double.infinity,
@@ -460,7 +460,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
           touchOutClose: false,
           backClose: false,
           onShow: () {
-            if (widget.currencyAsset.cs == CurrencySymbol.tEPK) {
+            if (widget.currencyAsset.cs == CurrencySymbol.EPK) {
               doWithdraw_epik();
             } else {
               doWithdraw_hd();

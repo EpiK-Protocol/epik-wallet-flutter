@@ -4,6 +4,7 @@ import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/api/api_bounty.dart';
+import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
 import 'package:epikwallet/model/BountyUserSwap.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
@@ -328,7 +329,7 @@ class BountyExchangeRecordListviewState
     String hash = datalist[position].tx_hash;
     DeviceUtils.copyText(hash);
 //    https://cn.etherscan.com/address/0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D
-    String url = "https://cn.etherscan.com/tx/$hash";
+    String url = ServiceInfo.ether_tx_web+hash;
     ViewGT.showGeneralWebView(context, ResString.get(context, RSID.berlv_4), url);
   }
 

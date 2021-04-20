@@ -126,7 +126,8 @@ class HttpUtil {
             "  params=" +
             params.toString() +
             " formData=" +
-            formData.toString());
+            formData.toString()+
+            " data="+data?.toString());
 
         if (params != null) {
           params.keys.forEach((key) {

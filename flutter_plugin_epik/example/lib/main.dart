@@ -208,12 +208,12 @@ class _MyAppState extends State<MyApp> {
                 minWidth: double.infinity,
                 padding: EdgeInsets.all(15),
                 child: Text(
-                    "epik导出私钥\nPrivateKey=${epikPrivateKey?.privateKey}\ntype=${epikPrivateKey?.keyType}"),
+                    "epik导出私钥\nPrivateKey=${epikPrivateKey}"),
                 onPressed: () {
                   if (Epik.epikWallet != null && Epik.epikWallet.address!=null) {
                     Epik.epikWallet.export(Epik.epikWallet.address).then((privatekey) {
                       setState(() {
-                        epikPrivateKey = privatekey;
+                        epikPrivateKey = privatekey ;
                       });
                     });
                   }
@@ -232,5 +232,5 @@ class _MyAppState extends State<MyApp> {
   String hdwallet_rpc;
   String hdwallet_eth_path, hdwallet_eth_address, hdwallet_eth_balance;
   String epikwallet_rpc,epikwallet_rpc_token, epikwallet_address;
-  PrivateKey epikPrivateKey;
+  String epikPrivateKey;
 }

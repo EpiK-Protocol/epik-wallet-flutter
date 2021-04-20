@@ -11,6 +11,7 @@ import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/sp_utils/sp_utils.dart';
+import 'package:epikwallet/utils/string_utils.dart';
 
 class ServiceInfo {
   static const String TAG = "ServiceInfo";
@@ -31,6 +32,11 @@ class ServiceInfo {
 
   static final String schemename = "epikwallet";
 
+  ///epik 浏览器 查看交易详情
+  static final String epik_msg_web="http://116.63.146.223:4001/#/message/detail?cid="; //todo
+  ///eth 浏览器 查看交易详情
+  static final String ether_tx_web="https://cn.etherscan.com/tx/";
+
   static String get server_wechat{
     return  serverConfig?.SignWeixin ?? "Sigrid_EpiK";//"fengyunbzb";
   }
@@ -40,7 +46,8 @@ class ServiceInfo {
   }
 
   static String get HOST {
-    return serverConfig?.WalletAPI ?? _HOST;
+    // return serverConfig?.WalletAPI ?? _HOST;
+    return "http://116.63.146.223:3003"; //todo
   }
 
   static String get hd_RpcUrl {
@@ -108,5 +115,23 @@ class ServiceInfo {
         });
       }
     }
+  }
+
+  // 拼接http url
+  static String makeHostUrl(String url) {
+    return makeUrl(HOST.trim(), url);
+  }
+
+  static String makeUrl(String host,String url) {
+
+    if (StringUtils.isEmpty(url)) return host;
+    if (url.startsWith("http")) return url;
+
+    if (host.endsWith("/")) host = host.substring(0, host.length - 1);
+
+    if (url.startsWith("/"))
+      return host + url;
+    else
+      return host + "/" + url;
   }
 }

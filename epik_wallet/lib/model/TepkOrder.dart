@@ -1,15 +1,9 @@
 import 'package:epikwallet/utils/string_utils.dart';
 
 class TepkOrder {
-//  "version":0,
-//  "from":"t1445lrdsqjoq4x7hw2r254ni3yhmk337h27mrczq",
-//  "to":"t1zhwmbbibecmxdoxzslsoi6vzszgaxdur33tuxmq",
-//  "value":"33123456000000000000",
-//  "nonce":1,
-//  "gas_limit":10000,
-//  "gas_price":"0",
-//  "method":"0",
-//  "params":""
+
+
+
 
   int version = 0;
   String from = "";
@@ -19,31 +13,27 @@ class TepkOrder {
   int nonce = 0;
   double gas_limit = 0;
   String gas_price = "0";
-  String method = "";
+  String gas_FeeCap="0";
+  String gas_Premium="0";
+  int method = 0;
   String params = "";
-
-  TepkOrder.fromJson(Map<String, dynamic> json) {
-    try {
-      version = json["version"] ?? 0;
-      from = json["from"] ?? "";
-      to = json["to"] ?? "";
-      value = json["value"] ?? "0";
-      double v = StringUtils.parseDouble(value, 0);
-      value_d = v / 1000000000000000000;
-      nonce = json["nonce"] ?? 0;
-      gas_limit = StringUtils.parseDouble(json["gas_limit"], 0);
-      gas_price = json["gas_price"] ?? "0";
-      method = json["method"] ?? "0";
-      params = json["params"] ?? "";
-    } catch (e,s) {
-      print(e);
-      print(s);
-    }
-  }
-
   int height;
   String time;
+  int time_ts=0;//时间戳 秒
   DateTime time_dt;
+
+  Map<String,dynamic> cidmap=null;
+
+  String actorName="";
+
+  // 0 是ok 已完成  其他都是错误失败
+  int exitCode=null;
+  double gas_Used = 0;
+
+  TepkOrder.fromJsonTepk(Map<String, dynamic> jsonobj) {
+    // parseTestNet(jsonobj);
+    parseMainNet(jsonobj);
+  }
 
   // Height: 195007,
   // Time: "2020-12-28T04:04:27Z"
@@ -58,33 +48,105 @@ class TepkOrder {
   //   Method: 2,
   //   Params: "hVgxA66ZqKiuBAUAVODNaPW2CXt5MxTRInsfyTGuvyBqiyzI8qwiSBWVbfbZcSiPLc+Vb1gxA66ZqKiuBAUAVODNaPW2CXt5MxTRInsfyTGuvyBqiyzI8qwiSBWVbfbZcSiPLc+VbwFYJgAkCAESIGrQGoPrwFHUHD3dJiPb7wNPgTXj9l5W/Bgd0mlzZYwYgA=="
   // }
-  TepkOrder.fromJsonTepk(Map<String, dynamic> jsonobj) {
+  // parseTestNet(Map<String, dynamic> jsonobj)
+  // {
+  //   try {
+  //     height = jsonobj["Height"];
+  //     time = jsonobj["Time"]; //"2020-12-28T04:04:27Z"
+  //     time_dt = DateTime.tryParse(time);
+  //     Map<String, dynamic> json = jsonobj["Message"];
+  //     version = json["Version"] ?? 0;
+  //     from = json["From"] ?? "";
+  //     to = json["To"] ?? "";
+  //     value = json["Value"] ?? "0";
+  //     double v = StringUtils.parseDouble(value, 0);
+  //     value_d = v / 1000000000000000000;
+  //     nonce = json["Nonce"] ?? 0;
+  //     gas_limit = StringUtils.parseDouble(json["GasLimit"], 0);
+  //     gas_price = json["GasPrice"] ?? "0";
+  //     method = json["Method"].toString();
+  //     params = json["Params"] ?? "";
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
+
+  // {
+  // "Timestamp": 1617005840,
+
+  // "Message": {
+      // "Version": 0,
+      // "To": "f3rivtflppymnpcmqn66a4wb6gx3323xcybw7bop72zj5qbi2hyr7hxznxgocxbj4kwqij2vr55kijc6ls7jva",
+      // "From": "f3rxzadet3wfoxecn7hxjhs7ztpugks2nhqxmi6oogkgxxvkdai5ojrpvuerlds4zpnllsvz2pshxg4za2eeiq",
+      // "Nonce": 21348,
+      // "Value": "123450000000000000",
+      // "GasLimit": 476268,
+      // "GasFeeCap": "100",
+      // "GasPremium": "0",
+      // "Method": 0,
+      // "Params": null,
+      // "CID": {
+          // "/": "bafy2bzacedjrysucjmo2s4dcrtwdnuful5thsqa4hufrl2dc76pqmfbadcrck"
+          // }
+  // },
+
+  // "ActorName": "epk/1/account",
+  // "Receipt": {
+  // "ExitCode": 0,
+  // "Return": null,
+  // "GasUsed": 468468
+  // }
+  // }
+  parseMainNet(Map<String, dynamic> jsonobj)
+  {
     try {
-      height = jsonobj["Height"];
-      time = jsonobj["Time"]; //"2020-12-28T04:04:27Z"
-      time_dt = DateTime.tryParse(time);
+
+      time_ts = jsonobj["Timestamp"];
+      time_dt = DateTime.fromMillisecondsSinceEpoch(time_ts*1000);
+
       Map<String, dynamic> json = jsonobj["Message"];
       version = json["Version"] ?? 0;
-      from = json["From"] ?? "";
       to = json["To"] ?? "";
-      value = json["Value"] ?? "0";
-      double v = StringUtils.parseDouble(value, 0);
-      value_d = v / 1000000000000000000;
+      from = json["From"] ?? "";
       nonce = json["Nonce"] ?? 0;
+      value = json["Value"] ?? "0";
+      value = StringUtils.bigNumDownsizing(value);
+      value_d = StringUtils.parseDouble(value, 0);
       gas_limit = StringUtils.parseDouble(json["GasLimit"], 0);
-      gas_price = json["GasPrice"] ?? "0";
-      method = json["Method"].toString();
+      // gas_price = json["GasPrice"] ?? "0";
+      gas_FeeCap = json["GasFeeCap"];
+      gas_Premium = json["GasPremium"];
+      method = json["Method"];
       params = json["Params"] ?? "";
+      cidmap=json["CID"];
+
+      actorName=jsonobj["ActorName"];
+
+      Map<String, dynamic> j_Receipt = jsonobj["Receipt"];
+      if(j_Receipt!=null)
+      {
+        exitCode = j_Receipt["ExitCode"];
+        gas_Used = StringUtils.parseDouble(j_Receipt["GasUsed"], 0);
+      }
     } catch (e) {
       print(e);
     }
+  }
+
+  String get cid{
+    String ret="";
+    if(cidmap!=null)
+    {
+      ret = cidmap["/"] ?? "";
+    }
+    return ret;
   }
 
   bool isWithdraw = true;
 
   checkSelf(String selfaddress)
   {
-    isWithdraw = from==selfaddress;
+    isWithdraw = from?.toLowerCase()==selfaddress?.toLowerCase();
   }
 
   String get numDirection

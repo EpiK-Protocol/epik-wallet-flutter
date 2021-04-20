@@ -66,6 +66,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     {
       headerlist.add("exchange_epk");
       headerlist.add( "hunter_reward");
+      headerlist.add( "uniswap");
     }
   }
 
@@ -327,6 +328,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
               child: InkWell(
                 onTap: () {
                   // todo
+                  ViewGT.showErc20ToEpkView(context);
                 },
                 child: Stack(
                   children: [
@@ -372,6 +374,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
               child: InkWell(
                 onTap: () {
                   // todo
+                  ViewGT.showTakeBountyView(context);
                 },
                 child: Stack(
                   children: [
@@ -379,6 +382,51 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                       alignment: FractionalOffset(0.5, 0.5),
                       child: Text(
                         "领取赏金猎人奖励",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: ResColor.black,
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: FractionalOffset(0.95, 0.5),
+                      child: Icon(
+                        Icons.arrow_forward_ios_outlined,
+                        size: 12,
+                        color: ResColor.black_50,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+        break;
+      case "uniswap":
+        {
+          return Container(
+            margin: EdgeInsets.fromLTRB(15, 0, 15, 15),
+            height: 50,
+            width: double.infinity,
+            child: Card(
+              clipBehavior: Clip.antiAlias,
+              color: ResColor.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              ),
+              elevation: 10,
+              shadowColor: ResColor.black_20,
+              child: InkWell(
+                onTap: () {
+                  ViewGT.showTransactionView2(context);
+                },
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: FractionalOffset(0.5, 0.5),
+                      child: Text(
+                        "ERC20-EPK Uniswap 交易",
                         style: TextStyle(
                           fontSize: 16,
                           color: ResColor.black,
