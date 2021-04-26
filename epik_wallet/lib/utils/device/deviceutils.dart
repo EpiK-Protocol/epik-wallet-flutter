@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:device_info/device_info.dart';
+import 'package:epikwallet/utils/res_color.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
@@ -129,12 +131,12 @@ class DeviceUtils {
     statusBarBrightness: Brightness.dark,
     //ios 状态栏 黑白
     //底部导航栏
-    systemNavigationBarColor: Color(0xFFffffff),
+    systemNavigationBarColor: ResColor.b_1,//Color(0xFFffffff),
     //Android O 8.0 api26 底部虚拟按键背景色
-    systemNavigationBarDividerColor: Color(0xFFffffff),
+    systemNavigationBarDividerColor:Colors.transparent,// Color(0xFFffffff),
     //Android P 9.0 api28  底部虚拟按键与app的分割线颜色
     systemNavigationBarIconBrightness:
-        Brightness.dark, //Android O 8.0 api26 底部虚拟按键图标黑白
+        Brightness.light, //Android O 8.0 api26 底部虚拟按键图标黑白
   );
 
   static const SystemUiOverlayStyle system_bar_dark = SystemUiOverlayStyle(
@@ -145,17 +147,36 @@ class DeviceUtils {
     statusBarBrightness: Brightness.light,
     //ios 状态栏 黑白
 
-    systemNavigationBarColor: Color(0xFFffffff),
+    systemNavigationBarColor: ResColor.b_1,//Color(0xFFffffff),
     //Android O 8.0 api26 底部虚拟按键背景色
-    systemNavigationBarDividerColor: Color(0xFFffffff),
+    systemNavigationBarDividerColor: Colors.transparent,//Color(0xFFffffff),
     //Android P 9.0 api28  底部虚拟按键与app的分割线颜色
     systemNavigationBarIconBrightness:
-        Brightness.dark, //Android O 8.0 api26 底部虚拟按键图标黑白
+        Brightness.light, //Android O 8.0 api26 底部虚拟按键图标黑白
   );
+
+  static const SystemUiOverlayStyle system_bar_main = SystemUiOverlayStyle(
+    statusBarColor: null,
+    //Android M 6.0 api23 状态栏背景色
+    statusBarIconBrightness: Brightness.light,
+    //Android M 6.0 状态栏图标文字黑白
+    statusBarBrightness: Brightness.dark,
+    //ios 状态栏 黑白
+
+    systemNavigationBarColor: ResColor.b_2,//Color(0xFFffffff),
+    //Android O 8.0 api26 底部虚拟按键背景色
+    systemNavigationBarDividerColor: Colors.transparent,//Color(0xFFffffff),
+    //Android P 9.0 api28  底部虚拟按键与app的分割线颜色
+    systemNavigationBarIconBrightness:
+    Brightness.light, //Android O 8.0 api26 底部虚拟按键图标黑白
+  );
+
+
 
   static SystemUiOverlayStyle system_bar_current;
 
   static setSystemBarStyle(SystemUiOverlayStyle style) {
+    print("setSystemBarStyle ${style.systemNavigationBarColor}");
     system_bar_current = style;
     SystemChrome.setSystemUIOverlayStyle(style);
   }
@@ -175,6 +196,8 @@ class DeviceUtils {
   ///设置android 底部系统导航栏背景色
   static changeNavigationColor(Color color, {bool animate = false}) async {
     try {
+      print("changeNavigationColor");
+      print(color);
       await FlutterStatusbarcolor.setNavigationBarColor(color,
           animate: animate);
     } on PlatformException catch (e) {

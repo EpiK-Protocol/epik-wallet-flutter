@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/_base_widget.dart';
@@ -11,6 +12,7 @@ import 'package:epikwallet/model/Expert.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/ClickUtil.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
+import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
@@ -35,7 +37,7 @@ class ExpertInfoView extends BaseWidget {
 
 class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
   TextEditingController _tec_vote;
-  TextEditingController _tec_rescind; 
+  TextEditingController _tec_rescind;
   TextEditingController _tec_withdraw;
 
   String text_vote = "";
@@ -47,22 +49,32 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
 
   @override
   void initState() {
+    viewSystemUiOverlayStyle = DeviceUtils.system_bar_main
+        .copyWith(systemNavigationBarColor: ResColor.b_4);
     super.initState();
-    resizeToAvoidBottomPadding = true;
+    setTopBarVisible(false);
+    setAppBarVisible(false);
+    setAppBarBackColor(Colors.transparent);
+    setTopBarBackColor(Colors.transparent);
 
+    resizeToAvoidBottomPadding = true;
     refresh();
 
-    AccountMgr().currentAccount.epikWallet.voterInfo(AccountMgr().currentAccount.epik_EPK_address).then((value) {
+    AccountMgr()
+        .currentAccount
+        .epikWallet
+        .voterInfo(AccountMgr().currentAccount.epik_EPK_address)
+        .then((value) {
       dlog(value.data);
     });
-  //   {
-  //     "UnlockingVotes":"0",
-  //   "UnlockedVotes":"0",
-  //   "WithdrawableRewards":"9161620797299401600",
-  //   "Candidates":{
-  //   "f01000":"42785500000000000000"
-  //   }
-  // }
+    //   {
+    //     "UnlockingVotes":"0",
+    //   "UnlockedVotes":"0",
+    //   "WithdrawableRewards":"9161620797299401600",
+    //   "Candidates":{
+    //   "f01000":"42785500000000000000"
+    //   }
+    // }
   }
 
   ExpertInfo expertinfo;
@@ -70,18 +82,19 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
   refresh() async {
     setLoadingWidgetVisible(true);
 
-    ResultObj<String> resultObj = await AccountMgr().currentAccount.epikWallet.expertInfo(widget.expert.id);
+    ResultObj<String> resultObj = await AccountMgr()
+        .currentAccount
+        .epikWallet
+        .expertInfo(widget.expert.id);
     dlog(resultObj?.data);
     // {"Owner":"f0101","Type":0,"ApplicationHash":"","Proposer":"f0101","ApplyNewOwner":"f0101","ApplyNewOwnerEpoch":-1,"LostEpoch":-1,"Status":2,"StatusDesc":"normal(votes not enough)","ImplicatedTimes":0,"DataCount":368,"CurrentVotes":"59542785500000000000000","RequiredVotes":"100000000000000000000000","TotalReward":"4406399999999999999987"}
-    if(resultObj.isSuccess && resultObj.data!=null)
-    {
-      Map<String,dynamic> json = jsonDecode(resultObj.data);
+    if (resultObj.isSuccess && resultObj.data != null) {
+      Map<String, dynamic> json = jsonDecode(resultObj.data);
       widget.expert.parseJsonFromExpertInfo(json);
     }
 
-
     HttpJsonRes hjr =
-        await ApiMainNet.expertProfile(hash : widget.expert.application_hash);
+        await ApiMainNet.expertProfile(hash: widget.expert.application_hash);
     if (hjr.code == 0) {
       expertinfo = ExpertInfo.fromJson(hjr.jsonMap["profile"]);
       closeStateLayout();
@@ -101,9 +114,8 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    setAppBarTitle("领域专家");
+    setAppBarTitle("领域专家详情");
   }
-
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -136,142 +148,207 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
 
     List<Widget> items = [];
 
-    if (expertinfo != null) {
-      items.addAll([
-        // 姓名 领域
-        Wrap(
-          direction: Axis.horizontal,
-          //排列方向，默认水平方向排列
-          alignment: WrapAlignment.start,
-          //子控件在主轴上的对齐方式
-          spacing: 0.0,
-          //主轴上子控件中间的间距
-          runAlignment: WrapAlignment.start,
-          //子控件在交叉轴上的对齐方式
-          runSpacing: 10,
-          //交叉轴上子控件之间的间距
-          crossAxisAlignment: WrapCrossAlignment.end,
-          //交叉轴上子控件的对齐方式
-          verticalDirection: VerticalDirection.down,
-          //垂直方向上子控件的其实位置
+    items.add(
+      Container(
+        width: double.infinity,
+        height: 51,
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            Text(
-              "姓名: ",
-              style: TextStyle(
-                color: ResColor.black,
-                fontSize: 16,
+            Positioned(
+              top: -20,
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 60,
+                    height: 60,
+                    padding: EdgeInsets.all(9.75),
+                    decoration: BoxDecoration(
+                      color: Color(0xff333333),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Image.asset(
+                      "assets/img/ic_main_menu_expert_s.png",
+                      width: 40.5,
+                      height: 40.5,
+                    ),
+                  ),
+                ],
               ),
             ),
-            Text(
-              expertinfo.name ?? "",
-              style: TextStyle(
-                color: ResColor.black,
-                fontSize: 16,
+            Positioned(
+              right: -20.05,
+              top: -0.05,
+              height: 30,
+              child: Container(
+                padding: EdgeInsets.fromLTRB(14, 0, 14, 0),
+                decoration: BoxDecoration(
+                  gradient: ResColor.lg_3,
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular((20)),
+                      bottomLeft: Radius.circular((20))),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "ID:${widget.expert.id}",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
         ),
+      ),
+    );
 
-        Container(height: 20),
+    if (expertinfo != null) {
+      items.addAll([
+        // 姓名 领域
+        Container(
+          width: double.infinity,
+          child: Text(
+            expertinfo.name ?? "--",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: ResColor.white,
+              fontSize: 17,
+            ),
+          ),
+        ),
+
+        Container(height: 10),
 
         // 姓名 领域
-        Wrap(
-          direction: Axis.horizontal,
-          //排列方向，默认水平方向排列
-          alignment: WrapAlignment.start,
-          //子控件在主轴上的对齐方式
-          spacing: 0.0,
-          //主轴上子控件中间的间距
-          runAlignment: WrapAlignment.start,
-          //子控件在交叉轴上的对齐方式
-          runSpacing: 10,
-          //交叉轴上子控件之间的间距
-          crossAxisAlignment: WrapCrossAlignment.end,
-          //交叉轴上子控件的对齐方式
-          verticalDirection: VerticalDirection.down,
-          //垂直方向上子控件的其实位置
-          children: [
-            Text(
-              "领域: ",
-              style: TextStyle(
-                color: ResColor.black,
-                fontSize: 16,
+        Center(
+          child: Wrap(
+            direction: Axis.horizontal,
+            //排列方向，默认水平方向排列
+            alignment: WrapAlignment.center,
+            //子控件在主轴上的对齐方式
+            spacing: 0.0,
+            //主轴上子控件中间的间距
+            runAlignment: WrapAlignment.center,
+            //子控件在交叉轴上的对齐方式
+            runSpacing: 0,
+            //交叉轴上子控件之间的间距
+            crossAxisAlignment: WrapCrossAlignment.center,
+            //交叉轴上子控件的对齐方式
+            verticalDirection: VerticalDirection.down,
+            //垂直方向上子控件的其实位置
+            children: [
+              Text(
+                "领域: ",
+                style: TextStyle(
+                  color: ResColor.white,
+                  fontSize: 12,
+                ),
               ),
-            ),
-            Text(
-              expertinfo.domain ?? "",
-              style: TextStyle(
-                color: ResColor.black,
-                fontSize: 16,
+              Text(
+                expertinfo.domain ?? "--",
+                style: TextStyle(
+                  color: ResColor.white,
+                  fontSize: 12,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
 
         Container(height: 20),
 
         // 个人简介
-        Text(
-          "个人简介",
-          style: TextStyle(
-            color: ResColor.black,
-            fontSize: 16,
-          ),
-        ),
-        Text(
-          expertinfo.introduction,
-          //"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nxxxxxxxxxxxxxxxxx\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nxxxxxxxxxxxxxxxxx\n",
-          style: TextStyle(
-            color: ResColor.black,
-            fontSize: 14,
-          ),
+        Row(
+          children: [
+            Container(
+              width: 4,
+              height: 14,
+              color: ResColor.o_1,
+              margin: EdgeInsets.only(right: 6),
+            ),
+            Text(
+              "个人简介",
+              style: TextStyle(
+                color: ResColor.white,
+                fontSize: 14,
+              ),
+            ),
+          ],
         ),
 
-        Container(height: 20),
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.only(top: 20, bottom: 20),
+          child: Text(
+            expertinfo.introduction,
+            //"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nxxxxxxxxxxxxxxxxx\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nxxxxxxxxxxxxxxxxx\n",
+            style: TextStyle(
+              color: ResColor.white_80,
+              fontSize: 14,
+            ),
+          ),
+        ),
 
         // 开源协议
-        Text(
-          "开源协议",
-          style: TextStyle(
-            color: ResColor.black,
-            fontSize: 16,
+        if (StringUtils.isNotEmpty(expertinfo.license))
+          Row(
+            children: [
+              Container(
+                width: 4,
+                height: 14,
+                color: ResColor.o_1,
+                margin: EdgeInsets.only(right: 6),
+              ),
+              Text(
+                "开源协议",
+                style: TextStyle(
+                  color: ResColor.white,
+                  fontSize: 14,
+                ),
+              ),
+            ],
           ),
-        ),
-        Text(
-          expertinfo.license,
-          //"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nxxxxxxxxxxxxxxxxx\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nxxxxxxxxxxxxxxxxx\n",
-          style: TextStyle(
-            color: ResColor.black,
-            fontSize: 14,
+        if (StringUtils.isNotEmpty(expertinfo.license))
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.only(top: 20, bottom: 20),
+            child: Text(
+              expertinfo.license,
+              //"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nxxxxxxxxxxxxxxxxx\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nxxxxxxxxxxxxxxxxx\n",
+              style: TextStyle(
+                color: ResColor.white_80,
+                fontSize: 14,
+              ),
+            ),
           ),
-        ),
 
         Container(height: 20),
       ]);
     }
 
     items.addAll([
-      Text(
-        "ID: ${widget.expert.id}",
-        style: TextStyle(
-          color: ResColor.black,
-          fontSize: 16,
-        ),
-      ),
-      Container(height: 20),
-      Text(
-        "收益: ${StringUtils.formatNumAmount(widget.expert.income)} EPK",
-        style: TextStyle(
-          color: ResColor.black,
-          fontSize: 16,
-        ),
-      ),
-      Container(height: 20),
+      // Text(
+      //   "ID: ${widget.expert.id}",
+      //   style: TextStyle(
+      //     color: ResColor.black,
+      //     fontSize: 16,
+      //   ),
+      // ),
+      // Container(height: 20),
       Text(
         "状态: ${widget.expert?.status_e?.getString()}",
         style: TextStyle(
-          color: ResColor.black,
-          fontSize: 16,
+          color: ResColor.white,
+          fontSize: 14,
         ),
       ),
       Container(height: 20),
@@ -294,20 +371,249 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
           Text(
             "投票: ",
             style: TextStyle(
-              color: ResColor.black,
-              fontSize: 16,
+              color: ResColor.white,
+              fontSize: 14,
             ),
           ),
           Text(
             "${StringUtils.formatNumAmount(widget.expert.vote)}${widget.expert.getRequiredVoteStr()} EPK",
             style: TextStyle(
-              color: ResColor.black,
-              fontSize: 16,
+              color: ResColor.o_1,
+              fontSize: 14,
             ),
           ),
         ],
       ),
       Container(height: 20),
+      Text(
+        "收益: ${StringUtils.formatNumAmount(widget.expert.income)} EPK",
+        style: TextStyle(
+          color: ResColor.white,
+          fontSize: 14,
+        ),
+      ),
+      Container(height: 20),
+    ]);
+
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      child: Stack(
+        children: [
+          // header card
+          Container(
+            width: double.infinity,
+            height: getAppBarHeight() + getTopBarHeight() + 128,
+            padding: EdgeInsets.only(top: getTopBarHeight()),
+            decoration: BoxDecoration(
+              gradient: ResColor.lg_1,
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+            ),
+            child: Column(
+              children: [
+                getAppBar(),
+              ],
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            top: getAppBarHeight() + getTopBarHeight(),
+            bottom: 0,
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    child: Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.fromLTRB(30, 40, 30, 40),
+                      padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                      decoration: BoxDecoration(
+                        color: ResColor.b_3,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: items,
+                      ),
+                    ),
+                  ),
+                ),
+                getBottomBar(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getBottomBar() {
+    List<Widget> views = [];
+
+    views.add(Container(
+      height: 50,
+      child: Row(
+        children: [
+          Text(
+            "已投 EPK",
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.white,
+            ),
+          ),
+          Container(width: 7),
+          Expanded(
+            child: Text(
+              "0.0000 TODO",
+              style: TextStyle(
+                fontSize: 24,
+                color: ResColor.o_1,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ));
+
+    views.add(Container(
+      width: double.infinity,
+      height: 0.5,
+      decoration: BoxDecoration(
+        gradient: ResColor.lg_4,
+      ),
+    ));
+
+    views.addAll(getInputs());
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.fromLTRB(
+          30, 0, 30, 30 + MediaQuery.of(context).padding.bottom),
+      decoration: BoxDecoration(
+        color: ResColor.b_4,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: views,
+      ),
+    );
+  }
+
+  Widget getInputWidget({
+    TextEditingController tec,
+    String btnText,
+    ValueChanged<String> onChanged,
+    VoidCallback btnOnClick,
+    VoidCallback maxOnClick,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                height: 33,
+                child: Row(
+                  children: [
+                    // textfield
+                    Expanded(
+                        child: Container(
+                      height: 33,
+                      child: TextField(
+                        controller: tec,
+                        keyboardType:
+                            TextInputType.numberWithOptions(decimal: true),
+                        maxLines: 1,
+                        obscureText: false,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExpUtil.re_float)
+                        ],
+                        // 这里限制长度 不会有数量提示
+                        decoration: InputDecoration(
+                          // 以下属性可用来去除TextField的边框
+                          border: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          focusedErrorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.fromLTRB(0, -15, 0, 0),
+                          // hintText: ResString.get(context, RSID.bexv_5),
+                          hintText: "请输入数额",
+                          hintStyle:
+                              TextStyle(color: Colors.white, fontSize: 17),
+                        ),
+                        cursorWidth: 2.0,
+                        //光标宽度
+                        cursorRadius: Radius.circular(2),
+                        //光标圆角弧度
+                        cursorColor: Colors.white,
+                        //光标颜色
+                        style: TextStyle(fontSize: 17, color: Colors.white),
+                        onChanged: onChanged,
+                      ),
+                    )),
+                    // max
+                    if (maxOnClick != null)
+                      InkWell(
+                        onTap: () {
+                          // 全部
+                          if (ClickUtil.isFastDoubleClick()) return;
+                          maxOnClick();
+                        },
+                        child: Text(
+                          " Max ",
+                          style: TextStyle(
+                            color: ResColor.white,
+                            fontSize: 17,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Divider(
+                height: 0.5,
+                thickness: 0.5,
+                color: ResColor.white_20,
+              ),
+            ],
+          ),
+        ),
+        LoadingButton(
+          margin: EdgeInsets.fromLTRB(30, 0, 0, 0),
+          height: 40,
+          width: 100,
+          gradient_bg: ResColor.lg_1,
+          color_bg: Colors.transparent,
+          disabledColor: Colors.transparent,
+          progress_size: 20,
+          padding: EdgeInsets.all(0),
+          bg_borderradius: BorderRadius.circular(4),
+          text: btnText,
+          textstyle: const TextStyle(
+            color: ResColor.white,
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+          ),
+          loading: false,
+          onclick: (lbtn) {
+            btnOnClick();
+          },
+        ),
+      ],
+    );
+  }
+
+  List<Widget> getInputs() {
+    List<Widget> inputs = [
+      Container(height: 15),
       getInputWidget(
         btnText: "追加投票",
         tec: _tec_vote,
@@ -353,127 +659,9 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
           btnOnClick: () {
             onClickVoteWithdraw();
           }),
-    ]);
+    ];
 
-    return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
-      child: Container(
-        constraints: BoxConstraints(
-          minHeight: getScreenHeight() -
-              MediaQuery.of(context).padding.top -
-              MediaQuery.of(context).padding.bottom,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: items,
-        ),
-      ),
-    );
-  }
-
-  Widget getInputWidget({
-    TextEditingController tec,
-    String btnText,
-    ValueChanged<String> onChanged,
-    VoidCallback btnOnClick,
-    VoidCallback maxOnClick,
-  }) {
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                height: 33,
-                child: Row(
-                  children: [
-                    // textfield
-                    Expanded(
-                        child: Container(
-                      height: 33,
-                      child: TextField(
-                        controller: tec,
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
-                        maxLines: 1,
-                        obscureText: false,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExpUtil.re_float)
-                        ],
-                        // 这里限制长度 不会有数量提示
-                        decoration: InputDecoration(
-                          // 以下属性可用来去除TextField的边框
-                          border: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          focusedErrorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          contentPadding: EdgeInsets.fromLTRB(0, -15, 0, 0),
-                          // hintText: ResString.get(context, RSID.bexv_5),
-                          //"请输入兑换数量",
-                          hintStyle:
-                              TextStyle(color: Colors.black54, fontSize: 16),
-                        ),
-                        cursorWidth: 2.0,
-                        //光标宽度
-                        cursorRadius: Radius.circular(2),
-                        //光标圆角弧度
-                        cursorColor: Colors.blue,
-                        //光标颜色
-                        style: TextStyle(fontSize: 16, color: Colors.black),
-                        onChanged: onChanged,
-                      ),
-                    )),
-                    // max
-                    if (maxOnClick != null)
-                      InkWell(
-                        onTap: () {
-                          // 全部
-                          if (ClickUtil.isFastDoubleClick()) return;
-                          maxOnClick();
-                        },
-                        child: Text(
-                          " Max ",
-                          style: TextStyle(
-                            color: ResColor.black_80,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              Divider(
-                height: 0.5,
-                thickness: 0.5,
-                color: ResColor.main,
-              ),
-            ],
-          ),
-        ),
-        LoadingButton(
-          margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
-          height: 34,
-          width: 100,
-          color_bg: ResColor.main,
-          disabledColor: Colors.white24,
-          progress_color: Colors.white,
-          progress_size: 20,
-          padding: EdgeInsets.all(0),
-          text: btnText,
-          textstyle: const TextStyle(
-            color: ResColor.white,
-            fontSize: 15,
-          ),
-          loading: false,
-          onclick: (lbtn) {
-            btnOnClick();
-          },
-        ),
-      ],
-    );
+    return inputs;
   }
 
   void onClickVoteSend() {
@@ -496,17 +684,18 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
           touchOutClose: false,
           backClose: false,
           onShow: () async {
-            ResultObj<String> resultObj =  await AccountMgr().currentAccount.epikWallet.voteSend(widget.expert.id, text_vote);
+            ResultObj<String> resultObj = await AccountMgr()
+                .currentAccount
+                .epikWallet
+                .voteSend(widget.expert.id, text_vote);
             closeLoadDialog();
-            if(resultObj.isSuccess)
-            {
-              String hash =resultObj.data;
+            if (resultObj.isSuccess) {
+              String hash = resultObj.data;
               dlog(hash);
               showToast("已投票");
-            }else{
-              showToast(resultObj?.errorMsg?? RSID.request_failed.text);
+            } else {
+              showToast(resultObj?.errorMsg ?? RSID.request_failed.text);
             }
-
           },
         );
       },
@@ -526,24 +715,25 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
     BottomDialog.showPassWordInputDialog(
       context,
       AccountMgr().currentAccount.password,
-          (password) {
+      (password) {
         //点击确定回调 , 已验证密码, 并且已关闭dialog
         showLoadDialog(
           "",
           touchOutClose: false,
           backClose: false,
           onShow: () async {
-            ResultObj<String> resultObj =  await AccountMgr().currentAccount.epikWallet.voteRescind(widget.expert.id, text_rescind);
+            ResultObj<String> resultObj = await AccountMgr()
+                .currentAccount
+                .epikWallet
+                .voteRescind(widget.expert.id, text_rescind);
             closeLoadDialog();
-            if(resultObj.isSuccess)
-            {
-              String hash =resultObj.data;
+            if (resultObj.isSuccess) {
+              String hash = resultObj.data;
               dlog(hash);
               showToast("已撤回");
-            }else{
-              showToast(resultObj?.errorMsg?? RSID.request_failed.text);
+            } else {
+              showToast(resultObj?.errorMsg ?? RSID.request_failed.text);
             }
-
           },
         );
       },
@@ -563,24 +753,25 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
     BottomDialog.showPassWordInputDialog(
       context,
       AccountMgr().currentAccount.password,
-          (password) {
+      (password) {
         //点击确定回调 , 已验证密码, 并且已关闭dialog
         showLoadDialog(
           "",
           touchOutClose: false,
           backClose: false,
           onShow: () async {
-            ResultObj<String> resultObj =  await AccountMgr().currentAccount.epikWallet.voteWithdraw(AccountMgr().currentAccount.epik_EPK_address);
+            ResultObj<String> resultObj = await AccountMgr()
+                .currentAccount
+                .epikWallet
+                .voteWithdraw(AccountMgr().currentAccount.epik_EPK_address);
             closeLoadDialog();
-            if(resultObj.isSuccess)
-            {
-              String hash =resultObj.data;
+            if (resultObj.isSuccess) {
+              String hash = resultObj.data;
               dlog(hash);
               showToast("已提取");
-            }else{
-              showToast(resultObj?.errorMsg?? RSID.request_failed.text);
+            } else {
+              showToast(resultObj?.errorMsg ?? RSID.request_failed.text);
             }
-
           },
         );
       },

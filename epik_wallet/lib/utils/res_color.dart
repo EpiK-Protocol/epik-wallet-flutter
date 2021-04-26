@@ -1,7 +1,6 @@
 import 'package:flutter/painting.dart';
 
-class ResColor{
-
+class ResColor {
   static const Color black = Color(0xFF000000);
   static const Color black_0 = Color(0x00000000);
   static const Color black_10 = Color(0x19000000);
@@ -28,6 +27,45 @@ class ResColor{
 
   static const Color main = Color(0xff10052f);
   static const Color main_1 = Color(0xff1e183c);
-  static const Color main_2 =  Color(0x7f10052f);
-  static const Color progress = Color(0xff10052f);
+  static const Color main_2 = Color(0x7f10052f);
+  static const Color progress = Color(0xffF28955);//Color(0xff10052f);
+
+  static const Color b_1 = Color(0xff141414);
+  static const Color b_2 = Color(0xff1d1d1d);
+  static const Color b_3 = Color(0xff1f1f1f);
+  static const Color b_4 = Color(0xff252525);
+
+
+  static const Color o_1 = Color(0xffF7AB00);
+
+  static const Color r_1 = Color(0xffF24F30);
+  static const Color g_1 = Color(0xff4ADE2C);
+
+  static const Color warning_bg=Color(0xff331F1F);
+  static const Color warning_text=Color(0xffF24F30);
+
+  static const LinearGradient lg_1 = LinearGradient(
+    colors: [Color(0xffF2C17C), Color(0xffD1851A)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient lg_2 = LinearGradient(
+    colors: [Color(0xff4CC8D4), Color(0xff4698F0)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+  static const LinearGradient lg_3 = LinearGradient(
+    colors: [Color(0xffE6AC5B), Color(0xffCC5252)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient lg_4 = LinearGradient(
+    colors: [Color(0xffF28955), Color(0x00F28955)],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+
+
 }

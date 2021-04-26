@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
@@ -16,12 +17,11 @@ import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/screen/screen_util.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
 import 'package:epikwallet/views/MinnerView.dart';
-import 'package:epikwallet/views/ThinkTankView.dart';
+import 'package:epikwallet/views/ExpertView.dart';
 import 'package:epikwallet/views/bountyview.dart';
-import 'package:epikwallet/views/miningview.dart';
-import 'package:epikwallet/views/transactionview.dart';
 import 'package:epikwallet/views/walletmenu.dart';
 import 'package:epikwallet/views/walletview.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -37,7 +37,7 @@ class MainView extends BaseWidget {
 enum MainSubViewType {
   // MININGVIEW,
   WALLETVIEW,
-  TRANSACTIONVIEW,
+  // TRANSACTIONVIEW,
   BOUNTYVIEW,
   THINKTANKVIEW,
   MINNER,
@@ -59,12 +59,17 @@ class _MainViewState extends BaseWidgetState<MainView> {
   void initState() {
     isTopBarShow = false; //状态栏是否显示
     isAppBarShow = false; //导航栏是否显示
+
+    viewSystemUiOverlayStyle= DeviceUtils.system_bar_main;
+
+    navigationColor = ResColor.b_2;
     super.initState();
 
     Future.delayed(Duration(milliseconds: 200)).then((value) {
       // 恢复顶部状态栏和底部按钮栏
       SystemChrome.setEnabledSystemUIOverlays(
           [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+
     });
 
     main_subviewTypes = [
@@ -91,14 +96,14 @@ class _MainViewState extends BaseWidgetState<MainView> {
         case MainSubViewType.WALLETVIEW:
           subViews.add(WalletView(key));
           return;
-        case MainSubViewType.TRANSACTIONVIEW:
-          subViews.add(TransactionView(key));
-          return;
+        // case MainSubViewType.TRANSACTIONVIEW:
+        //   subViews.add(TransactionView(key));
+        //   return;
         case MainSubViewType.BOUNTYVIEW:
           subViews.add(BountyView(key));
           return;
         case MainSubViewType.THINKTANKVIEW:
-          subViews.add(ThinkTankView(key));
+          subViews.add(ExpertView(key));
           return;
         case MainSubViewType.MINNER:
           subViews.add(MinnerView(key));
@@ -116,22 +121,34 @@ class _MainViewState extends BaseWidgetState<MainView> {
 
     Scaffold scaffold = Scaffold(
       key: key_scaffold,
-      body: IndexedStack(
-        index: currentIndex,
-        children: subViews,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        items: getBottomNavigationBarItems(),
-        currentIndex: currentIndex,
-        selectedItemColor: ResColor.main,
-        //Color(0xff000000),
-        unselectedItemColor: ResColor.main_2,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        selectedFontSize: 11,
-        unselectedFontSize: 11,
-        iconSize: 21,
+      backgroundColor: Colors.transparent,
+      // body: IndexedStack(
+      //   index: currentIndex,
+      //   children: subViews,
+      // ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   backgroundColor: Colors.white,
+      //   items: getBottomNavigationBarItems(),
+      //   currentIndex: currentIndex,
+      //   selectedItemColor: ResColor.main,
+      //   //Color(0xff000000),
+      //   unselectedItemColor: ResColor.main_2,
+      //   onTap: _onItemTapped,
+      //   type: BottomNavigationBarType.fixed,
+      //   selectedFontSize: 11,
+      //   unselectedFontSize: 11,
+      //   iconSize: 21,
+      // ),
+      body: Column(
+        children: [
+          Expanded(
+            child: IndexedStack(
+              index: currentIndex,
+              children: subViews,
+            ),
+          ),
+          getDarkBottomNavigationBar(),
+        ],
       ),
       endDrawer: Drawer(
         child: WalletMenu(),
@@ -177,22 +194,22 @@ class _MainViewState extends BaseWidgetState<MainView> {
             label: ResString.get(context, RSID.mainview_2), //'钱包',
           ));
           break;
-        case MainSubViewType.TRANSACTIONVIEW:
-          ret.add(BottomNavigationBarItem(
-            icon: Icon(OMIcons.swapHorizontalCircle),
-            label: ResString.get(context, RSID.mainview_3), //'交易',
-          ));
-          break;
+        // case MainSubViewType.TRANSACTIONVIEW:
+        //   ret.add(BottomNavigationBarItem(
+        //     icon: Icon(OMIcons.swapHorizontalCircle),
+        //     label: ResString.get(context, RSID.mainview_3), //'交易',
+        //   ));
+        //   break;
         case MainSubViewType.BOUNTYVIEW:
           ret.add(BottomNavigationBarItem(
             icon: Icon(OMIcons.assignmentTurnedIn),
-            label: ResString.get(context, RSID.mainview_4), //'赏金',
+            label: ResString.get(context, RSID.mainview_4), //'赏金', 活动
           ));
           break;
         case MainSubViewType.THINKTANKVIEW:
           ret.add(BottomNavigationBarItem(
             icon: Icon(Icons.school), //insights awesome psychology
-            label: ResString.get(context, RSID.mainview_5), //'智库',
+            label: ResString.get(context, RSID.mainview_5), //'智库', 专家
           ));
           break;
         case MainSubViewType.MINNER:
@@ -202,6 +219,154 @@ class _MainViewState extends BaseWidgetState<MainView> {
           ));
           break;
       }
+    });
+
+    return ret;
+  }
+
+  Widget getDarkBottomNavigationBar() {
+    return SafeArea(
+      bottom: true,
+      top: false,
+      child: Container(
+        decoration: BoxDecoration(
+          color: ResColor.b_2,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        height: 60,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: getDarkBottomNavigationBarItems(),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> getDarkBottomNavigationBarItems() {
+    // 导航按钮
+
+    Widget buildItem(
+        {MainSubViewType type, String img_n, String img_s, String label}) {
+      int index = main_subviewTypes.indexOf(type);
+      bool seleted = currentIndex == index;
+      return InkWell(
+        highlightColor: Colors.transparent,
+        splashColor: Colors.transparent,
+        onTap: () {
+          //todo
+          _onItemTapped(index);
+        },
+        child: Stack(
+          children: [
+            if (seleted)
+              Align(
+                alignment: FractionalOffset(0.5, 0),
+                child: Container(
+                  margin: EdgeInsets.only(top: 2),
+                  width: 44,
+                  height: 44,
+                  decoration:  BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xff333333),
+                        Color(0x00333333),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                ),
+              ),
+            Align(
+              alignment: FractionalOffset(0.5, 0),
+              child: Container(
+                width: 30,
+                height: 30,
+                margin: EdgeInsets.only(top: 7),
+                child: Image.asset(
+                  seleted ? img_s : img_n,
+                  width: 30,
+                  height: 30,
+                ),
+              ),
+            ),
+            Align(
+              alignment: FractionalOffset(0.5, 0),
+              child: Container(
+                margin: EdgeInsets.only(top: 42),
+                child: Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: seleted
+                      ? const TextStyle(
+                          fontSize: 11,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        )
+                      : const TextStyle(
+                          fontSize: 11,
+                          color: Color(0xff999999),
+                        ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    ;
+
+    List<Widget> ret = [];
+
+    main_subviewTypes.forEach((subtype) {
+      String img_n;
+      String img_s;
+      String label;
+      switch (subtype) {
+        // case MainSubViewType.MININGVIEW:
+        //   ret.add(BottomNavigationBarItem(
+        //     icon: Icon(Icons.bubble_chart),
+        //     label: ResString.get(context, RSID.mainview_1), //'挖矿',
+        //   ));
+        //   break;
+        case MainSubViewType.WALLETVIEW:
+          img_n = "assets/img/ic_main_menu_wallet_n.png";
+          img_s = "assets/img/ic_main_menu_wallet_s.png";
+          label = ResString.get(context, RSID.mainview_2); //'钱包',
+          break;
+        // case MainSubViewType.TRANSACTIONVIEW:
+        //   ret.add(BottomNavigationBarItem(
+        //     icon: Icon(OMIcons.swapHorizontalCircle),
+        //     label: ResString.get(context, RSID.mainview_3), //'交易',
+        //   ));
+        //   break;
+        case MainSubViewType.BOUNTYVIEW:
+          img_n = "assets/img/ic_main_menu_bounty_n.png";
+          img_s = "assets/img/ic_main_menu_bounty_s.png";
+          label = ResString.get(context, RSID.mainview_4); //'赏金', 活动
+          break;
+        case MainSubViewType.THINKTANKVIEW:
+          img_n = "assets/img/ic_main_menu_expert_n.png";
+          img_s = "assets/img/ic_main_menu_expert_s.png";
+          label = ResString.get(context, RSID.mainview_5); //'智库', 专家
+          break;
+        case MainSubViewType.MINNER:
+          // img_n="assets/img/ic_main_menu_minner_n.png";
+          // img_s="assets/img/ic_main_menu_minner_s.png";
+          img_n = "assets/img/ic_main_menu_swap_n.png";
+          img_s = "assets/img/ic_main_menu_swap_s.png";
+          label = ResString.get(context, RSID.mainview_6); //'矿工',
+          break;
+      }
+      ret.add(Expanded(
+          child: buildItem(
+            type: subtype,
+        img_n: img_n,
+        img_s: img_s,
+        label: label,
+      )));
     });
 
     return ret;
@@ -224,8 +389,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
   @override
   void onCreate() {
     super.onCreate();
-    DeviceUtils.setSystemBarStyle(DeviceUtils.system_bar_dark);
-
+    dlog("onCreate");
     eventMgr.add(EventTag.CHANGE_MAINVIEW_INDEX, eventCallback);
     eventMgr.add(EventTag.MAIN_RIGHT_DRAWER, eventCallback_rightdrawer);
 
@@ -256,6 +420,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
   @override
   void onResume() {
     super.onResume();
+    dlog("onResume");
   }
 
   void _onItemTapped(int index) {

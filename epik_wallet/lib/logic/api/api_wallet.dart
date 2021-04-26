@@ -39,7 +39,8 @@ class ApiWallet {
 //  }
 //  ###
   static Future<HttpJsonRes> Erc2EpkSubmitTx(String tx_hash) async {
-    String url = ServiceInfo.HOST + "/wallet/submitTx";
+    // String url = ServiceInfo.HOST + "/wallet/submitTx";
+    String url =  ServiceInfo.makeHostUrl("/wallet/submitTx");
     Map<String, dynamic> params = new Map();
 
     int timestamp =( DateTime.now().toUtc().millisecondsSinceEpoch/1000).toInt();
@@ -74,7 +75,8 @@ class ApiWallet {
 //  Content-Type: application/json
 //  ###
   static Future<HttpJsonRes> Erc2EpkRunningSwap() {
-    String url = ServiceInfo.HOST + "/wallet/runningSwap";
+    // String url = ServiceInfo.HOST + "/wallet/runningSwap";
+    String url =  ServiceInfo.makeHostUrl("/wallet/runningSwap");
     Map<String, dynamic> params = new Map();
     params["erc20_address"]=AccountMgr()?.currentAccount?.hd_eth_address;
     return HttpUtil.instance.requestJson(true, url, params);
@@ -86,7 +88,8 @@ class ApiWallet {
 //  Content-Type: application/json
 //  ###
   static Future<HttpJsonRes> Erc2EpkSwapRecords() {
-    String url = ServiceInfo.HOST + "/wallet/swapRecords";
+    // String url = ServiceInfo.HOST + "/wallet/swapRecords";
+    String url =  ServiceInfo.makeHostUrl("/wallet/swapRecords");
     Map<String, dynamic> params = new Map();
     params["erc20_address"]=AccountMgr()?.currentAccount?.hd_eth_address;
     return HttpUtil.instance.requestJson(true, url, params);
@@ -94,7 +97,8 @@ class ApiWallet {
 
   ///EPIK钱包币种报价
   static Future<HttpJsonRes> getCurrencyPrice() {
-    String url = ServiceInfo.HOST + "/wallet/price";
+    // String url = ServiceInfo.HOST + "/wallet/price";
+    String url =  ServiceInfo.makeHostUrl("/wallet/price");
     return HttpUtil.instance.requestJson(true, url, null);
   }
 
@@ -136,7 +140,8 @@ class ApiWallet {
 
 
     //https://explorer.epik-protocol.io/api/wallet/kline?start=2020-11-10T18:00:00Z&end=2020-11-15T14:00:00Z
-    String url = ServiceInfo.HOST+"/wallet/kline";
+    // String url = ServiceInfo.HOST+"/wallet/kline";
+    String url =  ServiceInfo.makeHostUrl("/wallet/kline");
     Map<String, dynamic> params = new Map();
     params["start"] = DateUtil.formatDate(start.toUtc(), format: "yyyy-MM-ddTHH:mm:ss") + "Z";
     params["end"] = DateUtil.formatDate(end.toUtc(), format: "yyyy-MM-ddTHH:mm:ss") + "Z";

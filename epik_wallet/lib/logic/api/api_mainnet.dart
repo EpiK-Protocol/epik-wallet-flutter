@@ -41,7 +41,8 @@ class ApiMainNet {
 //          .signText(erc20_address, weixin);
     String erc20_signature = hex.encode(erc20_signature_byte);
 
-    String url = ServiceInfo.HOST + "/mainnet/login";
+    // String url = ServiceInfo.HOST + "/mainnet/login";
+    String url =  ServiceInfo.makeHostUrl("/mainnet/login");
     Map<String, dynamic> params = new Map();
     params["timestamp"] = timestamp;
     params["epik_address"] = epik_address;
@@ -64,7 +65,8 @@ class ApiMainNet {
 //  Content-Type: application/json
 //  ###
   static Future<HttpJsonRes> voterPorfit() {
-    String url = ServiceInfo.HOST + "/mainnet/voterPorfit";
+    // String url = ServiceInfo.HOST + "/mainnet/voterPorfit";
+    String url =  ServiceInfo.makeHostUrl("/mainnet/voterPorfit");
     Map<String, dynamic> params = new Map();
     return HttpUtil.instance.requestJson(true, url, params, needToken: true);
   }
@@ -74,7 +76,8 @@ class ApiMainNet {
 //  Content-Type: application/json
 //  ###
   static Future<HttpJsonRes> experts(int page, int size) {
-    String url = ServiceInfo.HOST + "/mainnet/experts";
+    // String url = ServiceInfo.HOST + "/mainnet/experts";
+    String url =  ServiceInfo.makeHostUrl("/mainnet/experts");
     Map<String, dynamic> params = new Map();
     params["page"] = size * page;
     params["pageSize"] = size;
@@ -91,7 +94,8 @@ class ApiMainNet {
 //  ###
   static Future<HttpJsonRes> expertProfile(
       {String hash, String expert_id, String owner}) {
-    String url = ServiceInfo.HOST + "/mainnet/expertProfile";
+    // String url = ServiceInfo.HOST + "/mainnet/expertProfile";
+    String url =  ServiceInfo.makeHostUrl("/mainnet/expertProfile");
     Map<String, dynamic> params = new Map();
     if (StringUtils.isNotEmpty(hash)) {
       params["hash"] = hash; //资料地址
@@ -124,7 +128,8 @@ class ApiMainNet {
     String license,
     String owner,
   }) {
-    String url = ServiceInfo.HOST + "/mainnet/registerExpert";
+    // String url = ServiceInfo.HOST + "/mainnet/registerExpert";
+    String url =  ServiceInfo.makeHostUrl("/mainnet/registerExpert");
     Map<String, dynamic> params = {
       "name": name,
       "mobile": mobile,

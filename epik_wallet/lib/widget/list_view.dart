@@ -289,7 +289,9 @@ class ListPageDefStateWidgetHeader {
                 ),
                 Container(
                   margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                  child: Text(errmsg, style: TextStyle()),
+                  child: Text(errmsg, style: TextStyle(
+                    color: ResColor.white_80,
+                  )),
                 ),
               ],
             ),
@@ -321,7 +323,9 @@ class ListPageDefStateWidgetHeader {
                 ),
                 Container(
                   margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                  child: Text(msg, style: TextStyle()),
+                  child: Text(msg, style: TextStyle(
+                    color: ResColor.white_80,
+                  )),
                 ),
               ],
             ),

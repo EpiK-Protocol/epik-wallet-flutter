@@ -7,6 +7,7 @@ import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -28,17 +29,17 @@ abstract class BaseFuntion {
 
   bool isErrorWidgetShow = false; //错误信息是否显示
 
-  static Color titlebarColor = Colors.white;
+  static Color titlebarColor = Colors.transparent;//Colors.white;
 
   Color topBarColor = titlebarColor; // Colors.blue;
   Color appBarColor = titlebarColor; // Colors.blue; //3b92f7
-  Color _appBarContentColor = Colors.black;
-  Color navigationColor = Colors.white;//Colors.white
+  Color _appBarContentColor = Colors.white;
+  Color navigationColor = ResColor.b_1;//Colors.white;//Colors.white
 
-  Color bodyBackgroundColor = Colors.white;
+  Color bodyBackgroundColor =ResColor.b_1;// Colors.white;
 
   //标题字体大小
-  double _appBarCenterTextSize = 18; //根据需求变更
+  double _appBarCenterTextSize = 20; //根据需求变更
   String _appBarTitle;
 
   //小标题信息
@@ -47,7 +48,7 @@ abstract class BaseFuntion {
 
   String _errorContentMesage; //"网络错误";
 
-  String _errImgPath = "assets/img/ic_content_neterror.png";
+  String _errImgPath = null;//"assets/img/ic_content_neterror.png";
 
   bool _isLoadingWidgetShow = false;
 
@@ -55,7 +56,7 @@ abstract class BaseFuntion {
 
   String _emptyWidgetContent; //"暂无数据";
 
-  String _emptyImgPath = "assets/img/ic_content_empty.png"; //自己根据需求变更
+  String _emptyImgPath = null;// "assets/img/ic_content_empty.png"; //自己根据需求变更
   bool _isBackIconShow = true;
 
   bool get isBackIconShow => _isBackIconShow;
@@ -67,6 +68,7 @@ abstract class BaseFuntion {
 
   Color get appBarContentColor=>_appBarContentColor;
   double get appBarCenterTextSize=>_appBarCenterTextSize;
+  String get appBarTitle=>_appBarTitle;
 
   /// false 输入框抵住键盘 内容不随键盘滚动
   bool resizeToAvoidBottomPadding = false;
@@ -86,19 +88,19 @@ abstract class BaseFuntion {
     if (_emptyWidgetContent == null)
       _emptyWidgetContent = ResString.get(context, RSID.content_empty);
 
-    return Stack(
-      children: <Widget>[
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            isTopBarShow ? _getBaseTopBar() : _getHolderLWidget(),
-            isAppBarShow ? _getBaseAppBar() : _getHolderLWidget(),
-            Expanded(
-              flex: 1,
-              child: Container(
-//            width: getScreenWidth(),
-//            height: getMainWidgetHeight(),
-                color: bodyBackgroundColor, //背景颜色，可自己变更
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      color: bodyBackgroundColor, //背景颜色，可自己变更
+      child: Stack(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              isTopBarShow ? _getBaseTopBar() : _getHolderLWidget(),
+              isAppBarShow ? _getBaseAppBar() : _getHolderLWidget(),
+              Expanded(
+                flex: 1,
                 child: Stack(
                   children: <Widget>[
                     _buildProviderWidget(context),
@@ -117,10 +119,10 @@ abstract class BaseFuntion {
                   ],
                 ),
               ),
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -153,7 +155,7 @@ abstract class BaseFuntion {
     return Container(
       //错误页面中心可以自己调整
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-      color: Colors.white,
+      color: bodyBackgroundColor,//Colors.white,
       width: double.infinity,
       height: double.infinity,
       child: Center(
@@ -164,6 +166,7 @@ abstract class BaseFuntion {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              if(_errImgPath!=null)
               Image(
                 image: AssetImage(_errImgPath),
                 width: 150,
@@ -174,6 +177,8 @@ abstract class BaseFuntion {
                 child: Text(_errorContentMesage,
                     style: TextStyle(
                       fontWeight: _fontWidget,
+                      fontSize: 14,
+                      color: ResColor.white_60,
                     )),
               ),
             ],
@@ -197,7 +202,7 @@ abstract class BaseFuntion {
     return Container(
       //错误页面中心可以自己调整
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-      color: Colors.white,
+      color: bodyBackgroundColor,//Colors.white,
       width: double.infinity,
       height: double.infinity,
       child: Center(
@@ -250,12 +255,18 @@ abstract class BaseFuntion {
     return InkWell(
       onTap: clickAppBarBack,
       child: Container(
-        width: getAppBarHeight() * 0.8,
+        padding: EdgeInsets.fromLTRB(20, 0 , 20, 0),
+        width: 24.0+20+20,
         height: getAppBarHeight(),
-        child: Icon(
-          OMIcons.arrowBackIos,
+        // child: Icon(
+        //   OMIcons.arrowBackIos,
+        //   color: color ?? _appBarContentColor,
+        //   size: 20,
+        // ),
+        child: Center(
+          child: Image.asset("assets/img/ic_back.png",width: 24,height: 24,
           color: color ?? _appBarContentColor,
-          size: 20,
+          ),
         ),
       ),
     );
@@ -318,7 +329,7 @@ abstract class BaseFuntion {
     return topbarheight;
   }
 
-  static final double appbarheight_def = 45;
+  static final double appbarheight_def = 44;
   double appbarheight = 0;
 
   ///返回appbar高度，也就是导航栏高度
@@ -370,7 +381,7 @@ abstract class BaseFuntion {
       child: Container(
         //错误页面中心可以自己调整
         padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-        color: Colors.white,
+        color: bodyBackgroundColor,//Colors.white,
         width: double.infinity,
         height: double.infinity,
         child: Center(
@@ -379,6 +390,7 @@ abstract class BaseFuntion {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                if(_emptyImgPath!=null)
                 Image(
                   image: AssetImage(_emptyImgPath),
                   fit: BoxFit.cover,
@@ -390,6 +402,8 @@ abstract class BaseFuntion {
                   child: Text(_emptyWidgetContent,
                       style: TextStyle(
                         fontWeight: _fontWidget,
+                        fontSize: 14,
+                        color: ResColor.white_60,
                       )),
                 )
               ],

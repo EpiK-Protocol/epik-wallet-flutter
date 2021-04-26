@@ -8,6 +8,7 @@ import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/views/wallet/create/createwalletview.dart';
 import 'package:epikwallet/views/wallet/create/verifycreatepasswordview.dart';
+import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:epikwallet/widget/text/diff_scale_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -37,8 +38,8 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
   List<SelectedText> mnemonic_list = [];
   List<SelectedText> mnemonic_list_source = [];
 
-  Color bgColor = Color(0xff1A1C1F);
-  Color bgColor_disabled = Colors.black54;
+  Color bgColor = Colors.white;
+  Color bgColor_disabled = const Color(0xff262626);
 
   @override
   void initState() {
@@ -75,36 +76,39 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            Container(height: 20),
             Padding(
-              padding: EdgeInsets.fromLTRB(15, 6, 15, 10),
+              padding: EdgeInsets.fromLTRB(30, 0, 30, 20),
               child: Text(
                 ResString.get(context, RSID.vmv_1), //"验证助记词",
                 style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20,
+                  color: Colors.white,
+                  fontSize: 17,
+                  fontWeight:FontWeight.bold,
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
+              padding: EdgeInsets.fromLTRB(30, 0, 30, 10),
               child: Text(
                 ResString.get(context, RSID.vmv_2),
                 // "为了安全起见，按照顺序填写助记词以确认该助记词是否有效。",
                 style: TextStyle(
-                  color: ResColor.black_50,
-                  fontSize: 13,
+                  color: Colors.white,//Colors.redAccent,
+                  fontSize: 14,
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(15, 15, 15, 10),
+              padding: EdgeInsets.fromLTRB(30, 40, 30, 15),
               child: Row(
                 children: <Widget>[
                   Text(
                     ResString.get(context, RSID.vmv_3), // "填写助记词",
                     style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight:FontWeight.bold,
                     ),
                   ),
                 ],
@@ -112,79 +116,66 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
             ),
             getMnemonicGridWidget_1(),
             Padding(
-              padding: EdgeInsets.fromLTRB(15, 15, 15, 10),
+              padding: EdgeInsets.fromLTRB(30, 40, 30, 15),
               child: Row(
                 children: <Widget>[
                   Text(
                     ResString.get(context, RSID.vmv_4), //  "按助记词顺序点击下面词组：",
                     style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight:FontWeight.bold,
                     ),
                   ),
                 ],
               ),
             ),
             getMnemonicGridWidget_2(),
-            Container(
-              margin: EdgeInsets.fromLTRB(15, 50, 15, 0),
-              height: 44,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      height: 44,
-                      child: FlatButton(
-                        highlightColor: Colors.white24,
-                        splashColor: Colors.white24,
-                        onPressed: () {
-                          clickNextSetp();
-                        },
-                        onLongPress: BuildConfig.isDebug
-                            ? () {
-                                setState(() {
-                                  mnemonic_list_source.forEach((element) {
-                                    element.isSelected = true;
-                                  });
-                                  mnemonic_list = [];
-                                  widget._CreateAccountModel.mnemonic_list
-                                      .forEach((element) {
-                                    mnemonic_list
-                                        .add(SelectedText(element, true));
-                                  });
-                                });
-                              }
-                            : null,
-                        child: Text(
-                          ResString.get(context, RSID.vmv_1), //"验证助记词",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                          ),
-                        ),
-                        color: Color(0xff1A1C1F),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(22)),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+
+            LoadingButton(
+              margin: EdgeInsets.fromLTRB(30, 40, 30, 0),
+              gradient_bg: ResColor.lg_1,
+              color_bg: Colors.transparent,
+              disabledColor: Colors.transparent,
+              height: 40,
+              text:ResString.get(context, RSID.vmv_1), //"验证助记词",
+              textstyle: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight:FontWeight.bold,
               ),
+              bg_borderradius: BorderRadius.circular(4),
+              onclick: (lbtn) {
+                clickNextSetp();
+              },
+              onLongClick:BuildConfig.isDebug? (lbtn) {
+                  setState(() {
+                    mnemonic_list_source.forEach((element) {
+                      element.isSelected = true;
+                    });
+                    mnemonic_list = [];
+                    widget._CreateAccountModel.mnemonic_list
+                        .forEach((element) {
+                      mnemonic_list
+                          .add(SelectedText(element, true));
+                    });
+                  });
+              }:null,
             ),
+
             InkWell(
               onTap: () {
                 clickRecreate();
               },
               child: Container(
-                margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                margin: EdgeInsets.fromLTRB(0, 40, 0, 10),
                 padding: EdgeInsets.all(10),
                 alignment: Alignment.center,
                 child: Text(
                   ResString.get(context, RSID.vmv_5), //  "忘记助记词，重新创建",
                   style: TextStyle(
-                    fontSize: 13,
-                    color: ResColor.black_50,
+                    fontSize: 14,
+                    color: ResColor.white,
                   ),
                 ),
               ),
@@ -199,9 +190,9 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
 
   Widget getMnemonicGridWidget_1() {
     if (gridItemHightRatio == 0) {
-      gridItemHightRatio = (getScreenWidth() - 15 * 2 - 10 * 3) /
+      gridItemHightRatio = (getScreenWidth() - 30 * 2 - 10 * 3) /
           4.0 /
-          35.0; //    每个item的宽 / 高 = 比例
+          40.0; //    每个item的宽 / 高 = 比例
     }
 
     int size = mnemonic_list_source.length;
@@ -226,9 +217,10 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
             child: DiffScaleText(
               text: text == null ? (i + 1).toString() : text.text,
               textStyle: TextStyle(
-                color: Colors.white,
+                color: text == null ?Colors.white: ResColor.b_1,
                 fontSize: 14,
                 fontFamily: fontFamily_def,
+                fontWeight:FontWeight.bold,
               ),
             ),
             disabledColor: bgColor_disabled,
@@ -253,7 +245,7 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
         //垂直子Widget之间间距
         mainAxisSpacing: 10,
         //GridView内边距
-        padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+        padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
         //一行的Widget数量
         crossAxisCount: 4,
         //子Widget宽高比例
@@ -265,9 +257,9 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
 
   Widget getMnemonicGridWidget_2() {
     if (gridItemHightRatio == 0) {
-      gridItemHightRatio = (getScreenWidth() - 15 * 2 - 10 * 3) /
+      gridItemHightRatio = (getScreenWidth() - 30 * 2 - 10 * 3) /
           4.0 /
-          35.0; //    每个item的宽 / 高 = 比例
+          40.0; //    每个item的宽 / 高 = 比例
     }
 
     List<Widget> items = [];
@@ -287,8 +279,9 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
             child: Text(
               text.text,
               style: TextStyle(
-                color: Colors.white,
+                color: text.isSelected?Colors.white:ResColor.b_1,
                 fontSize: 14,
+                fontWeight: FontWeight.bold,
               ),
             ),
             color: text.isSelected ? bgColor_disabled : bgColor,
@@ -312,7 +305,7 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
         //垂直子Widget之间间距
         mainAxisSpacing: 10,
         //GridView内边距
-        padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+        padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
         //一行的Widget数量
         crossAxisCount: 4,
         //子Widget宽高比例

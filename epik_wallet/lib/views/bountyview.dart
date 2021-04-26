@@ -1,15 +1,12 @@
-import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:ui';
 
-import 'package:convert/convert.dart';
-import 'package:crypto/crypto.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
+import 'package:epikwallet/dialog/PopMenuDialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_bounty.dart';
-import 'package:epikwallet/logic/api/api_testnet.dart';
 import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
 import 'package:epikwallet/logic/loader/DataLoader.dart';
 import 'package:epikwallet/model/BountyTask.dart';
@@ -17,11 +14,12 @@ import 'package:epikwallet/utils/JsonUtils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
+import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
-import 'package:epikwallet/views/account/BindSocialAccountView.dart';
 import 'package:epikwallet/views/mainview.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/list_view.dart';
+import 'package:epikwallet/widget/rect_getter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -47,7 +45,8 @@ enum BountyPageState {
   bounty,
 }
 
-class BountyViewState extends BaseInnerWidgetState<BountyView> {
+class BountyViewState extends BaseInnerWidgetState<BountyView>
+    with TickerProviderStateMixin {
   int pageIndex = 0;
 
   BountyStateType state = null;
@@ -62,9 +61,12 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
   bool isLoading = false;
   bool hasMore = false;
 
+  TabController tabcontroller;
+
   @override
   void initStateConfig() {
     super.initStateConfig();
+    navigationColor = ResColor.b_2;
     setTopBarVisible(false);
     setAppBarVisible(false);
     setAppBarBackColor(Colors.transparent);
@@ -188,15 +190,354 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
         left: 0,
         right: 0,
         top: 0,
+        height: getTopBarHeight() + getAppBarHeight() + 70 + 52,
         child: Column(
-          children: <Widget>[
-            getTopBar(),
-            getAppBar(),
+          children: [
+            Container(
+              height: getTopBarHeight() + getAppBarHeight() + 70,
+              decoration: BoxDecoration(
+                gradient: ResColor.lg_1,
+                borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(20)),
+              ),
+              child: Column(
+                children: <Widget>[
+                  getTopBar(),
+                  getAppBar(),
+                  Container(
+                    height: 70,
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                          child: Text(
+                            "${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_score)}",
+                            style: TextStyle(
+                              fontSize: 30,
+                              color: Colors.white,
+                              fontFamily: "DIN_Condensed_Bold",
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            onClickBountyExchange();
+                          },
+                          child: Container(
+                            height: double.infinity,
+                            padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text(
+                                  ResString.get(context, RSID.main_bv_2),
+                                  //"兑换",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Container(
+                                  height: double.infinity,
+                                  padding: EdgeInsets.fromLTRB(4, 0, 0, 0),
+                                  child: Image.asset(
+                                    "assets/img/ic_arrow_right_1.png",
+                                    width: 7,
+                                    height: 11,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: 52,
+              child: getTabbar(),
+            ),
           ],
         ),
       );
 
     return Container();
+  }
+
+  GlobalKey key_btn1 = RectGetter.createGlobalKey();
+
+  Widget getTabbar() {
+    List<RSID> items = [RSID.main_bv_4, RSID.main_bv_5, RSID.main_bv_6];
+
+    if (tabcontroller == null)
+      tabcontroller = TabController(
+          initialIndex: pageIndex, length: items.length, vsync: this);
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      padding: EdgeInsets.fromLTRB(10, 0, 20, 0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TabBar(
+              tabs: items.map((rsid) {
+                return Container(
+                  alignment: Alignment.bottomCenter,
+                  child: Text(rsid.text),
+                );
+              }).toList(),
+              controller: tabcontroller,
+              isScrollable: true,
+              labelPadding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+              labelColor: Colors.white,
+              labelStyle: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                height: 1,
+              ),
+              unselectedLabelColor: ResColor.white_60,
+              unselectedLabelStyle: TextStyle(
+                fontSize: 14,
+                color: ResColor.white_60,
+                fontWeight: FontWeight.bold,
+                height: 1,
+              ),
+              indicator: BoxDecoration(
+                borderRadius: BorderRadius.circular(2),
+                gradient: ResColor.lg_1,
+              ),
+              indicatorPadding: EdgeInsets.fromLTRB(8, 42, 8, 6),
+              indicatorSize: TabBarIndicatorSize.label,
+              indicatorWeight: 4,
+              onTap: (value) {
+                onClickTab(value);
+              },
+            ),
+          ),
+          Container(
+            width: 15,
+          ),
+          InkWell(
+            onTap: () {
+              Rect rect = RectGetter.getRectFromKey(key_btn1);
+              PopMenuDialog.show<BountyFilterType>(
+                context: context,
+                rect: rect,
+                datas: BountyFilterType.values,
+                itemBuilder: (item, dialog) {
+                  return InkWell(
+                    onTap: () {
+                      dialog?.dismiss();
+                      onSelected(item);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(15, 10, 20, 10),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 20,
+                            height: 20,
+                            margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                            child: _DataFilterType == item
+                                ? Image.asset(
+                                    "assets/img/ic_checkmark.png",
+                                    width: 20,
+                                    height: 20,
+                                  )
+                                : null,
+                          ),
+                          Text(
+                            item.getName(),
+                            style: TextStyle(color: Colors.white, fontSize: 14),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+            child: RectGetter(
+              key: key_btn1,
+              child: Container(
+                height: 30,
+                alignment: Alignment.center,
+                padding: EdgeInsets.fromLTRB(15, 0, 12, 0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      _DataFilterType.getName(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Colors.white,
+                      size: 12,
+                    ),
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  color: ResColor.b_4,
+                  borderRadius: BorderRadius.all(Radius.circular(22.0)),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+//     return Container(
+//       width: double.infinity,
+//       height: BaseFuntion.appbarheight_def,
+//       padding: EdgeInsets.fromLTRB(20, 0, 25, 0),
+//       child: Row(
+//         children: <Widget>[
+//           Expanded(
+//             child: Container(
+//               height: 40,
+//               child: Card(
+//                 color: Colors.white,
+//                 shape: RoundedRectangleBorder(
+//                   borderRadius: BorderRadius.all(Radius.circular(20.0)),
+//                 ),
+//                 elevation: 5,
+//                 shadowColor: Colors.black38,
+//                 child: Row(
+//                   children: <Widget>[
+//                     Expanded(
+//                       child: GestureDetector(
+//                         onTap: () {
+//                           onClickTab(0);
+//                         },
+//                         child: Text(
+//                           ResString.get(context, RSID.main_bv_4), //"全部",
+//                           textAlign: TextAlign.center,
+//                           style: TextStyle(
+//                             color:
+//                                 pageIndex == 0 ? Colors.black : Colors.black45,
+//                             fontSize: 16,
+// //                                  fontWeight: pageIndex == 0
+// //                                      ? FontWeight.w600
+// //                                      : FontWeight.w500,
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                     Expanded(
+//                       child: GestureDetector(
+//                         onTap: () {
+//                           onClickTab(1);
+//                         },
+//                         child: Text(
+//                           ResString.get(context, RSID.main_bv_5), //"可认领",
+//                           textAlign: TextAlign.center,
+//                           style: TextStyle(
+//                             color:
+//                                 pageIndex == 1 ? Colors.black : Colors.black45,
+//                             fontSize: 16,
+// //                                  fontWeight: pageIndex == 1
+// //                                      ? FontWeight.w600
+// //                                      : FontWeight.w500,
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                     Expanded(
+//                       child: GestureDetector(
+//                         onTap: () {
+//                           onClickTab(2);
+//                         },
+//                         child: Text(
+//                           ResString.get(context, RSID.main_bv_6), //"已完成",
+//                           textAlign: TextAlign.center,
+//                           style: TextStyle(
+//                             color:
+//                                 pageIndex == 2 ? Colors.black : Colors.black45,
+//                             fontSize: 16,
+// //                                  fontWeight: pageIndex == 2
+// //                                      ? FontWeight.w600
+// //                                      : FontWeight.w500,
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           ),
+//           Container(
+//             width: 15,
+//           ),
+//           Container(
+//             height: 30,
+//             child: PopupMenuButton<BountyFilterType>(
+//               initialValue: _DataFilterType,
+//               child: Container(
+//                   alignment: Alignment.center,
+//                   padding: EdgeInsets.fromLTRB(15, 0, 12, 0),
+//                   child: Row(
+//                     mainAxisSize: MainAxisSize.min,
+//                     children: <Widget>[
+//                       Text(
+//                         _DataFilterType.getName(),
+//                         style: TextStyle(
+//                           color: Colors.black,
+//                           fontSize: 12,
+//                         ),
+//                       ),
+//                       Icon(
+//                         Icons.keyboard_arrow_down,
+//                         color: Colors.black,
+//                         size: 12,
+//                       ),
+//                     ],
+//                   ),
+//                   decoration: BoxDecoration(
+//                     color: Colors.grey[200],
+//                     borderRadius: BorderRadius.all(Radius.circular(22.0)),
+//                   )),
+//               itemBuilder: (context) {
+//                 List<PopupMenuEntry<BountyFilterType>> ret = [];
+//                 BountyFilterType.values.forEach((element) {
+//                   ret.add(CheckedPopupMenuItem<BountyFilterType>(
+//                     value: element,
+//                     checked: _DataFilterType == element,
+//                     child: Text(
+//                       element.getName(),
+//                       style: TextStyle(
+//                         fontSize: 12,
+//                         color: Colors.black,
+//                       ),
+//                     ),
+//                   ));
+//                 });
+//                 return ret;
+//               },
+//               onSelected: (value) {
+//                 onSelected(value);
+//               },
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
   }
 
   ///导航栏 appBar 可以重写
@@ -208,225 +549,44 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
         children: <Widget>[
           Container(
             height: BaseFuntion.appbarheight_def,
-            padding: EdgeInsets.fromLTRB(38, 0, 15, 0),
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
             child: Row(
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 6, 5, 0),
-                  child: Text(
-                    "${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_score)}",
-                    style: TextStyle(
-                      fontSize: 25,
-                      color: Colors.black,
-                      fontFamily: "DIN_Condensed_Bold",
-                    ),
-                  ),
-                ),
                 Text(
                   ResString.get(context, RSID.main_bv_1), //"积分",
                   style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.black,
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 Expanded(
                   child: Container(),
                 ),
-                Material(
-                  color: Colors.transparent,
-                  child: InkResponse(
-                    onTap: () {
-                      onClickBountyExchange();
-                    },
-                    child: Container(
-                      height: double.infinity,
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            ResString.get(context, RSID.main_bv_2), //"兑换",
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Icon(
-                            Icons.chevron_right,
-                            color: Colors.black,
-                            size: 15,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Material(
-                  color: Colors.transparent,
-                  child: InkResponse(
-                    onTap: () {
-                      onClickBountyHelp();
-                    },
-                    child: Container(
-                      height: double.infinity,
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            ResString.get(context, RSID.main_bv_3), //"说明",
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Icon(
-                            Icons.help_outline,
-                            color: Colors.black,
-                            size: 15,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            width: double.infinity,
-            height: BaseFuntion.appbarheight_def,
-            padding: EdgeInsets.fromLTRB(20, 0, 25, 0),
-            child: Row(
-              children: <Widget>[
-                Expanded(
+                InkWell(
+                  onTap: () {
+                    onClickBountyHelp();
+                  },
                   child: Container(
-                    height: 40,
-                    child: Card(
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                      ),
-                      elevation: 5,
-                      shadowColor: Colors.black38,
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                onClickTab(0);
-                              },
-                              child: Text(
-                                ResString.get(context, RSID.main_bv_4), //"全部",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: pageIndex == 0
-                                      ? Colors.black
-                                      : Colors.black45,
-                                  fontSize: 16,
-//                                  fontWeight: pageIndex == 0
-//                                      ? FontWeight.w600
-//                                      : FontWeight.w500,
-                                ),
-                              ),
-                            ),
+                    height: double.infinity,
+                    padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(
+                          "Bounty " + RSID.main_bv_3.text + " ", //"说明",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
                           ),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                onClickTab(1);
-                              },
-                              child: Text(
-                                ResString.get(context, RSID.main_bv_5), //"可认领",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: pageIndex == 1
-                                      ? Colors.black
-                                      : Colors.black45,
-                                  fontSize: 16,
-//                                  fontWeight: pageIndex == 1
-//                                      ? FontWeight.w600
-//                                      : FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                onClickTab(2);
-                              },
-                              child: Text(
-                                ResString.get(context, RSID.main_bv_6), //"已完成",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: pageIndex == 2
-                                      ? Colors.black
-                                      : Colors.black45,
-                                  fontSize: 16,
-//                                  fontWeight: pageIndex == 2
-//                                      ? FontWeight.w600
-//                                      : FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  width: 15,
-                ),
-                Container(
-                  height: 30,
-                  child: PopupMenuButton<BountyFilterType>(
-                    initialValue: _DataFilterType,
-                    child: Container(
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.fromLTRB(15, 0, 12, 0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Text(
-                              _DataFilterType.getName(),
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 12,
-                              ),
-                            ),
-                            Icon(
-                              Icons.keyboard_arrow_down,
-                              color: Colors.black,
-                              size: 12,
-                            ),
-                          ],
                         ),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.all(Radius.circular(22.0)),
-                        )),
-                    itemBuilder: (context) {
-                      List<PopupMenuEntry<BountyFilterType>> ret = [];
-                      BountyFilterType.values.forEach((element) {
-                        ret.add(CheckedPopupMenuItem<BountyFilterType>(
-                          value: element,
-                          checked: _DataFilterType == element,
-                          child: Text(
-                            element.getName(),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ));
-                      });
-                      return ret;
-                    },
-                    onSelected: (value) {
-                      onSelected(value);
-                    },
+                        Icon(
+                          Icons.help_outline,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -538,18 +698,8 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
     }
 
     return Container(
-      padding: EdgeInsets.fromLTRB(0, BaseFuntion.topbarheight + 90, 0, 0),
-      decoration: BoxDecoration(
-        gradient: const RadialGradient(
-          colors: [
-            Color(0xfff7e6f0),
-            Colors.white,
-          ],
-          center: Alignment.center,
-          radius: 1,
-          tileMode: TileMode.clamp,
-        ),
-      ),
+      padding: EdgeInsets.fromLTRB(
+          0, getTopBarHeight() + getAppBarHeight() + 70 + 52, 0, 0),
       child: widget,
     );
   }
@@ -658,102 +808,195 @@ class BountyViewState extends BaseInnerWidgetState<BountyView> {
     BountyTask item = datalist[position];
 
     return Container(
-      padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-      child: Card(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-        ),
-        elevation: 10,
-        shadowColor: Colors.black26,
-//        shadowColor: item?.status == null
-//            ? Colors.black26
-//            : item.status.getColorTagShadow(),
-        clipBehavior: Clip.antiAlias,
-        child: Stack(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    item.title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                    ),
+      width: double.infinity,
+      margin: EdgeInsets.fromLTRB(0, 0, 0, 6),
+      color: ResColor.b_2,
+      child: Stack(
+        children: [
+          Container(
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.title,
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
-                  Container(height: 10),
-                  Text(
-                    item.description,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.black54,
-                    ),
-                  ),
-                  Container(height: 5),
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        ResString.get(context, RSID.main_bv_11), //"负责人:",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black54,
-                        ),
-                      ),
-                      Container(
-                        width: 18,
-                        height: 18,
-                        margin: EdgeInsets.fromLTRB(4, 2, 4, 0),
-                        child: ImageIcon(
-                          AssetImage("assets/img/ic_wechat.png"),
-                          size: 18,
-                          color: Color(0xff88c42a),
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          "${item.admin_weixin}",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(height: 5),
-                  Text(
-                    "${ResString.get(context, RSID.main_bv_12)} ${item.reward}",
-                    //奖励区间:
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black54,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Positioned(
-              top: -8,
-              right: -8,
-              width: 30,
-              height: 30,
-              child: Banner(
-                message: item.status.getName(),
-                color: item.status.getColorTag(),
-                textStyle: TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
                 ),
-                textDirection: TextDirection.ltr,
-                location: BannerLocation.topEnd,
+                Container(height: 20),
+                Text(
+                  "${ResString.get(context, RSID.main_bv_12)} ${item.reward}",
+                  //奖励区间:
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Container(height: 20),
+                Text(
+                  item.description,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: ResColor.white_80,
+                  ),
+                ),
+                Container(height: 10),
+                Row(
+                  children: <Widget>[
+                    Container(
+                      width: 20,
+                      height: 20,
+                      margin: EdgeInsets.fromLTRB(0, 2, 6, 0),
+                      child: ImageIcon(
+                        AssetImage("assets/img/ic_wechat.png"),
+                        size: 20,
+                        color: Colors.white, //Color(0xff88c42a),
+                      ),
+                    ),
+                    Text(
+                      ResString.get(context, RSID.main_bv_11), //"负责人:",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: ResColor.white_80,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        "${item.admin_weixin}",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: ResColor.white_80,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            right: 0,
+            top: 0,
+            child: Container(
+              padding: EdgeInsets.fromLTRB(10, 4, 10, 4),
+              decoration: BoxDecoration(
+                gradient: ResColor.lg_2,
+              ),
+              child: Text(
+                  item.status.getName(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight:FontWeight.bold,
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
+
+//     return Container(
+//       padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+//       child: Card(
+//         color: Colors.white,
+//         shape: RoundedRectangleBorder(
+//           borderRadius: BorderRadius.all(Radius.circular(10.0)),
+//         ),
+//         elevation: 10,
+//         shadowColor: Colors.black26,
+// //        shadowColor: item?.status == null
+// //            ? Colors.black26
+// //            : item.status.getColorTagShadow(),
+//         clipBehavior: Clip.antiAlias,
+//         child: Stack(
+//           children: <Widget>[
+//             Container(
+//               padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: <Widget>[
+//                   Text(
+//                     item.title,
+//                     style: TextStyle(
+//                       fontSize: 16,
+//                       color: Colors.black,
+//                     ),
+//                   ),
+//                   Container(height: 10),
+//                   Text(
+//                     item.description,
+//                     style: TextStyle(
+//                       fontSize: 12,
+//                       color: Colors.black54,
+//                     ),
+//                   ),
+//                   Container(height: 5),
+//                   Row(
+//                     children: <Widget>[
+//                       Text(
+//                         ResString.get(context, RSID.main_bv_11), //"负责人:",
+//                         style: TextStyle(
+//                           fontSize: 14,
+//                           color: Colors.black54,
+//                         ),
+//                       ),
+//                       Container(
+//                         width: 18,
+//                         height: 18,
+//                         margin: EdgeInsets.fromLTRB(4, 2, 4, 0),
+//                         child: ImageIcon(
+//                           AssetImage("assets/img/ic_wechat.png"),
+//                           size: 18,
+//                           color: Color(0xff88c42a),
+//                         ),
+//                       ),
+//                       Expanded(
+//                         child: Text(
+//                           "${item.admin_weixin}",
+//                           style: TextStyle(
+//                             fontSize: 14,
+//                             color: Colors.black54,
+//                           ),
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                   Container(height: 5),
+//                   Text(
+//                     "${ResString.get(context, RSID.main_bv_12)} ${item.reward}",
+//                     //奖励区间:
+//                     style: TextStyle(
+//                       fontSize: 14,
+//                       color: Colors.black54,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             Positioned(
+//               top: -8,
+//               right: -8,
+//               width: 30,
+//               height: 30,
+//               child: Banner(
+//                 message: item.status.getName(),
+//                 color: item.status.getColorTag(),
+//                 textStyle: TextStyle(
+//                   color: Colors.white,
+//                   fontSize: 10,
+//                 ),
+//                 textDirection: TextDirection.ltr,
+//                 location: BannerLocation.topEnd,
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
   }
 }

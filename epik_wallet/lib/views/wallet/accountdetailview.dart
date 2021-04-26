@@ -1,20 +1,24 @@
+import 'dart:ui';
+
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
 import 'package:epikwallet/views/viewgoto.dart';
+import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
-import 'package:epikwallet/localstring/resstringid.dart';
 
 class AccountDetailView extends BaseWidget {
   WalletAccount walletaccount;
@@ -30,18 +34,19 @@ class AccountDetailView extends BaseWidget {
 class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
   List<AccountMenu> menudata;
 
-  Color color_icon = Color(0xff41454a);
+  Color color_icon = Colors.white;//Color(0xff41454a);
 
   @override
   void initState() {
     super.initState();
   }
 
-  LinearGradient gradient_header = LinearGradient(
-    colors: [Color(0xff2C3036), Color(0xff1A1C1F)],
-    begin: Alignment.centerLeft,
-    end: Alignment.centerRight,
-  );
+  // LinearGradient gradient_header = LinearGradient(
+  //   colors: [Color(0xff2C3036), Color(0xff1A1C1F)],
+  //   begin: Alignment.centerLeft,
+  //   end: Alignment.centerRight,
+  // );
+  LinearGradient gradient_header = ResColor.lg_1;
 
   @override
   void initStateConfig() {
@@ -69,20 +74,15 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
     ];
   }
 
-  SystemUiOverlayStyle oldSystemUiOverlayStyle;
 
   @override
   void onCreate() {
     super.onCreate();
 
-    oldSystemUiOverlayStyle = DeviceUtils.system_bar_current;
-    DeviceUtils.setSystemBarStyle(DeviceUtils.system_bar_light);
   }
 
   @override
   void dispose() {
-    if (oldSystemUiOverlayStyle != null)
-      DeviceUtils.setSystemBarStyle(oldSystemUiOverlayStyle);
     super.dispose();
   }
 
@@ -93,6 +93,7 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
       child: getAppBar(),
     );
   }
+
 
   double header_top = 0;
 
@@ -112,140 +113,189 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
           children: <Widget>[
             Container(
               width: double.infinity,
-              height: header_top + 100,
+              height: header_top + 128,
               decoration: BoxDecoration(
                 gradient: gradient_header,
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
               ),
               child: Stack(
                 children: <Widget>[
-                  Positioned(
-                    left: 0,
-                    top: 0,
-                    bottom: 0,
-                    child: AspectRatio(
-                      aspectRatio: 2,
-                      child: Image(
-                        image: AssetImage("assets/img/bg_account_header.png"),
-                        fit: BoxFit.fill,
+                  // Positioned(
+                  //   left: 0,
+                  //   top: 0,
+                  //   bottom: 0,
+                  //   child: AspectRatio(
+                  //     aspectRatio: 2,
+                  //     child: Image(
+                  //       image: AssetImage("assets/img/bg_account_header.png"),
+                  //       fit: BoxFit.fill,
+                  //     ),
+                  //   ),
+                  // ),
+                  Column(
+                    children: [
+                      Container(
+                        height: getTopBarHeight(),
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    top: header_top + 5,
-                    left: 30,
-                    child: InkWell(
-                      onTap: () {
-                        clickFixName();
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            widget.walletaccount.account,
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
-                            child: Icon(
+                      Container(
+                        height: getAppBarHeight(),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          clickFixName();
+                        },
+                        child: Row(
+                          children: <Widget>[
+                            Container(width: 30,),
+                            Expanded(child:  Text(
+                              widget.walletaccount.account,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontWeight:FontWeight.bold,
+                              ),
+                            ),),
+                            Container(width: 10),
+                            Icon(
                               Icons.border_color,
-                              size: 10,
+                              size: 14,
                               color: Colors.white,
                             ),
-                          ),
-                        ],
+                            Container(width: 20,),
+                          ],
+                        ),
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    top: header_top + 40,
-                    left: 30,
-                    right: 0,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Container(
-                          child: Text(
-                            "Address:" + widget.walletaccount.hd_eth_address,
-                            maxLines: 3,
-//                        overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: ResColor.white_80,
-                              fontSize: 14,
+                      Container(height: 10),
+                      InkWell(
+                        onTap: (){
+                          clickCopyEther(widget.walletaccount);
+                        },
+                        child:Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Container(width: 30),
+                            Expanded(
+                              child: Text(
+                                "EtherAddress:" + widget.walletaccount.hd_eth_address,
+                                maxLines: 3,
+                                // overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: ResColor.white,
+                                  fontSize: 12,
+                                ),
+                              ),
                             ),
-                          ),
-                          constraints: BoxConstraints(
-                            maxWidth: getScreenWidth() - 30 - 60,
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                          height: 30,
-                          width: 30,
-                          child: IconButton(
-                            icon: Icon(
+                            Container(width: 10),
+                            Icon(
                               Icons.content_copy,
-                              color: Color(0xff666666),
-                              size: 15,
+                              color: ResColor.white,
+                              size: 14,
                             ),
-                            onPressed: () {
-                              clickCopy(widget.walletaccount);
-                            },
-                          ),
+                            Container(width: 20),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      Container(height: 10),
+                      InkWell(
+                        onTap: (){
+                          clickCopyEpik(widget.walletaccount);
+                        },
+                        child:Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Container(width: 30),
+                            Expanded(
+                              child: Text(
+                                "EpiKAddress:" + widget.walletaccount.epik_EPK_address,
+                                maxLines: 3,
+                                // overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: ResColor.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                            Container(width: 10),
+                            Icon(
+                              Icons.content_copy,
+                              color: ResColor.white,
+                              size: 14,
+                            ),
+                            Container(width: 20),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
+
                 ],
               ),
             ),
+            Container(height: 20),
             Expanded(
               child: SingleChildScrollView(
 //              physics: AlwaysScrollableScrollPhysics(),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: menudata.map((menu) {
+                    int position = menudata.indexOf(menu);
+                    bool isend = position >= menudata.length - 1;
                     return Container(
-                      margin: EdgeInsets.only(top: 10),
+                      // margin: EdgeInsets.only(top: 10),
                       child: Material(
-                        color: Colors.transparent,
+                        color: ResColor.b_2,//Colors.transparent,
                         child: InkWell(
                           onTap: () {
                             onClickMenu(menu);
                           },
                           child: Container(
                             height: 60,
-                            child: Row(
-                              children: <Widget>[
-                                Container(
-                                  margin: EdgeInsets.only(left: 5),
-                                  width: 40,
-                                  height: double.infinity,
-                                  child: Icon(
-                                    menu.icon,
-                                    size: 16,
-                                    color: color_icon,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    menu.title,
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.black,
+                            child:Stack(
+                              children: [ Row(
+                                children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.only(left: 5),
+                                    width: 40,
+                                    height: double.infinity,
+                                    child: Icon(
+                                      menu.icon,
+                                      size: 16,
+                                      color: color_icon,
                                     ),
                                   ),
-                                ),
-                                Icon(
-                                  Icons.chevron_right,
-                                  color: color_icon,
-                                  size: 16,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(right: 10),
-                                ),
+                                  Expanded(
+                                    child: Text(
+                                      menu.title,
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    height: double.infinity,
+                                    padding: EdgeInsets.fromLTRB(15, 0, 25, 0),
+                                    child: Image.asset(
+                                      "assets/img/ic_arrow_right_1.png",
+                                      width: 7,
+                                      height: 11,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                                if (!isend)
+                                  Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      right: 0,
+                                      child: Divider(
+                                        height: 1/ScreenUtil.pixelRatio,
+                                        thickness: 1/ScreenUtil.pixelRatio,
+                                        indent: 20,
+                                        color: ResColor.white_20,
+                                      )),
                               ],
                             ),
                           ),
@@ -256,36 +306,56 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
                 ),
               ),
             ),
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
+            // Material(
+            //   color: Colors.transparent,
+            //   child: InkWell(
+            //     onTap: () {
+            //       clickDel();
+            //     },
+            //     child: Container(
+            //       height: 60,
+            //       child: Row(
+            //         children: <Widget>[
+            //           Container(
+            //             margin: EdgeInsets.only(left: 5),
+            //             width: 40,
+            //             height: double.infinity,
+            //             child: Icon(
+            //               OMIcons.delete,
+            //               size: 16,
+            //               color: color_icon,
+            //             ),
+            //           ),
+            //           Text(
+            //             ResString.get(context, RSID.adv_2), //"删除钱包",
+            //             style: TextStyle(
+            //               fontSize: 15,
+            //               color: Colors.black,
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
+
+            SafeArea(
+              child: LoadingButton(
+                margin: EdgeInsets.fromLTRB(30, 40, 30, 0),
+                gradient_bg: ResColor.lg_1,
+                color_bg: Colors.transparent,
+                disabledColor: Colors.transparent,
+                height: 40,
+                text: RSID.adv_2.text,//"删除钱包",
+                textstyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight:FontWeight.bold,
+                ),
+                bg_borderradius: BorderRadius.circular(4),
+                onclick: (lbtn) {
                   clickDel();
                 },
-                child: Container(
-                  height: 60,
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(left: 5),
-                        width: 40,
-                        height: double.infinity,
-                        child: Icon(
-                          OMIcons.delete,
-                          size: 16,
-                          color: color_icon,
-                        ),
-                      ),
-                      Text(
-                        ResString.get(context, RSID.adv_2), //"删除钱包",
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               ),
             ),
           ],
@@ -294,9 +364,15 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
     );
   }
 
-  clickCopy(WalletAccount wa) {
+  clickCopyEther(WalletAccount wa) {
     dlog("clickCopy");
     DeviceUtils.copyText(wa.hd_eth_address);
+//    ToastUtils.showToast("已复制到剪切板");
+    ToastUtils.showToast(ResString.get(context, RSID.copied));
+  }
+  clickCopyEpik(WalletAccount wa) {
+    dlog("clickCopy");
+    DeviceUtils.copyText(wa.epik_EPK_address);
 //    ToastUtils.showToast("已复制到剪切板");
     ToastUtils.showToast(ResString.get(context, RSID.copied));
   }

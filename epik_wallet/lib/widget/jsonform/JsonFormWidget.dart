@@ -1,3 +1,5 @@
+import 'package:epikwallet/utils/res_color.dart';
+
 import '../../utils/string_utils.dart';
 import 'base/jf_date_time_picker.dart';
 import 'base/jf_radio.dart';
@@ -216,7 +218,10 @@ class JsonFormWidgetState extends State<JsonFormWidget> {
     if (des != null && des.length > 0) {
       ret.add(Text(
         des,
-        style: Theme.of(ct).textTheme.caption,
+        style: TextStyle(
+          fontSize: 11,
+          color: ResColor.white_60,
+        ),
       ));
       ret.add(Container(height: 10));
     }

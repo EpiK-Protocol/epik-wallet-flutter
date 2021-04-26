@@ -11,7 +11,8 @@ class ApiBounty {
 
   static Future<WalletAccount> getBountyScore(String token,WalletAccount account)async
   {
-    String url = ServiceInfo.HOST + "/bounty/score";
+    // String url = ServiceInfo.HOST + "/bounty/score";
+    String url =  ServiceInfo.makeHostUrl("/bounty/score");
     Map<String, dynamic> headers = {"token": token};
     HttpJsonRes hjr = await HttpUtil.instance.requestJson(true, url, null, headers: headers);
     if(hjr!=null && hjr.code==0)
@@ -33,7 +34,8 @@ class ApiBounty {
       int pageSize, BountyStateType state, BountyFilterType filtertype) async {
     Dlog.p("cccmax", "${state}  ${filtertype}");
 
-    String url = ServiceInfo.HOST + "/bounty/list";
+    // String url = ServiceInfo.HOST + "/bounty/list";
+    String url =  ServiceInfo.makeHostUrl("/bounty/list");
 
     Map<String, dynamic> params = new Map();
 
@@ -72,7 +74,8 @@ class ApiBounty {
   /// 管理员保存任务结果并公示
   static Future<HttpJsonRes> adminSaveTaskPublicity(
       String token, int taskId,String data) async {
-    String url = ServiceInfo.HOST + "/bounty/publicity";
+    // String url = ServiceInfo.HOST + "/bounty/publicity";
+    String url =  ServiceInfo.makeHostUrl("/bounty/publicity");
 //
 //    "id":1,
 //    "result":"xxx,12\nxxx,15\nxxxx,10"
@@ -90,8 +93,8 @@ class ApiBounty {
   /// 个人任务列表
   static Future<HttpJsonRes> getUserTaskList(
       String token, int page, int pageSize) {
-    String url = ServiceInfo.HOST + "/bounty/tasklist";
-
+    // String url = ServiceInfo.HOST + "/bounty/tasklist";
+    String url =  ServiceInfo.makeHostUrl("/bounty/tasklist");
     Map<String, dynamic> params = new Map();
     params["page"] = page;
     params["size"] = pageSize;
@@ -104,7 +107,8 @@ class ApiBounty {
   /// 个人兑换列表
   static Future<HttpJsonRes> getUserSwaplist(
       String token, int page, int pageSize) {
-    String url = ServiceInfo.HOST + "/bounty/swaplist";
+    // String url = ServiceInfo.HOST + "/bounty/swaplist";
+    String url =  ServiceInfo.makeHostUrl("/bounty/swaplist");
 
     Map<String, dynamic> params = new Map();
     params["page"] = page;
@@ -117,7 +121,8 @@ class ApiBounty {
 
   ///兑换积分
   static Future<HttpJsonRes> bountySwap(String token, double amount) {
-    String url = ServiceInfo.HOST + "/bounty/swap";
+    // String url = ServiceInfo.HOST + "/bounty/swap";
+    String url =  ServiceInfo.makeHostUrl("/bounty/swap");
     Map<String, dynamic> params = new Map();
     params["amount"] = amount;
     String json = jsonEncode(params);
@@ -129,7 +134,8 @@ class ApiBounty {
 
   ///#任务详情
   static Future<HttpJsonRes> getBountyInfo(String token, int taskId) {
-    String url = ServiceInfo.HOST + "/bounty/info";
+    // String url = ServiceInfo.HOST + "/bounty/info";
+    String url =  ServiceInfo.makeHostUrl("/bounty/info");
     Map<String, dynamic> params = new Map();
     params["id"] = taskId;
     Map<String, dynamic> headers = {"token": token};

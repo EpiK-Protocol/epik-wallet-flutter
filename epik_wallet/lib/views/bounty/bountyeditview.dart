@@ -11,6 +11,7 @@ import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
+import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:epikwallet/widget/rect_getter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -82,7 +83,7 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
               right: 0,
               bottom: bottom_h,
               child: Container(
-                color: const Color(0xffeeeeee),
+                color: ResColor.b_3,
                 child: SingleChildScrollView(
                   padding: EdgeInsets.all(0),
                   child: Container(
@@ -97,7 +98,7 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16,
-                              color: Colors.black54,
+                              color: ResColor.white_80,
                               height: 2,
                             ),
                           ),
@@ -130,13 +131,13 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
                                 //"微信号,积分数量 (请按此格式输入,逗号分隔)\n",
                                 hintStyle: TextStyle(
                                   fontSize: 16,
-                                  color: Colors.black54,
+                                  color: ResColor.white_50,
                                   height: 2,
                                 ),
                               ),
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.black87,
+                                color: ResColor.white_80,
                                 height: 2,
                               ),
                               cursorWidth: 2.0,
@@ -173,7 +174,7 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
                       height: 10,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0x10000000), Color(0x00000000)],
+                          colors: [Color(0x10ffffff), Color(0x00ffffff)],
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
                         ),
@@ -205,14 +206,14 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 16,
-                                      color: Colors.black87,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
                                 Container(
                                   height: 16,
                                   width: 1,
-                                  color: Colors.black12,
+                                  color: Colors.white38,
                                 ),
                                 Expanded(
                                   child: Text(
@@ -221,7 +222,7 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 16,
-                                      color: Colors.black87,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
@@ -231,32 +232,48 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
                             // 按钮
 
                             //编辑
-                            Container(
+                            LoadingButton(
+                              gradient_bg: ResColor.lg_1,
+                              color_bg: Colors.transparent,
+                              disabledColor: Colors.transparent,
                               margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
                               width: double.infinity,
                               height: 40,
-                              child: FlatButton(
-                                highlightColor: Colors.white24,
-                                splashColor: Colors.white24,
-                                onPressed: () {
-                                  onClickPost();
-                                },
-                                child: Text(
-                                  ResString.get(context, RSID.bev_4),
-                                  //"提交奖励分配方案进行公示",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                color: ResColor.main_1,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20)),
-                                ),
+                              text:ResString.get(context, RSID.bev_4),
+                              //"提交奖励分配方案进行公示",
+                              textstyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
                               ),
+                              bg_borderradius: BorderRadius.circular(4),
+                              onclick: (lbtn) {
+                                onClickPost();
+                              },
                             ),
+                            // Container(
+                              // child: FlatButton(
+                              //   highlightColor: Colors.white24,
+                              //   splashColor: Colors.white24,
+                              //   onPressed: () {
+                              //     onClickPost();
+                              //   },
+                              //   child: Text(
+                              //     ResString.get(context, RSID.bev_4),
+                              //     //"提交奖励分配方案进行公示",
+                              //     textAlign: TextAlign.center,
+                              //     style: TextStyle(
+                              //       color: Colors.white,
+                              //       fontSize: 16,
+                              //     ),
+                              //   ),
+                              //   color: ResColor.main_1,
+                              //   shape: RoundedRectangleBorder(
+                              //     borderRadius:
+                              //         BorderRadius.all(Radius.circular(20)),
+                              //   ),
+                              // ),
+                            // ),
                           ],
                         ),
                       ),

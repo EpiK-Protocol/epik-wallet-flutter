@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
@@ -80,11 +82,11 @@ class BountyRewardRecordListviewState
           (json) => BountyUserRewardRecord.fromJson(json));
 
       // test
-//            int size = datalist.length + data.length;
-//            for (int i = size; i < size + 20; i++) {
-//              data.add((BountyUserRewardRecord.fromJson(jsonDecode(
-//                  '{"id":1,"created_at":"2020-10-10T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","bounty_id":1,"title":"案件水电费","miner_id":"241b7750-e601-54ad-9145-33837529dbbb","bonus":${i},"status":"done","description":"asdfa"}'))));
-//            }
+      int size = datalist.length + data.length;
+      for (int i = size; i < size + 20; i++) {
+        data.add((BountyUserRewardRecord.fromJson(jsonDecode(
+            '{"id":1,"created_at":"2020-10-10T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","bounty_id":1,"title":"案件水电费","miner_id":"241b7750-e601-54ad-9145-33837529dbbb","bonus":${i},"status":"done","description":"asdfa"}'))));
+      }
     }
 
     if (data != null) {
@@ -165,7 +167,7 @@ class BountyRewardRecordListviewState
 //    return customscrollview;
 
     return RefreshIndicator(
-      displacement: 50,
+      displacement: 80,
       color: ResColor.progress,
       onRefresh: _pullRefreshCallback,
       child: customscrollview,
@@ -200,71 +202,132 @@ class BountyRewardRecordListviewState
     var item = datalist[position];
     return Container(
       width: double.infinity,
-      height: 80,
-      padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
-      color: Colors.white,
-      child: Stack(
-        children: <Widget>[
-          // 底部分割线
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: 1,
-            child: Container(
-              color: Color(0xffeeeeee),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            top: 0,
-            child: Text(
-              item.title ?? "Title",
-              style: TextStyle(
-                fontSize: 15,
-                color: Color(0xff333333),
+//      height: 135,
+      padding: EdgeInsets.fromLTRB(20, 17, 20, 0),
+      color: ResColor.b_3,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                  child: Text(
+                item.title ?? "Title",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white,
+                ),
+              )),
+              Container(width: 10),
+              Text(
+                "+ " +
+                    StringUtils.formatNumAmount(item.bonus, point: 8) +
+                    ResString.get(context, RSID.berlv_1), //" 积分",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
+            ],
           ),
-          Positioned(
-            right: 10,
-            top: 0,
-            child: Text(
-              item.description ?? ResString.get(context, RSID.brrlv_1),
-              //"完成任务",
-              style: TextStyle(
-                fontSize: 15,
-                color: Color(0xff333333),
+          Container(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  ResString.get(context, RSID.berlv_3) + item.created_at_local,
+                  //"时间:${item.created_at_local}",
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.white60,
+                  ),
+                ),
               ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            bottom: 10,
-            child: Text(
-              "+ " +
-                  StringUtils.formatNumAmount(item.bonus, point: 8) +
-                  ResString.get(context, RSID.berlv_1), //" 积分",
-              style: TextStyle(
-                fontSize: 15,
-                color: Color(0xff333333),
+              Text(
+                item.description ?? RSID.brrlv_1.text,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.white60,
+                ),
               ),
-            ),
+            ],
           ),
-          Positioned(
-            right: 10,
-            bottom: 10,
-            child: Text(
-              item.created_at_local,
-              style: TextStyle(
-                fontSize: 12,
-                color: Color(0xff333333),
-              ),
-            ),
-          ),
+          Container(
+              margin: EdgeInsets.only(top: 16),
+              height: 1,
+              color: ResColor.white_20),
         ],
       ),
     );
+    // return Container(
+    //   width: double.infinity,
+    //   height: 80,
+    //   padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
+    //   color: Colors.white,
+    //   child: Stack(
+    //     children: <Widget>[
+    //       // 底部分割线
+    //       Positioned(
+    //         left: 0,
+    //         right: 0,
+    //         bottom: 0,
+    //         height: 1,
+    //         child: Container(
+    //           color: Color(0xffeeeeee),
+    //         ),
+    //       ),
+    //       Positioned(
+    //         left: 0,
+    //         top: 0,
+    //         child: Text(
+    //           item.title ?? "Title",
+    //           style: TextStyle(
+    //             fontSize: 15,
+    //             color: Color(0xff333333),
+    //           ),
+    //         ),
+    //       ),
+    //       Positioned(
+    //         right: 10,
+    //         top: 0,
+    //         child: Text(
+    //           item.description ?? ResString.get(context, RSID.brrlv_1),
+    //           //"完成任务",
+    //           style: TextStyle(
+    //             fontSize: 15,
+    //             color: Color(0xff333333),
+    //           ),
+    //         ),
+    //       ),
+    //       Positioned(
+    //         left: 0,
+    //         bottom: 10,
+    //         child: Text(
+    //           "+ " +
+    //               StringUtils.formatNumAmount(item.bonus, point: 8) +
+    //               ResString.get(context, RSID.berlv_1), //" 积分",
+    //           style: TextStyle(
+    //             fontSize: 15,
+    //             color: Color(0xff333333),
+    //           ),
+    //         ),
+    //       ),
+    //       Positioned(
+    //         right: 10,
+    //         bottom: 10,
+    //         child: Text(
+    //           item.created_at_local,
+    //           style: TextStyle(
+    //             fontSize: 12,
+    //             color: Color(0xff333333),
+    //           ),
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 
   Widget buildLoadMoreWidget(BuildContext context, int position) {

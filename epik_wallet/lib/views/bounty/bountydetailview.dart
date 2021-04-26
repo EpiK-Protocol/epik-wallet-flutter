@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
+import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
@@ -16,7 +18,7 @@ import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
-import 'package:epikwallet/widget/DashLineWidget.dart';
+import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:epikwallet/widget/text/diff_scale_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +49,13 @@ class BountyDetailViewState extends BaseWidgetState<BountyDetailView> {
   @override
   void initStateConfig() {
     super.initStateConfig();
+
+    setTopBarVisible(false);
+    setAppBarVisible(false);
+
+    viewSystemUiOverlayStyle = DeviceUtils.system_bar_main
+        .copyWith(systemNavigationBarColor: ResColor.b_4);
+
     if (widget.bountyTask.title.length > 16) {
       title_2 = widget.bountyTask.title.trim().substring(0, 16) + "…";
     } else {
@@ -55,7 +64,7 @@ class BountyDetailViewState extends BaseWidgetState<BountyDetailView> {
 
     _ScrollController = ScrollController();
     _ScrollController.addListener(() {
-      if (header_top == 0) header_top = getAppBarHeight();
+      if (header_top == 0) header_top = 45.0 + 20 + 20;
       bool _useTitle2 = _ScrollController.position.pixels >= header_top;
       if (_useTitle2 != useTitle2) {
         setState(() {
@@ -80,7 +89,7 @@ class BountyDetailViewState extends BaseWidgetState<BountyDetailView> {
       child: DiffScaleText(
         text: useTitle2 ? title_2 : title,
         textStyle: TextStyle(
-          color: Colors.black,
+          color: Colors.white,
           fontSize: 18,
           fontWeight: FontWeight.w400,
           fontFamily: fontFamily_def,
@@ -129,6 +138,12 @@ class BountyDetailViewState extends BaseWidgetState<BountyDetailView> {
           widget.bountyTask.parseJson(j_record);
           userlist = BountyTaskUser.parseLinesData(widget.bountyTask.result);
           closeStateLayout();
+
+          // if (userlist == null || userlist.isEmpty) //todo test
+          // {
+          //   userlist.add(BountyTaskUser("asdjfoaff", "0.0000000"));
+          //   userlist.add(BountyTaskUser("Chengyu612", "78.1234567890"));
+          // }
 
           if (widget.bountyTask.status == BountyStateType.PUBLICITY &&
               widget.bountyTask.getCountdownTimeNum() > 0) {
@@ -179,90 +194,101 @@ class BountyDetailViewState extends BaseWidgetState<BountyDetailView> {
   Widget buildWidget(BuildContext context) {
     List<Widget> views = [
       Padding(
-        padding: EdgeInsets.fromLTRB(15, 6, 15, 10),
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
         child: Text(
           widget?.bountyTask?.title ?? "",
           style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-          ),
+              color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold),
         ),
       ),
       Padding(
-        padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
-        child: Text(
-          "${ResString.get(context, RSID.bdv_2)} ${widget?.bountyTask?.reward}",
-          //奖励区间
-          style: TextStyle(
-            color: Colors.black87,
-            fontSize: 16,
-          ),
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+        child: Row(
+          children: [
+            Text(
+              "${ResString.get(context, RSID.bdv_2)} ",
+              //奖励区间
+              style: TextStyle(
+                color: ResColor.white_80,
+                fontSize: 14,
+              ),
+            ),
+            Text(
+              "${widget?.bountyTask?.reward}",
+              //奖励区间
+              style: TextStyle(
+                  color: ResColor.o_1,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
       ),
       getHtmlView(),
       Container(
-        height: 30,
+        height: 20,
       ),
     ];
 
     if (userlist != null && userlist.length > 0) {
-      views.add(
-        // 虚线分割线
-        Container(
-          height: 10,
-          alignment: Alignment.center,
-          child: DashLineWidget(
-            width: double.infinity,
-            height: 1,
-            dashWidth: 10,
-            dashHeight: 0.5,
-            spaceWidth: 5,
-            color: ResColor.main_1,
-            margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-          ),
-        ),
-      );
-
-      views.add(
-        Container(
-          padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
-          width: double.infinity,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                height: 2,
-                width: 60,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.black26, Colors.transparent],
-                    begin: Alignment.centerRight,
-                    end: Alignment.centerLeft,
-                  ),
-                ),
-              ),
-              Text(
-                ResString.get(context, RSID.bdv_3), //" 奖励分配公示 ",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                ),
-              ),
-              Container(
-                height: 2,
-                width: 60,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.black26, Colors.transparent],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
+      // 虚线分割线
+      // views.add(
+      //   Container(
+      //     height: 10,
+      //     alignment: Alignment.center,
+      //     child: DashLineWidget(
+      //       width: double.infinity,
+      //       height: 1,
+      //       dashWidth: 10,
+      //       dashHeight: 0.5,
+      //       spaceWidth: 5,
+      //       color: ResColor.white_20,
+      //       margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      //     ),
+      //   ),
+      // );
+      //
+      // //奖励分配公示
+      // views.add(
+      //   Container(
+      //     padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
+      //     width: double.infinity,
+      //     child: Row(
+      //       mainAxisAlignment: MainAxisAlignment.center,
+      //       children: [
+      //         Container(
+      //           height: 2,
+      //           width: 60,
+      //           decoration: BoxDecoration(
+      //             gradient: LinearGradient(
+      //               colors: [ResColor.white_20, Colors.transparent],
+      //               begin: Alignment.centerRight,
+      //               end: Alignment.centerLeft,
+      //             ),
+      //           ),
+      //         ),
+      //         Text(
+      //           ResString.get(context, RSID.bdv_3), //" 奖励分配公示 ",
+      //           style: TextStyle(
+      //             color: Colors.white,
+      //             fontSize: 14,
+      //           ),
+      //         ),
+      //         Container(
+      //           height: 2,
+      //           width: 60,
+      //           decoration: BoxDecoration(
+      //             gradient: LinearGradient(
+      //               colors: [ResColor.white_20, Colors.transparent],
+      //               begin: Alignment.centerLeft,
+      //               end: Alignment.centerRight,
+      //             ),
+      //           ),
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // );
 
       views.addAll(userlist.map((item) => getUserItem(item)).toList());
     }
@@ -271,13 +297,18 @@ class BountyDetailViewState extends BaseWidgetState<BountyDetailView> {
 
     Widget w1 = SingleChildScrollView(
       controller: _ScrollController,
-      padding: EdgeInsets.all(0),
+      padding: EdgeInsets.fromLTRB(30, 45, 30, 45),
       child: Container(
         constraints: BoxConstraints(
           minHeight: getScreenHeight() -
               BaseFuntion.topbarheight -
               BaseFuntion.appbarheight_def,
         ),
+        decoration: BoxDecoration(
+          color: ResColor.b_3,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        padding: EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: views,
@@ -285,96 +316,154 @@ class BountyDetailViewState extends BaseWidgetState<BountyDetailView> {
       ),
     );
 
+    double top = getAppBarHeight() + getTopBarHeight();
+
+    String countdown = widget?.bountyTask?.getCountdownString();
+    countdown = "1天 01:12:34";
+
     return Column(
       children: [
         Expanded(
           child: Stack(
             children: [
+              // 顶部背景
               Positioned(
                 left: 0,
                 top: 0,
                 right: 0,
-                bottom: 0,
-                child: w1,
-              ),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
+                height: top + 128,
                 child: Container(
-                  height: 10,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0x10000000), Color(0x00000000)],
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                    ),
+                    gradient: ResColor.lg_1,
+                    borderRadius:
+                        BorderRadius.vertical(bottom: Radius.circular(20)),
+                  ),
+                  child: Column(
+                    children: [
+                      getTopBar(),
+                      getAppBar(),
+                    ],
                   ),
                 ),
               ),
+              Positioned(
+                left: 0,
+                top: top,
+                right: 0,
+                bottom: 0,
+                child: w1,
+              ),
+              // Positioned(
+              //   left: 0,
+              //   right: 0,
+              //   bottom: 0,
+              //   child: Container(
+              //     height: 10,
+              //     decoration: BoxDecoration(
+              //       gradient: const LinearGradient(
+              //         colors: [Color(0x10ffffff), Color(0x00ffffff)],
+              //         begin: Alignment.bottomCenter,
+              //         end: Alignment.topCenter,
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
-
-        Container(height: 10),
-
-        Container(
-          margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-          width: double.infinity,
-          height: 40,
-          child: FlatButton(
-            highlightColor: Colors.white24,
-            splashColor: Colors.white24,
-            onPressed: () {
-              // todo
-            },
-            child: Text(
-              ResString.get(context, RSID.bdv_4) +
-                  "${widget?.bountyTask?.status.getName()} ${widget?.bountyTask?.getCountdownString()}", //任务状态
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-              ),
+        SafeArea(
+          top: false,
+          bottom: true,
+          left: false,
+          right: false,
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: ResColor.b_4,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
-            color: ResColor.main_1,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20)),
+            child: Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        RSID.bdv_4.text, //任务状态:
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: ResColor.white_60,
+                        ),
+                      ),
+                      Container(height: 4),
+                      Text(
+                        widget?.bountyTask?.status.getName(), //可认领 公式中 已完成
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: ResColor.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: StringUtils.isEmpty(countdown)
+                      ? Container()
+                      : Padding(
+                          padding: EdgeInsets.only(right: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                RSID.bdv_12.text, ////剩余:
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: ResColor.white_60,
+                                ),
+                              ),
+                              Container(height:4),
+                              Text(
+                                countdown,
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  color: ResColor.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                ),
+                if (isAdmin == true &&
+                    widget.bountyTask.status != BountyStateType.END)
+                  LoadingButton(
+                    height: 40,
+                    width: null,
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                    bg_borderradius: BorderRadius.circular(4),
+                    color_bg: const Color(0xff424242),
+                    disabledColor: const Color(0xff424242),
+                    text: RSID.bdv_13.text,
+                    textstyle: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    onclick: (lbtn) {
+                      ViewGT.showBountyEditView(context, widget?.bountyTask);
+                    },
+                  ),
+                getContactView(),
+              ],
             ),
           ),
         ),
-
-        Container(height: 10),
-        // 联系方式
-        getContactView(),
-
-        Container(height: 10),
-        //编辑
-        if (isAdmin == true && widget.bountyTask.status != BountyStateType.END)
-          Container(
-            margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
-            width: double.infinity,
-            height: 40,
-            child: FlatButton(
-              highlightColor: Colors.white24,
-              splashColor: Colors.white24,
-              onPressed: () {
-                ViewGT.showBountyEditView(context, widget?.bountyTask);
-              },
-              child: Text(
-                ResString.get(context, RSID.bdv_5), //"编辑奖励",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              color: ResColor.main_1,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-              ),
-            ),
-          ),
       ],
     );
   }
@@ -391,7 +480,7 @@ class BountyDetailViewState extends BaseWidgetState<BountyDetailView> {
       textStyle: TextStyle(
         fontSize: 16,
         height: 1.5,
-        color: Color(0xff666666),
+        color: Colors.white,
       ),
       // config: HtmlWidgetConfig(
       //   bodyPadding: const EdgeInsets.fromLTRB(15, 15, 15, 0), //内容边距
@@ -424,61 +513,116 @@ class BountyDetailViewState extends BaseWidgetState<BountyDetailView> {
     );
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(15, 15, 15, 0), //内容边距
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0), //内容边距
       child: htmlwidget,
     );
   }
 
   Widget getContactView() {
-    String text = "";
+
+    String text1 = "";
     switch (widget?.bountyTask?.status) {
       case BountyStateType.PUBLICITY:
-        text = ResString.get(context, RSID.bdv_6); // "申诉方式: ";
+        text1 = ResString.get(context, RSID.bdv_14); // "申诉
         break;
       case BountyStateType.END:
-        text = ResString.get(context, RSID.bdv_7); // "感谢方式: ";
+        text1 = ResString.get(context, RSID.bdv_15); // "感谢
         break;
       case BountyStateType.AVAILABLE:
       default:
-        text = ResString.get(context, RSID.bdv_8); //"认领方式: ";
+        text1 = ResString.get(context, RSID.bdv_16); //"认领
         break;
     }
 
-    String wechat = widget?.bountyTask?.admin_weixin;
-//    text += "联系负责人微信 " + wechat;
-    text += ResString.get(context, RSID.bdv_9) + wechat;
 
-    return Container(
-      margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-      width: double.infinity,
+    return LoadingButton(
       height: 40,
-      child: FlatButton(
-        highlightColor: Colors.white24,
-        splashColor: Colors.white24,
-        onPressed: () {
-          DeviceUtils.copyText(wechat);
-          showToast(ResString.get(context, RSID.bdv_10)); //"负责人微信已复制");
-          ViewGT.openOutUrl("weixin://");
-        },
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-          ),
-        ),
-        color: ResColor.main_1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-        ),
+      width: null,
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+      bg_borderradius: BorderRadius.circular(4),
+      gradient_bg: ResColor.lg_1,
+      color_bg: widget?.bountyTask?.status == BountyStateType.AVAILABLE
+          ? Colors.transparent
+          : const Color(0xff424242),
+      disabledColor: widget?.bountyTask?.status == BountyStateType.AVAILABLE
+          ? Colors.transparent
+          : const Color(0xff424242),
+      text: text1,
+      textstyle: TextStyle(
+        color: Colors.white,
+        fontSize: 17,
+        fontWeight: FontWeight.bold,
       ),
+      onclick: (lbtn) {
+
+        String text = "";
+        switch (widget?.bountyTask?.status) {
+          case BountyStateType.PUBLICITY:
+            text = ResString.get(context, RSID.bdv_6); // "申诉方式: ";
+            break;
+          case BountyStateType.END:
+            text = ResString.get(context, RSID.bdv_7); // "感谢方式: ";
+            break;
+          case BountyStateType.AVAILABLE:
+          default:
+            text = ResString.get(context, RSID.bdv_8); //"认领方式: ";
+            break;
+        }
+        String wechat = widget?.bountyTask?.admin_weixin;
+        // "联系负责人微信 " + wechat;
+
+        MessageDialog.showMsgDialog(context,
+        title: text,
+          msg: ResString.get(context, RSID.bdv_9) + wechat,
+        btnRight: RSID.confirm.text,
+          onClickBtnRight: (dialog) {
+            dialog.dismiss();
+            DeviceUtils.copyText(wechat);
+            showToast(ResString.get(context, RSID.bdv_10)); //"负责人微信已复制");
+            ViewGT.openOutUrl("weixin://");
+          },
+        );
+
+
+      },
     );
+
+    // return Container(
+    //   padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+    //   width: double.infinity,
+    //   height: 40,
+    //   child: FlatButton(
+    //     highlightColor: Colors.white24,
+    //     splashColor: Colors.white24,
+    //     onPressed: () {
+    //       DeviceUtils.copyText(wechat);
+    //       showToast(ResString.get(context, RSID.bdv_10)); //"负责人微信已复制");
+    //       ViewGT.openOutUrl("weixin://");
+    //     },
+    //     child: Text(
+    //       text,
+    //       textAlign: TextAlign.center,
+    //       style: TextStyle(
+    //         color: Colors.white,
+    //         fontSize: 16,
+    //       ),
+    //     ),
+    //     color: ResColor.b_2,
+    //     shape: RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.all(Radius.circular(20)),
+    //     ),
+    //   ),
+    // );
   }
 
   Widget getUserItem(BountyTaskUser user) {
     return Container(
-      padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
+      padding: EdgeInsets.fromLTRB(10, 13, 10, 13),
+      margin: EdgeInsets.fromLTRB(0, 0, 0, 6),
+      decoration: BoxDecoration(
+        color: ResColor.white_20,
+        borderRadius: BorderRadius.circular(4),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -488,8 +632,8 @@ class BountyDetailViewState extends BaseWidgetState<BountyDetailView> {
                 child: Text(
                   user.userid,
                   style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black87,
+                    fontSize: 14,
+                    color: ResColor.white_80,
                   ),
                 ),
               ),
@@ -497,17 +641,12 @@ class BountyDetailViewState extends BaseWidgetState<BountyDetailView> {
                 ResString.get(context, RSID.bdv_11, replace: [user.amount_str]),
                 //"+ ${user.amount_str} 积分",
                 style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black87,
+                  fontSize: 14,
+                  color: ResColor.o_1,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
-          ),
-          Container(height: 14),
-          Divider(
-            height: 1,
-            thickness: 1,
-            color: Color(0xffeeeeee),
           ),
         ],
       ),

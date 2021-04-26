@@ -128,6 +128,7 @@ enum RSID {
   main_wv_3,
   main_wv_4,
   main_wv_5,
+  main_wv_6,//总资产
   //WalletMenu 首页_钱包侧滑菜单
   main_mw_1,
   main_mw_2,
@@ -193,6 +194,7 @@ enum RSID {
   cdv_5,
   cdv_6,
   cdv_7,
+  cdv_8,
   //CurrencyWithdrawView 转账
   cwv_1,
   cwv_2,
@@ -280,6 +282,11 @@ enum RSID {
   bdv_9,
   bdv_10,
   bdv_11,
+  bdv_12,
+  bdv_13,
+  bdv_14,
+  bdv_15,
+  bdv_16,
   //BountyEditView 编辑奖励
   bev_1,
   bev_2,
@@ -317,6 +324,7 @@ enum RSID {
   bexv_18,
   bexv_19,
   bexv_20,
+  bexv_21,
 
   //----------------------------------------logic.*
   //UniswapHistoryMgr.dart

@@ -38,6 +38,7 @@ class MinnerViewState extends BaseInnerWidgetState<MinnerView> {
 
   @override
   void initStateConfig() {
+    navigationColor = ResColor.b_2;
     super.initStateConfig();
     setTopBarVisible(false);
     setAppBarVisible(false);
@@ -64,19 +65,8 @@ class MinnerViewState extends BaseInnerWidgetState<MinnerView> {
       width: double.infinity,
       height: double.infinity,
       padding: EdgeInsets.fromLTRB(0, BaseFuntion.topbarheight, 0, 0),
-      decoration: BoxDecoration(
-        gradient: const RadialGradient(
-          colors: [
-            Color(0xfff7e6f0),
-            Colors.white,
-          ],
-          center: Alignment.center,
-          radius: 1,
-          tileMode: TileMode.clamp,
-        ),
-      ),
       alignment: Alignment.center,
-      child: Text("矿工 TODO"),
+      child: Text("矿工 TODO",style: TextStyle(color: Colors.white),),
     );
   }
 

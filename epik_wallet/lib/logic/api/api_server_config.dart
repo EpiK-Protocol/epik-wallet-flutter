@@ -6,7 +6,8 @@ import 'package:epikwallet/utils/http/httputils.dart';
 class ApiServerConfig{
 
   static Future<HttpJsonRes> getWalletConfig() {
-    String url = ServiceInfo.HOST + "/wallet/config";
+    // String url = ServiceInfo.HOST + "/wallet/config";
+    String url =  ServiceInfo.makeHostUrl("/wallet/config");
     Map<String, dynamic> params = new Map();
     return HttpUtil.instance.requestJson(true, url, params);
   }

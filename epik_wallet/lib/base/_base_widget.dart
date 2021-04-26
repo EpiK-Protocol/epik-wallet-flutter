@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 //import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 
@@ -85,6 +86,17 @@ abstract class BaseWidgetState<T extends BaseWidget> extends State<T>
     );
   }
 
+  SystemUiOverlayStyle viewSystemUiOverlayStyle=DeviceUtils.system_bar_light;
+  SystemUiOverlayStyle oldSystemUiOverlayStyle;
+
+  @override
+  void onCreate() {
+    super.onCreate();
+
+    oldSystemUiOverlayStyle = DeviceUtils.system_bar_current;
+    DeviceUtils.setSystemBarStyle(viewSystemUiOverlayStyle);
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -97,6 +109,10 @@ abstract class BaseWidgetState<T extends BaseWidget> extends State<T>
     NavigatorManger().removeWidget(this);
 
 //    UmengAnalyticsPlugin.pageEnd(getWidgetName());
+
+    if (oldSystemUiOverlayStyle != null)
+      DeviceUtils.setSystemBarStyle(oldSystemUiOverlayStyle);
+
     super.dispose();
   }
 
@@ -139,6 +155,10 @@ abstract class BaseWidgetState<T extends BaseWidget> extends State<T>
   void onResume() {
     // TODO: implement onResume
     dlog("onResume");
-    DeviceUtils.changeNavigationColor(navigationColor);
+    // DeviceUtils.changeNavigationColor(navigationColor);
   }
+
+
+
 }
+

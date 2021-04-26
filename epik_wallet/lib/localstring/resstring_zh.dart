@@ -130,12 +130,13 @@ Map<RSID, String> map_zh = {
   RSID.main_wv_5: "主网",
 
   //WalletMenu 首页_钱包侧滑菜单
-  RSID.main_mw_1: "钱包",
+  RSID.main_mw_1: "选择钱包",
   RSID.main_mw_2: "当前钱包",
   RSID.main_mw_3: "无效钱包",
   RSID.main_mw_4: "暂不",
   RSID.main_mw_5: "确定清除",
   RSID.main_mw_6: "检测【%s】为无效钱包，是否清除？",
+  RSID.main_wv_6: "总资产",
 
   //TransactionView 首页_交易
   RSID.main_tv_1: "请先登录钱包",
@@ -198,6 +199,7 @@ Map<RSID, String> map_zh = {
   RSID.cdv_5: "请稍等...二维码正在加载",
   RSID.cdv_6: "二维码已保存到相册",
   RSID.cdv_7: "保存失败",
+  RSID.cdv_8:"请勿转入非 %s 资产到以上地址，否则转入资产将永久损失且无法找回。",
   //CurrencyWithdrawView 转账
   RSID.cwv_1: "转出地址",
   RSID.cwv_2: "接收地址",
@@ -205,7 +207,7 @@ Map<RSID, String> map_zh = {
   RSID.cwv_4: "转账金额",
   RSID.cwv_5: "全部",
   RSID.cwv_6: "输入金额",
-  RSID.cwv_7: "手续费 : %s eth",
+  RSID.cwv_7: "手续费: %s ETH",
   RSID.cwv_8: "请填入接收地址",
   RSID.cwv_9: "请输入金额",
   RSID.cwv_10: "转账金额不能是0",
@@ -260,7 +262,7 @@ Map<RSID, String> map_zh = {
   // , "低", "收", "涨跌额", "涨幅",/* "成交量"*/];
   //UniswapPoolAddView 注入资金
   RSID.uspav_1: "当前为预估价格，如果价格波动超过%s%，您的交易将会撤销。",
-  RSID.uspav_2: "手续费 : %s eth",
+  RSID.uspav_2: "手续费: %s ETH",
   RSID.uspav_3: "确定注入",
   RSID.uspav_4: "请输入数量",
   RSID.uspav_5: "正在提交",
@@ -288,6 +290,11 @@ Map<RSID, String> map_zh = {
   RSID.bdv_9: "联系负责人微信",
   RSID.bdv_10: "负责人微信已复制",
   RSID.bdv_11: "+ %s 积分",
+  RSID.bdv_12:"剩余: ",
+  RSID.bdv_13: "编辑",
+  RSID.bdv_14: "申诉",
+  RSID.bdv_15: "感谢",
+  RSID.bdv_16: "认领",
   //BountyEditView 编辑奖励
   RSID.bev_1: "微信号,积分数量 (请按此格式输入,逗号分隔)\n",
   RSID.bev_2: "总人数\n",
@@ -326,6 +333,7 @@ Map<RSID, String> map_zh = {
   RSID.bexv_18: "当前EPK收币账户：",
   RSID.bexv_19: "预估手续费：%s EPK",
   RSID.bexv_20: "用积分兑换EPK时，需要扣除手续费",
+  RSID.bexv_21: "兑换数量",
 
   //----------------------------------------logic.*
   //UniswapHistoryMgr.dart

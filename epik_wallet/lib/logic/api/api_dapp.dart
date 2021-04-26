@@ -10,7 +10,8 @@ class ApiDapp {
 
   // dapp 列表
   static Future<HttpJsonRes> dappList() {
-    String url = ServiceInfo.HOST + "/dapp/list";
+    // String url = ServiceInfo.HOST + "/dapp/list";
+    String url =  ServiceInfo.makeHostUrl("/dapp/list");
     return HttpUtil.instance.requestJson(true, url, null);
   }
 

@@ -11,13 +11,13 @@ extension aaaa on CurrencySymbol {
   String get iconUrl {
     switch (this) {
       case CurrencySymbol.EPK:
-        return "assets/img/ic_epk.png";
+        return "assets/img/ic_epk_2.png";
       case CurrencySymbol.EPKerc20:
-        return "assets/img/ic_epk.png";
+        return "assets/img/ic_epk_2.png";
       case CurrencySymbol.ETH:
-        return "assets/img/ic_eth.png";
+        return "assets/img/ic_eth_2.png";
       case CurrencySymbol.USDT:
-        return "assets/img/ic_usdt.png";
+        return "assets/img/ic_usdt_2.png";
       default:
         return "";
     }

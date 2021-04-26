@@ -9,12 +9,12 @@ import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
-import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
+import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -46,6 +46,11 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
   @override
   void initStateConfig() {
 //    setAppBarTitle("${widget.currencyAsset.cs.symbol}转账");
+
+    isTopBarShow = false; //状态栏是否显示
+    isAppBarShow = false; //导航栏是否显示
+    isTopFloatWidgetShow = true;
+
     resizeToAvoidBottomPadding = true;
 
     switch (widget.currencyAsset.cs) {
@@ -62,27 +67,28 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
   }
 
   @override
+  Widget getTopFloatWidget() {
+    return Padding(
+      padding: EdgeInsets.only(top: getTopBarHeight()),
+      child: getAppBar(),
+    );
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     setAppBarTitle(
         widget.currencyAsset.cs.symbol + ResString.get(context, RSID.withdraw));
   }
 
-  SystemUiOverlayStyle oldSystemUiOverlayStyle;
-
   @override
   void onCreate() {
     super.onCreate();
-
-    oldSystemUiOverlayStyle = DeviceUtils.system_bar_current;
-    DeviceUtils.setSystemBarStyle(DeviceUtils.system_bar_dark);
     eventMgr.add(EventTag.SCAN_QRCODE_RESULT, eventcallback_qrcode);
   }
 
   @override
   void dispose() {
-    if (oldSystemUiOverlayStyle != null)
-      DeviceUtils.setSystemBarStyle(oldSystemUiOverlayStyle);
     eventMgr.remove(EventTag.SCAN_QRCODE_RESULT, eventcallback_qrcode);
     super.dispose();
   }
@@ -103,300 +109,430 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
   Widget buildWidget(BuildContext context) {
     List<Widget> views = [];
 
-    /// 转出地址
-    views.add(Container(
-      width: double.infinity,
-      margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
-      padding: EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: bgcolor,
+    views.add(
+      Container(
+        padding: EdgeInsets.fromLTRB(20, 40, 20, 5),
+        child: Text(
+          ResString.get(context, RSID.cwv_1), //"转出地址",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 13,
+          ),
+        ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            ResString.get(context, RSID.cwv_1), //"转出地址",
-            style: TextStyle(
-              color: Colors.black54,
-              fontSize: 14,
-            ),
+    );
+
+    views.add(
+      Container(
+        padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+        child: Text(
+          from_address,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 17,
           ),
-          Container(
-            height: 10,
-          ),
-          Text(
-            from_address,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 16,
-            ),
-          ),
-        ],
+        ),
       ),
-    ));
+    );
 
     if (_controllerToAddress == null)
       _controllerToAddress = new TextEditingController(text: to_address);
+    views.add(
+      Container(
+        width: double.infinity,
+        // height: 77,
+        constraints: BoxConstraints(
+          minHeight: 67,
+        ),
+        margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
+        child: Row(
+          children: [
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: TextField(
+                      controller: _controllerToAddress,
+                      keyboardType: TextInputType.text,
+                      //获取焦点时,启用的键盘类型
+                      maxLines: null,
+                      //1,
+                      // 输入框最大的显示行数
+//              maxLength: 20, //允许输入的字符长度/ 右下角有数量提示
+                      maxLengthEnforced: true,
+                      //是否允许输入的字符长度超过限定的字符长度
+                      obscureText: false,
+                      //是否是密码
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExpUtil.re_noChs)
+                      ],
+                      // 这里限制长度 不会有数量提示
+                      decoration: InputDecoration(
+                        // 以下属性可用来去除TextField的边框
+                        // border: InputBorder.none,
+                        // errorBorder: InputBorder.none,
+                        // focusedErrorBorder: InputBorder.none,
+                        border: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        focusedErrorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        // enabledBorder: const UnderlineInputBorder(
+                        //   borderRadius: BorderRadius.zero,
+                        //   borderSide: BorderSide(
+                        //     color: ResColor.white_20,
+                        //     width: 1,
+                        //   ),
+                        // ),
+                        // focusedBorder: const UnderlineInputBorder(
+                        //   borderRadius: BorderRadius.zero,
+                        //   borderSide: BorderSide(
+                        //     color: ResColor.white,
+                        //     width: 1,
+                        //   ),
+                        // ),
+                        contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 20),
 
-    /// 接收地址
-    views.add(Container(
-      width: double.infinity,
-      margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
-      padding: EdgeInsets.fromLTRB(15, 0, 0, 15),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: bgcolor,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            width: double.infinity,
-            height: 50,
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Text(
-                    ResString.get(context, RSID.cwv_2), //"接收地址",
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 14,
+//                      contentPadding: EdgeInsets.symmetric(vertical: 8.5),
+//                         hintText: RSID.cwv_2.text,
+//                         //"接收地址"
+//                         hintStyle:
+//                             TextStyle(color: ResColor.white_50, fontSize: 14),
+                        labelText: RSID.cwv_2.text,
+                        //"接收地址",
+                        labelStyle:
+                            TextStyle(color: ResColor.white, fontSize: 17),
+                      ),
+                      cursorWidth: 2.0,
+                      //光标宽度
+                      cursorRadius: Radius.circular(2),
+                      //光标圆角弧度
+                      cursorColor: Colors.white,
+                      //光标颜色
+                      style: TextStyle(fontSize: 17, color: Colors.white),
+                      onChanged: (value) {
+                        setState(() {
+                          to_address = _controllerToAddress.text.trim();
+                        });
+                      },
+                      onSubmitted: (value) {
+                        setState(() {
+                          to_address = _controllerToAddress.text.trim();
+                        });
+                      }, // 是否隐藏输入的内容
                     ),
                   ),
-                ),
-                InkWell(
-                  onTap: () {
-                    onClickScan();
-                  },
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    padding: EdgeInsets.all(15),
-                    child: ImageIcon(
-                      AssetImage("assets/img/ic_scan.png"),
-                      color: Colors.lightBlue,
-                      size: 10,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.fromLTRB(0, 0, 15, 0),
-            constraints: BoxConstraints(
-              minWidth: double.infinity,
-              minHeight: 15,
-              maxHeight: 100,
-            ),
-            child: TextField(
-              controller: _controllerToAddress,
-              keyboardType: TextInputType.text,
-              maxLines: null,
-              maxLengthEnforced: true,
-              obscureText: false,
-              //是否是密码
-              inputFormatters: [
-                WhitelistingTextInputFormatter(RegExpUtil.re_noChs)
-              ],
-              // 这里限制长度 不会有数量提示
-              decoration: InputDecoration(
-                // 以下属性可用来去除TextField的边框
-                border: InputBorder.none,
-                errorBorder: InputBorder.none,
-                focusedErrorBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                hintText: ResString.get(context, RSID.cwv_3),
-                //"输入地址、长按粘贴地址或点扫描二维码",
-                hintStyle: TextStyle(color: Colors.black54, fontSize: 16),
+                ],
               ),
-              cursorWidth: 2.0,
-              //光标宽度
-              cursorRadius: Radius.circular(2),
-              //光标圆角弧度
-              cursorColor: Colors.black,
-              //光标颜色
-              style: TextStyle(fontSize: 16, color: Colors.black),
-              onChanged: (value) {
-                to_address = _controllerToAddress.text.trim();
-              },
-              onSubmitted: (value) {
-                to_address = _controllerToAddress.text.trim();
-              }, // 是否隐藏输入的内容
             ),
-          ),
-        ],
+            (StringUtils.isEmpty(to_address))
+                ? Container()
+                : SizedBox(
+                    width: 40,
+                    height: 67,
+                    child: IconButton(
+                      onPressed: () {
+                        to_address = "";
+                        _controllerToAddress = null;
+                        setState(() {});
+                      },
+                      padding: EdgeInsets.all(0),
+                      icon: Icon(Icons.clear_rounded),
+                      color: Colors.white,
+                      iconSize: 14,
+                    ),
+                  ),
+            InkWell(
+              onTap: () {
+                onClickScan();
+              },
+              child: Container(
+                width: 40,
+                height: 62,
+                padding: EdgeInsets.all(9),
+                child: Image.asset("assets/img/ic_scan_2.png"),
+              ),
+            ),
+          ],
+        ),
       ),
+    );
+    views.add(Container(
+      height: 1,
+      width: double.infinity,
+      color: ResColor.white_20,
+      margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
     ));
 
     if (_controllerAmount == null)
       _controllerAmount = new TextEditingController(text: amount);
 
-    /// 金额
-    views.add(Container(
-      width: double.infinity,
-      margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
-      padding: EdgeInsets.fromLTRB(15, 0, 0, 15),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: bgcolor,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            width: double.infinity,
-            height: 50,
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Text(
-                    ResString.get(context, RSID.cwv_4), //"转账金额",
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    amount = widget.currencyAsset.balance ?? "0";
+    views.add(
+      Container(
+        width: double.infinity,
+        height: 67,
+        // constraints: BoxConstraints(
+        //   minHeight: 67,
+        // ),
+        margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
+        child: Row(
+          children: [
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: TextField(
+                      controller: _controllerAmount,
+                      keyboardType: TextInputType.text,
+                      //获取焦点时,启用的键盘类型
+                      maxLines: 1,
+                      // 输入框最大的显示行数
+//              maxLength: 20, //允许输入的字符长度/ 右下角有数量提示
+                      maxLengthEnforced: true,
+                      //是否允许输入的字符长度超过限定的字符长度
+                      obscureText: false,
+                      //是否是密码
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExpUtil.re_float)
+                      ],
+                      // 这里限制长度 不会有数量提示
+                      decoration: InputDecoration(
+                        // 以下属性可用来去除TextField的边框
+                        // border: InputBorder.none,
+                        // errorBorder: InputBorder.none,
+                        // focusedErrorBorder: InputBorder.none,
+                        border: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        focusedErrorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        // enabledBorder: const UnderlineInputBorder(
+                        //   borderRadius: BorderRadius.zero,
+                        //   borderSide: BorderSide(
+                        //     color: ResColor.white_20,
+                        //     width: 1,
+                        //   ),
+                        // ),
+                        // focusedBorder: const UnderlineInputBorder(
+                        //   borderRadius: BorderRadius.zero,
+                        //   borderSide: BorderSide(
+                        //     color: ResColor.white,
+                        //     width: 1,
+                        //   ),
+                        // ),
+                        contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 20),
 
-                    if (widget.currencyAsset.cs == CurrencySymbol.ETH) {
-                      //eth转账 gas就是eth 所以全部金额 要减掉gas
-                      try {
-                        String suggestGas =
-                            widget.walletaccount.eth_suggestGas ?? "0";
-                        double _a = StringUtils.parseDouble(amount, 0);
-                        double _gas = StringUtils.parseDouble(suggestGas, 0);
-                        _a -= _gas;
-                        if (_a < 0) _a = 0;
-                        // print("amount=$amount");
-                        // print("_a=$_a");
-                        // print("suggestGas=$suggestGas");
-                        // print("_gas=$_gas");
-                        amount = StringUtils.formatNumAmount(_a,
-                                point: 18, supply0: false)
-                            .replaceAll(",", "");
-                        // print("$amount");
-                      } catch (e) {
-                        print(e);
-                      }
-                    }
-
-                    _controllerAmount = null;
-                    setState(() {});
-                  },
-                  child: Container(
-                    height: 50,
-                    padding: EdgeInsets.all(15),
-                    child: Text(
-                      ResString.get(context, RSID.cwv_5), //"全部",
-                      style: TextStyle(
-                        color: Colors.lightBlue,
-                        fontSize: 14,
+//                      contentPadding: EdgeInsets.symmetric(vertical: 8.5),
+//                         hintText: RSID.cwv_2.text,
+//                         //"接收地址"
+//                         hintStyle:
+//                             TextStyle(color: ResColor.white_50, fontSize: 14),
+                        labelText: RSID.cwv_4.text,
+                        labelStyle:
+                            TextStyle(color: ResColor.white, fontSize: 17),
                       ),
+                      cursorWidth: 2.0,
+                      //光标宽度
+                      cursorRadius: Radius.circular(2),
+                      //光标圆角弧度
+                      cursorColor: Colors.white,
+                      //光标颜色
+                      style: TextStyle(fontSize: 17, color: Colors.white),
+                      onChanged: (value) {
+                        setState(() {
+                          amount = _controllerAmount.text.trim();
+                        });
+                      },
+                      onSubmitted: (value) {
+                        setState(() {
+                          amount = _controllerAmount.text.trim();
+                        });
+                      }, // 是否隐藏输入的内容
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.fromLTRB(0, 0, 15, 0),
-            child: TextField(
-              controller: _controllerAmount,
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              maxLines: 1,
-              maxLengthEnforced: true,
-              obscureText: false,
-              //是否是密码
-              inputFormatters: [
-                WhitelistingTextInputFormatter(RegExpUtil.re_float)
-              ],
-              // 这里限制长度 不会有数量提示
-              decoration: InputDecoration(
-                // 以下属性可用来去除TextField的边框
-                border: InputBorder.none,
-                errorBorder: InputBorder.none,
-                focusedErrorBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                hintText: ResString.get(context, RSID.cwv_6),
-                //"输入金额",
-                hintStyle: TextStyle(color: Colors.black54, fontSize: 16),
+                ],
               ),
-              cursorWidth: 2.0,
-              //光标宽度
-              cursorRadius: Radius.circular(2),
-              //光标圆角弧度
-              cursorColor: Colors.black,
-              //光标颜色
-              style: TextStyle(fontSize: 16, color: Colors.black),
-              onChanged: (value) {
-                amount = _controllerAmount.text.trim();
-              },
-              onSubmitted: (value) {
-                amount = _controllerAmount.text.trim();
-              }, // 是否隐藏输入的内容
             ),
-          ),
-        ],
+            (StringUtils.isEmpty(amount))
+                ? Container()
+                : SizedBox(
+                    width: 40,
+                    height: 67,
+                    child: IconButton(
+                      onPressed: () {
+                        amount = "";
+                        _controllerAmount = null;
+                        setState(() {});
+                      },
+                      padding: EdgeInsets.all(0),
+                      icon: Icon(Icons.clear_rounded),
+                      color: Colors.white,
+                      iconSize: 14,
+                    ),
+                  ),
+            LoadingButton(
+              margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+              color_bg: Colors.transparent,
+              disabledColor: Colors.transparent,
+              height: 20,
+              width: 40,
+              text: RSID.cwv_5.text,
+              //全部
+              textstyle: TextStyle(
+                color: ResColor.o_1,
+                fontSize: 12,
+              ),
+              bg_borderradius: BorderRadius.circular(4),
+              side: BorderSide(
+                color: ResColor.o_1,
+                width: 1,
+              ),
+              onclick: (lbtn) {
+                amount = widget.currencyAsset.balance ?? "0";
+
+                if (widget.currencyAsset.cs == CurrencySymbol.ETH) {
+                  //eth转账 gas就是eth 所以全部金额 要减掉gas
+                  try {
+                    String suggestGas =
+                        widget.walletaccount.eth_suggestGas ?? "0";
+                    double _a = StringUtils.parseDouble(amount, 0);
+                    double _gas = StringUtils.parseDouble(suggestGas, 0);
+                    _a -= _gas;
+                    if (_a < 0) _a = 0;
+                    // print("amount=$amount");
+                    // print("_a=$_a");
+                    // print("suggestGas=$suggestGas");
+                    // print("_gas=$_gas");
+                    amount = StringUtils.formatNumAmount(_a,
+                            point: 18, supply0: false)
+                        .replaceAll(",", "");
+                    // print("$amount");
+                  } catch (e) {
+                    print(e);
+                  }
+                }
+
+                _controllerAmount = null;
+                setState(() {});
+              },
+            ),
+          ],
+        ),
       ),
+    );
+    views.add(Container(
+      height: 1,
+      width: double.infinity,
+      color: ResColor.white_20,
+      margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
     ));
+
+    views.add(
+      Container(
+        width: double.infinity,
+        margin: EdgeInsets.fromLTRB(20, 11, 20, 0),
+        child: Text(
+          RSID.usev_4.text +
+              " " +
+              (StringUtils.isNotEmpty(widget.currencyAsset.balance)
+                  ? widget.currencyAsset.balance
+                  : "--") +
+              " " +
+              widget.currencyAsset.symbol,
+          textAlign: TextAlign.end,
+          style: TextStyle(
+            color: ResColor.white_40,
+            fontSize: 14,
+          ),
+        ),
+      ),
+    );
 
     if (widget.currencyAsset.cs != CurrencySymbol.EPK) {
       views.add(
         Container(
           width: double.infinity,
-          margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
+          margin: EdgeInsets.fromLTRB(20, 5, 20, 0),
           child: Text(
             ResString.get(context, RSID.cwv_7,
                 replace: [widget.walletaccount.eth_suggestGas]),
             //"手续费 : ${widget.walletaccount.eth_suggestGas} eth",
+            textAlign: TextAlign.end,
             style: TextStyle(
-              color: Colors.black45,
-              fontSize: 12,
+              color: ResColor.white_40,
+              fontSize: 14,
             ),
           ),
         ),
       );
     }
 
-    views.add(Container(
-      width: double.infinity,
-      height: 44,
-      margin: EdgeInsets.fromLTRB(20, 50, 20, 20),
-      child: FlatButton(
-        highlightColor: Colors.white24,
-        splashColor: Colors.white24,
-        onPressed: () {
+    views.add(
+      LoadingButton(
+        margin: EdgeInsets.fromLTRB(30, 40, 30, 20),
+        gradient_bg: ResColor.lg_1,
+        color_bg: Colors.transparent,
+        disabledColor: Colors.transparent,
+        height: 40,
+        text: RSID.confirm.text, //"确定",
+        textstyle: TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
+        bg_borderradius: BorderRadius.circular(4),
+        onclick: (lbtn) {
           onClickWithdraw();
         },
-        child: Text(
-          ResString.get(context, RSID.confirm), //"确定",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-          ),
-        ),
-        color: Color(0xff393E45),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(22)),
-        ),
       ),
-    ));
+    );
 
-    return SingleChildScrollView(
+    // views.add(Container(
+    //   width: double.infinity,
+    //   height: 44,
+    //   margin: EdgeInsets.fromLTRB(20, 50, 20, 20),
+    //   child: FlatButton(
+    //     highlightColor: Colors.white24,
+    //     splashColor: Colors.white24,
+    //     onPressed: () {
+    //       onClickWithdraw();
+    //     },
+    //     child: Text(
+    //       ResString.get(context, RSID.confirm), //"确定",
+    //       style: TextStyle(
+    //         color: Colors.white,
+    //         fontSize: 16,
+    //       ),
+    //     ),
+    //     color: Color(0xff393E45),
+    //     shape: RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.all(Radius.circular(22)),
+    //     ),
+    //   ),
+    // ));
+
+    Widget subgroup = Container(
+      margin: EdgeInsets.fromLTRB(30, 40, 30, 40),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: ResColor.b_3,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: views,
+      ),
+    );
+
+    Widget sv = SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.all(0),
       child: Container(
@@ -406,10 +542,31 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
               BaseFuntion.appbarheight_def,
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: views,
+          children: [subgroup],
         ),
+      ),
+    );
+
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      child: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            height: getAppBarHeight() + getTopBarHeight() + 128,
+            decoration: BoxDecoration(
+              gradient: ResColor.lg_1,
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+            ),
+          ),
+          Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              top: getAppBarHeight() + getTopBarHeight(),
+              child: sv),
+        ],
       ),
     );
   }
@@ -511,12 +668,10 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
     closeLoadDialog();
 
     if (result?.code != 0) {
-
-      String err="";
-      if(StringUtils.isNotEmpty(result.errorMsg))
-      {
-        err= "ERROR: ${result.errorMsg}";
-      }else{
+      String err = "";
+      if (StringUtils.isNotEmpty(result.errorMsg)) {
+        err = "ERROR: ${result.errorMsg}";
+      } else {
         err = ResString.get(context, RSID.cwv_11); //"转账失败");
       }
       MessageDialog.showMsgDialog(

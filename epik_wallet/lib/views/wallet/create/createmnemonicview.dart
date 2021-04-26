@@ -1,11 +1,15 @@
+import 'dart:ui';
+
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/model/CreateAccountModel.dart';
+import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/views/wallet/create/createwalletview.dart';
 import 'package:epikwallet/views/wallet/create/verifymnemonicview.dart';
+import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -72,35 +76,38 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            Container(height: 20),
             Padding(
-              padding: EdgeInsets.fromLTRB(15, 6, 15, 10),
+              padding: EdgeInsets.fromLTRB(30, 0, 30, 20),
               child: Text(
                 ResString.get(context, RSID.cmv_1),//"备份助记词",
                 style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20,
+                  color: Colors.white,
+                  fontSize: 17,
+                  fontWeight:FontWeight.bold,
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
+              padding: EdgeInsets.fromLTRB(30, 0, 30, 10),
               child: Text(
                 ResString.get(context, RSID.cmv_2),// "请备份好您的助记词，不要截图、拍照，不要泄漏给他人！\nEpiK Portal不存储用户数据，无法提供找回或重置的服务。",
                 style: TextStyle(
-                  color: Colors.redAccent,
-                  fontSize: 13,
+                  color: Colors.white,//Colors.redAccent,
+                  fontSize: 14,
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(15, 5, 15, 0),
+              padding: EdgeInsets.fromLTRB(30, 40, 30, 15),
               child: Row(
                 children: <Widget>[
                   Text(
                     ResString.get(context, RSID.cmv_3),// "您的助记词",
                     style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight:FontWeight.bold,
                     ),
                   ),
                   Expanded(
@@ -114,7 +121,7 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
                         createMnemonic();
                       },
                       icon:
-                          Icon(Icons.refresh, size: 20, color: Colors.black54),
+                          Icon(Icons.refresh, size: 20, color: Colors.white),
                     ),
                   ),
                 ],
@@ -122,55 +129,45 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
             ),
             getMnemonicGridWidget(),
             Container(
-              margin: EdgeInsets.fromLTRB(15, 50, 15, 0),
+              margin: EdgeInsets.fromLTRB(30, 40, 30, 0),
               height: 44,
               child: Row(
                 children: <Widget>[
+                  // Expanded(
+                  //   child:  LoadingButton(
+                  //     gradient_bg: ResColor.lg_1,
+                  //     color_bg: Colors.transparent,
+                  //     disabledColor: Colors.transparent,
+                  //     height: 40,
+                  //     text: ResString.get(context, RSID.last_step),// "上一步",
+                  //     textstyle: TextStyle(
+                  //       color: Colors.white,
+                  //       fontSize: 14,
+                  //       fontWeight:FontWeight.bold,
+                  //     ),
+                  //     bg_borderradius: BorderRadius.circular(4),
+                  //     onclick: (lbtn) {
+                  //       clickLastSetp();
+                  //     },
+                  //   ),
+                  // ),
+                  // Padding(padding: EdgeInsets.only(left: 10)),
                   Expanded(
-                    child: Container(
-                      height: 44,
-                      child: FlatButton(
-                        highlightColor: Colors.white24,
-                        splashColor: Colors.white24,
-                        onPressed: () {
-                          clickLastSetp();
-                        },
-                        child: Text(
-                          ResString.get(context, RSID.last_step),// "上一步",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                          ),
-                        ),
-                        color: Color(0xff393E45),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(22)),
-                        ),
+                    child:  LoadingButton(
+                      gradient_bg: ResColor.lg_1,
+                      color_bg: Colors.transparent,
+                      disabledColor: Colors.transparent,
+                      height: 40,
+                      text: ResString.get(context, RSID.cmv_4),// "我已备份",
+                      textstyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight:FontWeight.bold,
                       ),
-                    ),
-                  ),
-                  Padding(padding: EdgeInsets.only(left: 10)),
-                  Expanded(
-                    child: Container(
-                      height: 44,
-                      child: FlatButton(
-                        highlightColor: Colors.white24,
-                        splashColor: Colors.white24,
-                        onPressed: () {
-                          clickNextSetp();
-                        },
-                        child: Text(
-                          ResString.get(context, RSID.cmv_4),// "我已备份",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                          ),
-                        ),
-                        color: Color(0xff1A1C1F),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(22)),
-                        ),
-                      ),
+                      bg_borderradius: BorderRadius.circular(4),
+                      onclick: (lbtn) {
+                        clickNextSetp();
+                      },
                     ),
                   ),
                 ],
@@ -186,9 +183,9 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
 
   Widget getMnemonicGridWidget() {
     if (gridItemHightRatio == 0) {
-      gridItemHightRatio = (getScreenWidth() - 15 * 2 - 10 * 3) /
+      gridItemHightRatio = (getScreenWidth() - 30 * 2 - 10 * 3) /
           4.0 /
-          35.0; //    每个item的宽 / 高 = 比例
+          40.0; //    每个item的宽 / 高 = 比例
     }
 
     List<Widget> items = [];
@@ -204,11 +201,12 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
             child: Text(
               text,
               style: TextStyle(
-                color: Colors.white,
+                color: ResColor.b_1,
                 fontSize: 14,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            color: Color(0xff1A1C1F),
+            color: Colors.white,//Color(0xff1A1C1F),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(4)),
             ),
@@ -229,7 +227,7 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
         //垂直子Widget之间间距
         mainAxisSpacing: 10,
         //GridView内边距
-        padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+        padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
         //一行的Widget数量
         crossAxisCount: 4,
         //子Widget宽高比例

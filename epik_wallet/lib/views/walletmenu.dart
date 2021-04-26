@@ -8,6 +8,7 @@ import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
 import 'package:epikwallet/views/viewgoto.dart';
+import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -34,12 +35,15 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
 
   @override
   void initStateConfig() {
-    isTopBarShow = true; //状态栏是否显示
-    isAppBarShow = true; //导航栏是否显示
-    setTopBarBackColor(Colors.white);
-    setAppBarBackColor(Colors.white);
-    setAppBarContentColor(Colors.black);
-    setBackIconHinde(isHinde: false);
+    isTopBarShow = false; //状态栏是否显示
+    isAppBarShow = false; //导航栏是否显示
+    setTopBarBackColor(ResColor.b_4);
+    setAppBarBackColor(ResColor.b_4);
+    setAppBarContentColor(Colors.white);
+
+    bodyBackgroundColor = ResColor.b_4;
+
+    // setBackIconHinde(isHinde: true);
   }
 
   @override
@@ -81,67 +85,115 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
 //    );
   }
 
+  ///导航栏 appBar 可以重写
+  Widget getAppBar() {
+    return Container(
+      height: getAppBarHeight(),
+      width: double.infinity,
+      color: appBarColor,
+      child: Stack(
+        alignment: FractionalOffset(0, 0.5),
+        children: <Widget>[
+          Align(
+            alignment: FractionalOffset(0, 0.5),
+            child: getAppBarCenter(),
+          ),
+          // Align(
+          //   //左边返回导航 的位置，可以根据需求变更
+          //   alignment: FractionalOffset(0, 0.5),
+          //   child: Offstage(
+          //     offstage: !_isBackIconShow,
+          //     child: getAppBarLeft(),
+          //   ),
+          // ),
+          // Align(
+          //   alignment: FractionalOffset(0.98, 0.5),
+          //   child: getAppBarRight(),
+          // ),
+        ],
+      ),
+    );
+  }
+
+  ///导航栏appBar中间部分 ，不满足可以自行重写
+  Widget getAppBarCenter({Color color}) {
+    return Row(
+      children: [
+        Container(width: 20),
+        Image.asset(
+          "assets/img/ic_main_menu_wallet_s.png",
+          width: 40,
+          height: 40,
+        ),
+        Container(width: 10),
+        Text(
+          appBarTitle,
+          style: TextStyle(
+            fontSize: appBarCenterTextSize,
+            color: color ?? appBarContentColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget buildWidget(BuildContext context) {
     List<Widget> items = [];
     for (int i = 0; i < data.length; i++) {
-      items.add(buildItem(data[i], i == 0));
+      // items.add(buildItem(data[i], i == 0));
+      items.add(buildItem2(data[i], i == 0));
     }
 
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
+        getTopBar(),
+        getAppBar(),
         Expanded(
           child: ListView(
-            padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+            padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
             children: items,
           ),
         ),
         Container(
           margin: EdgeInsets.fromLTRB(
-              15, 15, 15, 15 + MediaQuery.of(context).padding.bottom),
+              20, 15, 20, 10 + MediaQuery.of(context).padding.bottom),
           height: 44,
           child: Row(
             children: <Widget>[
               Expanded(
-                child: FlatButton(
-                  highlightColor: Colors.white24,
-                  splashColor: Colors.white24,
-                  onPressed: () {
-                    clickImport();
+                child: LoadingButton(
+                  color_bg: const Color(0xff3a3a3a),
+                  disabledColor:const Color(0xff3a3a3a),
+                  text: RSID.main_wv_2.text, //"创建钱包",
+                  onclick: (lbtn) {
+                    clickCreate();
                   },
-                  child: Text(
-                    ResString.get(context, RSID.main_wv_4), //"导入钱包",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
+                  textstyle: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
                   ),
-                  color: Color(0xff393E45),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(22)),
-                  ),
+                  bg_borderradius: BorderRadius.circular(4),
                 ),
               ),
               Padding(padding: EdgeInsets.only(left: 10)),
               Expanded(
-                child: FlatButton(
-                  highlightColor: Colors.white24,
-                  splashColor: Colors.white24,
-                  onPressed: () {
-                    clickCreate();
+                child: LoadingButton(
+                  color_bg: const Color(0xff3a3a3a),
+                  disabledColor:const Color(0xff3a3a3a),
+                  text: RSID.main_wv_4.text, //"导入钱包",
+                  onclick: (lbtn) {
+                    clickImport();
                   },
-                  child: Text(
-                    ResString.get(context, RSID.main_wv_2), //"创建钱包",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
+                  textstyle: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
                   ),
-                  color: Color(0xff1A1C1F),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(22)),
-                  ),
+                  bg_borderradius: BorderRadius.circular(4),
                 ),
               ),
             ],
@@ -240,7 +292,7 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
                                 size: 15,
                               ),
                               onPressed: () {
-                                clickCopy(lks);
+                                clickCopyEther(lks);
                               },
                             ),
                           ),
@@ -266,6 +318,138 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
               )
             : Container(height: 25),
       ],
+    );
+  }
+
+  Widget buildItem2(WalletAccount lks, bool isCurrent) {
+    Widget ret = Material(
+      // color: isCurrent ? Colors.transparent : Color(0xff424242),
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(4),
+        onTap: () {
+          clickWallet(lks);
+        },
+        child: Container(
+          padding: EdgeInsets.fromLTRB(15, 15, 0, 15),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      (lks?.account ?? "----"),
+                      style: TextStyle(
+                        color: isCurrent ? Colors.white : ResColor.white_80,
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  if (isCurrent)
+                    Image.asset(
+                      "assets/img/ic_checkmark.png",
+                      width: 20,
+                      height: 20,
+                    ),
+                  Container(width: 15),
+                ],
+              ),
+              // Padding(
+              //   padding: EdgeInsets.only(top: 5),
+              // ),
+              // Container(
+              //   width: 30,
+              //   height: 3,
+              //   // color: isCurrent ? Colors.white : ResColor.black_50,
+              // ),
+              // InkWell(
+              //   onTap: () {
+              //     clickCopyEther(lks);
+              //   },
+              //   child: Row(
+              //     children: <Widget>[
+              //       Expanded(
+              //         child: Text(
+              //           "Ether:${lks?.hd_eth_address}",
+              //           maxLines: 1,
+              //           overflow: TextOverflow.ellipsis,
+              //           style: TextStyle(
+              //             color:
+              //                 isCurrent ? ResColor.white_80 : ResColor.white_60,
+              //             fontSize: 13,
+              //           ),
+              //         ),
+              //       ),
+              //       Container(
+              //         margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+              //         height: 20,
+              //         width: 30,
+              //         alignment: Alignment.center,
+              //         child: Icon(
+              //           Icons.content_copy,
+              //           color:
+              //           isCurrent ? ResColor.white_80 : ResColor.white_60,
+              //           size: 15,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // InkWell(
+              //   onTap: () {
+              //     clickCopyEther(lks);
+              //   },
+              //   child: Row(
+              //     children: <Widget>[
+              //       Expanded(
+              //         child: Text(
+              //           "EpiK:${lks?.epik_EPK_address}",
+              //           maxLines: 1,
+              //           overflow: TextOverflow.ellipsis,
+              //           style: TextStyle(
+              //             color:
+              //             isCurrent ? ResColor.white_80 : ResColor.white_60,
+              //             fontSize: 13,
+              //           ),
+              //         ),
+              //       ),
+              //       Container(
+              //         margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+              //         height: 20,
+              //         width: 30,
+              //         alignment: Alignment.center,
+              //         child: Icon(
+              //           Icons.content_copy,
+              //           color:
+              //           isCurrent ? ResColor.white_80 : ResColor.white_60,
+              //           size: 15,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    return Container(
+      margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
+      child: ret,
+      decoration: isCurrent
+          ? BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: ResColor.o_1, width: 2),
+            )
+          : BoxDecoration(
+              color: Color(0xff424242),
+              borderRadius: BorderRadius.circular(4),
+            ),
     );
   }
 
@@ -322,9 +506,16 @@ class _WalletMenuState extends BaseInnerWidgetState<WalletMenu> {
     });
   }
 
-  clickCopy(WalletAccount lks) {
+  clickCopyEther(WalletAccount lks) {
     dlog("clickCopy");
     DeviceUtils.copyText(lks.hd_eth_address);
+//    ToastUtils.showToast("已复制到剪切板");
+    ToastUtils.showToast(ResString.get(context, RSID.copied));
+  }
+
+  clickCopyEpiK(WalletAccount lks) {
+    dlog("clickCopy");
+    DeviceUtils.copyText(lks.epik_EPK_address);
 //    ToastUtils.showToast("已复制到剪切板");
     ToastUtils.showToast(ResString.get(context, RSID.copied));
   }

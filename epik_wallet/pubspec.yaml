@@ -209,6 +209,7 @@ flutter:
     - assets/img/ic_content_neterror.png
     - assets/img/ic_wallet_menu.png
     - assets/img/ic_launcher.png
+    - assets/img/ic_launcher_2.png
     - assets/img/bg_account_header.png
     - assets/img/bg_splash.png
     - assets/img/bg_header.png
@@ -219,6 +220,27 @@ flutter:
     - assets/img/ic_scan.png
     - assets/img/ic_qrcode_scan.png
     - assets/img/ic_telgram.png
+    - assets/img/ic_main_menu_wallet_s.png
+    - assets/img/ic_main_menu_bounty_n.png
+    - assets/img/ic_main_menu_bounty_s.png
+    - assets/img/ic_main_menu_expert_n.png
+    - assets/img/ic_main_menu_expert_s.png
+    - assets/img/ic_main_menu_swap_n.png
+    - assets/img/ic_main_menu_swap_s.png
+    - assets/img/ic_main_menu_wallet_n.png
+    - assets/img/ic_checkmark.png
+    - assets/img/ic_add_circle.png
+    - assets/img/ic_import_circle.png
+    - assets/img/ic_arrow_right_1.png
+    - assets/img/ic_epk_2.png
+    - assets/img/ic_eth_2.png
+    - assets/img/ic_usdt_2.png
+    - assets/img/ic_swap.png
+    - assets/img/256x256_App_Icon_Pink.png
+    - assets/img/ic_back.png
+    - assets/img/ic_arrow_withdraw.png
+    - assets/img/ic_arrow_deposit.png
+    - assets/img/ic_scan_2.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

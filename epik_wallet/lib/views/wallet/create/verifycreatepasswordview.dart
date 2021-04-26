@@ -9,6 +9,7 @@ import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/views/wallet/create/createwalletview.dart';
+import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -70,38 +71,41 @@ class _VerifyCreatePasswordViewState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            Container(height: 20),
             Padding(
-              padding: EdgeInsets.fromLTRB(15, 6, 15, 10),
+              padding: EdgeInsets.fromLTRB(30, 0, 30, 20),
               child: Text(
                 ResString.get(context, RSID.vcpv_1), //"验证钱包密码",
                 style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20,
+                  color: Colors.white,
+                  fontSize: 17,
+                  fontWeight:FontWeight.bold,
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
+              padding: EdgeInsets.fromLTRB(30, 0, 30, 10),
               child: Text(
                 ResString.get(context, RSID.vcpv_2), //"为了安全起见，请再次输入钱包密码。",
                 style: TextStyle(
-                  color: ResColor.black_50,
-                  fontSize: 13,
+                  color: Colors.white,//Colors.redAccent,
+                  fontSize: 14,
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(15, 25, 15, 15),
-              child: Text(
-                ResString.get(context, RSID.iwv_8), //"钱包密码",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 15,
-                ),
-              ),
-            ),
+            // Padding(
+            //   padding: EdgeInsets.fromLTRB(15, 25, 15, 15),
+            //   child: Text(
+            //     ResString.get(context, RSID.iwv_8), //"钱包密码",
+            //     style: TextStyle(
+            //       color: Colors.black,
+            //       fontSize: 15,
+            //     ),
+            //   ),
+            // ),
             getInputWidget(
               keyword,
+              ResString.get(context, RSID.iwv_8), //"钱包密码",
               ResString.get(context, RSID.iwv_9), //"请输入钱包密码",
               _controllerKeyword,
               (text) {
@@ -119,36 +123,22 @@ class _VerifyCreatePasswordViewState
                 });
               },
             ),
-            Container(
-              margin: EdgeInsets.fromLTRB(15, 50, 15, 0),
-              height: 44,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      height: 44,
-                      child: FlatButton(
-                        highlightColor: Colors.white24,
-                        splashColor: Colors.white24,
-                        onPressed: () {
-                          clickNext();
-                        },
-                        child: Text(
-                          ResString.get(context, RSID.next_step), //"下一步",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                          ),
-                        ),
-                        color: Color(0xff1A1C1F),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(22)),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+            LoadingButton(
+              margin: EdgeInsets.fromLTRB(30, 40, 30, 0),
+              gradient_bg: ResColor.lg_1,
+              color_bg: Colors.transparent,
+              disabledColor: Colors.transparent,
+              height: 40,
+              text: RSID.next_step.text,// "下一步",
+              textstyle: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight:FontWeight.bold,
               ),
+              bg_borderradius: BorderRadius.circular(4),
+              onclick: (lbtn) {
+                clickNext();
+              },
             ),
             InkWell(
               onTap: () {
@@ -156,14 +146,14 @@ class _VerifyCreatePasswordViewState
                     model: ViewPushModel.PushReplacement);
               },
               child: Container(
-                margin: EdgeInsets.fromLTRB(0, 35, 0, 10),
+                margin: EdgeInsets.fromLTRB(0, 40, 0, 10),
                 padding: EdgeInsets.all(10),
                 alignment: Alignment.center,
                 child: Text(
                   ResString.get(context, RSID.vcpv_3), // "忘记密码？重新创建",
                   style: TextStyle(
-                    fontSize: 13,
-                    color: ResColor.black_50,
+                    fontSize: 14,
+                    color: ResColor.white,
                   ),
                 ),
               ),
@@ -174,94 +164,206 @@ class _VerifyCreatePasswordViewState
     );
   }
 
+//   Widget getInputWidget(
+//       String keyword,
+//       String hind,
+//       TextEditingController controller,
+//       ValueChanged<String> onChanged,
+//       VoidCallback onClean) {
+//     return Container(
+//       width: double.infinity,
+//       height: 44,
+//       margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
+//       decoration: BoxDecoration(
+//         color: Color(0xff393E45),
+//         borderRadius: BorderRadius.circular(22),
+//       ),
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.start,
+//         crossAxisAlignment: CrossAxisAlignment.center,
+//         children: <Widget>[
+//           Container(width: 5),
+//           Container(
+//             width: 44,
+//             height: 44,
+//             child: Icon(
+//               Icons.lock_outline,
+//               size: 20,
+//               color: Colors.white,
+//             ),
+//           ),
+//           Expanded(
+//             flex: 1,
+//             child: TextField(
+//               controller: controller,
+//               keyboardType: TextInputType.text,
+//               //获取焦点时,启用的键盘类型
+//               maxLines: 1,
+//               // 输入框最大的显示行数
+// //              maxLength: 20, //允许输入的字符长度/ 右下角有数量提示
+//               maxLengthEnforced: true,
+//               //是否允许输入的字符长度超过限定的字符长度
+//               obscureText: true,
+//               //是否是密码
+//               inputFormatters: [
+//                 LengthLimitingTextInputFormatter(20),
+//               ],
+//               //WhitelistingTextInputFormatter(RegExpUtil.re_azAZ09)
+//               // 这里限制长度 不会有数量提示
+//               decoration: InputDecoration(
+//                 // 以下属性可用来去除TextField的边框
+//                 border: InputBorder.none,
+//                 errorBorder: InputBorder.none,
+//                 focusedErrorBorder: InputBorder.none,
+//                 disabledBorder: InputBorder.none,
+//                 enabledBorder: InputBorder.none,
+//                 focusedBorder: InputBorder.none,
+//                 contentPadding: EdgeInsets.fromLTRB(0, -3, 0, 0),
+// //                      contentPadding: EdgeInsets.symmetric(vertical: 8.5),
+//                 hintText: hind,
+//                 hintStyle: TextStyle(color: ResColor.white_80, fontSize: 16),
+//               ),
+//               cursorWidth: 2.0,
+//               //光标宽度
+//               cursorRadius: Radius.circular(2),
+//               //光标圆角弧度
+//               cursorColor: Colors.white,
+//               //光标颜色
+//               style: TextStyle(fontSize: 16, color: Colors.white),
+//               onChanged: onChanged,
+//               onSubmitted: (value) {
+//                 // 当用户确定已经完成编辑时触发
+//               }, // 是否隐藏输入的内容
+//             ),
+//           ),
+//           (StringUtils.isEmpty(keyword))
+//               ? Container()
+//               : SizedBox(
+//                   width: 30,
+//                   height: 40,
+//                   child: IconButton(
+//                     onPressed: () {
+//                       onClean();
+//                     },
+//                     padding: EdgeInsets.all(0),
+//                     icon: Icon(Icons.clear),
+//                     color: Colors.white,
+//                     iconSize: 14,
+//                   ),
+//                 ),
+//           Container(width: 5),
+//         ],
+//       ),
+//     );
+//   }
+
   Widget getInputWidget(
       String keyword,
+      String label,
       String hind,
       TextEditingController controller,
       ValueChanged<String> onChanged,
-      VoidCallback onClean) {
+      VoidCallback onClean, {
+        bool isPassword = true,
+      }) {
     return Container(
       width: double.infinity,
-      height: 44,
-      margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-      decoration: BoxDecoration(
-        color: Color(0xff393E45),
-        borderRadius: BorderRadius.circular(22),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Container(width: 5),
-          Container(
-            width: 44,
-            height: 44,
-            child: Icon(
-              Icons.lock_outline,
-              size: 20,
-              color: Colors.white,
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: TextField(
-              controller: controller,
-              keyboardType: TextInputType.text,
-              //获取焦点时,启用的键盘类型
-              maxLines: 1,
-              // 输入框最大的显示行数
+      height: 77,
+      margin: EdgeInsets.fromLTRB(30, 0, 30, 0),
+      child: Stack(
+        children: [
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: TextField(
+                    controller: controller,
+                    keyboardType: TextInputType.text,
+                    //获取焦点时,启用的键盘类型
+                    maxLines: 1,
+                    // 输入框最大的显示行数
 //              maxLength: 20, //允许输入的字符长度/ 右下角有数量提示
-              maxLengthEnforced: true,
-              //是否允许输入的字符长度超过限定的字符长度
-              obscureText: true,
-              //是否是密码
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(20),
-              ],
-              //WhitelistingTextInputFormatter(RegExpUtil.re_azAZ09)
-              // 这里限制长度 不会有数量提示
-              decoration: InputDecoration(
-                // 以下属性可用来去除TextField的边框
-                border: InputBorder.none,
-                errorBorder: InputBorder.none,
-                focusedErrorBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                contentPadding: EdgeInsets.fromLTRB(0, -3, 0, 0),
+                    maxLengthEnforced: true,
+                    //是否允许输入的字符长度超过限定的字符长度
+                    obscureText: isPassword,
+                    //是否是密码
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(20),
+                    ],
+                    //WhitelistingTextInputFormatter(RegExpUtil.re_azAZ09)
+                    // 这里限制长度 不会有数量提示
+                    decoration: InputDecoration(
+                      // 以下属性可用来去除TextField的边框
+                      // border: InputBorder.none,
+                      // errorBorder: InputBorder.none,
+                      // focusedErrorBorder: InputBorder.none,
+                      border: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      focusedErrorBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                      enabledBorder: const UnderlineInputBorder(
+                        borderRadius:BorderRadius.zero,
+                        borderSide: BorderSide(
+                          color: ResColor.white_20,
+                          width: 1,
+                        ),
+                      ),
+                      focusedBorder:const UnderlineInputBorder(
+                        borderRadius:BorderRadius.zero,
+                        borderSide: BorderSide(
+                          color: ResColor.white,
+                          width: 1,
+                        ),
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0, 10, 40, 20),
+
 //                      contentPadding: EdgeInsets.symmetric(vertical: 8.5),
-                hintText: hind,
-                hintStyle: TextStyle(color: ResColor.white_80, fontSize: 16),
-              ),
-              cursorWidth: 2.0,
-              //光标宽度
-              cursorRadius: Radius.circular(2),
-              //光标圆角弧度
-              cursorColor: Colors.white,
-              //光标颜色
-              style: TextStyle(fontSize: 16, color: Colors.white),
-              onChanged: onChanged,
-              onSubmitted: (value) {
-                // 当用户确定已经完成编辑时触发
-              }, // 是否隐藏输入的内容
-            ),
-          ),
-          (StringUtils.isEmpty(keyword))
-              ? Container()
-              : SizedBox(
-                  width: 30,
-                  height: 40,
-                  child: IconButton(
-                    onPressed: () {
-                      onClean();
-                    },
-                    padding: EdgeInsets.all(0),
-                    icon: Icon(Icons.clear),
-                    color: Colors.white,
-                    iconSize: 14,
+                      hintText: hind,
+                      hintStyle: TextStyle(color: ResColor.white_50, fontSize: 14),
+                      labelText: label,
+                      labelStyle: TextStyle(color: ResColor.white, fontSize: 17),
+                    ),
+                    cursorWidth: 2.0,
+                    //光标宽度
+                    cursorRadius: Radius.circular(2),
+                    //光标圆角弧度
+                    cursorColor: Colors.white,
+                    //光标颜色
+                    style: TextStyle(fontSize: 17, color: Colors.white),
+                    onChanged: onChanged,
+                    onSubmitted: (value) {
+                      // 当用户确定已经完成编辑时触发
+                    }, // 是否隐藏输入的内容
                   ),
                 ),
-          Container(width: 5),
+              ],
+            ),),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child:
+            (StringUtils.isEmpty(keyword))
+                ? Container()
+                : SizedBox(
+              width: 40,
+              height: 62,
+              child: IconButton(
+                onPressed: () {
+                  onClean();
+                },
+                padding: EdgeInsets.all(0),
+                icon: Icon(Icons.clear_rounded),
+                color: Colors.white,
+                iconSize: 14,
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
@@ -13,9 +14,10 @@ import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
+import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart'
+    as ensv;
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart' as ensv;
 
 class BountyExchangeRecordListview extends BaseInnerWidget {
   int index = 0;
@@ -82,12 +84,12 @@ class BountyExchangeRecordListviewState
           hjr?.jsonMap["list"] ?? [],
           (json) => BountyUserSwapRecord.fromJson(json));
 
-//       test
-//      int size = datalist.length + data.length;
-//      for (int i = size; i < size + 20; i++) {
-//        data.add((BountyUserSwapRecord.fromJson(jsonDecode(
-//            '{"id":1,"created_at":"2020-10-10T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","miner_id":"241b7750-e601-54ad-9145-33837529dbbb","amount":100,"erc20_epk":120,"fee":0,"status":"pending","tx_hash":"$i"}'))));
-//      }
+//       test todo
+//       int size = datalist.length + data.length;
+//       for (int i = size; i < size + 20; i++) {
+//         data.add((BountyUserSwapRecord.fromJson(jsonDecode(
+//             '{"id":1,"created_at":"2020-10-10T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","miner_id":"241b7750-e601-54ad-9145-33837529dbbb","amount":100,"erc20_epk":120,"fee":0,"status":"pending","tx_hash":"$i"}'))));
+//       }
     }
 
     if (data != null) {
@@ -168,7 +170,7 @@ class BountyExchangeRecordListviewState
 //    return customscrollview;
 
     return RefreshIndicator(
-      displacement: 50,
+      displacement: 80,
       color: ResColor.progress,
       onRefresh: _pullRefreshCallback,
       child: customscrollview,
@@ -207,8 +209,8 @@ class BountyExchangeRecordListviewState
     return Container(
       width: double.infinity,
 //      height: 135,
-      padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
-      color: Colors.white,
+      padding: EdgeInsets.fromLTRB(20, 17, 20, 0),
+      color: ResColor.b_3,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,17 +221,20 @@ class BountyExchangeRecordListviewState
                   child: Text(
                 "- " +
                     StringUtils.formatNumAmount(item.amount, point: 8) +
-                    ResString.get(context, RSID.berlv_1),//" 积分",
+                    ResString.get(context, RSID.berlv_1), //" 积分",
                 style: TextStyle(
-                  fontSize: 15,
-                  color: Color(0xff333333),
+                  fontSize: 14,
+                  color: Colors.white,
                 ),
               )),
               Text(
-                item.getStatusStr(),
+                "+ " +
+                    StringUtils.formatNumAmount(item.erc20_epk, point: 8) +
+                    " EPK",
                 style: TextStyle(
-                  fontSize: 15,
-                  color: Color(0xff333333),
+                  fontSize: 14,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -239,67 +244,59 @@ class BountyExchangeRecordListviewState
             children: [
               Expanded(
                 child: Text(
-                  "+ " +
-                      StringUtils.formatNumAmount(item.erc20_epk, point: 8) +
-                      " ERC2-EPK",
+                  ResString.get(context, RSID.berlv_3) + item.created_at_local,
+                  //"时间:${item.created_at_local}",
                   style: TextStyle(
-                    fontSize: 15,
-                    color: Color(0xff333333),
+                    fontSize: 11,
+                    color: Colors.white60,
                   ),
                 ),
               ),
               Text(
-                ResString.get(context, RSID.berlv_2,replace: [StringUtils.formatNumAmount(item.fee, point: 8)]),//"手续费: ${StringUtils.formatNumAmount(item.fee, point: 8)} ERC2-EPK",
+                ResString.get(context, RSID.berlv_2,
+                    replace: [StringUtils.formatNumAmount(item.fee, point: 8)]),
+                //"手续费: ${StringUtils.formatNumAmount(item.fee, point: 8)} ERC2-EPK",
                 style: TextStyle(
-                  fontSize: 15,
-                  color: Color(0xff333333),
+                  fontSize: 11,
+                  color: Colors.white60,
                 ),
               ),
             ],
           ),
-          Container(height: 10),
-          Text(
-            ResString.get(context, RSID.berlv_3)+item.created_at_local,//"时间:${item.created_at_local}",
-            style: TextStyle(
-              fontSize: 12,
-              color: Color(0xff333333),
-            ),
-          ),
-
-          if (StringUtils.isNotEmpty(item?.tx_hash))
-            Container(
-              padding: EdgeInsets.only(top: 5),
-              child:   Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    child: Text(
-                      "txhash:${item.tx_hash}",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Color(0xff333333),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 12,
-                    margin: EdgeInsets.fromLTRB(5, 3, 0, 0),
-                    child: Icon(
-                      Icons.redo,
-                      color: Colors.blue,
-                      size: 12,
-                    ),
-                  )
-                ],
-              ),
-            ),
+          //
+          // if (StringUtils.isNotEmpty(item?.tx_hash))
+          //   Container(
+          //     padding: EdgeInsets.only(top: 5),
+          //     child:   Row(
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       children: <Widget>[
+          //         Expanded(
+          //           child: Text(
+          //             "txhash:${item.tx_hash}",
+          //             maxLines: 1,
+          //             overflow: TextOverflow.ellipsis,
+          //             style: TextStyle(
+          //               fontSize: 12,
+          //               color: Color(0xff333333),
+          //             ),
+          //           ),
+          //         ),
+          //         Container(
+          //           width: 12,
+          //           margin: EdgeInsets.fromLTRB(5, 3, 0, 0),
+          //           child: Icon(
+          //             Icons.redo,
+          //             color: Colors.blue,
+          //             size: 12,
+          //           ),
+          //         )
+          //       ],
+          //     ),
+          //   ),
           Container(
-            margin: EdgeInsets.only(top: 14),
-            height: 1,
-            color: Color(0xffeeeeee),
-          ),
+              margin: EdgeInsets.only(top: 16),
+              height: 1,
+              color: ResColor.white_20),
         ],
       ),
     );
@@ -317,7 +314,7 @@ class BountyExchangeRecordListviewState
           : Container(
               child: needNoMoreTipe
                   ? Text(
-                ResString.get(context, RSID.no_more),//"没有更多了",
+                      ResString.get(context, RSID.no_more), //"没有更多了",
                       style: TextStyle(fontSize: 14, color: Color(0xff999999)),
                     )
                   : null,
@@ -329,8 +326,16 @@ class BountyExchangeRecordListviewState
     String hash = datalist[position].tx_hash;
     DeviceUtils.copyText(hash);
 //    https://cn.etherscan.com/address/0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D
-    String url = ServiceInfo.ether_tx_web+hash;
-    ViewGT.showGeneralWebView(context, ResString.get(context, RSID.berlv_4), url);
+    String url = "";
+    if(hash.startsWith("0"))
+    {
+      url = ServiceInfo.ether_tx_web+hash; // 以太
+    }else{
+      url = ServiceInfo.epik_msg_web + hash;// epik
+    }
+
+    ViewGT.showGeneralWebView(
+        context, ResString.get(context, RSID.berlv_4), url);
   }
 
   Future<void> _pullRefreshCallback() async {

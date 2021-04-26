@@ -1,3 +1,5 @@
+import 'package:epikwallet/localstring/LocaleConfig.dart';
+
 enum DateFormat {
   DEFAULT, //yyyy-MM-dd HH:mm:ss.SSS
   NORMAL, //yyyy-MM-dd HH:mm:ss
@@ -672,7 +674,7 @@ class DateUtil {
       int hours = (timeMs % 86400000 / 3600000).toInt();
       int minutes = (timeMs % 3600000 / 60000).toInt();
       int seconds = (timeMs % 60000/1000).toInt();
-      if (days > 0) ret += "$days天 ";
+      if (days > 0) ret += "$days"+(LocaleConfig.currentIsZh()?"天 ":" days ");//"$days天 ";
       ret += "${twoDigits(hours)}:${twoDigits(minutes)}:${twoDigits(seconds)}";
     } catch (e) {
       print(e);

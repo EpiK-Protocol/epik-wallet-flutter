@@ -106,8 +106,9 @@ class BountyTask {
       // 倒计时大于0
       if (msTime >= 0)
 //        return "(剩余: ${DateUtil.getCountdownString(msTime)})";
-        return ResString.get(appContext, RSID.bts_1,
-            replace: ["${DateUtil.getCountdownString(msTime)}"]);
+//         return ResString.get(appContext, RSID.bts_1,
+//             replace: ["${DateUtil.getCountdownString(msTime)}"]);
+        return "${DateUtil.getCountdownString(msTime)}";
     }
 
     return "";

@@ -130,12 +130,13 @@ Map<RSID, String> map_en = {
   RSID.main_wv_5: "Main network",//"主网",
 
   //WalletMenu 首页_钱包侧滑菜单
-  RSID.main_mw_1: "Wallet",//"钱包",
+  RSID.main_mw_1: "Choose wallet",//"钱包",
   RSID.main_mw_2: "Current wallet",//"当前钱包",
   RSID.main_mw_3: "Invalid wallet",//"无效钱包",
   RSID.main_mw_4: "Not now",//"暂不",
   RSID.main_mw_5: "Confirm to delete",//"确定清除",
   RSID.main_mw_6: "Check [%s] is an invalid wallet, delete or not?",//"检测【%s】为无效钱包，是否清除？",
+  RSID.main_wv_6: "Total assets",// "总资产",
 
   //TransactionView 首页_交易 Homepage exchange
   RSID.main_tv_1: "Please log in the wallet",//"请先登录钱包",
@@ -198,6 +199,7 @@ Map<RSID, String> map_en = {
   RSID.cdv_5: "One moment, please... The QR code is loading.",//"请稍等...二维码正在加载",
   RSID.cdv_6: "QR code saved to album",//"二维码已保存到相册",
   RSID.cdv_7: "Failed to save",//"保存失败",
+  RSID.cdv_8:"Please do not transfer the non %s assets to the above address, otherwise the transferred assets will be permanently lost and cannot be recovered.",
   //CurrencyWithdrawView 转账 Transfer
   RSID.cwv_1: "From",//"转出地址", Forwarding address
   RSID.cwv_2: "To",//"接收地址", Receiving address
@@ -205,7 +207,7 @@ Map<RSID, String> map_en = {
   RSID.cwv_4: "Transfer amount",//"转账金额",
   RSID.cwv_5: "All",//"全部",
   RSID.cwv_6: "Enter the amount",//"输入金额",
-  RSID.cwv_7: "Fee : %s eth",//"手续费 : %s eth",
+  RSID.cwv_7: "Fee: %s ETH",//"手续费 : %s eth",
   RSID.cwv_8: "Please enter receiving address",//"请填入接收地址",
   RSID.cwv_9: "Please enter the amount",//"请输入金额",
   RSID.cwv_10: "Transfer amount can't be 0",//"转账金额不能是0",
@@ -259,7 +261,7 @@ Map<RSID, String> map_en = {
   RSID.usev_13: "Date,Open,High,Low,Close,Change,Change%",//Amount ["时间", "开", "高", "低", "收", "涨跌额", "涨幅",/* "成交量"*/];
   //UniswapPoolAddView 注入资金
   RSID.uspav_1: "The current price is estimated. If the price fluctuates more than %s%, your transaction will be cancelled",//"当前为预估价格，如果价格波动超过%s%，您的交易将会撤销。",
-  RSID.uspav_2: "Fee : %s eth",//"手续费 : %s eth",
+  RSID.uspav_2: "Fee: %s ETH",//"手续费 : %s eth",
   RSID.uspav_3: "Confirm to add",//"确定注入",
   RSID.uspav_4: "Please enter the amount",//"请输入数量",
   RSID.uspav_5: "Submitting",//"正在提交",
@@ -287,6 +289,11 @@ Map<RSID, String> map_en = {
   RSID.bdv_9: "Wechat account of person in charge",//"联系负责人微信 ",
   RSID.bdv_10: "Copied Wechat account",//"负责人微信已复制",
   RSID.bdv_11: "+ %s scores",//"+ %s 积分",
+  RSID.bdv_12:"Remainder:",//"剩余: ",
+  RSID.bdv_13: "Edit",//"编辑",
+  RSID.bdv_14: "Appeal",//"申诉",
+  RSID.bdv_15: "Thanks",//"感谢",
+  RSID.bdv_16: "Claim",//"认领",
   //BountyEditView 编辑奖励 Edit bonus
   RSID.bev_1: "Wechat account, the amount of scores (please enter in this format, separated by commas)\n",//"微信号,积分数量 (请按此格式输入,逗号分隔)\n",
   RSID.bev_2: "Total peoples\n",//"总人数\n",
@@ -325,6 +332,7 @@ Map<RSID, String> map_en = {
   RSID.bexv_18: "Current EPK receiving account:",//"当前EPK收币账户：",
   RSID.bexv_19: "Estimatedfee: %s EPK",//"预估手续费：%s EPK",
   RSID.bexv_20: "When redeeming scores for EPK, you need to deduct the handling charge.",//"用积分兑换EPK时，需要扣除手续费",
+  RSID.bexv_21: "Swap amount",//"兑换数量",
 
   //----------------------------------------logic.*
   //UniswapHistoryMgr.dart

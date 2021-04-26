@@ -5,7 +5,6 @@ import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
-import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_bounty.dart';
 import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
@@ -15,6 +14,8 @@ import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/bounty/bountyexchangerecordlistview.dart';
 import 'package:epikwallet/views/bounty/bountyrewardrecordlistview.dart';
+import 'package:epikwallet/widget/LoadingButton.dart';
+import 'package:epikwallet/widget/text/TextEllipsisMiddle.dart';
 import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart'
     as ensv;
 import 'package:flutter/cupertino.dart';
@@ -47,12 +48,11 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
   @override
   void initStateConfig() {
     super.initStateConfig();
-    setTopBarVisible(true);
-    setAppBarVisible(true);
-    setTopBarBackColor(Colors.white);
-    setAppBarBackColor(Colors.white);
-//    isTopFloatWidgetShow = true;
-//    setAppBarTitle("积分兑换");
+    setTopBarVisible(false);
+    setAppBarVisible(false);
+    setAppBarBackColor(Colors.transparent);
+    setTopBarBackColor(Colors.transparent);
+    isTopFloatWidgetShow = true;
 
     _tabController =
         new TabController(initialIndex: pageIndex, length: 2, vsync: this);
@@ -76,9 +76,8 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    setAppBarTitle(ResString.get(context, RSID.bexv_1));//"积分兑换");
+    setAppBarTitle(ResString.get(context, RSID.bexv_1)); //"积分兑换");
   }
-
 
   //  @override
 //  Widget getTopFloatWidget() {
@@ -87,9 +86,16 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
 
   Widget buildWidget(BuildContext context) {
     if (_tec_from == null)
-      _tec_from = new TextEditingController(text: text_from);
+      // _tec_from = new TextEditingController(text: text_from);
+      _tec_from = new TextEditingController.fromValue(TextEditingValue(
+        text: text_from,
+        selection: new TextSelection.fromPosition(
+          TextPosition(
+              affinity: TextAffinity.downstream, offset: text_from.length),
+        ),
+      ));
 
-    return ensv.NestedScrollView(
+    Widget nestedscrollview = ensv.NestedScrollView(
       innerScrollPositionKeyBuilder: () {
         if (pageIndex == 0)
           return key_0;
@@ -106,332 +112,289 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
           handle: ensv.NestedScrollView.sliverOverlapAbsorberHandleFor(context),
           sliver: SliverPersistentHeader(
             delegate: BountyHeader(
-              50,
-              340,
+              80,
+              450,
               OverflowBox(
-                maxHeight: 290,
+                maxHeight: 370,
                 minHeight: 0,
                 child: Container(
-                  margin: EdgeInsets.only(top: 0),
-                  padding: EdgeInsets.all(15),
-                  height: 290,
+                  margin: EdgeInsets.fromLTRB(30, 45, 30, 0),
+                  padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  height: 325,
                   width: double.infinity,
-                  child: Card(
-                    color: ResColor.main,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    //card内容按边框剪切
-                    elevation: 10,
-                    child: Stack(
-                      children: <Widget>[
-                        //背景图片
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          top: 0,
-                          bottom: 0,
-                          child: Image(
-                            image: AssetImage("assets/img/bg_header.png"),
-                            fit: BoxFit.cover,
-                          ),
+                  decoration: BoxDecoration(
+                    color: ResColor.b_2,
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        "${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_score ?? 0)}",
+                        style: TextStyle(
+                          fontSize: 30,
+                          color: Colors.white,
+                          fontFamily: "DIN_Condensed_Bold",
+                          height: 1,
                         ),
-                        //背景颜色遮罩
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          top: 0,
-                          bottom: 0,
-                          child: Container(
-                            color: Colors.black26,
-                          ),
+                      ),
+                      Text(
+                        ResString.get(context, RSID.main_bv_1), //"积分",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
                         ),
-                        //积分数量
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          top: 25,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                "　　",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                                child: Text(
-                                  "${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_score ?? 0)}",
-                                  style: TextStyle(
-                                    fontSize: 40,
-                                    color: Colors.white,
-                                    fontFamily: "DIN_Condensed_Bold",
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                ResString.get(context, RSID.main_bv_1),//"积分",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 15),
+                        padding: EdgeInsets.only(left: 10, right: 10),
+                        width: double.infinity,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: ResColor.white_20,
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
                         ),
-                        //兑换比例
-                        Positioned(
-                          left: 20,
-                          right: 20,
-                          top: 80,
-                          child: Text(
-                            //RSID.bexv_2
-//                            "当前兑换比例：1积分 = ${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1)}ERC20-EPK",
-//                            "当前兑换比例：${StringUtils.formatNumAmount(1 / (AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1))} 积分 = 1 ERC20-EPK",
-                            ResString.get(context, RSID.bexv_17,replace: [StringUtils.formatNumAmount(1 / (AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1))]),//
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.white70,
+                        child: Row(
+                          children: [
+                            Text(
+                              ResString.get(context, RSID.bexv_18), //
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: ResColor.white_80,
+                              ),
                             ),
-                          ),
-                        ),
-//                         Positioned(
-//                           left: 20,
-//                           right: 20,
-//                           top: 100,
-//                           child: Text(
-// //                            "当前绑定微信：${AccountMgr()?.currentAccount?.mining_weixin}",
-//                            AccountMgr()?.currentAccount?.mining_account_platform==BingAccountPlatform.WEIXIN?
-//                             ResString.get(context, RSID.bexv_3)+AccountMgr()?.currentAccount?.mining_bind_account:
-//                            ResString.get(context, RSID.bexv_16)+AccountMgr()?.currentAccount?.mining_bind_account
-//                             ,
-//                             textAlign: TextAlign.left,
-//                             style: TextStyle(
-//                               fontSize: 12,
-//                               color: Colors.white70,
-//                             ),
-//                           ),
-//                         ),
-                        //以太坊地址
-                        Positioned(
-                          left: 20,
-                          right: 0,
-                          top: 100,
-                          child: Text(
-//                            "当前以太坊收币账户：${AccountMgr()?.currentAccount?.hd_eth_address}",
-//                             ResString.get(context, RSID.bexv_4)+"${AccountMgr()?.currentAccount?.hd_eth_address}",//
-                            ResString.get(context, RSID.bexv_18)+"${AccountMgr()?.currentAccount?.epik_EPK_address}",//
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ),
-                        // 输入框
-                        Positioned(
-                          left: 20,
-                          right: 20,
-                          top: 155,//155
-                          height: 40,
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: TextField(
-                                  controller: _tec_from,
-                                  keyboardType: TextInputType.numberWithOptions(
-                                      decimal: true),
-                                  maxLines: 1,
-                                  maxLengthEnforced: true,
-                                  obscureText: false,
-                                  inputFormatters: [
-                                    WhitelistingTextInputFormatter(
-                                        RegExpUtil.re_float)
-                                  ],
-                                  // 这里限制长度 不会有数量提示
-                                  decoration: InputDecoration(
-                                    // 以下属性可用来去除TextField的边框
-                                    border: InputBorder.none,
-                                    errorBorder: InputBorder.none,
-                                    focusedErrorBorder: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    contentPadding:
-                                        EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                    hintText: ResString.get(context, RSID.bexv_5),//"请输入兑换数量",
-                                    hintStyle: TextStyle(
-                                        color: Colors.white70, fontSize: 16),
-                                  ),
-                                  cursorWidth: 2.0,
-                                  //光标宽度
-                                  cursorRadius: Radius.circular(2),
-                                  //光标圆角弧度
-                                  cursorColor: Colors.white,
-                                  //光标颜色
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.white),
-                                  onChanged: (value) {
-                                    text_from = _tec_from.text.trim();
-                                    amount_form =
-                                        StringUtils.parseDouble(text_from, 0);
-                                    onInputFrom();
-                                  },
+                            Expanded(
+                              child: TextEm(
+                                "${AccountMgr()?.currentAccount?.epik_EPK_address}", //
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: ResColor.white_80,
                                 ),
                               ),
-                              Container(
-                                height: 30,
-                                margin: EdgeInsets.fromLTRB(10, 6, 0, 0),
-                                child: FlatButton(
-                                  highlightColor: Colors.white24,
-                                  splashColor: Colors.white24,
-                                  onPressed: () {
-                                    onClickExchange();
-                                  },
-                                  child: Text(
-                                    ResString.get(context, RSID.bexv_6),//"兑换",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: double.infinity,
+                        height: 63,
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 1,
+                                    child: TextField(
+                                      controller: _tec_from,
+                                      keyboardType:
+                                          TextInputType.numberWithOptions(
+                                              decimal: true),
+                                      //获取焦点时,启用的键盘类型
+                                      maxLines: 1,
+                                      // 输入框最大的显示行数
+//              maxLength: 20, //允许输入的字符长度/ 右下角有数量提示
+                                      maxLengthEnforced: true,
+                                      //是否允许输入的字符长度超过限定的字符长度
+                                      obscureText: false,
+                                      //是否是密码
+                                      inputFormatters: [
+                                        // LengthLimitingTextInputFormatter(20),
+                                        FilteringTextInputFormatter.allow(
+                                            RegExpUtil.re_float),
+                                      ],
+                                      // 这里限制长度 不会有数量提示
+                                      decoration: InputDecoration(
+                                        // 以下属性可用来去除TextField的边框
+                                        // border: InputBorder.none,
+                                        // errorBorder: InputBorder.none,
+                                        // focusedErrorBorder: InputBorder.none,
+                                        border: InputBorder.none,
+                                        errorBorder: InputBorder.none,
+                                        focusedErrorBorder: InputBorder.none,
+                                        disabledBorder: InputBorder.none,
+                                        enabledBorder:
+                                            const UnderlineInputBorder(
+                                          borderRadius: BorderRadius.zero,
+                                          borderSide: BorderSide(
+                                            color: ResColor.white_20,
+                                            width: 1,
+                                          ),
+                                        ),
+                                        focusedBorder:
+                                            const UnderlineInputBorder(
+                                          borderRadius: BorderRadius.zero,
+                                          borderSide: BorderSide(
+                                            color: ResColor.white,
+                                            width: 1,
+                                          ),
+                                        ),
+                                        contentPadding:
+                                            EdgeInsets.fromLTRB(0, 10, 40, 15),
+
+//                      contentPadding: EdgeInsets.symmetric(vertical: 8.5),
+                                        hintText: RSID.bexv_5.text,
+                                        hintStyle: TextStyle(
+                                            color: ResColor.white_50,
+                                            fontSize: 17),
+                                        labelText: RSID.bexv_21.text,
+                                        labelStyle: TextStyle(
+                                            color: ResColor.white,
+                                            fontSize: 17),
+                                      ),
+                                      cursorWidth: 2.0,
+                                      //光标宽度
+                                      cursorRadius: Radius.circular(2),
+                                      //光标圆角弧度
+                                      cursorColor: Colors.white,
+                                      //光标颜色
+                                      style: TextStyle(
+                                          fontSize: 17, color: Colors.white),
+                                      onChanged: (value) {
+                                        text_from = _tec_from.text.trim();
+                                        amount_form = StringUtils.parseDouble(
+                                            text_from, 0);
+                                        onInputFrom();
+                                        setState(() {});
+                                      },
+                                      onSubmitted: (value) {
+                                        // 当用户确定已经完成编辑时触发
+                                      }, // 是否隐藏输入的内容
                                     ),
                                   ),
-                                  color: Color(0xff393E45),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(22)),
-                                  ),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
-                        //输入框底部线条
-                        Positioned(
-                          left: 20,
-                          right: 120,
-                          top: 190,
-                          height: 1,
-                          child: Divider(
-                            height: 0.5,
-                            thickness: 0.5,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Positioned(
-                          left: 20,
-                          right: 20,
-                          top: 205,
-                          child: Text(
-//                            "最少兑换数量：${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_min ?? 1)} 积分",
-                            ResString.get(context, RSID.bexv_7,replace: ["${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_min ?? 1)}"]),//
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.white70,
                             ),
-                          ),
-                        ),
-                        //手续费
-                        Positioned(
-                          left: 20,
-                          right: 20,
-                          top: 225,
-                          child: InkWell(
-                            onTap: () {
-                              onClickHelp();
-                            },
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Text(
-//                                  "预估手续费：${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_fee ?? "0")} ERC20-EPK",
-//                                   ResString.get(context, RSID.bexv_8,replace: ["${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_fee ?? "0")}"]),//
-                                    ResString.get(context, RSID.bexv_19,replace: ["${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_fee ?? "0")}"]),//
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.white70,
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(5, 2, 0, 0),
-                                  child: Icon(
-                                    Icons.help_outline,
-                                    color: Colors.white70,
-                                    size: 12,
-                                  ),
-                                ),
-                              ],
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: (StringUtils.isEmpty(text_from))
+                                  ? Container()
+                                  : SizedBox(
+                                      width: 40,
+                                      height: 51,
+                                      child: IconButton(
+                                        onPressed: () {
+                                          setState(
+                                            () {
+                                              text_from = "";
+                                              _tec_from = null;
+                                            },
+                                          );
+                                        },
+                                        padding: EdgeInsets.all(0),
+                                        icon: Icon(Icons.clear_rounded),
+                                        color: Colors.white,
+                                        iconSize: 14,
+                                      ),
+                                    ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                height: 50,
-                width: 220,
-                padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                child: Card(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                  ),
-                  elevation: 6,
-                  shadowColor: Colors.black45,
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            onClickTab(0);
-                          },
-                          child: Text(
-                            ResString.get(context, RSID.bexv_9),//"奖励记录",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: pageIndex == 0
-                                  ? Colors.black
-                                  : Colors.black45,
-                              fontSize: 16,
-//                                  fontWeight: pageIndex == 0
-//                                      ? FontWeight.w600
-//                                      : FontWeight.w500,
-                            ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 5),
+                        alignment: Alignment.centerRight,
+                        child: Text(
+//                            "当前兑换比例：1积分 = ${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1)}ERC20-EPK",
+//                            "当前兑换比例：${StringUtils.formatNumAmount(1 / (AccountMgr()?.currentAccount?.bounty_swap_rate ?? 1))} 积分 = 1 ERC20-EPK",
+                          ResString.get(context, RSID.bexv_17, replace: [
+                            StringUtils.formatNumAmount(1 /
+                                (AccountMgr()
+                                        ?.currentAccount
+                                        ?.bounty_swap_rate ??
+                                    1))
+                          ]), //
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white60,
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            onClickTab(1);
-                          },
-                          child: Text(
-                            ResString.get(context, RSID.bexv_10),//"兑换记录",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: pageIndex == 1
-                                  ? Colors.black
-                                  : Colors.black45,
-                              fontSize: 16,
-//                                  fontWeight: pageIndex == 1
-//                                      ? FontWeight.w600
-//                                      : FontWeight.w500,
-                            ),
+                      Container(
+                        margin: EdgeInsets.only(top: 1),
+                        alignment: Alignment.centerRight,
+                        child: Text(
+//                            "最少兑换数量：${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_min ?? 1)} 积分",
+                          ResString.get(context, RSID.bexv_7, replace: [
+                            "${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_min ?? 1)}"
+                          ]), //
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white60,
                           ),
                         ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 1),
+                        alignment: Alignment.centerRight,
+                        child: InkWell(
+                          onTap: () {
+                            onClickHelp();
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text(
+//                                  "预估手续费：${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_fee ?? "0")} ERC20-EPK",
+//                                   ResString.get(context, RSID.bexv_8,replace: ["${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_fee ?? "0")}"]),//
+                                ResString.get(context, RSID.bexv_19, replace: [
+                                  "${StringUtils.formatNumAmount(AccountMgr()?.currentAccount?.bounty_swap_fee ?? "0")}"
+                                ]), //
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white60,
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.fromLTRB(5, 2, 0, 0),
+                                child: Icon(
+                                  Icons.help_outline,
+                                  color: Colors.white60,
+                                  size: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      LoadingButton(
+                        margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
+                        gradient_bg: ResColor.lg_1,
+                        color_bg: Colors.transparent,
+                        disabledColor: Colors.transparent,
+                        height: 40,
+                        text: RSID.bexv_6.text,
+                        //"兑换",
+                        textstyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        bg_borderradius: BorderRadius.circular(4),
+                        onclick: (lbtn) {
+                          onClickExchange();
+                        },
                       ),
                     ],
                   ),
                 ),
+              ),
+              Container(
+                height: 80,
+                width: double.infinity,
+                color: ResColor.b_1,
+                padding: EdgeInsets.fromLTRB(21, 21, 21, 21),
+                child: getTabbar(),
               ),
             ),
             pinned: true,
@@ -470,6 +433,87 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
         ],
       ),
     );
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      child: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            height: getAppBarHeight() + getTopBarHeight() + 128,
+            padding: EdgeInsets.fromLTRB(0, getTopBarHeight(), 0, 0),
+            decoration: BoxDecoration(
+              gradient: ResColor.lg_1,
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+            ),
+            alignment: Alignment.topCenter,
+            child: getAppBar(),
+          ),
+          Positioned(
+              left: 0,
+              right: 0,
+              top: getAppBarHeight() + getTopBarHeight(),
+              bottom: 0,
+              child: nestedscrollview),
+        ],
+      ),
+    );
+  }
+
+  // TabController tabcontroller;
+
+  Widget getTabbar() {
+    // RSID.bexv_9), //"奖励记录",
+    // RSID.bexv_10), //"兑换记录",
+    List<RSID> items = const [RSID.bexv_9, RSID.bexv_10];
+
+    // if (tabcontroller == null)
+    //   tabcontroller = TabController(
+    //       initialIndex: pageIndex, length: items.length, vsync: this);
+
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(100),
+        color: ResColor.b_4,
+      ),
+      child: TabBar(
+        tabs: items.map((rsid) {
+          return Container(
+            alignment: Alignment.center,
+            child: Text(rsid.text),
+          );
+        }).toList(),
+        controller: _tabController,
+        isScrollable: false,
+        labelPadding: EdgeInsets.fromLTRB(0, 3, 0, 0),
+        labelColor: ResColor.b_1,
+        labelStyle: TextStyle(
+          fontSize: 17,
+          color: ResColor.b_1,
+          fontWeight: FontWeight.bold,
+          // height: 1,
+        ),
+        unselectedLabelColor: ResColor.white_60,
+        unselectedLabelStyle: TextStyle(
+          fontSize: 17,
+          color: ResColor.white_60,
+          fontWeight: FontWeight.bold,
+          // height: 1,
+        ),
+        indicator: BoxDecoration(
+          borderRadius: BorderRadius.circular(100),
+          color: Colors.white,
+        ),
+        indicatorPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicatorWeight: 4,
+        onTap: (value) {
+          onClickTab(value);
+        },
+      ),
+    );
   }
 
   onClickTab(int i) {
@@ -488,14 +532,15 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
     closeInput();
 
     if (amount_form == 0) {
-      showToast(ResString.get(context, RSID.bexv_5));//"请输入兑换数量");
+      showToast(ResString.get(context, RSID.bexv_5)); //"请输入兑换数量");
       return;
     }
 
     double min = AccountMgr()?.currentAccount?.bounty_swap_min ?? 1;
     if (amount_form < min) {
 //      showToast("最少兑换数量为${StringUtils.formatNumAmount(min)}积分");
-    showToast(ResString.get(context, RSID.bexv_7,replace: [StringUtils.formatNumAmount(min)]));
+      showToast(ResString.get(context, RSID.bexv_7,
+          replace: [StringUtils.formatNumAmount(min)]));
       return;
     }
 
@@ -505,7 +550,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
       (password) {
         //点击确定回调
         showLoadDialog(
-          ResString.get(context, RSID.bexv_11),//"正在提交兑换...",
+          ResString.get(context, RSID.bexv_11), //"正在提交兑换...",
           touchOutClose: false,
           backClose: false,
           onShow: () {
@@ -517,9 +562,12 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                 // 请求成功
                 MessageDialog.showMsgDialog(
                   context,
-                  title: ResString.get(context, RSID.bexv_12),//"积分兑换",
-                  msg: ResString.get(context, RSID.bexv_13),//"积分兑换已提交，\n请稍后刷新查看钱包余额。",
-                  btnRight: ResString.get(context, RSID.confirm),//"确定",
+                  title: ResString.get(context, RSID.bexv_12),
+                  //"积分兑换",
+                  msg: ResString.get(context, RSID.bexv_13),
+                  //"积分兑换已提交，\n请稍后刷新查看钱包余额。",
+                  btnRight: ResString.get(context, RSID.confirm),
+                  //"确定",
                   onClickBtnRight: (dialog) {
                     dialog.dismiss();
                   },
@@ -540,7 +588,8 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
                 });
               } else {
                 // 请求失败
-                showToast(hjr?.msg ?? ResString.get(context, RSID.request_failed));//"请求失败");
+                showToast(hjr?.msg ??
+                    ResString.get(context, RSID.request_failed)); //"请求失败");
               }
             });
           },
@@ -552,8 +601,8 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
   void onClickHelp() {
     MessageDialog.showMsgDialog(
       context,
-      title:ResString.get(context, RSID.bexv_14),// "关于手续费",
-      btnRight:ResString.get(context, RSID.isee),// "知道了",
+      title: ResString.get(context, RSID.bexv_14), // "关于手续费",
+      btnRight: ResString.get(context, RSID.isee), // "知道了",
       onClickBtnRight: (dialog) {
         dialog.dismiss();
       },
@@ -562,8 +611,8 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
         child: RichText(
           text: TextSpan(
             text:
-            //ResString.get(context, RSID.bexv_15),// "「1」用积分兑换ERC20-EPK时，通过以太网转账会产生ETH手续费；\n\n「2」手续费数量是根据以太坊gas费用和Uniswap中的币价计算出要扣除多少ERC20-EPK。",
-            ResString.get(context, RSID.bexv_20),
+                //ResString.get(context, RSID.bexv_15),// "「1」用积分兑换ERC20-EPK时，通过以太网转账会产生ETH手续费；\n\n「2」手续费数量是根据以太坊gas费用和Uniswap中的币价计算出要扣除多少ERC20-EPK。",
+                ResString.get(context, RSID.bexv_20),
             style: TextStyle(
               color: Color(0xff333333),
               fontSize: 14.0,
@@ -590,7 +639,7 @@ class BountyHeader extends SliverPersistentHeaderDelegate {
     alpha = min(max(alpha, 0), 1);
 
     return Container(
-      color: Colors.white,
+      color: Colors.transparent,
       child: Stack(
         children: <Widget>[
           Positioned(

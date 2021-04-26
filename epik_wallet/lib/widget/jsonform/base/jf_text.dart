@@ -66,6 +66,72 @@ class JfTextState extends State<JfText> {
         ),
       ));
 
+    // 白色主题使用
+    // return TextField(
+    //   controller: tec,
+    //   autofocus: widget.autofocus,
+    //   textAlign: TextAlign.left,
+    //   keyboardType: widget.maxLines == 1 ? TextInputType.text : TextInputType.multiline,
+    //   //获取焦点时,启用的键盘类型
+    //   minLines: widget.minLines,
+    //   maxLines: widget.maxLines==-1 ? null: widget.maxLines ,
+    //   // 输入框最大的显示行数
+    //   maxLength: widget.maxLength,
+    //   // maxLengthEnforced: true,
+    //   //是否允许输入的字符长度超过限定的字符长度
+    //   obscureText: widget.isPassword,
+    //   //是否是密码
+    //   inputFormatters: [
+    //     // LengthLimitingTextInputFormatter(maxLength),
+    //     if (widget.regexp != null) FilteringTextInputFormatter.allow(re), //todo
+    //   ],
+    //   // 这里限制长度 不会有数量提示
+    //   decoration: InputDecoration(
+    //     // 以下属性可用来去除TextField的边框
+    //     border: OutlineInputBorder(
+    //       gapPadding: 0,
+    //     ),
+    //     errorBorder: InputBorder.none,
+    //     focusedErrorBorder: InputBorder.none,
+    //     // disabledBorder: InputBorder.none,
+    //     // enabledBorder: InputBorder.none,
+    //     // focusedBorder: InputBorder.none,
+    //     contentPadding:  widget.maxLines==-1 ? null:EdgeInsets.fromLTRB(10, -5, 10, -5),
+    //     labelText: (widget?.label?.isNotEmpty == true)? " ${widget.label} " :null, //有label的话 没焦点时不显示hint
+    //     hintText: widget.hint,
+    //     hintStyle: const TextStyle(
+    //       fontSize: 14,
+    //       color: ResColor.black_40,
+    //     ),
+    //     labelStyle: const TextStyle(
+    //       fontSize: 14,
+    //       color: ResColor.black_40,
+    //     ),
+    //   ),
+    //   // cursorWidth: 2.0,
+    //   //光标宽度
+    //   // cursorRadius: Radius.circular(2),
+    //   // 光标圆角弧度
+    //   // cursorColor: Colors.black,
+    //   //光标颜色
+    //   style: const TextStyle(
+    //     fontSize: 14,
+    //     color: ResColor.black_80,
+    //   ),
+    //   onChanged: (value) {
+    //     widget.data = value;
+    //     if (widget.onChanged != null) {
+    //       widget.onChanged(value, widget.classtype);
+    //     }
+    //   },
+    //   onSubmitted: (value) {
+    //     widget.data = value;
+    //     if (widget.onChanged != null) {
+    //       widget.onChanged(value, widget.classtype);
+    //     }
+    //   },
+    // );
+
     return TextField(
       controller: tec,
       autofocus: widget.autofocus,
@@ -90,32 +156,47 @@ class JfTextState extends State<JfText> {
         border: OutlineInputBorder(
           gapPadding: 0,
         ),
-        errorBorder: InputBorder.none,
-        focusedErrorBorder: InputBorder.none,
+        // errorBorder: InputBorder.none,
+        // focusedErrorBorder: InputBorder.none,
         // disabledBorder: InputBorder.none,
         // enabledBorder: InputBorder.none,
         // focusedBorder: InputBorder.none,
-        contentPadding:  widget.maxLines==-1 ? null:EdgeInsets.fromLTRB(10, -5, 10, -5),
+        enabledBorder: const UnderlineInputBorder(
+          borderRadius:BorderRadius.zero,
+          borderSide: BorderSide(
+            color: ResColor.white_20,
+            width: 1,
+          ),
+        ),
+        focusedBorder:const UnderlineInputBorder(
+          borderRadius:BorderRadius.zero,
+          borderSide: BorderSide(
+            color: ResColor.white,
+            width: 1,
+          ),
+        ),
+        // contentPadding: EdgeInsets.fromLTRB(0, 10, 40, 20),
+        contentPadding:  widget.maxLines==-1 ? EdgeInsets.fromLTRB(0, 10, 0, 20):EdgeInsets.fromLTRB(0, 10, 0, 20),
         labelText: (widget?.label?.isNotEmpty == true)? " ${widget.label} " :null, //有label的话 没焦点时不显示hint
         hintText: widget.hint,
         hintStyle: const TextStyle(
-          fontSize: 14,
-          color: ResColor.black_40,
+          fontSize: 17,
+          color: ResColor.white_60,
         ),
         labelStyle: const TextStyle(
-          fontSize: 14,
-          color: ResColor.black_40,
+          fontSize: 17,
+          color: ResColor.white,
         ),
       ),
-      // cursorWidth: 2.0,
+      cursorWidth: 2.0,
       //光标宽度
-      // cursorRadius: Radius.circular(2),
+      cursorRadius: Radius.circular(2),
       // 光标圆角弧度
-      // cursorColor: Colors.black,
+      cursorColor: Colors.white,
       //光标颜色
       style: const TextStyle(
-        fontSize: 14,
-        color: ResColor.black_80,
+        fontSize: 17,
+        color: ResColor.white,
       ),
       onChanged: (value) {
         widget.data = value;
