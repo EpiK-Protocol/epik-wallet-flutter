@@ -1,3 +1,4 @@
+import 'package:epikwallet/utils/res_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
 
@@ -11,8 +12,8 @@ class MessageDialog {
     Widget extend,
     String btnLeft,
     String btnRight,
-    Color btnLeftColor = const Color(0xff808080),
-    Color btnRightColor = Colors.black,
+    Color btnLeftColor = ResColor.o_1,//const Color(0xff808080),
+    Color btnRightColor = ResColor.o_1,//Colors.black,
     YYDialogCallback onClickBtnLeft,
     YYDialogCallback onClickBtnRight,
     bool touchOutClose = true,
@@ -20,18 +21,27 @@ class MessageDialog {
     YYDialogCallback onShow,
     YYDialogCallback onDismiss,
     TextAlign msgAlign = TextAlign.left,
+    Color dialogbg=ResColor.b_4,//Colors.white; dialog背景色
+    double borderRadius = 20, //dialog 圆角 10
+    Color titleColor = Colors.white,//Colors.black,
+    Color msgColor = ResColor.white_80,//Color(0xff333333),
+    Color dividerColor = ResColor.white_20,//Color(0xfff5f5f5),
   }) {
+
+
+
     YYDialog dialog = YYDialog().build(context)
       ..width = MediaQuery
           .of(context)
           .size
           .width // dialog宽度
       ..margin = EdgeInsets.fromLTRB(50, 0, 50, 0) //外边距
-      ..borderRadius = 10 // 圆角尺寸
+      ..borderRadius = borderRadius // 圆角尺寸
       ..barrierColor = Colors.black54 //dialog 外部背景颜色
       ..barrierDismissible = touchOutClose // dialog外部 点击可以关闭
       ..duration = Duration(milliseconds: 200) //动画持续时间
       ..gravityAnimationEnable = false //使用对齐方向动画  除center外 其他对齐位置 有飞入动画
+    ..backgroundColor=dialogbg
       ..gravity = Gravity.center; //弹窗出现的位置
 
     //动画
@@ -80,8 +90,9 @@ class MessageDialog {
     if (title != null && title.isNotEmpty) {
       dialog.text(
         text: title,
-        color: Colors.black,
-        fontSize: 16.0,
+        color: titleColor,
+        fontSize: 17.0,
+        fontWeight: FontWeight.bold,
         padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
         alignment: Alignment.center,
       );
@@ -91,7 +102,7 @@ class MessageDialog {
     if (msg != null && msg.isNotEmpty) {
       dialog.text(
         text: msg,
-        color: Color(0xff333333),
+        color: msgColor,
         fontSize: 14.0,
         padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
         alignment: Alignment.center,
@@ -108,15 +119,15 @@ class MessageDialog {
       dialog.widget(Divider(
         height: 1,
         thickness: 1,
-        color: Color(0xfff5f5f5),
-        indent: 20,
-        endIndent: 20,
+        color: dividerColor,
+        // indent: 20,
+        // endIndent: 20,
       ));
 
       bool needDivider = btnLeft != null && btnRight != null;
       dialog.widget(Container(
         width: double.infinity,
-        height: 44,
+        height: 59,
         child: Row(
           children: <Widget>[
             //左按钮
@@ -134,8 +145,9 @@ class MessageDialog {
                       child: Text(
                         btnLeft,
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 17,
                           color: btnLeftColor,
+                          fontWeight:FontWeight.bold,
                         ),
                       ),
                     ),
@@ -147,8 +159,8 @@ class MessageDialog {
               Container(
                 width: 1,
                 height: double.infinity,
-                margin: EdgeInsets.only(top: 10, bottom: 10),
-                color: Color(0xfff5f5f5),
+                // margin: EdgeInsets.only(top: 10, bottom: 10),
+                color:dividerColor,
               ),
 
             // 右按钮
@@ -166,8 +178,9 @@ class MessageDialog {
                       child: Text(
                         btnRight,
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 17,
                           color: btnRightColor,
+                          fontWeight:FontWeight.bold,
                         ),
                       ),
                     ),

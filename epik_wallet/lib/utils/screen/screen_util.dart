@@ -53,4 +53,9 @@ class WHScreenUtil extends ScreenUtil {
   {
     return ScreenUtil.pixelRatio*size;
   }
+
+  static double onePx()
+  {
+    return 1/ScreenUtil.pixelRatio;
+  }
 }

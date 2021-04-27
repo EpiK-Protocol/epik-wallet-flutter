@@ -154,8 +154,7 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
     Widget list = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (expertInfo_old?.status_t == ExpertInfoStatus.reject)
-          getStateTips(),
+        if (expertInfo_old?.status_t == ExpertInfoStatus.reject) getStateTips(),
         getFormView(),
         Container(height: 10),
         Row(
@@ -174,7 +173,7 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
                 style: TextStyle(
                   fontSize: 17,
                   color: ResColor.white,
-                  fontWeight:FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -252,23 +251,24 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
             ),
           ),
           Positioned(
-              left: 0,
-              right: 0,
-              top: getAppBarHeight() + getTopBarHeight(),
-              bottom: 0,
-              child: SingleChildScrollView(
-                physics: AlwaysScrollableScrollPhysics(),
-                child: Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.fromLTRB(30, 40, 30, 40),
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: ResColor.b_3,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: list,
+            left: 0,
+            right: 0,
+            top: getAppBarHeight() + getTopBarHeight(),
+            bottom: 0,
+            child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Container(
+                width: double.infinity,
+                margin: EdgeInsets.fromLTRB(30, 40, 30, 40),
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: ResColor.b_3,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-              )),
+                child: list,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -280,7 +280,7 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: ResColor.warning_bg,
-        borderRadius:BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
         "很遗憾，您的申请未通过。\n原因: ${expertInfo_old?.reason ?? ""}\n您可以更新申请表重新提交审核",

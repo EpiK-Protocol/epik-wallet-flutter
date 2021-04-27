@@ -241,8 +241,15 @@ class BottomDialog {
     String _text = oldText ?? "";
     TextEditingController tec = TextEditingController(text: _text);
 
+    Color dialogbg=ResColor.b_4;//Colors.white;
+    Color titleColor = Colors.white;//Colors.black;
+    Color closeIconColor = Colors.white;//Color(0xff666666);
+    Color hintColor = Colors.white70;// Color(0xff999999);
+    Color textColor = Colors.white;//Color(0xff333333);
+    Color dividerColor = ResColor.white_20;//Colors.blue;
+
     Widget widget = Container(
-      padding: EdgeInsets.fromLTRB(0, 5, 0, 20),
+      padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
       width: double.infinity,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -257,8 +264,8 @@ class BottomDialog {
                   child: Text(
                     title,
                     style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
+                      color: titleColor,
+                      fontSize: 14,
                     ),
                   ),
                 ),
@@ -275,7 +282,7 @@ class BottomDialog {
                       color: Colors.transparent,
                       child: Icon(
                         Icons.close,
-                        color: Color(0xff666666),
+                        color:closeIconColor,
                         size: 14,
                       ),
                     ),
@@ -286,8 +293,8 @@ class BottomDialog {
           ),
           Container(
             width: double.infinity,
-            height: 44,
-            padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+            height: 55,
+            padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
             child: TextField(
               autofocus: true,
               //自动获取焦点， 自动弹出输入法
@@ -313,17 +320,17 @@ class BottomDialog {
                 disabledBorder: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
-                contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                contentPadding: EdgeInsets.fromLTRB(0, 0, 0, -10),
                 hintText: hint,
-                hintStyle: TextStyle(color: Color(0xff999999), fontSize: 16),
+                hintStyle: TextStyle(color: hintColor, fontSize: 17),
               ),
               cursorWidth: 2.0,
               //光标宽度
               cursorRadius: Radius.circular(2),
               //光标圆角弧度
-              cursorColor: Colors.black,
+              cursorColor: textColor,//Colors.black,
               //光标颜色
-              style: TextStyle(fontSize: 16, color: Color(0xff333333)),
+              style: TextStyle(fontSize: 16, color: textColor),
               onChanged: (text) {
                 _text = text;
               },
@@ -335,46 +342,69 @@ class BottomDialog {
           Divider(
             height: 1,
             thickness: 1,
-            color: Colors.blue,
-            indent: 25,
-            endIndent: 25,
+            color: dividerColor,
+            indent: 30,
+            endIndent: 30,
           ),
-          Container(
-            height: 44,
-            width: double.infinity,
-            margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
-            padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
-            child: FlatButton(
-              highlightColor: Colors.white24,
-              splashColor: Colors.white24,
-              onPressed: () {
-                if (StringUtils.isEmpty(_text.trim())) {
-                  ToastUtils.showToast(hint);
-                  return;
-                }
-
-                Navigator.pop(context);
-                callback(_text);
-              },
-              child: Text(
-                ResString.get(context, RSID.confirm), //"确定",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                ),
-              ),
-              color: Color(0xff1A1C1F),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(22)),
-              ),
+          LoadingButton(
+            margin: EdgeInsets.fromLTRB(30, 40, 30, 40),
+            gradient_bg: ResColor.lg_1,
+            color_bg: Colors.transparent,
+            disabledColor: Colors.transparent,
+            height: 40,
+            text:RSID.confirm.text, //"确定",
+            textstyle: TextStyle(
+              color: Colors.white,
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
             ),
+            bg_borderradius: BorderRadius.circular(4),
+            onclick: (lbtn) {
+                    if (StringUtils.isEmpty(_text.trim())) {
+                      ToastUtils.showToast(hint);
+                      return;
+                    }
+
+                    Navigator.pop(context);
+                    callback(_text);
+            },
           ),
+          // Container(
+          //   height: 44,
+          //   width: double.infinity,
+          //   margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
+          //   padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+          //   child: FlatButton(
+          //     highlightColor: Colors.white24,
+          //     splashColor: Colors.white24,
+          //     onPressed: () {
+          //       if (StringUtils.isEmpty(_text.trim())) {
+          //         ToastUtils.showToast(hint);
+          //         return;
+          //       }
+          //
+          //       Navigator.pop(context);
+          //       callback(_text);
+          //     },
+          //     child: Text(
+          //       ResString.get(context, RSID.confirm), //"确定",
+          //       style: TextStyle(
+          //         color: Colors.white,
+          //         fontSize: 15,
+          //       ),
+          //     ),
+          //     color: Color(0xff1A1C1F),
+          //     shape: RoundedRectangleBorder(
+          //       borderRadius: BorderRadius.all(Radius.circular(22)),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
 
     return showBottomPop(context, widget,
-        radius_top: 15, bgColor: Colors.white);
+        radius_top: 15, bgColor: dialogbg);
   }
 
   /// 交易枷锁 成功后在callback中返回新的交易hash

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/api/api_dapp.dart';
@@ -9,6 +11,8 @@ import 'package:epikwallet/utils/JsonUtils.dart';
 import 'package:epikwallet/utils/data/date_util.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
+import 'package:epikwallet/utils/res_color.dart';
+import 'package:epikwallet/utils/screen/screen_util.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/list_view.dart';
@@ -16,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 ///DAPP epk 领取记录
 class BountyDappTakeRecordView extends BaseWidget {
@@ -33,16 +38,31 @@ class BountyDappTakeRecordViewState
     extends BaseWidgetState<BountyDappTakeRecordView> {
   List<DappEpkSwapRecord> data = [];
 
-  SystemUiOverlayStyle oldSystemUiOverlayStyle;
 
   @override
   void initStateConfig() {
     super.initStateConfig();
 
-    oldSystemUiOverlayStyle = DeviceUtils.system_bar_current;
-    DeviceUtils.setSystemBarStyle(DeviceUtils.system_bar_dark);
+    setTopBarVisible(false);
+    setAppBarVisible(true);
+    setAppBarBackColor(Colors.transparent);
+    setTopBarBackColor(Colors.transparent);
+
 
     refresh();
+  }
+
+
+  @override
+  Widget getAppBar() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.fromLTRB(0, getTopBarHeight(), 0, 0),
+      decoration: BoxDecoration(
+        gradient: ResColor.lg_1,
+      ),
+      child: super.getAppBar(),
+    );
   }
 
   @override
@@ -102,11 +122,12 @@ class BountyDappTakeRecordViewState
 
     List<DappEpkSwapRecord> temp = [];
 
-    HttpJsonRes hjr = await ApiWallet.Erc2EpkSwapRecords();
+    HttpJsonRes hjr = await ApiDapp.getFlowList(
+        widget.dapp.api_host, widget.dapp.getDappToken());
     if (hjr?.code == 0) {
       temp = JsonArray.parseList<DappEpkSwapRecord>(
           JsonArray.obj2List(hjr.jsonMap["list"]),
-          (json) => DappEpkSwapRecord.fromJson(json));
+              (json) => DappEpkSwapRecord.fromJson(json));
     } else {
       setErrorWidgetVisible(true);
       return;
@@ -135,6 +156,10 @@ class BountyDappTakeRecordViewState
   Widget buildWidget(BuildContext context) {
     return ListPage(
       data,
+      headerList: ["header"],
+      headerCreator: (context, position) {
+        return Container(height: 10,);
+      },
       itemWidgetCreator: (context, position) {
         return InkWell(
           onTap: () => onItemClick(position),
@@ -148,100 +173,81 @@ class BountyDappTakeRecordViewState
   itemWidgetBuild(BuildContext context, int position) {
     DappEpkSwapRecord record = data[position];
 
+    bool isend = position >= data.length - 1;
+
     List<Widget> items = [
-      Row(
-        children: [
-          Text(
-            record.created_at_dt == null
-                ? ""
-                : DateUtil.formatDate(record.created_at_dt,
-                    format: DataFormats.y_mo_d_h_m),
-            style: TextStyle(
-              fontSize: 16,
-              color: Color(0xff333333),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              "${record.amount} EPK",
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                fontSize: 16,
-                color: Color(0xff333333),
-              ),
-            ),
-          ),
-        ],
-      ),
-
-      Container(height: 5),
-
-      Row(
-        children: [
-          Expanded(
-            child: Text(
-              record.status,
+      Container(
+        padding: EdgeInsets.fromLTRB(20, 0, 20,0),
+        child: Row(
+          children: [
+            Text(
+              record.created_at_dt == null
+                  ? ""
+                  : DateUtil.formatDate(record.created_at_dt,
+                  format: DataFormats.y_mo_d_h_m),
               style: TextStyle(
                 fontSize: 14,
-                color: Color(0xff333333),
+                color: ResColor.white_60,
               ),
             ),
-          ),
-          Container(width: 5),
-          if (StringUtils.isNotEmpty(record.hash))
-            InkWell(
-              onTap: () {
-                lookEpkCid(record.hash);
-              },
+            Container(width: 9),
+            Expanded(
               child: Text(
-                "EPK发放交易",
+                record.status,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.blue,
+                  color: ResColor.white,
                 ),
               ),
             ),
-        ],
+            Container(width: 9),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "${record.amount} EPK",
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Container(height: 5),
+                if (StringUtils.isNotEmpty(record.hash))
+                  InkWell(
+                    onTap: () {
+                      lookEpkCid(record.hash);
+                    },
+                    child: Text(
+                      "EPK 发放交易",
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: ResColor.white_60,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
       ),
-      //
-      // Container(height: 5),
-      //
-      // Row(
-      //   children: [
-      //     Expanded(
-      //       child:Text(
-      //        "ERC20-EPK销毁交易",
-      //         textAlign: TextAlign.center,
-      //         style: TextStyle(
-      //           fontSize: 12,
-      //           color: Colors.blue,
-      //         ),
-      //       ),
-      //     ),
-      //     Expanded(
-      //       child:Text(
-      //         "EPK发放交易",
-      //         textAlign: TextAlign.center,
-      //         style: TextStyle(
-      //           fontSize: 12,
-      //           color: Colors.blue,
-      //         ),
-      //       ),
-      //     ),
-      //   ],
-      // ),
 
-      Container(height: 14),
+      Container(height: 14.5),
 
+      if(!isend)
       Divider(
-        color: const Color(0xffeeeeee),
-        height: 1,
-        thickness: 1,
+        color: ResColor.white_20,
+        height:0.5,//WHScreenUtil.onePx(),
+        thickness: 0.5,//WHScreenUtil.onePx(),
+        indent: 20,
       ),
     ];
 
     return Container(
-      padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
+      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+      color: ResColor.b_3,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: items,

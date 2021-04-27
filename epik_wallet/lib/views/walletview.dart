@@ -729,8 +729,8 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                   left: 0,
                   right: 0,
                   child: Divider(
-                    height: 1/ScreenUtil.pixelRatio,
-                    thickness: 1/ScreenUtil.pixelRatio,
+                    height: 0.5,//1/ScreenUtil.pixelRatio,
+                    thickness:0.5,// 1/ScreenUtil.pixelRatio,
                     indent: 20,
                     color: ResColor.white_20,
                   )),

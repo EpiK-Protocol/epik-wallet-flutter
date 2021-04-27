@@ -66,46 +66,41 @@ class DappBountyItemState extends State<DappBountyItem> {
     items.add(Row(
       children: [
         // icon
-        Card(
-          child: Container(
-            width: 60,
-            height: 60,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: CachedNetworkImage(
-                imageUrl: widget.dapp.icon,
-                fit: BoxFit.cover,
-                placeholder: (context, url) {
-                  return Stack(
-                    alignment: FractionalOffset(0.5, 0.5),
-                    children: <Widget>[
-                      SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation(Colors.white10)),
-                      )
-                    ],
-                  );
-                },
-                errorWidget: (context, url, error) {
-                  return Container(color: Colors.white54);
-                },
-              ),
+        Container(
+          width: 50,
+          height: 50,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: CachedNetworkImage(
+              imageUrl: widget.dapp.icon,
+              fit: BoxFit.cover,
+              placeholder: (context, url) {
+                return Stack(
+                  alignment: FractionalOffset(0.5, 0.5),
+                  children: <Widget>[
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation(Colors.white10)),
+                    )
+                  ],
+                );
+              },
+              errorWidget: (context, url, error) {
+                return Container(color: Colors.white54);
+              },
             ),
           ),
-          color: Colors.transparent,
-          shadowColor: ResColor.white_80,
-          elevation: 5,
         ),
-        Container(width: 15),
+        Container(width: 10),
         // app 名
         Expanded(
           child: Text(
             widget.dapp.name,
             style: TextStyle(
               color: Colors.white,
-              fontSize: 20,
+              fontSize: 17,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -131,16 +126,16 @@ class DappBountyItemState extends State<DappBountyItem> {
               Text(
                 "账号: ",
                 style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
+                  color: ResColor.white_60,
+                  fontSize: 11,
                 ),
               ),
               Expanded(
                 child: Text(
                   widget?.dapp?.dappInfo?.account ?? "--",
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
+                    color: ResColor.white_60,
+                    fontSize: 11,
                   ),
                 ),
               ),
@@ -157,16 +152,16 @@ class DappBountyItemState extends State<DappBountyItem> {
               Text(
                 "名称: ",
                 style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
+                  color: ResColor.white_60,
+                  fontSize: 11,
                 ),
               ),
               Expanded(
                 child: Text(
                   widget?.dapp?.dappInfo?.name ?? "--",
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
+                    color: ResColor.white_60,
+                    fontSize: 11,
                   ),
                 ),
               ),
@@ -183,16 +178,16 @@ class DappBountyItemState extends State<DappBountyItem> {
               Text(
                 "ID: ",
                 style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
+                  color: ResColor.white_60,
+                  fontSize: 11,
                 ),
               ),
               Expanded(
                 child: Text(
                   widget?.dapp?.dappInfo?.id ?? "--",
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
+                    color: ResColor.white_60,
+                    fontSize: 11,
                   ),
                 ),
               ),
@@ -208,8 +203,8 @@ class DappBountyItemState extends State<DappBountyItem> {
             Text(
               "EPK: ",
               style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
+                color: ResColor.white_60,
+                fontSize: 11,
               ),
             ),
             Expanded(
@@ -227,21 +222,17 @@ class DappBountyItemState extends State<DappBountyItem> {
             ),
             if (widget.dapp.dappInfo!=null)
             LoadingButton(
-              width: 60,
-              height: 24,
+              width: 50,
+              height: 30,
+              gradient_bg: ResColor.lg_1,
+              color_bg: Colors.transparent,
+              disabledColor: Colors.transparent,
+              bg_borderradius: BorderRadius.circular(4),
               text: "领取",
               textstyle: TextStyle(
-                color: ResColor.main,
-                fontSize: 12,
-                // fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 14,
               ),
-              // color_bg: Colors.transparent,
-              // side: BorderSide(
-              //   color: Colors.white,
-              //   width: 1,
-              //   style: BorderStyle.solid,
-              // ),
-              color_bg: Colors.white,
               onclick: (lbtn) {
                 ViewGT.showBountyDappTakeView(context, widget.dapp);
               },
@@ -252,24 +243,16 @@ class DappBountyItemState extends State<DappBountyItem> {
     }
 
     return Container(
-      margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
-      // padding: EdgeInsets.all(15),
+      margin: EdgeInsets.fromLTRB(30, 0, 30, 20),
       width: double.infinity,
-      // height: 100,
-      child: Card(
-        color: ResColor.main_1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12.0)),
-        ),
-        elevation: 10,
-        shadowColor: ResColor.black_30,
-        child: Container(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: items,
-          ),
-        ),
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: ResColor.b_3,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child:   Column(
+        mainAxisSize: MainAxisSize.min,
+        children: items,
       ),
     );
   }
@@ -277,20 +260,18 @@ class DappBountyItemState extends State<DappBountyItem> {
   getTokenbtn() {
     if (!widget.dapp.hasDappToken() || loading)
       return LoadingButton(
-        width: 60,
-        height: 24,
+        width: 50,
+        height: 30,
+        gradient_bg: ResColor.lg_1,
+        color_bg: Colors.transparent,
+        disabledColor: Colors.transparent,
         text: "绑定",
         textstyle: TextStyle(
           color: Colors.white,
-          fontSize: 12,
+          fontSize: 14,
           // fontWeight: FontWeight.bold,
         ),
-        color_bg: Colors.transparent,
-        side: BorderSide(
-          color: Colors.white,
-          width: 1,
-          style: BorderStyle.solid,
-        ),
+        bg_borderradius: BorderRadius.circular(4),
         progress_size: 18,
         progress_color: Colors.white,
         loading: loading,
@@ -308,20 +289,18 @@ class DappBountyItemState extends State<DappBountyItem> {
       );
     else
       return LoadingButton(
-        width: 60,
-        height: 24,
+        width: 50,
+        height: 30,
+        // gradient_bg: ResColor.lg_1,
+        color_bg:const Color(0xff424242),
+        disabledColor: const Color(0xff424242),
         text: "解绑",
         textstyle: TextStyle(
           color: Colors.white,
-          fontSize: 12,
+          fontSize: 14,
           // fontWeight: FontWeight.bold,
         ),
-        color_bg: Colors.transparent,
-        side: BorderSide(
-          color: Colors.white,
-          width: 1,
-          style: BorderStyle.solid,
-        ),
+        bg_borderradius: BorderRadius.circular(4),
         progress_size: 18,
         progress_color: Colors.white,
         // loading: loading,

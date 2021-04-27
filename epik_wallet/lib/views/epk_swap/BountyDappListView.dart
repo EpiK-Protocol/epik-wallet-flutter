@@ -1,19 +1,14 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
-import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/logic/api/api_dapp.dart';
 import 'package:epikwallet/main.dart';
 import 'package:epikwallet/model/Dapp.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
-import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/res_color.dart';
-import 'package:epikwallet/utils/string_utils.dart';
-import 'package:epikwallet/views/epk_exchange/DappBountyItem.dart';
+import 'package:epikwallet/views/epk_swap/DappBountyItem.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/views/wallet/create/createwalletview.dart';
-import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +28,13 @@ class BountyDappListViewState extends BaseWidgetState<BountyDappListView> {
   @override
   void initStateConfig() {
     super.initStateConfig();
+    navigationColor = ResColor.b_2;
+    setTopBarVisible(false);
+    setAppBarVisible(false);
+    setAppBarBackColor(Colors.transparent);
+    setTopBarBackColor(Colors.transparent);
     resizeToAvoidBottomPadding = true;
+    isTopFloatWidgetShow=true;
     refresh();
   }
 
@@ -43,6 +44,15 @@ class BountyDappListViewState extends BaseWidgetState<BountyDappListView> {
     setAppBarTitle("赏金猎人奖励");
   }
 
+
+  @override
+  Widget getTopFloatWidget() {
+    return  Container(
+      width: double.infinity,
+      padding: EdgeInsets.only(top: getTopBarHeight()),
+      child: getAppBar(),
+    );
+  }
 
   refresh() async {
     setLoadingWidgetVisible(true);
@@ -65,7 +75,6 @@ class BountyDappListViewState extends BaseWidgetState<BountyDappListView> {
       return;
     }
 
-
     closeStateLayout();
   }
 
@@ -82,23 +91,29 @@ class BountyDappListViewState extends BaseWidgetState<BountyDappListView> {
   @override
   Widget buildWidget(BuildContext context) {
     List<Widget> items = [
-      Padding(
-        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
         child: Text(
           "领取须知",
           style: TextStyle(
-            color: Colors.redAccent,
-            fontSize: 20,
+            color: Colors.white,
+            fontSize: 17,
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
-      Padding(
-        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+      Container(
+        width: double.infinity,
+        padding: EdgeInsets.fromLTRB(20, 11, 20, 11),
+        decoration: BoxDecoration(
+          color: ResColor.warning_bg,
+              borderRadius:BorderRadius.circular(4),
+        ),
         child: RichText(
           text: TextSpan(
             style: TextStyle(
-              color: Colors.redAccent,
+              color: ResColor.warning_text,
               fontSize: 14,
               fontFamily: fontFamily_def,
             ),
@@ -107,9 +122,9 @@ class BountyDappListViewState extends BaseWidgetState<BountyDappListView> {
                 text: "赏金猎人奖励所需的EPK有EpiK知识基金提供。领取过程中，需要您提供",
               ),
               TextSpan(
-                text: "Dapp", //"知识大陆",
+                text: " Dapp ", //"知识大陆",
                 style: TextStyle(
-                  color: Colors.blue,
+                  color: Colors.white,
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () async {
@@ -124,23 +139,30 @@ class BountyDappListViewState extends BaseWidgetState<BountyDappListView> {
           ),
         ),
       ),
-      Padding(
-        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+      Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.fromLTRB(0, 31, 0, 20),
+
         child: Text(
           "风险提示",
           style: TextStyle(
-            color: Colors.redAccent,
-            fontSize: 20,
+            color: Colors.white,
+            fontSize: 17,
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
-      Padding(
-        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+      Container(
+        width: double.infinity,
+        padding: EdgeInsets.fromLTRB(20, 11, 20, 11),
+        decoration: BoxDecoration(
+          color: ResColor.warning_bg,
+          borderRadius:BorderRadius.circular(4),
+        ),
         child: RichText(
           text: TextSpan(
             style: TextStyle(
-              color: Colors.redAccent,
+              color: ResColor.warning_text,
               fontSize: 14,
               fontFamily: fontFamily_def,
             ),
@@ -149,9 +171,9 @@ class BountyDappListViewState extends BaseWidgetState<BountyDappListView> {
                 text: "请确保您没有泄露当前钱包助记词和私钥，否则强烈建议",
               ),
               TextSpan(
-                text: "创建新钱包",
+                text: " 创建新钱包 ",
                 style: TextStyle(
-                  color: Colors.blue,
+                  color: Colors.white,
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () async {
@@ -168,28 +190,62 @@ class BountyDappListViewState extends BaseWidgetState<BountyDappListView> {
       ),
     ];
 
+    List<Widget> listitems = [];
+    listitems.add(Container(
+      width: double.infinity,
+      margin: EdgeInsets.fromLTRB(30, 40, 30, 10),
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: ResColor.b_3,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: items,
+      ),
+    ));
     list_dapp.forEach((dapp) {
-      items.add(buildDappCard(dapp));
+      listitems.add(buildDappCard(dapp));
     });
 
-    return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
-      child: Container(
-        constraints: BoxConstraints(
-          minHeight: getScreenHeight() -
-              BaseFuntion.topbarheight -
-              BaseFuntion.appbarheight_def,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: items,
-        ),
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      child: Stack(
+        children: [
+          // header card
+          Container(
+            width: double.infinity,
+            height: getAppBarHeight() + getTopBarHeight() + 128,
+            padding: EdgeInsets.only(top: getTopBarHeight()),
+            decoration: BoxDecoration(
+              gradient: ResColor.lg_1,
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+            ),
+            child: Column(
+              children: [
+                // getAppBar(),
+              ],
+            ),
+          ),
+          Positioned(
+              left: 0,
+              right: 0,
+              top: getAppBarHeight() + getTopBarHeight(),
+              bottom: 0,
+              child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  children: listitems,
+                ),
+              )),
+        ],
       ),
     );
+
   }
 
-
   Widget buildDappCard(Dapp dapp) {
-   return DappBountyItem(dapp);
+    return DappBountyItem(dapp);
   }
 }
