@@ -23,6 +23,7 @@ import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/views/wallet/create/createwalletview.dart';
 import 'package:epikwallet/widget/LoadingButton.dart';
+import 'package:epikwallet/widget/text/TextEllipsisMiddle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -63,7 +64,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
   Erc2EpkStep current_step = Erc2EpkStep.post_destroy;
 
   TextEditingController _tec_erc20;
-  String text_erc20 = "0";
+  String text_erc20 = "";
   double amount_erc20 = 0;
 
   // 销毁erc20的交易记录
@@ -75,6 +76,10 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
   @override
   void initStateConfig() {
     super.initStateConfig();
+    setTopBarVisible(false);
+    setAppBarVisible(false);
+    setAppBarBackColor(Colors.transparent);
+    setTopBarBackColor(Colors.transparent);
     resizeToAvoidBottomPadding = true;
     refresh();
   }
@@ -187,33 +192,35 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
   Widget buildWidget(BuildContext context) {
     List<Widget> items = [
       Padding(
-        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+        padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
         child: Text(
           "兑换须知",
           style: TextStyle(
-            color: Colors.redAccent,
-            fontSize: 20,
+            color: Colors.white,
+            fontSize: 17,
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
-      Padding(
-        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+      Container(
+        width: double.infinity,
+        padding: EdgeInsets.fromLTRB(20, 11, 20, 11),
+        color: ResColor.warning_bg,
         child: Text(
           "此次兑换所需的EPK有EpiK基金会提供。兑换过程中，需要您发起一笔以太坊交易，所以请确保您当前账户内有足够的以太坊支付此笔交易的手续费。兑换后，您当前以太坊钱包中的所有ERC20-EPK将会销毁，并按照1:1的比例兑换得到EPK，这些EPK将自动转入您当前EpiK钱包。",
           style: TextStyle(
-            color: Colors.redAccent,
+            color: ResColor.warning_text,
             fontSize: 14,
           ),
         ),
       ),
       Padding(
-        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+        padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
         child: Text(
           "风险提示",
           style: TextStyle(
-            color: Colors.redAccent,
-            fontSize: 20,
+            color: Colors.white,
+            fontSize: 17,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -228,12 +235,14 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
       //     ),
       //   ),
       // ),
-      Padding(
-        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-        child:RichText(
+      Container(
+        width: double.infinity,
+        padding: EdgeInsets.fromLTRB(20, 11, 20, 11),
+        color: ResColor.warning_bg,
+        child: RichText(
           text: TextSpan(
             style: TextStyle(
-              color: Colors.redAccent,
+              color: ResColor.warning_text,
               fontSize: 14,
               fontFamily: fontFamily_def,
             ),
@@ -244,11 +253,12 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
               TextSpan(
                 text: "创建新钱包",
                 style: TextStyle(
-                  color: Colors.blue,
+                  color: Colors.white,
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () async {
-                    ViewGT.showView(context, CreateWalletView(),model: ViewPushModel.PushReplacement);
+                    ViewGT.showView(context, CreateWalletView(),
+                        model: ViewPushModel.PushReplacement);
                   },
               ),
               TextSpan(
@@ -259,43 +269,103 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
         ),
       ),
       Padding(
-        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+        padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
         child: Text(
           "免责声明",
           style: TextStyle(
-            color: Colors.redAccent,
-            fontSize: 20,
+            color: Colors.white,
+            fontSize: 17,
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
-      Padding(
-        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+      Container(
+        width: double.infinity,
+        padding: EdgeInsets.fromLTRB(20, 11, 20, 11),
+        color: ResColor.warning_bg,
         child: Text(
           "如您通过其他渠道自行销毁了ERC20-EPK导致无法正常兑换EPK，EpiK基金会将不予赔偿",
           style: TextStyle(
-            color: Colors.redAccent,
+            color: ResColor.warning_text,
             fontSize: 14,
           ),
         ),
       ),
       getErc20EpkCard(),
       getEpkCard(),
+
       getSteps(),
     ];
 
-    return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
+    // Widget child = SingleChildScrollView(
+    //   padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
+    //   child: Container(
+    //     constraints: BoxConstraints(
+    //       minHeight: getScreenHeight() -
+    //           BaseFuntion.topbarheight -
+    //           BaseFuntion.appbarheight_def,
+    //     ),
+    //     child: Column(
+    //       crossAxisAlignment: CrossAxisAlignment.start,
+    //       children: items,
+    //     ),
+    //   ),
+    // );
+
+    Widget child = SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.all(0),
       child: Container(
         constraints: BoxConstraints(
           minHeight: getScreenHeight() -
               BaseFuntion.topbarheight -
               BaseFuntion.appbarheight_def,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: items,
-        ),
+        child: Column(children: [
+          Container(
+            width: double.infinity,
+            margin: EdgeInsets.fromLTRB(30, 40, 30, 30),
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+            decoration: BoxDecoration(
+              color: ResColor.b_3,
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            ),
+            child: Column(
+              children: items,
+            ),
+          ),
+        ]),
+      ),
+    );
+
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      child: Stack(
+        children: [
+          // header card
+          Container(
+            width: double.infinity,
+            height: getAppBarHeight() + getTopBarHeight() + 128,
+            padding: EdgeInsets.only(top: getTopBarHeight()),
+            decoration: BoxDecoration(
+              gradient: ResColor.lg_1,
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+            ),
+            child: Column(
+              children: [
+                getAppBar(),
+              ],
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            top: getAppBarHeight() + getTopBarHeight(),
+            bottom: 0,
+            child: child,
+          ),
+        ],
       ),
     );
   }
@@ -310,90 +380,95 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
     if (ca != null) balance = ca.balance;
 
     return Container(
-      margin: EdgeInsets.fromLTRB(0, 10, 0, 15),
+      margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
       // padding: EdgeInsets.all(15),
       width: double.infinity,
-      child: Card(
-        color: ResColor.main,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12.0)),
-        ),
-        elevation: 10,
-        child: Container(
-          padding: EdgeInsets.all(15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                "ERC20-EPK",
-                style: TextStyle(
-                  color: ResColor.white,
-                  fontSize: 20,
-                  fontFamily: "DIN_Condensed_Bold",
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Row(
+            children: [
+              Container(
+                margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                width: 30,
+                height: 30,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: <Widget>[
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      child: Image(
+                        image: AssetImage(ca.cs.iconUrl),
+                        width: 30,
+                        height: 30,
+                      ),
+                    ),
+                    Positioned(
+                        right: -1.5,
+                        bottom: -1.5,
+                        child: Image(
+                          image: AssetImage(ca.networkType.iconUrl),
+                          width: 13,
+                          height: 13,
+                        )),
+                  ],
                 ),
               ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                    child: Text(
-                      "余额:",
-                      style: TextStyle(
-                        color: ResColor.white,
-                        fontSize: 16,
-                        // fontFamily: "DIN_Condensed_Bold",
-                      ),
-                    ),
-                  ),
-                  Text(
-                    // balance,
-                    StringUtils.isNotEmpty(balance)
-                        ? StringUtils.formatNumAmount(ca.getBalanceDouble(),
-                            point: 16, supply0: false)
-                        : "--",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      // fontFamily: "DIN_Condensed_Bold",
-                      // height: 1,
-                    ),
-                  ),
-                ],
+              Text(
+                ca.symbol,
+                style: TextStyle(
+                    color: ResColor.white,
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold),
               ),
-              Container(height: 5),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                    child: Text(
-                      "地址:",
-                      style: TextStyle(
-                        color: ResColor.white,
-                        fontSize: 16,
-                        // fontFamily: "DIN_Condensed_Bold",
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      address,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        // fontFamily: "DIN_Condensed_Bold",
-                        // height: 1,
-                      ),
-                    ),
-                  ),
-                ],
+              Expanded(
+                child: Text(
+                  // balance,
+                  StringUtils.isNotEmpty(balance)
+                      ? StringUtils.formatNumAmount(ca.getBalanceDouble(),
+                          point: 16, supply0: false)
+                      : "--",
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),
-        ),
+          Container(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                child: Text(
+                  "地址:",
+                  style: TextStyle(
+                    color: ResColor.white_60,
+                    fontSize: 11,
+                    // fontFamily: "DIN_Condensed_Bold",
+                  ),
+                ),
+              ),
+              Expanded(
+                child: TextEm(
+                  address,
+                  style: TextStyle(
+                    color: ResColor.white_60,
+                    fontSize: 11,
+                    // fontFamily: "DIN_Condensed_Bold",
+                    // height: 1,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -407,90 +482,121 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
     if (ca != null) balance = ca.balance;
 
     return Container(
-      margin: EdgeInsets.fromLTRB(0, 0, 0, 15),
+      margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
       // padding: EdgeInsets.all(15),
       width: double.infinity,
-      child: Card(
-        color: ResColor.main,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12.0)),
-        ),
-        elevation: 10,
-        child: Container(
-          padding: EdgeInsets.all(15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                "EPK",
-                style: TextStyle(
-                  color: ResColor.white,
-                  fontSize: 20,
-                  fontFamily: "DIN_Condensed_Bold",
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Row(
+            children: [
+              Container(
+                margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                width: 30,
+                height: 30,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: <Widget>[
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      child: Image(
+                        image: AssetImage(ca.cs.iconUrl),
+                        width: 30,
+                        height: 30,
+                      ),
+                    ),
+                    Positioned(
+                        right: -1.5,
+                        bottom: -1.5,
+                        child: Image(
+                          image: AssetImage(ca.networkType.iconUrl),
+                          width: 13,
+                          height: 13,
+                        )),
+                  ],
                 ),
               ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                    child: Text(
-                      "余额:",
-                      style: TextStyle(
-                        color: ResColor.white,
-                        fontSize: 16,
-                        // fontFamily: "DIN_Condensed_Bold",
-                      ),
-                    ),
-                  ),
-                  Text(
-                    // balance,
-                    StringUtils.isNotEmpty(balance)
-                        ? StringUtils.formatNumAmount(ca.getBalanceDouble(),
-                            point: 16, supply0: false)
-                        : "--",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      // fontFamily: "DIN_Condensed_Bold",
-                      // height: 1,
-                    ),
-                  ),
-                ],
+              Text(
+                ca.symbol,
+                style: TextStyle(
+                    color: ResColor.white,
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold),
               ),
-              Container(height: 5),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                    child: Text(
-                      "地址:",
-                      style: TextStyle(
-                        color: ResColor.white,
-                        fontSize: 16,
-                        // fontFamily: "DIN_Condensed_Bold",
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      address,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        // fontFamily: "DIN_Condensed_Bold",
-                        // height: 1,
-                      ),
-                    ),
-                  ),
-                ],
+              Expanded(
+                child: Text(
+                  // balance,
+                  StringUtils.isNotEmpty(balance)
+                      ? StringUtils.formatNumAmount(ca.getBalanceDouble(),
+                          point: 16, supply0: false)
+                      : "--",
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),
-        ),
+          Container(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                child: Text(
+                  "地址:",
+                  style: TextStyle(
+                    color: ResColor.white_60,
+                    fontSize: 11,
+                    // fontFamily: "DIN_Condensed_Bold",
+                  ),
+                ),
+              ),
+              Expanded(
+                child: TextEm(
+                  address,
+                  style: TextStyle(
+                    color: ResColor.white_60,
+                    fontSize: 11,
+                    // fontFamily: "DIN_Condensed_Bold",
+                    // height: 1,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getSubType(String text) {
+    return Container(
+      margin: EdgeInsets.fromLTRB(0, 0, 0, 20),
+      child: Row(
+        children: [
+          Container(
+            width: 4,
+            height: 14,
+            color: ResColor.o_1,
+            margin: EdgeInsets.fromLTRB(0, 0, 6, 0),
+          ),
+          Expanded(
+            child: Text(
+              text ?? "",
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -501,36 +607,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
     // 步骤列表
     List<Widget> wrapitms = [];
 
-    List<Erc2EpkStep> steps = Erc2EpkStep.values.toList();
-    for (int i = 0; i < steps.length; i++) {
-      Erc2EpkStep step = steps[i];
-      wrapitms.add(Text(
-        "${i + 1}.${step.name}",
-        style: TextStyle(
-          fontSize: 14,
-          color: current_step == step ? Colors.green : Colors.black,
-          fontWeight: current_step == step ? FontWeight.bold : null,
-        ),
-      ));
-      if (i < steps.length - 1) {
-        wrapitms.add(Container(
-          margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
-          color: Colors.black,
-          width: 10,
-          height: 1,
-        ));
-      }
-    }
-
-    items.add(Container(
-      height: 20,
-    ));
-    items.add(
-      Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: wrapitms,
-      ),
-    );
+    items.add(getStepProgress());
 
     // 具体步骤
     items.add(getStep());
@@ -538,6 +615,113 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: items,
+    );
+  }
+
+  Widget getStepProgress() {
+    // ---- (  ) ----
+    //  15   30   15
+
+    // wrapitms.add(Text(
+    //   "${i + 1}.${step.name}",
+    //   style: TextStyle(
+    //     fontSize: 14,
+    //     color: current_step == step ? Colors.green : Colors.black,
+    //     fontWeight: current_step == step ? FontWeight.bold : null,
+    //   ),
+    // ));
+    // if (i < steps.length - 1) {
+    //   wrapitms.add(Container(
+    //     margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+    //     color: Colors.black,
+    //     width: 10,
+    //     height: 1,
+    //   ));
+    // }
+
+    List<Widget> items = [];
+
+    List<Erc2EpkStep> steps = Erc2EpkStep.values.toList();
+    int currentIndex = steps.indexOf(current_step);
+    for (int i = 0; i < steps.length; i++) {
+      Erc2EpkStep step = steps[i];
+      bool isFirst = i == 0;
+      bool isLast = i >= steps.length - 1;
+      bool isCurrent = current_step == step;
+
+      Widget getLine() {
+        return Container(
+          width: double.infinity,
+          height: 1,
+          color: (isCurrent || i <= currentIndex) ? ResColor.o_1 : Colors.white,
+        );
+      }
+
+      items.add(
+        Expanded(
+            child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(child: isFirst ? Container() : getLine()),
+                Container(
+                  width: 30,
+                  height: 30,
+                  decoration: isCurrent
+                      ? BoxDecoration(
+                          color: ResColor.o_1,
+                          borderRadius: BorderRadius.circular(30),
+                        )
+                      : BoxDecoration(
+                          color: ResColor.b_3,
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.fromBorderSide(BorderSide(
+                            width: 1,
+                            color:
+                                i <= currentIndex ? ResColor.o_1 : Colors.white,
+                          )),
+                        ),
+                  child: Center(
+                    child: Text(
+                      "${i + 1}",
+                      style: TextStyle(
+                        color: i < currentIndex ? ResColor.o_1 : Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(child: isLast ? Container() : getLine()),
+              ],
+            ),
+            Container(
+              width: double.infinity,
+              margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+              child: Text(
+                "${step.name}",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isCurrent ? ResColor.o_1 : Colors.white,
+                  fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
+          ],
+        )),
+      );
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.fromLTRB(18, 30, 18, 0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: items,
+      ),
     );
   }
 
@@ -568,24 +752,17 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
 
     Widget input = Row(
       children: [
-        Text(
-          "销毁数量：",
-          style: TextStyle(
-            color: ResColor.black_80,
-            fontSize: 16,
-          ),
-        ),
         Expanded(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                height: 33,
+                height: 55,
                 child: Row(
                   children: [
                     Expanded(
                         child: Container(
-                      height: 33,
+                      height: 55,
                       child: TextField(
                         controller: _tec_erc20,
                         keyboardType:
@@ -604,19 +781,22 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
                           disabledBorder: InputBorder.none,
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
-                          contentPadding: EdgeInsets.fromLTRB(0, -15, 0, 0),
+                          contentPadding: EdgeInsets.fromLTRB(0, -10, 0, 0),
                           // hintText: ResString.get(context, RSID.bexv_5),
                           //"请输入兑换数量",
                           hintStyle:
-                              TextStyle(color: Colors.black54, fontSize: 16),
+                              TextStyle(color: ResColor.white_60, fontSize: 17),
+                          labelText: "销毁数量",
+                          labelStyle:
+                              TextStyle(color: ResColor.white, fontSize: 17),
                         ),
                         cursorWidth: 2.0,
                         //光标宽度
                         cursorRadius: Radius.circular(2),
                         //光标圆角弧度
-                        cursorColor: Colors.blue,
+                        cursorColor: Colors.white,
                         //光标颜色
-                        style: TextStyle(fontSize: 16, color: Colors.black),
+                        style: TextStyle(fontSize: 17, color: Colors.white),
                         onChanged: (value) {
                           text_erc20 = _tec_erc20.text.trim();
                           amount_erc20 = StringUtils.parseDouble(text_erc20, 0);
@@ -624,8 +804,23 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
                       ),
                     )),
                     // max
-                    InkWell(
-                      onTap: () {
+                    LoadingButton(
+                      height: 20,
+                      width: 40,
+                      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      // gradient_bg: ResColor.lg_1,
+                      color_bg: Colors.transparent,
+                      disabledColor: Colors.transparent,
+                      side: BorderSide(width: 1, color: ResColor.o_1),
+                      bg_borderradius: BorderRadius.circular(4),
+                      text: RSID.main_bv_4.text,
+                      //"全部",
+                      textstyle: const TextStyle(
+                        color: ResColor.o_1,
+                        fontSize: 11,
+                      ),
+                      loading: false,
+                      onclick: (lbtn) {
                         String balance = "0";
 
                         CurrencyAsset ca = AccountMgr()
@@ -639,13 +834,6 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
 
                         setState(() {});
                       },
-                      child: Text(
-                        " Max ",
-                        style: TextStyle(
-                          color: ResColor.black_80,
-                          fontSize: 16,
-                        ),
-                      ),
                     ),
                   ],
                 ),
@@ -664,29 +852,29 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
     Widget items = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          "销毁ERC20-EPK",
-          style: TextStyle(
-            color: ResColor.black,
-            fontSize: 18,
-          ),
-        ),
-        Container(
-          height: 10,
-        ),
+        getSubType("销毁ERC20-EPK"),
         input,
+        Divider(
+          color: ResColor.white_20,
+          height: 1,
+          thickness: 1,
+        ),
         LoadingButton(
-          margin: EdgeInsets.fromLTRB(0, 15, 0, 15),
-          height: 44,
-          color_bg: ResColor.main,
-          disabledColor: ResColor.main,
+          height: 40,
+          width: double.infinity,
+          margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
+          gradient_bg: ResColor.lg_1,
+          color_bg: Colors.transparent,
+          disabledColor: Colors.transparent,
           progress_color: Colors.white,
           progress_size: 20,
           padding: EdgeInsets.all(0),
+          bg_borderradius: BorderRadius.circular(4),
           text: Erc2EpkStep.post_destroy.name,
           textstyle: const TextStyle(
             color: ResColor.white,
-            fontSize: 15,
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
           ),
           loading: false,
           onclick: (lbtn) {
@@ -768,7 +956,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
             "已销毁记录补领EPK",
             style: TextStyle(
               fontSize: 14,
-              color: Colors.blue,
+              color: Colors.white,
             ),
           ),
           onTap: () {
@@ -814,18 +1002,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
       margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
       // padding: EdgeInsets.all(15),
       width: double.infinity,
-      child: Card(
-        color: ResColor.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12.0)),
-        ),
-        elevation: 10,
-        shadowColor: ResColor.black_30,
-        child: Container(
-          padding: EdgeInsets.all(15),
-          child: items,
-        ),
-      ),
+      child: items,
     );
   }
 
@@ -834,52 +1011,44 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
     String txhash = getLocalTxHash_Erc20epk();
 
     List<Widget> items = [];
-    switch (hdwallet_result.data) {
+    switch (hdwallet_result.data)
+    {
       case "success":
         {}
         break;
       case "failed":
         {
           //failed交易失败
-          items.add(Text(
-            "销毁失败",
-            style: TextStyle(
-              color: ResColor.black,
-              fontSize: 18,
-            ),
-          ));
-          items.add(Container(
-            height: 10,
-          ));
-
-          items.add(InkWell(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            onTap: () {
-              DeviceUtils.copyText(txhash);
-              showToast("TxHash已复制");
-            },
-            child: Text(
-              "$txhash",
-              style: TextStyle(
-                fontSize: 14,
-                color: ResColor.black_80,
-              ),
-            ),
-          ));
-
-          items.add(Container(
-            height: 10,
-          ));
-
-          items.add(Wrap(
+          items.add(getSubType("销毁失败"));
+          items.add(Row(
             children: [
+              Expanded(
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () {
+                    DeviceUtils.copyText(txhash);
+                    showToast("TxHash已复制");
+                  },
+                  child: TextEm(
+                    "$txhash",
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: ResColor.white_60,
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                width: 30,
+              ),
               InkWell(
                 child: Text(
                   "查看交易",
                   style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.blue,
+                    fontSize: 11,
+                    color: ResColor.o_1,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 onTap: () {
@@ -890,17 +1059,20 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
           ));
 
           items.add(LoadingButton(
-            margin: EdgeInsets.fromLTRB(0, 15, 0, 15),
-            height: 44,
-            color_bg: ResColor.main,
-            disabledColor: ResColor.main,
+            margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
+            height: 40,
+            gradient_bg: ResColor.lg_1,
+            color_bg: Colors.transparent,
+            disabledColor:Colors.transparent,
             progress_color: Colors.white,
             progress_size: 20,
             padding: EdgeInsets.all(0),
+            bg_borderradius:BorderRadius.circular(4) ,
             text: "发起新的兑换",
             textstyle: const TextStyle(
               color: ResColor.white,
-              fontSize: 15,
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
             ),
             loading: false,
             onclick: (lbtn) {
@@ -917,37 +1089,47 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
       case "pending":
         {
           //pending交易等待中
-          items.add(Text(
-            "等待ERC20-EPK销毁确认",
-            style: TextStyle(
-              color: ResColor.black,
-              fontSize: 18,
-            ),
-          ));
-          items.add(Container(
-            height: 10,
-          ));
-
-          items.add(InkWell(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            onTap: () {
-              DeviceUtils.copyText(txhash);
-              showToast("TxHash已复制");
-            },
-            child: Text(
-              "$txhash",
-              style: TextStyle(
-                fontSize: 14,
-                color: ResColor.black_80,
+          items.add(getSubType("等待ERC20-EPK销毁确认"));
+          items.add(Row(
+            children: [
+              Expanded(
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () {
+                    DeviceUtils.copyText(txhash);
+                    showToast("TxHash已复制");
+                  },
+                  child: TextEm(
+                    "$txhash",
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: ResColor.white_60,
+                    ),
+                  ),
+                ),
               ),
-            ),
+              Container(
+                width: 30,
+              ),
+              InkWell(
+                child: Text(
+                  "查看交易",
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: ResColor.o_1,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                onTap: () {
+                  lookEthTxhash(txhash);
+                },
+              ),
+            ],
           ));
-
           items.add(Container(
             height: 10,
           ));
-
           items.add(RichText(
             text: TextSpan(
               style: TextStyle(
@@ -955,32 +1137,20 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
               ),
               children: [
                 TextSpan(
-                  text: "查看交易",
+                  text: "如长时间不上链可以",
                   style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.blue,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () async {
-                      lookEthTxhash(txhash);
-                    },
-                ),
-                TextSpan(
-                  text: "，如长时间不上链可以",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: ResColor.black_80,
+                    fontSize: 11,
+                    color: ResColor.white,
                   ),
                 ),
                 TextSpan(
                   text: "加速交易",
                   style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.blue,
+                    fontSize: 11,
+                    color: ResColor.o_1,
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () async {
-                      // 加速交易
                       onClickAccelerateTx(txhash);
                     },
                 ),
@@ -989,17 +1159,19 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
           ));
 
           items.add(LoadingButton(
-            margin: EdgeInsets.fromLTRB(0, 15, 0, 15),
-            height: 44,
-            color_bg: ResColor.main,
+            margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
+            height: 40,
+            color_bg: const Color(0xff424242),
             disabledColor: ResColor.main,
             progress_color: Colors.white,
             progress_size: 20,
             padding: EdgeInsets.all(0),
+            bg_borderradius: BorderRadius.circular(4),
             text: "刷新",
             textstyle: const TextStyle(
               color: ResColor.white,
-              fontSize: 15,
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
             ),
             loading: false,
             onclick: (lbtn) {
@@ -1014,26 +1186,15 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
       margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
       // padding: EdgeInsets.all(15),
       width: double.infinity,
-      child: Card(
-        color: ResColor.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12.0)),
-        ),
-        elevation: 10,
-        shadowColor: ResColor.black_30,
-        child: Container(
-          padding: EdgeInsets.all(15),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: items,
-          ),
-        ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: items,
       ),
     );
   }
 
   lookEthTxhash(String txhash) {
-    String url = ServiceInfo.ether_tx_web+txhash;
+    String url = ServiceInfo.ether_tx_web + txhash;
     ViewGT.showGeneralWebView(
       context,
       RSID.usolv_3.text, //"详情",
@@ -1111,45 +1272,37 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
 
     {
       // erc20  success交易成功
-      items.add(Text(
-        "ERC20-EPK已销毁",
-        style: TextStyle(
-          color: ResColor.black,
-          fontSize: 18,
-        ),
-      ));
-      items.add(Container(
-        height: 10,
-      ));
+      items.add(getSubType("ERC20-EPK已销毁"));
 
-      items.add(InkWell(
-        splashColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        onTap: () {
-          DeviceUtils.copyText(txhash);
-          showToast("TxHash已复制");
-        },
-        child: Text(
-          "$txhash",
-          style: TextStyle(
-            fontSize: 14,
-            color: ResColor.black_80,
-          ),
-        ),
-      ));
-
-      items.add(Container(
-        height: 10,
-      ));
-
-      items.add(Wrap(
+      items.add(Row(
         children: [
+          Expanded(
+            child: InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              onTap: () {
+                DeviceUtils.copyText(txhash);
+                showToast("TxHash已复制");
+              },
+              child: TextEm(
+                "$txhash",
+                style: TextStyle(
+                  fontSize: 11,
+                  color: ResColor.white_60,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            width: 30,
+          ),
           InkWell(
             child: Text(
               "查看交易",
               style: TextStyle(
-                fontSize: 14,
-                color: Colors.blue,
+                fontSize: 11,
+                color: ResColor.o_1,
+                fontWeight: FontWeight.bold,
               ),
             ),
             onTap: () {
@@ -1160,17 +1313,21 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
       ));
 
       items.add(LoadingButton(
-        margin: EdgeInsets.fromLTRB(0, 15, 0, 15),
-        height: 44,
-        color_bg: ResColor.main,
-        disabledColor: ResColor.main,
+        height: 40,
+        width: double.infinity,
+        margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
+        gradient_bg: ResColor.lg_1,
+        color_bg: Colors.transparent,
+        disabledColor: Colors.transparent,
         progress_color: Colors.white,
         progress_size: 20,
         padding: EdgeInsets.all(0),
+        bg_borderradius: BorderRadius.circular(4),
         text: Erc2EpkStep.submitepk.name,
         textstyle: const TextStyle(
           color: ResColor.white,
-          fontSize: 15,
+          fontSize: 17,
+          fontWeight: FontWeight.bold,
         ),
         loading: false,
         onclick: (lbtn) {
@@ -1181,25 +1338,13 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
     }
 
     return Container(
-      margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
-      // padding: EdgeInsets.all(15),
-      width: double.infinity,
-      child: Card(
-        color: ResColor.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12.0)),
-        ),
-        elevation: 10,
-        shadowColor: ResColor.black_30,
-        child: Container(
-          padding: EdgeInsets.all(15),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: items,
-          ),
-        ),
-      ),
-    );
+        margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
+        // padding: EdgeInsets.all(15),
+        width: double.infinity,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: items,
+        ));
   }
 
   onClickAccelerateTx(String txhash) {
@@ -1211,7 +1356,8 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
       callback: (newTxHash) {
         if (StringUtils.isNotEmpty(newTxHash)) {
           setLocalTxHash_Erc20epk(newTxHash);
-          Future.delayed(Duration(milliseconds: 200)).then((value) => refresh());
+          Future.delayed(Duration(milliseconds: 200))
+              .then((value) => refresh());
         }
       },
     );
@@ -1222,75 +1368,67 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
     String epkcid = getLocalTxHash_epk();
 
     List<Widget> items = [];
-    switch (epkwallet_result.data) {
+    switch (epkwallet_result.data)
+    {
       case "success":
         {
           //成功
-          //failed交易失败
-          items.add(Text(
-            "EPK已到账",
-            style: TextStyle(
-              color: ResColor.black,
-              fontSize: 18,
-            ),
-          ));
-          items.add(Container(
-            height: 10,
-          ));
+          items.add(getSubType("EPK已到账"));
 
-          items.add(InkWell(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            onTap: () {
-              DeviceUtils.copyText(epkcid);
-              showToast("cid已复制");
-            },
-            child: Text(
-              "$epkcid",
-              style: TextStyle(
-                fontSize: 14,
-                color: ResColor.black_80,
-              ),
-            ),
-          ));
-
-          items.add(Container(
-            height: 10,
-          ));
-
-          items.add(RichText(
-            text: TextSpan(
-              style: TextStyle(
-                fontFamily: fontFamily_def,
-              ),
-              children: [
-                TextSpan(
-                  text: "查看交易",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.blue,
+          items.add(Row(
+            children: [
+              Expanded(
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () {
+                    DeviceUtils.copyText(epkcid);
+                    showToast("cid已复制");
+                  },
+                  child: TextEm(
+                    "$epkcid",
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: ResColor.white_60,
+                    ),
                   ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () async {
-                      lookEpkCid(epkcid);
-                    },
                 ),
-              ],
-            ),
+              ),
+              Container(
+                width: 30,
+              ),
+              InkWell(
+                child: Text(
+                  "查看交易",
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: ResColor.o_1,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                onTap: () {
+                  lookEpkCid(epkcid);
+                },
+              ),
+            ],
           ));
+
 
           items.add(LoadingButton(
-            margin: EdgeInsets.fromLTRB(0, 15, 0, 15),
-            height: 44,
-            color_bg: ResColor.main,
-            disabledColor: ResColor.main,
+            margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
+            height: 40,
+            gradient_bg: ResColor.lg_1,
+            color_bg: Colors.transparent,
+            disabledColor:Colors.transparent,
             progress_color: Colors.white,
             progress_size: 20,
             padding: EdgeInsets.all(0),
+            bg_borderradius:BorderRadius.circular(4) ,
             text: "发起新的兑换",
             textstyle: const TextStyle(
               color: ResColor.white,
-              fontSize: 15,
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
             ),
             loading: false,
             onclick: (lbtn) {
@@ -1307,70 +1445,61 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
       case "failed":
         {
           //failed交易失败
-          items.add(Text(
-            "发放EPK失败",
-            style: TextStyle(
-              color: ResColor.black,
-              fontSize: 18,
-            ),
-          ));
-          items.add(Container(
-            height: 10,
-          ));
+          items.add(getSubType("发放EPK失败"));
 
-          items.add(InkWell(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            onTap: () {
-              DeviceUtils.copyText(epkcid);
-              showToast("cid已复制");
-            },
-            child: Text(
-              "$epkcid",
-              style: TextStyle(
-                fontSize: 14,
-                color: ResColor.black_80,
-              ),
-            ),
-          ));
-
-          items.add(Container(
-            height: 10,
-          ));
-
-          items.add(RichText(
-            text: TextSpan(
-              style: TextStyle(
-                fontFamily: fontFamily_def,
-              ),
-              children: [
-                TextSpan(
-                  text: "查看交易",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.blue,
+          items.add(Row(
+            children: [
+              Expanded(
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () {
+                    DeviceUtils.copyText(epkcid);
+                    showToast("cid已复制");
+                  },
+                  child: TextEm(
+                    "$epkcid",
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: ResColor.white_60,
+                    ),
                   ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () async {
-                      lookEpkCid(epkcid);
-                    },
                 ),
-              ],
-            ),
+              ),
+              Container(
+                width: 30,
+              ),
+              InkWell(
+                child: Text(
+                  "查看交易",
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: ResColor.o_1,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                onTap: () {
+                  lookEpkCid(epkcid);
+                },
+              ),
+            ],
           ));
 
           items.add(LoadingButton(
-            margin: EdgeInsets.fromLTRB(0, 15, 0, 15),
-            height: 44,
-            color_bg: ResColor.main,
-            disabledColor: ResColor.main,
+            margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
+            height: 40,
+            gradient_bg: ResColor.lg_1,
+            color_bg: Colors.transparent,
+            disabledColor:Colors.transparent,
             progress_color: Colors.white,
             progress_size: 20,
             padding: EdgeInsets.all(0),
+            bg_borderradius:BorderRadius.circular(4) ,
             text: "发起新的兑换",
             textstyle: const TextStyle(
               color: ResColor.white,
-              fontSize: 15,
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
             ),
             loading: false,
             onclick: (lbtn) {
@@ -1387,37 +1516,47 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
       case "pending":
         {
           //pending交易等待中
-          items.add(Text(
-            "等待发放EPK到账",
-            style: TextStyle(
-              color: ResColor.black,
-              fontSize: 18,
-            ),
-          ));
-          items.add(Container(
-            height: 10,
-          ));
-
-          items.add(InkWell(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            onTap: () {
-              DeviceUtils.copyText(epkcid);
-              showToast("cid已复制");
-            },
-            child: Text(
-              "$epkcid",
-              style: TextStyle(
-                fontSize: 14,
-                color: ResColor.black_80,
+          items.add(getSubType("等待发放EPK到账"));
+          items.add(Row(
+            children: [
+              Expanded(
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () {
+                    DeviceUtils.copyText(epkcid);
+                    showToast("cid已复制");
+                  },
+                  child: TextEm(
+                    "$epkcid",
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: ResColor.white_60,
+                    ),
+                  ),
+                ),
               ),
-            ),
+              Container(
+                width: 30,
+              ),
+              InkWell(
+                child: Text(
+                  "查看交易",
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: ResColor.o_1,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                onTap: () {
+                  lookEpkCid(epkcid);
+                },
+              ),
+            ],
           ));
-
           items.add(Container(
             height: 10,
           ));
-
           items.add(RichText(
             text: TextSpan(
               style: TextStyle(
@@ -1425,28 +1564,17 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
               ),
               children: [
                 TextSpan(
-                  text: "查看交易",
+                  text: "如长时间不上链可以",
                   style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.blue,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () async {
-                      lookEpkCid(epkcid);
-                    },
-                ),
-                TextSpan(
-                  text: "，如长时间不上链可以",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: ResColor.black_80,
+                    fontSize: 11,
+                    color: ResColor.white,
                   ),
                 ),
                 TextSpan(
                   text: "询问客服",
                   style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.blue,
+                    fontSize: 11,
+                    color: ResColor.o_1,
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () async {
@@ -1458,17 +1586,19 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
           ));
 
           items.add(LoadingButton(
-            margin: EdgeInsets.fromLTRB(0, 15, 0, 15),
-            height: 44,
-            color_bg: ResColor.main,
+            margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
+            height: 40,
+            color_bg: const Color(0xff424242),
             disabledColor: ResColor.main,
             progress_color: Colors.white,
             progress_size: 20,
             padding: EdgeInsets.all(0),
+            bg_borderradius: BorderRadius.circular(4),
             text: "刷新",
             textstyle: const TextStyle(
               color: ResColor.white,
-              fontSize: 15,
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
             ),
             loading: false,
             onclick: (lbtn) {
@@ -1481,37 +1611,48 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
         {
           //未知
           //failed交易失败
-          items.add(Text(
-            "未知状态",
-            style: TextStyle(
-              color: ResColor.black,
-              fontSize: 18,
-            ),
-          ));
-          items.add(Container(
-            height: 10,
-          ));
+          items.add(getSubType("未知状态"));
 
-          items.add(InkWell(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            onTap: () {
-              DeviceUtils.copyText(epkcid);
-              showToast("cid已复制");
-            },
-            child: Text(
-              "$epkcid",
-              style: TextStyle(
-                fontSize: 14,
-                color: ResColor.black_80,
+          items.add(Row(
+            children: [
+              Expanded(
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () {
+                    DeviceUtils.copyText(epkcid);
+                    showToast("cid已复制");
+                  },
+                  child: TextEm(
+                    "$epkcid",
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: ResColor.white_60,
+                    ),
+                  ),
+                ),
               ),
-            ),
+              Container(
+                width: 30,
+              ),
+              InkWell(
+                child: Text(
+                  "查看交易",
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: ResColor.o_1,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                onTap: () {
+                  lookEpkCid(epkcid);
+                },
+              ),
+            ],
           ));
-
           items.add(Container(
             height: 10,
           ));
-
           items.add(RichText(
             text: TextSpan(
               style: TextStyle(
@@ -1519,28 +1660,17 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
               ),
               children: [
                 TextSpan(
-                  text: "查看交易",
+                  text: "未知状态可以",
                   style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.blue,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () async {
-                      lookEpkCid(epkcid);
-                    },
-                ),
-                TextSpan(
-                  text: "，未知状态可以",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: ResColor.black_80,
+                    fontSize: 11,
+                    color: ResColor.white,
                   ),
                 ),
                 TextSpan(
                   text: "询问客服",
                   style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.blue,
+                    fontSize: 11,
+                    color: ResColor.o_1,
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () async {
@@ -1552,17 +1682,20 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
           ));
 
           items.add(LoadingButton(
-            margin: EdgeInsets.fromLTRB(0, 15, 0, 15),
-            height: 44,
-            color_bg: ResColor.main,
-            disabledColor: ResColor.main,
+            margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
+            height: 40,
+            gradient_bg: ResColor.lg_1,
+            color_bg: Colors.transparent,
+            disabledColor:Colors.transparent,
             progress_color: Colors.white,
             progress_size: 20,
             padding: EdgeInsets.all(0),
+            bg_borderradius:BorderRadius.circular(4) ,
             text: "发起新的兑换",
             textstyle: const TextStyle(
               color: ResColor.white,
-              fontSize: 15,
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
             ),
             loading: false,
             onclick: (lbtn) {
@@ -1582,20 +1715,9 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
       margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
       // padding: EdgeInsets.all(15),
       width: double.infinity,
-      child: Card(
-        color: ResColor.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12.0)),
-        ),
-        elevation: 10,
-        shadowColor: ResColor.black_30,
-        child: Container(
-          padding: EdgeInsets.all(15),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: items,
-          ),
-        ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: items,
       ),
     );
   }

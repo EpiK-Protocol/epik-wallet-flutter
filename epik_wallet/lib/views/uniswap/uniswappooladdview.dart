@@ -14,6 +14,7 @@ import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/widget/DashLineWidget.dart';
+import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -83,8 +84,20 @@ class UniswapPoolAddViewState extends BaseWidgetState<UniswapPoolAddView> {
   }
 
   Widget buildWidget(BuildContext context) {
-    if (_tec_A == null) _tec_A = new TextEditingController(text: text_A);
-    if (_tec_B == null) _tec_B = new TextEditingController(text: text_B);
+    if (_tec_A == null) _tec_A =  new TextEditingController.fromValue(TextEditingValue(
+      text: text_A,
+      selection: new TextSelection.fromPosition(
+        TextPosition(
+            affinity: TextAffinity.downstream, offset: text_A.length),
+      ),
+    ));
+    if (_tec_B == null) _tec_B = new TextEditingController.fromValue(TextEditingValue(
+      text: text_B,
+      selection: new TextSelection.fromPosition(
+        TextPosition(
+            affinity: TextAffinity.downstream, offset: text_B.length),
+      ),
+    ));
 
     Widget child = SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
@@ -99,234 +112,365 @@ class UniswapPoolAddViewState extends BaseWidgetState<UniswapPoolAddView> {
           children: <Widget>[
             Container(
               width: double.infinity,
-              margin: EdgeInsets.fromLTRB(20, 30, 20, 0),
-              child: Card(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                ),
-                elevation: 10,
-                shadowColor: Colors.black26,
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Container(
-                              margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
-                              child: TextField(
-                                controller: _tec_A,
-                                keyboardType: TextInputType.numberWithOptions(
-                                    decimal: true),
-                                maxLines: 1,
-                                maxLengthEnforced: true,
-                                obscureText: false,
-                                inputFormatters: [
-                                  WhitelistingTextInputFormatter(
-                                      RegExpUtil.re_float)
-                                ],
-                                // 这里限制长度 不会有数量提示
-                                decoration: InputDecoration(
-                                  // 以下属性可用来去除TextField的边框
-                                  border: InputBorder.none,
-                                  errorBorder: InputBorder.none,
-                                  focusedErrorBorder: InputBorder.none,
-                                  disabledBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  contentPadding:
-                                      EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  hintText: "0.0",
-                                  hintStyle: TextStyle(
-                                      color: Colors.black54, fontSize: 16),
+              margin: EdgeInsets.fromLTRB(30, 40, 30, 40),
+              decoration: BoxDecoration(
+                color: ResColor.b_3,
+                borderRadius:BorderRadius.circular(20),
+              ),
+              child:  Column(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                          width: 30,
+                          height: 30,
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: <Widget>[
+                              Positioned(
+                                left: 0,
+                                top: 0,
+                                child: Image(
+                                  image: AssetImage(cs_A.iconUrl),
+                                  width: 30,
+                                  height: 30,
                                 ),
-                                cursorWidth: 2.0,
-                                //光标宽度
-                                cursorRadius: Radius.circular(2),
-                                //光标圆角弧度
-                                cursorColor: Colors.black,
-                                //光标颜色
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.black87),
-                                onChanged: (value) {
-                                  text_A = _tec_A.text.trim();
-                                  amount_A = StringUtils.parseDouble(text_A, 0);
-                                  onInputA();
-                                },
                               ),
+                              Positioned(
+                                  right: -1.5,
+                                  bottom: -1.5,
+                                  child: Image(
+                                    image: AssetImage(cs_A.networkType.iconUrl),
+                                    width: 13,
+                                    height: 13,
+                                  )),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                            child: TextField(
+                              controller: _tec_A,
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              maxLines: 1,
+                              maxLengthEnforced: true,
+                              obscureText: false,
+                              inputFormatters: [
+                                WhitelistingTextInputFormatter(
+                                    RegExpUtil.re_float)
+                              ],
+                              // 这里限制长度 不会有数量提示
+                              decoration: InputDecoration(
+                                // 以下属性可用来去除TextField的边框
+                                border: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                focusedErrorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                contentPadding:
+                                EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                hintText: "0.0",
+                                hintStyle: TextStyle(
+                                    color: ResColor.white_60, fontSize: 17),
+                              ),
+                              cursorWidth: 2.0,
+                              //光标宽度
+                              cursorRadius: Radius.circular(2),
+                              //光标圆角弧度
+                              cursorColor: Colors.white,
+                              //光标颜色
+                              style: TextStyle(
+                                  fontSize: 16, color:ResColor.white),
+                              onChanged: (value) {
+                                text_A = _tec_A.text.trim();
+                                amount_A = StringUtils.parseDouble(text_A, 0);
+                                onInputA();
+                              },
                             ),
                           ),
-                          Container(
-                            width: 5,
+                        ),
+                        Container(
+                          width: 5,
+                        ),
+                        Text(
+                          cs_A.symbol,
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: ResColor.white_60,
                           ),
-                          Text(
-                            cs_A.symbol,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    Container(
-                      margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                      alignment: Alignment.centerLeft,
-                      child: Icon(
-                        Icons.add,
-                        size: 16,
-                        color: Colors.black54,
-                      ),
+                  ),
+                  Container(height: 4),
+                  Divider(
+                    height: 1,
+                    thickness: 1,
+                    indent: 20,
+                    endIndent: 20,
+                    color: ResColor.white_20,
+                  ),
+                  Container(
+                    width: 20,
+                    height: 20,
+                    margin: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      border:
+                          Border.fromBorderSide(BorderSide(color: ResColor.o_1,width: 1)),
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Container(
-                              margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
-                              child: TextField(
-                                controller: _tec_B,
-                                keyboardType: TextInputType.numberWithOptions(
-                                    decimal: true),
-                                maxLines: 1,
-                                maxLengthEnforced: true,
-                                obscureText: false,
-                                inputFormatters: [
-                                  WhitelistingTextInputFormatter(
-                                      RegExpUtil.re_float)
-                                ],
-                                // 这里限制长度 不会有数量提示
-                                decoration: InputDecoration(
-                                  // 以下属性可用来去除TextField的边框
-                                  border: InputBorder.none,
-                                  errorBorder: InputBorder.none,
-                                  focusedErrorBorder: InputBorder.none,
-                                  disabledBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  contentPadding:
-                                      EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  hintText: "0.0",
-                                  hintStyle: TextStyle(
-                                      color: Colors.black54, fontSize: 16),
+                    child: Icon(Icons.add,color: ResColor.o_1,size: 18,),
+                  ),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                          width: 30,
+                          height: 30,
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: <Widget>[
+                              Positioned(
+                                left: 0,
+                                top: 0,
+                                child: Image(
+                                  image: AssetImage(cs_B.iconUrl),
+                                  width: 30,
+                                  height: 30,
                                 ),
-                                cursorWidth: 2.0,
-                                //光标宽度
-                                cursorRadius: Radius.circular(2),
-                                //光标圆角弧度
-                                cursorColor: Colors.black,
-                                //光标颜色
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.black87),
-                                onChanged: (value) {
-                                  text_B = _tec_B.text.trim();
-                                  amount_B = StringUtils.parseDouble(text_B, 0);
-                                  onInputB();
-                                },
                               ),
+                              Positioned(
+                                  right: -1.5,
+                                  bottom: -1.5,
+                                  child: Image(
+                                    image: AssetImage(cs_B.networkType.iconUrl),
+                                    width: 13,
+                                    height: 13,
+                                  )),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                            child: TextField(
+                              controller: _tec_B,
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              maxLines: 1,
+                              maxLengthEnforced: true,
+                              obscureText: false,
+                              inputFormatters: [
+                                WhitelistingTextInputFormatter(
+                                    RegExpUtil.re_float)
+                              ],
+                              // 这里限制长度 不会有数量提示
+                              decoration: InputDecoration(
+                                // 以下属性可用来去除TextField的边框
+                                border: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                focusedErrorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                contentPadding:
+                                EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                hintText: "0.0",
+                                hintStyle: TextStyle(
+                                    color: ResColor.white_60, fontSize: 17),
+                              ),
+                              cursorWidth: 2.0,
+                              //光标宽度
+                              cursorRadius: Radius.circular(2),
+                              //光标圆角弧度
+                              cursorColor: Colors.white,
+                              //光标颜色
+                              style: TextStyle(
+                                  fontSize: 17, color: Colors.white),
+                              onChanged: (value) {
+                                text_B = _tec_B.text.trim();
+                                amount_B = StringUtils.parseDouble(text_B, 0);
+                                onInputB();
+                              },
                             ),
                           ),
-                          Container(
-                            width: 5,
+                        ),
+                        Container(
+                          width: 5,
+                        ),
+                        Text(
+                          cs_B.symbol,
+                          style: TextStyle(
+                              color: ResColor.white_60, fontSize: 17,
                           ),
-                          Text(
-                            cs_B.symbol,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(height: 4),
+                  Divider(
+                    height: 1,
+                    thickness: 1,
+                    indent: 20,
+                    endIndent: 20,
+                    color: ResColor.white_20,
+                  ),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                    child: Text(
+                      ResString.get(context, RSID.uspav_1, replace: [
+                        StringUtils.formatNumAmount(price_changes * 100,
+                            point: 2, supply0: false)
+                      ]),
+                      //"当前为预估价格，如果价格波动超过${StringUtils.formatNumAmount(price_changes * 100, point: 2, supply0: false)}%，您的交易将会撤销。",
+                      style: TextStyle(
+                          color: ResColor.white_60, fontSize: 12
+                      ),
+                    ),
+                  ),
+                  //虚线
+                  // DashLineWidget(
+                  //   width: double.infinity,
+                  //   height: 1,
+                  //   dashWidth: 10,
+                  //   dashHeight: 0.5,
+                  //   spaceWidth: 5,
+                  //   color: ResColor.white,
+                  //   margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  // ),
+                  Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            ResString.get(context, RSID.usev_2, replace: [""]),
+//                        "手续费 : ${StringUtils.formatNumAmount(StringUtils.parseDouble(widget.walletAccount.eth_suggestGas, 0) * 9, point: 8, supply0: false)} eth",
                             style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black87,
+                              color: Colors.white,
+                              fontSize: 14,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(20, 10, 20, 20),
-                      child: Text(
-                        ResString.get(context, RSID.uspav_1, replace: [
-                          StringUtils.formatNumAmount(price_changes * 100,
-                              point: 2, supply0: false)
-                        ]),
-                        //"当前为预估价格，如果价格波动超过${StringUtils.formatNumAmount(price_changes * 100, point: 2, supply0: false)}%，您的交易将会撤销。",
-                        style: TextStyle(
-                          color: Colors.black45,
-                          fontSize: 12,
                         ),
-                      ),
-                    ),
-                    DashLineWidget(
-                      width: double.infinity,
-                      height: 1,
-                      dashWidth: 10,
-                      dashHeight: 0.5,
-                      spaceWidth: 5,
-                      color: color_btn_1,
-                      margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                      child: Text(
-                        ResString.get(context, RSID.uspav_2,
-                            replace: [widget.walletAccount.eth_suggestGas]),
-//                        "手续费 : ${widget.walletAccount.eth_suggestGas} eth",
-
-                        style: TextStyle(
-                          color: Colors.black45,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
-                      child: Text(
-                        "1 ${cs_A.symbol} = ${StringUtils.formatNumAmount(widget.uniswapinfo.price_USDT_EPK, point: 8, supply0: false)} ${cs_B.symbol}",
-                        style: TextStyle(
-                          color: Colors.black45,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
-                      child: Text(
-                        "1 ${cs_B.symbol} = ${StringUtils.formatNumAmount(widget.uniswapinfo.price_EPK_USDT, point: 8, supply0: false)} ${cs_A.symbol}",
-                        style: TextStyle(
-                          color: Colors.black45,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
-                      width: double.infinity,
-                      height: 40,
-                      child: FlatButton(
-                        highlightColor: Colors.white24,
-                        splashColor: Colors.white24,
-                        onPressed: () {
-                          onClickAdd();
-                        },
-                        child: Text(
-                          ResString.get(context, RSID.uspav_3), //"确定注入",
-                          textAlign: TextAlign.center,
+                        Text(
+                          "${widget.walletAccount.eth_suggestGas}"+ " ",
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 16,
+                            fontSize: 14,
                           ),
                         ),
-                        color: color_btn_1,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                        Text(
+                          "ETH", //手续费改为
+                          style: TextStyle(
+                            color: ResColor.white_60,
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.fromLTRB(20, 5, 20, 0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            RSID.usev_15.text,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  // "1 ${cs_A.symbol} = ${StringUtils.formatNumAmount(widget?.walletAccount?.uniswapinfo?.price_USDT_EPK ?? 0, point: 8, supply0: false)} ${cs_B.symbol}",
+                                  StringUtils.formatNumAmount(
+                                      widget?.walletAccount?.uniswapinfo
+                                          ?.price_USDT_EPK ??
+                                          0,
+                                      point: 8,
+                                      supply0: false) +
+                                      " ",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                Text(
+                                  "${cs_A.symbol}/ ${cs_B.symbol}",
+                                  style: TextStyle(
+                                    color: ResColor.white_60,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(height: 5),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  // "1 ${cs_B.symbol} = ${StringUtils.formatNumAmount(widget?.walletAccount?.uniswapinfo?.price_EPK_USDT ?? 0, point: 8, supply0: false)} ${cs_A.symbol}",
+                                  StringUtils.formatNumAmount(
+                                      widget?.walletAccount?.uniswapinfo
+                                          ?.price_EPK_USDT ??
+                                          0,
+                                      point: 8,
+                                      supply0: false) +
+                                      " ",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                Text(
+                                  "${cs_B.symbol}/ ${cs_A.symbol}",
+                                  style: TextStyle(
+                                    color: ResColor.white_60,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  LoadingButton(
+                    margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                    width: double.infinity,
+                    height: 40,
+                    gradient_bg: ResColor.lg_1,
+                    color_bg: Colors.transparent,
+                    disabledColor: Colors.transparent,
+                    bg_borderradius: BorderRadius.circular(4),
+                    text:RSID.uspav_3.text,//"确定注入",
+                    textstyle: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                    ),
+                    onclick: (lbtn) {
+                      onClickAdd();
+                    },
+                  ),
+                ],
               ),
             ),
           ],
@@ -335,20 +479,36 @@ class UniswapPoolAddViewState extends BaseWidgetState<UniswapPoolAddView> {
     );
 
     return Container(
-      padding: EdgeInsets.fromLTRB(
-          0, BaseFuntion.topbarheight + BaseFuntion.appbarheight_def, 0, 0),
-      decoration: BoxDecoration(
-        gradient: RadialGradient(
-          colors: [
-            Color(0xfff7e6f0),
-            Colors.white,
-          ],
-          center: Alignment.center,
-          radius: 1,
-          tileMode: TileMode.clamp,
-        ),
+      width: double.infinity,
+      height: double.infinity,
+      child: Stack(
+        children: [
+          // header card
+          Container(
+            width: double.infinity,
+            height: getAppBarHeight() +
+                getTopBarHeight() +
+                128,
+            padding: EdgeInsets.only(top: getTopBarHeight()),
+            decoration: BoxDecoration(
+              gradient: ResColor.lg_1,
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+            ),
+            child: Column(
+              children: [
+                getAppBar(),
+              ],
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            top: getAppBarHeight() + getTopBarHeight(),
+            bottom: 0,
+            child: child,
+          ),
+        ],
       ),
-      child: child,
     );
   }
 
@@ -367,6 +527,7 @@ class UniswapPoolAddViewState extends BaseWidgetState<UniswapPoolAddView> {
   }
 
   onClickAdd() {
+
     if (amount_A == 0 || amount_B == 0) {
       showToast(ResString.get(context, RSID.uspav_4)); //"请输入数量");
       return;

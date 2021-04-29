@@ -73,8 +73,6 @@ class BountyDappTakeRecordViewState
 
   @override
   void dispose() {
-    if (oldSystemUiOverlayStyle != null)
-      DeviceUtils.setSystemBarStyle(oldSystemUiOverlayStyle);
     super.dispose();
   }
 

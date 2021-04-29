@@ -15,7 +15,7 @@ import 'package:epikwallet/utils/http/httputils.dart';
 class ApiWallet {
   // GET {{HOST}}/messages?address=t3v2m2rkfoaqcqavhazvuplnqjpn4tgfgrej5r7sjrv27sa2ulftepflbcjakzk3pw3fysrdznz6kw6l4aamja&from=&size=50
   static Future<HttpJsonRes> getTepkOrderList(
-      String address, String from, int size) async {
+      String address, String from, int size ,int epkHeight) async {
     // String url = ServiceInfo.HOST + "/messages";
     String url = "http://116.63.146.223:3002" + "/messages";//todo test
     Map<String, dynamic> params = new Map();
@@ -23,6 +23,7 @@ class ApiWallet {
     params["address"] = address;
     params["from"] = from??""; //Time: "2020-12-28T04:04:27Z"
     params["size"] = size;
+    params["height"] = epkHeight;
     return await HttpUtil.instance.requestJson(true, url, params);
   }
 

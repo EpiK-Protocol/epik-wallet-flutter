@@ -2,14 +2,12 @@ import 'dart:ui';
 
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
-import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
-import 'package:epikwallet/logic/api/api_testnet.dart';
 import 'package:epikwallet/logic/api/api_wallet.dart';
 import 'package:epikwallet/main.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
@@ -23,6 +21,7 @@ import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/mainview.dart';
 import 'package:epikwallet/views/viewgoto.dart';
+import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -79,8 +78,7 @@ class UniswapExchangeViewState
     cs_A = CurrencySymbol.EPKerc20;
     cs_B = CurrencySymbol.USDT;
 
-    setAppBarHeight(60);
-
+    // setAppBarHeight(60);
   }
 
   @override
@@ -110,11 +108,10 @@ class UniswapExchangeViewState
     super.dispose();
   }
 
-  List<String> infoNames =[];
+  List<String> infoNames = [];
 
   refresh() {
-
-    infoNames=ResString.get(appContext,RSID.usev_13).split(",");
+    infoNames = ResString.get(appContext, RSID.usev_13).split(",");
 
     widget.walletAccount.uploadSuggestGas();
     widget.walletAccount.uploadUniswapInfo();
@@ -126,6 +123,10 @@ class UniswapExchangeViewState
   Widget buildWidget(BuildContext context) {
     Color exchanegBtnColor =
         (amount_form != 0 && calc_amounts != null) ? color_btn_2 : color_btn_1;
+    LinearGradient exchanegBtnColor_lg =
+        (amount_form != 0 && calc_amounts != null)
+            ? ResColor.lg_1
+            : ResColor.lg_2;
     String btn_text = (amount_form != 0 && calc_amounts != null)
         ? ResString.get(context, RSID.usv_2)
         : ResString.get(context, RSID.usev_1); //"兑换" : "预估";
@@ -140,123 +141,202 @@ class UniswapExchangeViewState
         ),
         child: Column(
           children: <Widget>[
-            Container(height: appbarheight + BaseFuntion.topbarheight),
             getKlineWidget(),
             Container(
               width: double.infinity,
-              margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
-              child: Card(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                ),
-                elevation: 10,
-                shadowColor: Colors.black26,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    getFrom(),
-                    InkWell(
-                      borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                      onTap: () {
-                        changeCurrency();
-                      },
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        child: Icon(Icons.swap_vert),
-                      ),
-                    ),
-                    getTo(),
-                    Container(
-                      width: double.infinity,
-                      margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                      child: Text(
-                        ResString.get(context, RSID.usev_2, replace: [
-                          // StringUtils.formatNumAmount(
-                          //     StringUtils.parseDouble(
-                          //             widget.walletAccount.eth_suggestGas, 0) *
-                          //         9,
-                          //     point: 8,
-                          //     supply0: false)+" eth"
-                          StringUtils.formatNumAmount((amount_form??0)*0.003,point: 8,supply0: false)+" "+cs_from.symbol//手续费改为
-                        ]),
-//                        "手续费 : ${StringUtils.formatNumAmount(StringUtils.parseDouble(widget.walletAccount.eth_suggestGas, 0) * 9, point: 8, supply0: false)} eth",
-                        style: TextStyle(
-                          color: Colors.black45,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      margin: EdgeInsets.fromLTRB(20, 5, 20, 0),
-                      child: Text(
-                        ResString.get(context, RSID.usev_3, replace: [
-                          StringUtils.formatNumAmount(
-                              (slippage_calc ?? 0.01) * 100,
-                              point: 2,
-                              supply0: false)
-                        ]),
-//                        "滑点 : ${StringUtils.formatNumAmount((slippage_calc ?? 0.01) * 100, point: 2, supply0: false)}%",
-                        style: TextStyle(
-                          color: Colors.black45,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
-                      child: Text(
-                        "1 ${cs_A.symbol} = ${StringUtils.formatNumAmount(widget?.walletAccount?.uniswapinfo?.price_USDT_EPK ?? 0, point: 8, supply0: false)} ${cs_B.symbol}",
-                        style: TextStyle(
-                          color: Colors.black45,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
-                      child: Text(
-                        "1 ${cs_B.symbol} = ${StringUtils.formatNumAmount(widget?.walletAccount?.uniswapinfo?.price_EPK_USDT ?? 0, point: 8, supply0: false)} ${cs_A.symbol}",
-                        style: TextStyle(
-                          color: Colors.black45,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
-                      width: double.infinity,
+              margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+              padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+              color: ResColor.b_3,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  getFrom(),
+                  InkWell(
+                    // borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                    onTap: () {
+                      changeCurrency();
+                    },
+                    child: Container(
+                      width: 40,
                       height: 40,
-                      child: FlatButton(
-                        highlightColor: Colors.white24,
-                        splashColor: Colors.white24,
-                        onPressed: () {
-                          onClickExchange();
-                        },
-                        child: Text(
-                          btn_text, //"兑换",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
+                      padding: EdgeInsets.all(10),
+                      child: Image.asset(
+                        "assets/img/ic_uniswap_change_currency.png",
+                        width: 20,
+                        height: 20,
+                      ),
+                    ),
+                  ),
+                  getTo(),
+                  Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            ResString.get(context, RSID.usev_2, replace: [""]),
+//                        "手续费 : ${StringUtils.formatNumAmount(StringUtils.parseDouble(widget.walletAccount.eth_suggestGas, 0) * 9, point: 8, supply0: false)} eth",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
-                        color: exchanegBtnColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                        Text(
+                          StringUtils.formatNumAmount(
+                                  (amount_form ?? 0) * 0.003,
+                                  point: 8,
+                                  supply0: false) +
+                              " ",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
+                        Text(
+                          cs_from.symbol, //手续费改为
+                          style: TextStyle(
+                            color: ResColor.white_60,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.fromLTRB(20, 5, 20, 0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            ResString.get(context, RSID.usev_14, replace: [""]),
+                            //usev_3
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          StringUtils.formatNumAmount(
+                                  (slippage_calc ?? 0.01) * 100,
+                                  point: 2,
+                                  supply0: false) +
+                              " ",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                        Text(
+                          "%",
+                          style: TextStyle(
+                            color: ResColor.white_60,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.fromLTRB(20, 5, 20, 0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            RSID.usev_15.text,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  // "1 ${cs_A.symbol} = ${StringUtils.formatNumAmount(widget?.walletAccount?.uniswapinfo?.price_USDT_EPK ?? 0, point: 8, supply0: false)} ${cs_B.symbol}",
+                                  StringUtils.formatNumAmount(
+                                          widget?.walletAccount?.uniswapinfo
+                                                  ?.price_USDT_EPK ??
+                                              0,
+                                          point: 8,
+                                          supply0: false) +
+                                      " ",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                Text(
+                                  "${cs_A.symbol}/ ${cs_B.symbol}",
+                                  style: TextStyle(
+                                    color: ResColor.white_60,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(height: 5),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  // "1 ${cs_B.symbol} = ${StringUtils.formatNumAmount(widget?.walletAccount?.uniswapinfo?.price_EPK_USDT ?? 0, point: 8, supply0: false)} ${cs_A.symbol}",
+                                  StringUtils.formatNumAmount(
+                                          widget?.walletAccount?.uniswapinfo
+                                                  ?.price_EPK_USDT ??
+                                              0,
+                                          point: 8,
+                                          supply0: false) +
+                                      " ",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                Text(
+                                  "${cs_B.symbol}/ ${cs_A.symbol}",
+                                  style: TextStyle(
+                                    color: ResColor.white_60,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  LoadingButton(
+                    margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                    height: 40,
+                    gradient_bg: exchanegBtnColor_lg,
+                    color_bg: Colors.transparent,
+                    disabledColor: Colors.transparent,
+                    bg_borderradius: BorderRadius.circular(4),
+                    text: btn_text,
+                    //"兑换",
+                    textstyle: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                    ),
+                    onclick: (lbtn) {
+                      onClickExchange();
+                    },
+                  ),
+                ],
               ),
             ),
             Container(
-              padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
+              padding: EdgeInsets.fromLTRB(40, 35, 40, 0),
               child: InkWell(
                 onTap: () {
                   onClickReadme();
@@ -264,9 +344,9 @@ class UniswapExchangeViewState
                 child: Text(
                   ResString.get(context, RSID.uspv_3), //"使用说明(新手必读)",
                   style: TextStyle(
-                    color: ResColor.main_1,
+                    color: ResColor.white,
                     fontSize: 14,
-                    decoration: TextDecoration.underline, //下滑线
+                    // decoration: TextDecoration.underline, //下滑线
                   ),
                 ),
               ),
@@ -281,7 +361,7 @@ class UniswapExchangeViewState
         Positioned(
           left: 0,
           right: 0,
-          top: 0,
+          top: 50,
           bottom: 0,
           child: scroll,
         ),
@@ -291,30 +371,32 @@ class UniswapExchangeViewState
 
   Widget getFrom() {
     if (_tec_from == null)
-      _tec_from = new TextEditingController(text: text_from);
+      _tec_from = new TextEditingController.fromValue(TextEditingValue(
+        text: text_from,
+        selection: new TextSelection.fromPosition(
+          TextPosition(
+              affinity: TextAffinity.downstream, offset: text_from.length),
+        ),
+      ));
 
     return Container(
-      margin: EdgeInsets.fromLTRB(20, 20, 20, 10),
       width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(15.0)),
-        border: Border.all(color: Color(0xffeeeeee), width: 0.7),
-      ),
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 9),
             child: Row(
               children: <Widget>[
                 Expanded(
                   child: Text(
-                    "From",
+                    "From : ${cs_from.symbol}",
                     style: TextStyle(
-                      color: Colors.black54,
+                      color: ResColor.white_60,
                       fontSize: 14,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -323,19 +405,47 @@ class UniswapExchangeViewState
                       ? "${ResString.get(context, RSID.usev_4)}${getBalance(cs_from) ?? "--"}" //余额
                       : "",
                   style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 12,
+                    color: Colors.white,
+                    fontSize: 14,
                   ),
                 ),
               ],
             ),
           ),
           Container(
-            padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
             child: Row(
               children: <Widget>[
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                  width: 30,
+                  height: 30,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: <Widget>[
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        child: Image(
+                          image: AssetImage(cs_from.iconUrl),
+                          width: 30,
+                          height: 30,
+                        ),
+                      ),
+                      Positioned(
+                          right: -1.5,
+                          bottom: -1.5,
+                          child: Image(
+                            image: AssetImage(cs_from.networkType.iconUrl),
+                            width: 13,
+                            height: 13,
+                          )),
+                    ],
+                  ),
+                ),
                 Expanded(
                   child: Container(
+                    height: 30,
                     margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                     child: TextField(
                       controller: _tec_from,
@@ -356,18 +466,18 @@ class UniswapExchangeViewState
                         disabledBorder: InputBorder.none,
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        contentPadding: EdgeInsets.fromLTRB(0, -18, 0, 0),
                         hintText: "0.0",
                         hintStyle:
-                            TextStyle(color: Colors.black54, fontSize: 16),
+                            TextStyle(color: ResColor.white_60, fontSize: 14),
                       ),
                       cursorWidth: 2.0,
                       //光标宽度
                       cursorRadius: Radius.circular(2),
                       //光标圆角弧度
-                      cursorColor: Colors.black,
+                      cursorColor: Colors.white,
                       //光标颜色
-                      style: TextStyle(fontSize: 16, color: Colors.black87),
+                      style: TextStyle(fontSize: 14, color: Colors.white),
                       onChanged: (value) {
                         text_from = _tec_from.text.trim();
                         amount_form = StringUtils.parseDouble(text_from, 0);
@@ -376,57 +486,38 @@ class UniswapExchangeViewState
                     ),
                   ),
                 ),
-                Container(
-                  width: 35,
-                  height: 22,
-                  child: OutlineButton(
-                    padding: EdgeInsets.all(0),
-                    highlightColor: color_btn_1.withOpacity(0.1),
-                    splashColor: Colors.white24,
-                    onPressed: () {
-                      setState(() {
-                        text_from =
-                            (getBalance(cs_from) ?? "").replaceAll(",", "");
-                        _tec_from.text = text_from;
-                        amount_form = StringUtils.parseDouble(text_from, 0);
-                        onInputFrom();
-                      });
-                    },
-                    child: Text(
-                      ResString.get(context, RSID.usev_5), //"全部",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: color_btn_1,
-                        fontSize: 12,
-                      ),
-                    ),
-                    borderSide: BorderSide(color: color_btn_1),
-                    highlightedBorderColor: color_btn_1,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(4)),
-                    ),
+                LoadingButton(
+                  width: 40,
+                  height: 20,
+                  color_bg: Colors.transparent,
+                  disabledColor: Colors.transparent,
+                  side: BorderSide(color: ResColor.o_1, width: 1),
+                  bg_borderradius: BorderRadius.circular(4),
+                  text: RSID.usev_5.text,
+                  //"全部",
+                  textstyle: TextStyle(
+                    color: ResColor.o_1,
+                    fontSize: 12,
                   ),
-                ),
-                Container(
-                  width: 5,
-                ),
-                Image(
-                  image: AssetImage(cs_from.iconUrl),
-                  width: 30,
-                  height: 30,
-                ),
-                Container(
-                  width: 5,
-                ),
-                Text(
-                  cs_from.symbol,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black87,
-                  ),
+                  onclick: (lbtn) {
+                    setState(() {
+                      text_from =
+                          (getBalance(cs_from) ?? "").replaceAll(",", "");
+                      _tec_from.text = text_from;
+                      amount_form = StringUtils.parseDouble(text_from, 0);
+                      _tec_from = null;
+                      onInputFrom();
+                    });
+                  },
                 ),
               ],
             ),
+          ),
+          Container(height: 4),
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: ResColor.white_20,
           ),
         ],
       ),
@@ -438,27 +529,23 @@ class UniswapExchangeViewState
         (calc_amounts == null && amount_form != 0) ? color_btn_2 : color_btn_1;
 
     return Container(
-      margin: EdgeInsets.fromLTRB(20, 10, 20, 20),
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
       width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(15.0)),
-        border: Border.all(color: Color(0xffeeeeee), width: 0.7),
-      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 9),
             child: Row(
               children: <Widget>[
                 Expanded(
                   child: Text(
-                    "To",
+                    "To : ${cs_to.symbol}",
                     style: TextStyle(
-                      color: Colors.black54,
+                      color: ResColor.white_60,
                       fontSize: 14,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -467,17 +554,44 @@ class UniswapExchangeViewState
                       ? "${ResString.get(context, RSID.usev_4)}${getBalance(cs_to) ?? "--"}" //余额:
                       : "",
                   style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 12,
+                    color: Colors.white,
+                    fontSize: 14,
                   ),
                 ),
               ],
             ),
           ),
           Container(
-            padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
             child: Row(
               children: <Widget>[
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                  width: 30,
+                  height: 30,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: <Widget>[
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        child: Image(
+                          image: AssetImage(cs_to.iconUrl),
+                          width: 30,
+                          height: 30,
+                        ),
+                      ),
+                      Positioned(
+                          right: -1.5,
+                          bottom: -1.5,
+                          child: Image(
+                            image: AssetImage(cs_to.networkType.iconUrl),
+                            width: 13,
+                            height: 13,
+                          )),
+                    ],
+                  ),
+                ),
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
@@ -486,10 +600,10 @@ class UniswapExchangeViewState
                           ? text_to
                           : ResString.get(context, RSID.usev_6), //"需要预估数量",
                       style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           color: StringUtils.isNotEmpty(text_to)
-                              ? Colors.black87
-                              : Colors.black54),
+                              ? Colors.white
+                              : ResColor.white_60),
                     ),
                   ),
                 ),
@@ -504,55 +618,18 @@ class UniswapExchangeViewState
                       height: 30,
                       child: Icon(
                         Icons.refresh,
-                        color: color_btn_1,
+                        color: ResColor.white_60,
                       ),
                     ),
                   ),
-//                Container(
-//                  width: 35,
-//                  height: 22,
-//                  child: OutlineButton(
-//                    padding: EdgeInsets.all(0),
-//                    highlightColor: color_btn_1.withOpacity(0.1),
-//                    splashColor: Colors.white24,
-//                    onPressed: () {
-//                      calcToAmount();
-//                    },
-//                    child: Text(
-//                      "预估",
-//                      textAlign: TextAlign.center,
-//                      style: TextStyle(
-//                        color:calc_color,
-//                        fontSize: 12,
-//                      ),
-//                    ),
-//                    borderSide: BorderSide(color:calc_color),
-//                    highlightedBorderColor: calc_color,
-//                    shape: RoundedRectangleBorder(
-//                      borderRadius: BorderRadius.all(Radius.circular(4)),
-//                    ),
-//                  ),
-//                ),
-                Container(
-                  width: 5,
-                ),
-                Image(
-                  image: AssetImage(cs_to.iconUrl),
-                  width: 30,
-                  height: 30,
-                ),
-                Container(
-                  width: 5,
-                ),
-                Text(
-                  cs_to.symbol,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black87,
-                  ),
-                ),
               ],
             ),
+          ),
+          Container(height: 4),
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: ResColor.white_20,
           ),
         ],
       ),
@@ -590,7 +667,8 @@ class UniswapExchangeViewState
 
   calcToAmount() {
     if (widget?.walletAccount?.hdwallet == null) {
-      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX,  main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
+      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX,
+          main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
       return;
     }
 
@@ -690,7 +768,7 @@ class UniswapExchangeViewState
             text: ResString.get(context, RSID.usev_10_1),
             // "「1」本页兑换交易是基于Uniswap的ERC20-EPK与USDT交易\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
             style: TextStyle(
-              color: Color(0xff333333),
+              color: Colors.white,
               fontSize: 14.0,
               fontFamily: fontFamily_def,
             ),
@@ -698,7 +776,7 @@ class UniswapExchangeViewState
               TextSpan(
                 text: address,
                 style: TextStyle(
-                  color: Colors.blue,
+                  color: ResColor.o_1,//Colors.blue,
                   fontSize: 14.0,
 //                  decoration: TextDecoration.underline,
                 ),
@@ -711,7 +789,7 @@ class UniswapExchangeViewState
               TextSpan(
                 text: ResString.get(context, RSID.usev_10_3), // "这里",
                 style: TextStyle(
-                  color: Colors.blue,
+                  color: ResColor.o_1,//Colors.blue,
                   fontSize: 14.0,
 //                  decoration: TextDecoration.underline,
                 ),
@@ -743,7 +821,8 @@ class UniswapExchangeViewState
 
   onClickExchange() {
     if (widget?.walletAccount?.hdwallet == null) {
-      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX,  main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
+      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX,
+          main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
       return;
     }
 
@@ -877,6 +956,7 @@ class UniswapExchangeViewState
       Container(
         height: double.infinity,
         width: double.infinity,
+        color: ResColor.b_3,
         child: KChartWidget(
           data_kline,
           isLine: false,

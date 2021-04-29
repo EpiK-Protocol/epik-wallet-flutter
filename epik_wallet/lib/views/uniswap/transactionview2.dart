@@ -45,7 +45,7 @@ class TransactionView2State extends BaseWidgetState<TransactionView2> {
   Widget getTopFloatWidget() {
     return Container(
       width: 60,
-      height: 60,
+      height: getAppBarHeight(),
       margin: EdgeInsets.only(top: getTopBarHeight()),
       child: Stack(
         children: [
@@ -86,127 +86,20 @@ class TransactionView2State extends BaseWidgetState<TransactionView2> {
 
   @override
   Widget buildWidget(BuildContext context) {
-    if (AccountMgr().currentAccount == null) {
-      return Text(
-        ResString.get(context, RSID.main_tv_1), //"请先登录钱包",
+    if (AccountMgr().currentAccount == null)
+    {
+      return Center(
+        child: Text(
+          ResString.get(context, RSID.main_tv_1), //"请先登录钱包",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
       );
     }
 
     // 暂时把uniswap嵌入到这里显示
     return UniswapView(AccountMgr().currentAccount);
-
-//    return Column(
-//      mainAxisSize: MainAxisSize.min,
-//      children: <Widget>[
-//        getLinechart(),
-//        InkWell(
-//          onTap: () {
-//            onClickUniswap();
-//          },
-//          child: Container(
-//            margin: EdgeInsets.fromLTRB(30, 0, 30, 30),
-//            width: double.infinity,
-//            height: 50,
-//            child: Card(
-//              color: Colors.white,
-//              shape: RoundedRectangleBorder(
-//                borderRadius: BorderRadius.all(Radius.circular(20.0)),
-//              ),
-//              elevation: 10,
-//              shadowColor: Colors.black54,
-//              child: Row(
-//                children: <Widget>[
-////                   Container(
-////                     width: 40,
-////                     height: 40,
-////                     margin: EdgeInsets.all(20),
-////                     decoration: BoxDecoration(
-////                       color: Color(0xff1a1c1f),
-////                       shape: BoxShape.circle,
-////                     ),
-////                     child: Icon(
-////                       Icons.add_circle,
-////                       size: 26,
-////                       color: Color(0xfff0f0f0),
-////                     ),
-////                   ),
-//                  Expanded(
-//                    child: Text(
-//                      "Uniswap",
-//                      textAlign: TextAlign.center,
-//                      style: TextStyle(
-//                        color: Colors.black,
-//                        fontSize: 16,
-//                        fontWeight: FontWeight.w600,
-//                      ),
-//                    ),
-//                  ),
-////                   Icon(
-////                     Icons.chevron_right,
-////                     color: Colors.black,
-////                     size: 20,
-////                   ),
-////                   Container(width: 15),
-//                ],
-//              ),
-//            ),
-//          ),
-//        ),
-////        InkWell(
-////          onTap: () {
-////            onClickMining();
-////          },
-////          child: Container(
-////            margin: EdgeInsets.fromLTRB(30, 0, 30, 30),
-////            width: double.infinity,
-////            height: 70,
-////            child: Card(
-////              color: Colors.white,
-////              shape: RoundedRectangleBorder(
-////                borderRadius: BorderRadius.all(Radius.circular(40.0)),
-////              ),
-////              elevation: 10,
-////              shadowColor: Colors.black54,
-////              child: Row(
-////                children: <Widget>[
-//////                   Container(
-//////                     width: 40,
-//////                     height: 40,
-//////                     margin: EdgeInsets.all(20),
-//////                     decoration: BoxDecoration(
-//////                       color: Color(0xff1a1c1f),
-//////                       shape: BoxShape.circle,
-//////                     ),
-//////                     child: Icon(
-//////                       Icons.add_circle,
-//////                       size: 26,
-//////                       color: Color(0xfff0f0f0),
-//////                     ),
-//////                   ),
-////                  Expanded(
-////                    child: Text(
-////                      "流动性挖矿",
-////                      textAlign: TextAlign.center,
-////                      style: TextStyle(
-////                        color: Colors.black,
-////                        fontSize: 16,
-////                        fontWeight: FontWeight.w600,
-////                      ),
-////                    ),
-////                  ),
-//////                   Icon(
-//////                     Icons.chevron_right,
-//////                     color: Colors.black,
-//////                     size: 20,
-//////                   ),
-//////                   Container(width: 15),
-////                ],
-////              ),
-////            ),
-////          ),
-////        ),
-//      ],
-//    );
   }
 
   Widget getLinechart() {

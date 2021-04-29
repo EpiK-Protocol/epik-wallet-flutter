@@ -259,6 +259,8 @@ Map<RSID, String> map_en = {
   RSID.usev_11: "Being submitted to the Ethernet network, please be patient!",//"正在提交到以太坊网络，请耐心等待",
   RSID.usev_12: "Submitted to Ethereum \nThe results will be available later in the transaction history.",//"已提交到以太坊\n稍后可在交易记录中查询结果",
   RSID.usev_13: "Date,Open,High,Low,Close,Change,Change%",//Amount ["时间", "开", "高", "低", "收", "涨跌额", "涨幅",/* "成交量"*/];
+  RSID.usev_14: "Slip point : ",//"滑点 : ",
+  RSID.usev_15: "Price : ",
   //UniswapPoolAddView 注入资金
   RSID.uspav_1: "The current price is estimated. If the price fluctuates more than %s%, your transaction will be cancelled",//"当前为预估价格，如果价格波动超过%s%，您的交易将会撤销。",
   RSID.uspav_2: "Fee: %s ETH",//"手续费 : %s eth",

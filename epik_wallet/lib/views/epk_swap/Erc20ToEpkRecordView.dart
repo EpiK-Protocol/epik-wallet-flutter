@@ -6,6 +6,8 @@ import 'package:epikwallet/model/Erc20ToEpkSwapRecord.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
 import 'package:epikwallet/utils/data/date_util.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
+import 'package:epikwallet/utils/res_color.dart';
+import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/list_view.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,6 +28,12 @@ class Erc20ToEpkRecordViewState extends BaseWidgetState<Erc20ToEpkRecordView> {
   @override
   void initStateConfig() {
     super.initStateConfig();
+
+    setTopBarVisible(false);
+    setAppBarVisible(true);
+    setAppBarBackColor(Colors.transparent);
+    setTopBarBackColor(Colors.transparent);
+
     refresh();
   }
 
@@ -33,6 +41,18 @@ class Erc20ToEpkRecordViewState extends BaseWidgetState<Erc20ToEpkRecordView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     setAppBarTitle("EPK兑换记录");
+  }
+
+  @override
+  Widget getAppBar() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.fromLTRB(0, getTopBarHeight(), 0, 0),
+      decoration: BoxDecoration(
+        gradient: ResColor.lg_1,
+      ),
+      child: super.getAppBar(),
+    );
   }
 
   bool isFirst = true;
@@ -124,113 +144,182 @@ class Erc20ToEpkRecordViewState extends BaseWidgetState<Erc20ToEpkRecordView> {
   itemWidgetBuild(BuildContext context, int position) {
     Erc20ToEpkSwapRecord record = data[position];
 
+    bool isend = position >= data.length - 1;
+
+    // List<Widget> items = [
+    //
+    //   Row(
+    //     children: [
+    //       Text(
+    //         record.created_at_dt==null?"":
+    //         DateUtil.formatDate(record.created_at_dt,
+    //             format: DataFormats.y_mo_d_h_m),
+    //         style: TextStyle(
+    //           fontSize: 16,
+    //           color: Color(0xff333333),
+    //         ),
+    //       ),
+    //       Expanded(
+    //         child:Text(
+    //           "${record.amount} EPK",
+    //           textAlign: TextAlign.right,
+    //           style: TextStyle(
+    //             fontSize: 16,
+    //             color: Color(0xff333333),
+    //           ),
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    //
+    //   Container(height: 5),
+    //
+    //   Row(
+    //     children: [
+    //       Expanded(
+    //         child:Text(
+    //           record.status,
+    //           style: TextStyle(
+    //             fontSize: 14,
+    //             color: Color(0xff333333),
+    //           ),
+    //         ),
+    //       ),
+    //       Container(width: 5),
+    //       InkWell(
+    //         onTap: (){
+    //           lookEthTxhash(record.erc20_tx_hash);
+    //         },
+    //         child: Text(
+    //           "ERC20-EPK销毁交易",
+    //           style: TextStyle(
+    //             fontSize: 14,
+    //             color: Colors.blue,
+    //           ),
+    //         ),
+    //       ),
+    //       Container(width: 10),
+    //       InkWell(
+    //         onTap: (){
+    //           lookEpkCid(record.epik_cid);
+    //         },
+    //         child: Text(
+    //           "EPK发放交易",
+    //           style: TextStyle(
+    //             fontSize: 14,
+    //             color: Colors.blue,
+    //           ),
+    //         ),
+    //       ),
+    //
+    //     ],
+    //   ),
+    //
+    //
+    //   Container(height: 14),
+    //
+    //   Divider(
+    //     color: const Color(0xffeeeeee),
+    //     height: 1,
+    //     thickness: 1,
+    //   ),
+    // ];
+    //
+    // return Container(
+    //   padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
+    //   child: Column(
+    //     mainAxisSize: MainAxisSize.min,
+    //     children: items,
+    //   ),
+    // );
+
     List<Widget> items = [
-
-      Row(
-        children: [
-          Text(
-            record.created_at_dt==null?"":
-            DateUtil.formatDate(record.created_at_dt,
-                format: DataFormats.y_mo_d_h_m),
-            style: TextStyle(
-              fontSize: 16,
-              color: Color(0xff333333),
-            ),
-          ),
-          Expanded(
-            child:Text(
-              "${record.amount} EPK",
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                fontSize: 16,
-                color: Color(0xff333333),
-              ),
-            ),
-          ),
-        ],
-      ),
-
-      Container(height: 5),
-
-      Row(
-        children: [
-          Expanded(
-            child:Text(
-              record.status,
+      Container(
+        padding: EdgeInsets.fromLTRB(20, 0, 20,0),
+        child: Row(
+          children: [
+            Text(
+              record.created_at_dt == null
+                  ? ""
+                  : DateUtil.formatDate(record.created_at_dt,
+                  format: DataFormats.y_mo_d_h_m),
               style: TextStyle(
                 fontSize: 14,
-                color: Color(0xff333333),
+                color: ResColor.white_60,
               ),
             ),
-          ),
-          Container(width: 5),
-          InkWell(
-            onTap: (){
-              lookEthTxhash(record.erc20_tx_hash);
-            },
-            child: Text(
-              "ERC20-EPK销毁交易",
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.blue,
+            Container(width: 9),
+            Expanded(
+              child: Text(
+                record.status,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: ResColor.white,
+                ),
               ),
             ),
-          ),
-          Container(width: 10),
-          InkWell(
-            onTap: (){
-              lookEpkCid(record.epik_cid);
-            },
-            child: Text(
-              "EPK发放交易",
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.blue,
-              ),
+            Container(width: 9),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "${record.amount} EPK",
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Container(height: 5),
+                if (StringUtils.isNotEmpty(record.erc20_tx_hash))
+                  InkWell(
+                    onTap: () {
+                      lookEthTxhash(record.erc20_tx_hash);
+                    },
+                    child: Text(
+                      "ERC20-EPK 销毁交易",
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: ResColor.white_60,
+                      ),
+                    ),
+                  ),
+                Container(height: 5),
+                if (StringUtils.isNotEmpty(record.epik_cid))
+                  InkWell(
+                    onTap: () {
+                      lookEpkCid(record.epik_cid);
+                    },
+                    child: Text(
+                      "EPK 发放交易",
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: ResColor.white_60,
+                      ),
+                    ),
+                  ),
+              ],
             ),
-          ),
-
-        ],
+          ],
+        ),
       ),
-      //
-      // Container(height: 5),
-      //
-      // Row(
-      //   children: [
-      //     Expanded(
-      //       child:Text(
-      //        "ERC20-EPK销毁交易",
-      //         textAlign: TextAlign.center,
-      //         style: TextStyle(
-      //           fontSize: 12,
-      //           color: Colors.blue,
-      //         ),
-      //       ),
-      //     ),
-      //     Expanded(
-      //       child:Text(
-      //         "EPK发放交易",
-      //         textAlign: TextAlign.center,
-      //         style: TextStyle(
-      //           fontSize: 12,
-      //           color: Colors.blue,
-      //         ),
-      //       ),
-      //     ),
-      //   ],
-      // ),
 
-      Container(height: 14),
+      Container(height: 14.5),
 
-      Divider(
-        color: const Color(0xffeeeeee),
-        height: 1,
-        thickness: 1,
-      ),
+      if(!isend)
+        Divider(
+          color: ResColor.white_20,
+          height:0.5,//WHScreenUtil.onePx(),
+          thickness: 0.5,//WHScreenUtil.onePx(),
+          indent: 20,
+        ),
     ];
 
     return Container(
-      padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
+      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+      color: ResColor.b_3,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: items,

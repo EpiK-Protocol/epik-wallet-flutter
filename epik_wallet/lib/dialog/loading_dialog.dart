@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:epikwallet/main.dart';
+import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -127,7 +128,7 @@ class LoadingDialog {
               padding: EdgeInsets.fromLTRB(
                   padding_lr, padding_tb, padding_lr, padding_tb),
               decoration: BoxDecoration(
-                color: Color(0xffffffff),
+                color: ResColor.b_4,//Color(0xffffffff),
                 borderRadius: BorderRadius.circular(8),
 //          border: Border.all(
 //              color: ResColor.black_20,
@@ -143,7 +144,8 @@ class LoadingDialog {
                     height: progressSize,
                     padding: EdgeInsets.all(progressWidth / 2),
                     child: CircularProgressIndicator(
-                      strokeWidth: progressWidth,
+                      strokeWidth: progressWidth,//2.0
+                      valueColor: new AlwaysStoppedAnimation<Color>(ResColor.progress),
                     ),
                   ),
                   if (StringUtils.isNotEmpty(text))
@@ -156,8 +158,8 @@ class LoadingDialog {
                           child: Text(
                             text,
                             style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black87,
+                              fontSize: 17,//16,
+                              color: Colors.white,//Colors.black87,
                               decoration: TextDecoration.none,
                               fontFamily: fontFamily_def,
                               fontWeight: FontWeight.w500,

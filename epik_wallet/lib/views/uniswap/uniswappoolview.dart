@@ -12,6 +12,7 @@ import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
+import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -128,81 +129,54 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
         ),
         child: Column(
           children: <Widget>[
-            Container(height: appbarheight + BaseFuntion.topbarheight),
             Container(
               width: double.infinity,
-              margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
-              child: Card(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                ),
-                elevation: 10,
-                shadowColor: Colors.black26,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
-                      width: double.infinity,
-                      height: 40,
-                      child: FlatButton(
-                        highlightColor: Colors.white24,
-                        splashColor: Colors.white24,
-                        onPressed: () {
-                          onClickAdd();
-                        },
-                        child: Text(
-                          ResString.get(context, RSID.uspv_1), //"注入流动资金",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
+              margin: EdgeInsets.fromLTRB(30, 45, 30, 0),
+              padding: EdgeInsets.fromLTRB(20, 15, 20, 25),
+              decoration: BoxDecoration(
+                color: ResColor.b_3,
+                borderRadius:BorderRadius.circular(20),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Text(
+                            ResString.get(context, RSID.uspv_2), //"资金池信息",
+                            style: TextStyle(
+                                color: Colors.white, fontSize: 17),
                           ),
                         ),
-                        color: color_btn_1,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                        InkWell(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(15.0)),
+                          onTap: () {
+                            refresh();
+                          },
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            padding: EdgeInsets.fromLTRB(5, 5, 7,7),
+                            child: Icon(
+                              Icons.refresh_outlined,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(20, 0, 20, 5),
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(
-                              ResString.get(context, RSID.uspv_2), //"资金池信息",
-                              style: TextStyle(
-                                  color: Colors.black87, fontSize: 16),
-                            ),
-                          ),
-                          InkWell(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(15.0)),
-                            onTap: () {
-                              refresh();
-                            },
-                            child: Container(
-                              width: 30,
-                              height: 30,
-                              child: Icon(
-                                Icons.refresh,
-                                color: Colors.black54,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    getUserLiquidity(),
-                  ],
-                ),
+                  ),
+                  getUserLiquidity(),
+                ],
               ),
             ),
             Container(
-              padding: EdgeInsets.fromLTRB(40, 20, 40, 0),
+              padding: EdgeInsets.fromLTRB(40, 35, 40, 0),
               child: InkWell(
                 onTap: () {
                   onClickReadme();
@@ -210,9 +184,9 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
                 child: Text(
                   ResString.get(context, RSID.uspv_3), //"使用说明(新手必读)",
                   style: TextStyle(
-                    color: ResColor.main_1,
+                    color: ResColor.white,
                     fontSize: 14,
-                    decoration: TextDecoration.underline, //下滑线
+                    // decoration: TextDecoration.underline, //下滑线
                   ),
                 ),
               ),
@@ -229,8 +203,8 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
       child = Text(
         ResString.get(context, RSID.uspv_4), //"请先登录钱包",
         style: TextStyle(
-          color: Colors.black54,
-          fontSize: 16,
+          color: Colors.white,
+          fontSize: 17,
         ),
       );
     } else if (loading) {
@@ -239,20 +213,20 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
         height: 30,
         child: CircularProgressIndicator(
           strokeWidth: 2,
-          valueColor: new AlwaysStoppedAnimation<Color>(color_btn_1),
+          valueColor: new AlwaysStoppedAnimation<Color>(ResColor.progress),
         ),
       );
     } else if (uniswapinfo == null) {
       child = Text(
         ResString.get(context, RSID.request_failed), //"请求失败",
         style: TextStyle(
-          color: Colors.black54,
-          fontSize: 16,
+          color: Colors.white,
+          fontSize: 17,
         ),
       );
     } else {
       child = Container(
-        padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,8 +238,8 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
                       replace: [CurrencySymbol.EPKerc20.symbol]),
                   //"池中${CurrencySymbol.EPKerc20.symbol}:",
                   style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 16,
+                    color: ResColor.white_60,
+                    fontSize: 14,
                   ),
                 ),
                 Expanded(
@@ -276,14 +250,14 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
                         supply0: false),
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 16,
+                      color: Colors.white,
+                      fontSize: 14,
                     ),
                   ),
                 ),
               ],
             ),
-            Container(height: 10),
+            Container(height: 7),
             Row(
               children: <Widget>[
                 Text(
@@ -291,8 +265,8 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
                       replace: [CurrencySymbol.USDT.symbol]),
                   //"池中${CurrencySymbol.USDT.symbol}:",
                   style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 16,
+                    color: ResColor.white_60,
+                    fontSize: 14,
                   ),
                 ),
                 Expanded(
@@ -303,21 +277,21 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
                         supply0: false),
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 16,
+                      color: Colors.white,
+                      fontSize: 14,
                     ),
                   ),
                 ),
               ],
             ),
-            Container(height: 10),
+            Container(height: 7),
             Row(
               children: <Widget>[
                 Text(
                   ResString.get(context, RSID.uspv_6), //"您所占份额:",
                   style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 16,
+                    color: ResColor.white_60,
+                    fontSize: 14,
                   ),
                 ),
                 Expanded(
@@ -329,21 +303,21 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
                         "%",
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 16,
+                      color: Colors.white,
+                      fontSize: 14,
                     ),
                   ),
                 ),
               ],
             ),
-            Container(height: 10),
+            Container(height: 7),
             Row(
               children: <Widget>[
                 Text(
                   ResString.get(context, RSID.uspv_7), //"最后交易时间:",
                   style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 16,
+                    color: ResColor.white_60,
+                    fontSize: 14,
                   ),
                 ),
                 Expanded(
@@ -356,8 +330,8 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
                         format: DataFormats.full),
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 16,
+                      color: Colors.white,
+                      fontSize: 14,
                     ),
                   ),
                 ),
@@ -367,54 +341,63 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
             Row(
               children: <Widget>[
                 Expanded(
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  child : LoadingButton(
                     height: 40,
-                    child: FlatButton(
-                      highlightColor: Colors.white24,
-                      splashColor: Colors.white24,
-                      onPressed: () {
-                        onClickAdd();
-                      },
-                      child: Text(
-                        ResString.get(context, RSID.uspv_8), //"注入",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                      color: color_btn_2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(6)),
-                      ),
+                    width: null,
+                    bg_borderradius: BorderRadius.circular(4),
+                    gradient_bg: ResColor.lg_2,
+                    color_bg: Colors.transparent,
+                    disabledColor: Colors.transparent,
+                    text: RSID.uspv_8.text, //"注入",
+                    textstyle: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
                     ),
+                    onclick: (lbtn) {
+                      onClickAdd();
+                    },
                   ),
                 ),
                 Container(width: 10),
                 Expanded(
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  // child: Container(
+                  //   margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  //   height: 40,
+                  //   child: FlatButton(
+                  //     highlightColor: Colors.white24,
+                  //     splashColor: Colors.white24,
+                  //     onPressed: () {
+                  //       onClickRemove();
+                  //     },
+                  //     child: Text(
+                  //       ResString.get(context, RSID.uspv_9), //"撤回",
+                  //       textAlign: TextAlign.center,
+                  //       style: TextStyle(
+                  //         color: Colors.white,
+                  //         fontSize: 16,
+                  //       ),
+                  //     ),
+                  //     color: color_btn_2,
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.all(Radius.circular(6)),
+                  //     ),
+                  //   ),
+                  // ),
+                  child : LoadingButton(
                     height: 40,
-                    child: FlatButton(
-                      highlightColor: Colors.white24,
-                      splashColor: Colors.white24,
-                      onPressed: () {
-                        onClickRemove();
-                      },
-                      child: Text(
-                        ResString.get(context, RSID.uspv_9), //"撤回",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                      ),
-                      color: color_btn_2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(6)),
-                      ),
+                    width: null,
+                    bg_borderradius: BorderRadius.circular(4),
+                    gradient_bg: ResColor.lg_5,
+                    color_bg: Colors.transparent,
+                    disabledColor: Colors.transparent,
+                    text: RSID.uspv_9.text, //"撤回",
+                    textstyle: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
                     ),
+                    onclick: (lbtn) {
+                      onClickRemove();
+                    },
                   ),
                 ),
               ],
@@ -425,16 +408,16 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
     }
 
     return Container(
-      margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
+      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
       width: double.infinity,
       constraints: BoxConstraints(
-        minHeight: 130,
+        minHeight: 157,
       ),
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(15.0)),
-        border: Border.all(color: Color(0xffeeeeee), width: 0.7),
-      ),
+      // decoration: BoxDecoration(
+      //   borderRadius: BorderRadius.all(Radius.circular(15.0)),
+      //   border: Border.all(color: Color(0xffeeeeee), width: 0.7),
+      // ),
       child: child,
     );
   }
@@ -489,7 +472,7 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
             text: ResString.get(context, RSID.uspv_15_1),
             // "「1」本页资金池交易是基于Uniswap的ERC20-EPK与USDT的流动性支持\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
             style: TextStyle(
-              color: Color(0xff333333),
+              color: Colors.white,
               fontSize: 14.0,
               fontFamily: fontFamily_def,
             ),
@@ -497,7 +480,7 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
               TextSpan(
                 text: address,
                 style: TextStyle(
-                  color: Colors.blue,
+                  color: ResColor.o_1,//Colors.blue,
                   fontSize: 14.0,
 //                  decoration: TextDecoration.underline,
                 ),
@@ -510,7 +493,7 @@ class UniswapPoolViewState extends BaseInnerWidgetState<UniswapPoolView> {
               TextSpan(
                 text: ResString.get(context, RSID.uspv_15_3), //"这里",
                 style: TextStyle(
-                  color: Colors.blue,
+                  color: ResColor.o_1,//Colors.blue,
                   fontSize: 14.0,
 //                  decoration: TextDecoration.underline,
                 ),

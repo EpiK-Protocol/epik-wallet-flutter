@@ -321,7 +321,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     switch (headerlist[position]) {
       case "exchange_epk":
         return headerItemBuild(
-          localImage: "assets/img/ic_swap.png",
+          localImage: "assets/img/ic_erc20_to_epk.png",
           text: "ERC20-EPK 兑换 EPK",
           onclick: () {
             ViewGT.showErc20ToEpkView(context);
@@ -331,7 +331,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
       case "hunter_reward":
         {
           return headerItemBuild(
-            localImage: "assets/img/ic_swap.png",
+            localImage: "assets/img/ic_dapp_bounty_swap.png",
             text: "领取赏金猎人奖励",
             onclick: () {
               ViewGT.showTakeBountyView(context);

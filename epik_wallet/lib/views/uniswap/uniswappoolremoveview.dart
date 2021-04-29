@@ -12,6 +12,7 @@ import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
+import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -54,6 +55,7 @@ class UniswapPoolRemoveViewState
     setAppBarBackColor(Colors.transparent);
     setTopBarBackColor(Colors.transparent);
     isTopFloatWidgetShow = true;
+    resizeToAvoidBottomPadding = true;
   }
 
   @override
@@ -79,28 +81,28 @@ class UniswapPoolRemoveViewState
 
   Widget buildWidget(BuildContext context) {
     List<Widget> views = [
+      // Container(
+      //   padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+      //   alignment: Alignment.centerLeft,
+      //   child: Row(
+      //     children: <Widget>[
+      //       Text(
+      //         ResString.get(context, RSID.usprv_2), //"撤回金额",
+      //         style: TextStyle(
+      //           color: Colors.white,
+      //           fontSize: 17,
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+      // ),
       Container(
-        padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-        alignment: Alignment.centerLeft,
-        child: Row(
-          children: <Widget>[
-            Text(
-              ResString.get(context, RSID.usprv_2), //"撤回金额",
-              style: TextStyle(
-                color: Colors.black87,
-                fontSize: 16,
-              ),
-            ),
-          ],
-        ),
-      ),
-      Container(
-        padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+        padding: EdgeInsets.fromLTRB(20, 40, 20, 0),
         alignment: Alignment.center,
         child: Text(
           "${StringUtils.formatNumAmount(amount_ratio * 100, point: 2, supply0: false)}%",
           style: TextStyle(
-            color: Colors.black87,
+            color:ResColor.o_1,// Colors.white,
             fontSize: 50,
             fontFamily: "DIN_Condensed_Bold",
           ),
@@ -125,8 +127,8 @@ class UniswapPoolRemoveViewState
           onChangeEnd: (val) {},
           min: 0,
           max: 1,
-          activeColor: color_btn_1,
-          inactiveColor: color_btn_2,
+          activeColor: ResColor.o_1,
+          inactiveColor: ResColor.white,
         ),
       ),
       Container(
@@ -135,94 +137,157 @@ class UniswapPoolRemoveViewState
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [0.25, 0.50, 0.75, 1.0].map((item) {
-            return Container(
-              margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-              height: 30,
-              width: 50,
-              child: FlatButton(
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                highlightColor: Colors.white24,
-                splashColor: Colors.white24,
-                onPressed: () {
+            return LoadingButton(
+                height: 20,
+                width: 40,
+              bg_borderradius: BorderRadius.circular(4),
+              // gradient_bg: ResColor.lg_1,
+              color_bg: Colors.transparent,
+              disabledColor: Colors.transparent,
+              side: BorderSide(color: ResColor.o_1,width: 1),
+              text: "${StringUtils.formatNumAmount(item * 100, point: 0, supply0: false)}%",
+              textstyle: TextStyle(
+                color: ResColor.o_1,
+                fontSize: 11,
+              ),
+              onclick: (lbtn) {
                   setState(() {
                     amount_ratio = item;
                     calcAmount();
                   });
-                },
-                child: Text(
-                  "${StringUtils.formatNumAmount(item * 100, point: 0, supply0: false)}%",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                  ),
-                ),
-                color: color_btn_1,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(6)),
-                ),
-              ),
+              },
             );
+
           }).toList(),
         ),
       ),
       Container(
         width: 50,
         height: 50,
-        child: Icon(Icons.arrow_downward),
+        child: Icon(Icons.arrow_downward,color: ResColor.o_1,),
       ),
       Container(
         margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
-        padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
+        // padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
         width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(15.0)),
-          border: Border.all(color: Color(0xffeeeeee), width: 0.7),
-        ),
+        // decoration: BoxDecoration(
+        //   borderRadius: BorderRadius.all(Radius.circular(15.0)),
+        //   border: Border.all(color: Color(0xffeeeeee), width: 0.7),
+        // ),
         child: Column(
           children: <Widget>[
             Row(
               children: <Widget>[
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                  width: 30,
+                  height: 30,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: <Widget>[
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        child: Image(
+                          image: AssetImage(cs_A.iconUrl),
+                          width: 30,
+                          height: 30,
+                        ),
+                      ),
+                      Positioned(
+                          right: -1.5,
+                          bottom: -1.5,
+                          child: Image(
+                            image: AssetImage(cs_A.networkType.iconUrl),
+                            width: 13,
+                            height: 13,
+                          )),
+                    ],
+                  ),
+                ),
                 Expanded(
                   child: Text(
                     StringUtils.formatNumAmount(amount_A,
                         point: 8, supply0: false),
                     style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 16,
+                      color: ResColor.white,
+                      fontSize: 17,
                     ),
                   ),
                 ),
                 Text(
                   "${cs_A.symbol}",
                   style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black87,
+                    color: ResColor.white_60,
+                    fontSize: 17,
                   ),
                 ),
               ],
             ),
-            Container(height: 10),
+            Container(height: 8),
+            Divider(
+              height: 1,
+              thickness: 1,
+              indent: 0,
+              endIndent: 0,
+              color: ResColor.white_20,
+            ),
+            Container(height: 20),
             Row(
               children: <Widget>[
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+                  width: 30,
+                  height: 30,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: <Widget>[
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        child: Image(
+                          image: AssetImage(cs_B.iconUrl),
+                          width: 30,
+                          height: 30,
+                        ),
+                      ),
+                      Positioned(
+                          right: -1.5,
+                          bottom: -1.5,
+                          child: Image(
+                            image: AssetImage(cs_B.networkType.iconUrl),
+                            width: 13,
+                            height: 13,
+                          )),
+                    ],
+                  ),
+                ),
                 Expanded(
                   child: Text(
                     StringUtils.formatNumAmount(amount_B,
                         point: 8, supply0: false),
                     style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 16,
+                      color: ResColor.white,
+                      fontSize: 17,
                     ),
                   ),
                 ),
                 Text(
                   "${cs_B.symbol}",
                   style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black87,
+                    color: ResColor.white_60,
+                    fontSize: 17,
                   ),
                 ),
               ],
+            ),
+            Container(height: 8),
+            Divider(
+              height: 1,
+              thickness: 1,
+              indent: 0,
+              endIndent: 0,
+              color: ResColor.white_20,
             ),
           ],
         ),
@@ -230,103 +295,186 @@ class UniswapPoolRemoveViewState
       Container(
         width: double.infinity,
         margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
-        child: Text(
-          ResString.get(context, RSID.uspav_2,replace: [widget.walletAccount.eth_suggestGas]),//"手续费 : ${widget.walletAccount.eth_suggestGas} eth",
-          style: TextStyle(
-            color: Colors.black45,
-            fontSize: 12,
-          ),
-        ),
-      ),
-      Container(
-        width: double.infinity,
-        padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
-        child: Text(
-          "1 ${cs_A.symbol} = ${StringUtils.formatNumAmount(widget.uniswapinfo.price_USDT_EPK, point: 8, supply0: false)} ${cs_B.symbol}",
-          style: TextStyle(
-            color: Colors.black45,
-            fontSize: 12,
-          ),
-        ),
-      ),
-      Container(
-        width: double.infinity,
-        padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
-        child: Text(
-          "1 ${cs_B.symbol} = ${StringUtils.formatNumAmount(widget.uniswapinfo.price_EPK_USDT, point: 8, supply0: false)} ${cs_A.symbol}",
-          style: TextStyle(
-            color: Colors.black45,
-            fontSize: 12,
-          ),
-        ),
-      ),
-      Container(
-        margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
-        width: double.infinity,
-        height: 40,
-        child: FlatButton(
-          highlightColor: Colors.white24,
-          splashColor: Colors.white24,
-          onPressed: () {
-            onClickRemove();
-          },
-          child: Text(
-            ResString.get(context, RSID.usprv_3), //"确定撤回",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-            ),
-          ),
-          color: color_btn_1,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
-        ),
-      ),
-    ];
-
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-          0, BaseFuntion.topbarheight + BaseFuntion.appbarheight_def, 0, 0),
-      decoration: BoxDecoration(
-        gradient: RadialGradient(
-          colors: [
-            Color(0xfff7e6f0),
-            Colors.white,
-          ],
-          center: Alignment.center,
-          radius: 1,
-          tileMode: TileMode.clamp,
-        ),
-      ),
-      child: SingleChildScrollView(
-        physics: AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.all(0),
-        child: Container(
-          constraints: BoxConstraints(
-            minHeight: getScreenHeight() -
-                BaseFuntion.topbarheight -
-                BaseFuntion.appbarheight_def,
-          ),
-          child: Column(children: [
-            Container(
-              width: double.infinity,
-              margin: EdgeInsets.fromLTRB(20, 30, 20, 0),
-              child: Card(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                ),
-                elevation: 10,
-                shadowColor: Colors.black26,
-                child: Column(
-                  children: views,
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                ResString.get(context, RSID.usev_2, replace: [""]),
+//                        "手续费 : ${StringUtils.formatNumAmount(StringUtils.parseDouble(widget.walletAccount.eth_suggestGas, 0) * 9, point: 8, supply0: false)} eth",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
                 ),
               ),
             ),
-          ]),
+            Text(
+              "${widget.walletAccount.eth_suggestGas}"+ " ",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+              ),
+            ),
+            Text(
+              "ETH", //手续费改为
+              style: TextStyle(
+                color: ResColor.white_60,
+                fontSize: 14,
+              ),
+            ),
+          ],
         ),
+      ),
+      Container(
+        width: double.infinity,
+        margin: EdgeInsets.fromLTRB(20, 5, 20, 0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Text(
+                RSID.usev_15.text,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+            Column(
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      // "1 ${cs_A.symbol} = ${StringUtils.formatNumAmount(widget?.walletAccount?.uniswapinfo?.price_USDT_EPK ?? 0, point: 8, supply0: false)} ${cs_B.symbol}",
+                      StringUtils.formatNumAmount(
+                          widget?.walletAccount?.uniswapinfo
+                              ?.price_USDT_EPK ??
+                              0,
+                          point: 8,
+                          supply0: false) +
+                          " ",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                    ),
+                    Text(
+                      "${cs_A.symbol}/ ${cs_B.symbol}",
+                      style: TextStyle(
+                        color: ResColor.white_60,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+                Container(height: 5),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      // "1 ${cs_B.symbol} = ${StringUtils.formatNumAmount(widget?.walletAccount?.uniswapinfo?.price_EPK_USDT ?? 0, point: 8, supply0: false)} ${cs_A.symbol}",
+                      StringUtils.formatNumAmount(
+                          widget?.walletAccount?.uniswapinfo
+                              ?.price_EPK_USDT ??
+                              0,
+                          point: 8,
+                          supply0: false) +
+                          " ",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                    ),
+                    Text(
+                      "${cs_B.symbol}/ ${cs_A.symbol}",
+                      style: TextStyle(
+                        color: ResColor.white_60,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      LoadingButton(
+        height: 40,
+        width: double.infinity,
+        margin: EdgeInsets.fromLTRB(20, 20, 20, 40),
+        bg_borderradius: BorderRadius.circular(4),
+        gradient_bg: ResColor.lg_1,
+        color_bg: Colors.transparent,
+        disabledColor: Colors.transparent,
+        text: RSID.usprv_3.text, //"确定撤回",
+        textstyle: TextStyle(
+          color: Colors.white,
+          fontSize: 17,
+        ),
+        onclick: (lbtn) {
+          onClickRemove();
+        },
+      ),
+
+    ];
+
+    Widget child = SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.all(0),
+      child: Container(
+        constraints: BoxConstraints(
+          minHeight: getScreenHeight() -
+              BaseFuntion.topbarheight -
+              BaseFuntion.appbarheight_def,
+        ),
+        child: Column(children: [
+          Container(
+            width: double.infinity,
+            margin: EdgeInsets.fromLTRB(20, 30, 20, 0),
+            decoration: BoxDecoration(
+              color:ResColor.b_3,
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            ),
+            child: Column(
+              children: views,
+            ),
+          ),
+        ]),
+      ),
+    );
+
+
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      child: Stack(
+        children: [
+          // header card
+          Container(
+            width: double.infinity,
+            height: getAppBarHeight() +
+                getTopBarHeight() +
+                128,
+            padding: EdgeInsets.only(top: getTopBarHeight()),
+            decoration: BoxDecoration(
+              gradient: ResColor.lg_1,
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+            ),
+            child: Column(
+              children: [
+                getAppBar(),
+              ],
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            top: getAppBarHeight() + getTopBarHeight(),
+            bottom: 0,
+            child: child,
+          ),
+        ],
       ),
     );
   }

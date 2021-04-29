@@ -241,6 +241,9 @@ flutter:
     - assets/img/ic_arrow_withdraw.png
     - assets/img/ic_arrow_deposit.png
     - assets/img/ic_scan_2.png
+    - assets/img/ic_dapp_bounty_swap.png
+    - assets/img/ic_erc20_to_epk.png
+    - assets/img/ic_uniswap_change_currency.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

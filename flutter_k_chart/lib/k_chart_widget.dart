@@ -192,9 +192,9 @@ class _KChartWidgetState extends State<KChartWidget>  with SingleTickerProviderS
   Widget _buildItem(String info, String infoName) {
     Color color = Colors.white;
     if (info.startsWith("+"))
-      color = Colors.green.shade600;
+      color = const Color(0xff4ADE2C);//Colors.green.shade600;
     else if (info.startsWith("-"))
-      color =Colors.pinkAccent;
+      color =const Color(0xffF24F30);//Colors.pinkAccent;
     else
       color = ChartColors.markerTextColor;//Colors.white;
     return Container(

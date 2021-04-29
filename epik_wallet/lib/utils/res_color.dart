@@ -67,5 +67,11 @@ class ResColor {
     end: Alignment.centerRight,
   );
 
+  static const LinearGradient lg_5 = LinearGradient(
+    colors: [Color(0xffF576A4), Color(0xffA870F5)],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+
 
 }

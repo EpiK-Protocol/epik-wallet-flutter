@@ -177,7 +177,7 @@ class EpikWalletUtils {
         // 从api接口读取 使用 lasttime
         List<TepkOrder> temp;
         HttpJsonRes hjr = await ApiWallet.getTepkOrderList(
-            waccount.epik_EPK_address, lastTime, pagesize);
+            waccount.epik_EPK_address, lastTime, pagesize,epkHeight);
         if (hjr.code == 0) {
           temp = JsonArray.parseList<TepkOrder>(
               JsonArray.obj2List(hjr.jsonMap["list"]),

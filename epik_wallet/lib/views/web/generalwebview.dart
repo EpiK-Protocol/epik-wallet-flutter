@@ -76,12 +76,18 @@ class _GeneralWebViewState extends BaseWidgetState<GeneralWebView> {
         finish();
       },
       child: Container(
-        width: getAppBarHeight() * 0.8,
+        padding: EdgeInsets.fromLTRB(20, 0 , 20, 0),
+        width: 24.0+20+20,
         height: getAppBarHeight(),
-        child: Icon(
-          OMIcons.arrowBackIos,
-          color: color ?? Colors.black,
-          size: 20,
+        // child: Icon(
+        //   OMIcons.arrowBackIos,
+        //   color: color ?? _appBarContentColor,
+        //   size: 20,
+        // ),
+        child: Center(
+          child: Image.asset("assets/img/ic_back.png",width: 24,height: 24,
+            color: color ?? appBarContentColor,
+          ),
         ),
       ),
     );

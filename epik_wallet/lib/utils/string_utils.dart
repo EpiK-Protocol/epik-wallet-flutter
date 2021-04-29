@@ -206,9 +206,20 @@ class StringUtils {
   }
 
   ///100000123456789012345678 ->  100000.123456789012345678
+  ///                                      1200000000000000
   static String bigNumDownsizing(String num,{int bit=18})
   {
     num = num?.trim();
+    if(num!=null && num.length<=bit)
+    {
+
+      int zero = bit-num.length;
+        zero+=2;
+      for(int i=0;i<zero;i++)
+      {
+        num="0"+num;
+      }
+    }
     if(num!=null&& num.length>bit && num.contains(".")==false)
     {
       List<String> list =  num.split("");

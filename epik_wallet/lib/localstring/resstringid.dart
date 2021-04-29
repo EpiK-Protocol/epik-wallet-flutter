@@ -252,6 +252,8 @@ enum RSID {
   usev_11,
   usev_12,
   usev_13,
+  usev_14,
+  usev_15,
   //UniswapPoolAddView 注入资金
   uspav_1,
   uspav_2,

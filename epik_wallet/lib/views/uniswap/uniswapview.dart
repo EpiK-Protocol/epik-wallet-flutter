@@ -7,6 +7,7 @@ import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
+import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/views/uniswap/uniswapexchangeview.dart';
 import 'package:epikwallet/views/uniswap/uniswappoolview.dart';
 import 'package:epikwallet/views/viewgoto.dart';
@@ -25,29 +26,31 @@ class UniswapView extends BaseWidget {
   }
 }
 
-class UniswapViewState extends BaseWidgetState<UniswapView> with TickerProviderStateMixin{
-
+class UniswapViewState extends BaseWidgetState<UniswapView>
+    with TickerProviderStateMixin {
   TabController _tabController;
   int pageIndex = 0;
   int _selectedIndex_lest = -1;
 
+  double headerbgRate = 0;
+
   @override
   void initStateConfig() {
     super.initStateConfig();
-//    setAppBarTitle("Uniswap");
     setBackIconHinde();
     setTopBarVisible(false);
     setAppBarVisible(false);
-    setAppBarHeight(60);
     setAppBarBackColor(Colors.transparent);
     setTopBarBackColor(Colors.transparent);
     isTopFloatWidgetShow = true;
+    resizeToAvoidBottomPadding = true;
 
-//    setAppBarRightTitle("交易记录");
+    // setAppBarRightTitle("交易记录");
 
-    _tabController = new TabController(
-        initialIndex: pageIndex, length: 2, vsync: this);
+    _tabController =
+        new TabController(initialIndex: pageIndex, length: 2, vsync: this);
     _tabController.addListener(() {
+      print(_tabController.animation.value);
       // tabbar 监听
       setState(() {
         _selectedIndex_lest = pageIndex;
@@ -75,8 +78,7 @@ class UniswapViewState extends BaseWidgetState<UniswapView> with TickerProviderS
     super.dispose();
   }
 
-  eventCallback_upconfig(arg)
-  {
+  eventCallback_upconfig(arg) {
     // 钱包接口api更新 重新请求uniswapinfo
     widget?.walletAccount?.uploadUniswapInfo();
   }
@@ -87,26 +89,31 @@ class UniswapViewState extends BaseWidgetState<UniswapView> with TickerProviderS
       left: 0,
       right: 0,
       top: 0,
-      height: appbarheight+BaseFuntion.topbarheight,
-      child: ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX:2,sigmaY: 2),
-          child: Column(
-            children: <Widget>[
-              getTopBar(),
-              getAppBar(),
-            ],
-          ),
-        ),
+      height: appbarheight + BaseFuntion.topbarheight,
+      // child: ClipRect(
+      //   child: BackdropFilter(
+      //     filter: ImageFilter.blur(sigmaX:2,sigmaY: 2),
+      //     child: Column(
+      //       children: <Widget>[
+      //         getTopBar(),
+      //         getAppBar(),
+      //       ],
+      //     ),
+      //   ),
+      // ),
+      child: Column(
+        children: <Widget>[
+          getTopBar(),
+          getAppBar(),
+        ],
       ),
     );
   }
 
-
   @override
   Widget getAppBarRight({Color color}) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         ViewGT.showUniswaporderlistView(context, widget.walletAccount);
       },
       child: super.getAppBarRight(color: color),
@@ -115,60 +122,50 @@ class UniswapViewState extends BaseWidgetState<UniswapView> with TickerProviderS
 
   @override
   Widget getAppBarCenter({Color color}) {
+    List<RSID> items = [RSID.usv_2, RSID.usv_3];
+
     return Container(
-      height: 40,
-      width: 220,
-      child: Card(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+      height: getAppBarHeight(),
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      child: TabBar(
+        tabs: items.map((rsid) {
+          return Container(
+            alignment: Alignment.bottomCenter,
+            child: Text(rsid.text),
+          );
+        }).toList(),
+        controller: _tabController,
+        isScrollable: true,
+        labelPadding: EdgeInsets.fromLTRB(10, 0, 10, 6),
+        labelColor: Colors.white,
+        labelStyle: TextStyle(
+          fontSize: 20,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          height: 1,
         ),
-        elevation: 5,
-        shadowColor: Colors.black26,
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: GestureDetector(
-                onTap: (){
-                  onClickTab(0);
-                },
-                child: Text(
-                  ResString.get(context, RSID.usv_2),//"兑换",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: pageIndex == 0 ? Colors.black : Colors.black54,
-                    fontSize: 16,
-                    fontWeight:
-                    pageIndex == 0 ? FontWeight.w600 : FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: GestureDetector(
-                onTap: (){
-                  onClickTab(1);
-                },
-                child:Text(
-                  ResString.get(context, RSID.usv_3),//"资金池",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: pageIndex == 1 ? Colors.black : Colors.black54,
-                    fontSize: 16,
-                    fontWeight:
-                    pageIndex == 1 ?FontWeight.w600 : FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-          ],
+        unselectedLabelColor: ResColor.white_60,
+        unselectedLabelStyle: TextStyle(
+          fontSize: 14,
+          color: ResColor.white_80,
+          fontWeight: FontWeight.bold,
+          height: 1,
         ),
+        indicator: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          color: Colors.white,
+        ),
+        indicatorPadding: EdgeInsets.fromLTRB(8, 40, 8, 0),
+        indicatorSize: TabBarIndicatorSize.label,
+        indicatorWeight: 4,
+        onTap: (value) {
+          onClickTab(value);
+        },
       ),
     );
   }
 
-  onClickTab(int index)
-  {
+  onClickTab(int index) {
     setState(() {
       pageIndex = index;
       _tabController.animateTo(index);
@@ -178,21 +175,63 @@ class UniswapViewState extends BaseWidgetState<UniswapView> with TickerProviderS
   @override
   Widget buildWidget(BuildContext context) {
     return Container(
-      // padding: EdgeInsets.fromLTRB(0, BaseFuntion.topbarheight+getAppBarHeight(), 0, 0),
-      decoration: BoxDecoration(
-        gradient:const RadialGradient(
-          colors:  [Color(0xfff7e6f0),Colors.white,],
-          center: Alignment.center,
-          radius:1,
-          tileMode: TileMode.clamp,
-        ),
-      ),
-      child: TabBarView(
-        controller: _tabController,
-//        physics: new NeverScrollableScrollPhysics(), //禁止横向滑动翻页
+      width: double.infinity,
+      height: double.infinity,
+      child: Stack(
         children: [
-          UniswapExchangeView(widget.walletAccount),
-          UniswapPoolView(widget.walletAccount),
+          // header card
+          Container(
+            width: double.infinity,
+            height: getAppBarHeight() +
+                getTopBarHeight() +
+                (40 + 128 * headerbgRate),
+            // (pageIndex == 0 ? 40 : 128),
+            padding: EdgeInsets.only(top: getTopBarHeight()),
+            decoration: BoxDecoration(
+              gradient: ResColor.lg_1,
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+            ),
+            child: Column(
+              children: [
+                // getAppBar(),
+              ],
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            top: getAppBarHeight() + getTopBarHeight(),
+            bottom: 0,
+            // child: TabBarView(
+            //   controller: _tabController,
+            //   children: [
+            //     UniswapExchangeView(widget.walletAccount),
+            //     UniswapPoolView(widget.walletAccount),
+            //   ],
+            // ),
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                if (notification is ScrollUpdateNotification) {
+                  ScrollUpdateNotification sun = notification;
+                  if (sun.metrics is PageMetrics) {
+                    PageMetrics pagemetrics = sun.metrics;
+                    double a = pagemetrics.extentBefore;
+                    double b = pagemetrics.extentInside;
+                    headerbgRate = b == 0 ? 0 : a / b;
+                    // dlog("$a  /  $b  = $headerbgRate ");
+                    setState(() {});
+                  }
+                }
+              },
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  UniswapExchangeView(widget.walletAccount),
+                  UniswapPoolView(widget.walletAccount),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
