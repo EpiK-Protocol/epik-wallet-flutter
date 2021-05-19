@@ -16,9 +16,10 @@ import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/screen/screen_util.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
-import 'package:epikwallet/views/MinnerView.dart';
+import 'package:epikwallet/views/MinerView.dart';
 import 'package:epikwallet/views/ExpertView.dart';
 import 'package:epikwallet/views/bountyview.dart';
+import 'package:epikwallet/views/miner/Minermenu.dart';
 import 'package:epikwallet/views/walletmenu.dart';
 import 'package:epikwallet/views/walletview.dart';
 import 'package:flutter/cupertino.dart';
@@ -106,7 +107,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
           subViews.add(ExpertView(key));
           return;
         case MainSubViewType.MINNER:
-          subViews.add(MinnerView(key));
+          subViews.add(MinerView(key));
           return;
       }
     });
@@ -151,7 +152,10 @@ class _MainViewState extends BaseWidgetState<MainView> {
         ],
       ),
       endDrawer: Drawer(
-        child: WalletMenu(),
+        child:
+        rightDrawerType==0?
+        WalletMenu():
+        MinerMenu(),
       ),
       endDrawerEnableOpenDragGesture: false,
     );
@@ -392,6 +396,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
     dlog("onCreate");
     eventMgr.add(EventTag.CHANGE_MAINVIEW_INDEX, eventCallback);
     eventMgr.add(EventTag.MAIN_RIGHT_DRAWER, eventCallback_rightdrawer);
+    eventMgr.add(EventTag.MAIN_RIGHT_DRAWER_MINER,eventCallback_rightdrawer_miner);
 
     checkUpgrade();
   }
@@ -404,9 +409,25 @@ class _MainViewState extends BaseWidgetState<MainView> {
     }
   }
 
+  /// 0 钱包菜单  1 矿机菜单
+  int rightDrawerType = 0;
+
   eventCallback_rightdrawer(obj) {
     if (obj == true) {
-      openRightDrawer();
+      rightDrawerType=0;
+      setState(() {
+        openRightDrawer();
+      });
+    } else {
+      closeRightDrawer();
+    }
+  }
+  eventCallback_rightdrawer_miner(obj) {
+    if (obj == true) {
+      rightDrawerType=1;
+      setState(() {
+        openRightDrawer();
+      });
     } else {
       closeRightDrawer();
     }
@@ -429,6 +450,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
         index = 1;
       }
     }
+    closeInput();
 
     setState(() {
       lastIndex = currentIndex;
@@ -449,6 +471,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
   void dispose() {
     eventMgr.remove(EventTag.CHANGE_MAINVIEW_INDEX, eventCallback);
     eventMgr.remove(EventTag.MAIN_RIGHT_DRAWER, eventCallback_rightdrawer);
+    eventMgr.remove(EventTag.MAIN_RIGHT_DRAWER_MINER,eventCallback_rightdrawer_miner);
 
     super.dispose();
   }

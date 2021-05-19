@@ -3,13 +3,17 @@ import 'dart:ui';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
+import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_mainnet.dart';
 import 'package:epikwallet/model/Expert.dart';
 import 'package:epikwallet/model/ExpertBaseInfo.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
+import 'package:epikwallet/utils/eventbus/event_manager.dart';
+import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
+import 'package:epikwallet/views/mainview.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:epikwallet/widget/list_view.dart';
@@ -334,6 +338,12 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
       ),
       bg_borderradius: BorderRadius.circular(4),
       onclick: (lbtn) {
+        if (AccountMgr().currentAccount == null)
+        {
+          showToast(RSID.main_bv_7.text);
+          eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX,  main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
+          return;
+        }
         ViewGT.showApplyExpertView(context);
       },
     );
@@ -475,6 +485,15 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
   }
 
   onItemClick(int position) {
+
+    if (AccountMgr().currentAccount == null)
+    {
+      showToast(RSID.main_bv_7.text);
+      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX,  main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
+      return;
+    }
+
+
     Expert item = data_experts_show[position];
     ViewGT.showExpertInfoView(context, item).then((value) {
       // dlog("showExpertInfoView result =${value}");

@@ -188,6 +188,9 @@ dependencies:
   # 状态栏导航栏控制器(手机系统顶部、底部)
   flutter_statusbarcolor: ^0.2.3
 
+  #各种进度指示器 https://pub.dev/packages/percent_indicator
+  percent_indicator: ^2.1.9
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -244,6 +247,7 @@ flutter:
     - assets/img/ic_dapp_bounty_swap.png
     - assets/img/ic_erc20_to_epk.png
     - assets/img/ic_uniswap_change_currency.png
+    - assets/img/ic_delete_red.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

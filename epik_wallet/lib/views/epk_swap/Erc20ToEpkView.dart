@@ -11,8 +11,10 @@ import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_wallet.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
+import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
 import 'package:epikwallet/main.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
+import 'package:epikwallet/model/EpikErc20SwapConfig.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
@@ -31,21 +33,27 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 enum Erc2EpkStep {
-  post_destroy,
-  confirm_destroy,
-  submitepk,
+  swap,
+  confirm_swap,
+  // post_destroy,
+  // confirm_destroy,
+  // submitepk,
   complete,
 }
 
 extension Erc2EpkStepEx on Erc2EpkStep {
   String get name {
     switch (this) {
-      case Erc2EpkStep.post_destroy:
-        return "发起销毁";
-      case Erc2EpkStep.confirm_destroy:
-        return "确认销毁";
-      case Erc2EpkStep.submitepk:
-        return "发放EPK";
+      case Erc2EpkStep.swap:
+        return "发起兑换";
+      case Erc2EpkStep.confirm_swap:
+        return "确认交易";
+      // case Erc2EpkStep.post_destroy:
+      //   return "发起销毁";
+      // case Erc2EpkStep.confirm_destroy:
+      //   return "确认销毁";
+      // case Erc2EpkStep.submitepk:
+      //   return "发放EPK";
       case Erc2EpkStep.complete:
         return "完成";
     }
@@ -61,7 +69,7 @@ class Erc20ToEpkView extends BaseWidget {
 }
 
 class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
-  Erc2EpkStep current_step = Erc2EpkStep.post_destroy;
+  Erc2EpkStep current_step = Erc2EpkStep.swap;
 
   TextEditingController _tec_erc20;
   String text_erc20 = "";
@@ -70,8 +78,8 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
   // 销毁erc20的交易记录
   ResultObj hdwallet_result;
 
-  // 发布epk的交易记录
-  ResultObj epkwallet_result;
+  // // 发布epk的交易记录
+  // ResultObj epkwallet_result;
 
   @override
   void initStateConfig() {
@@ -108,6 +116,8 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
 
   bool isFristRefresh = true;
 
+  EpikErc20SwapConfig config;
+
   refresh() async {
     if (isFristRefresh) {
       isFristRefresh = false;
@@ -116,7 +126,27 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
       showLoadDialog("", touchOutClose: false, backClose: false);
     }
 
-    Erc2EpkStep temp_step = Erc2EpkStep.post_destroy;
+    if (config == null) {
+      config = await ApiWallet.getSwapConfig();
+    }
+    if (config == null) {
+      closeLoadDialog();
+      setErrorWidgetVisible(true);
+      return;
+    }
+
+    if(!DL_TepkLoginToken.getEntity().hasToken())
+    {
+      await DL_TepkLoginToken.getEntity().refreshData(false);
+      if(!DL_TepkLoginToken.getEntity().hasToken())
+      {
+        closeLoadDialog();
+        setErrorWidgetVisible(true);
+        return;
+      }
+    }
+
+    Erc2EpkStep temp_step = Erc2EpkStep.swap;
 
     //刷新钱包余额
     EpikWalletUtils.requestBalance(AccountMgr().currentAccount).then((value) {
@@ -124,27 +154,28 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
     });
 
     //查询没完成的兑换
-    HttpJsonRes hjr = await ApiWallet.Erc2EpkRunningSwap();
-    dlog("Erc2EpkRunningSwap $hjr");
+    // HttpJsonRes hjr = await ApiWallet.Erc2EpkRunningSwap();
+    // dlog("Erc2EpkRunningSwap $hjr");
 
     String txhash = getLocalTxHash_Erc20epk();
     dlog("erc20_txhash = $txhash");
 
-    String epkcid = getLocalTxHash_epk();
-    dlog("epk_cid = $epkcid");
+    // String epkcid = getLocalTxHash_epk();
+    // dlog("epk_cid = $epkcid");
 
-    if (StringUtils.isNotEmpty(epkcid)) {
-      //发放EPK的结果
-      ResultObj result = await AccountMgr()
-          ?.currentAccount
-          ?.epikWallet
-          ?.messageReceipt(epkcid);
-      dlog("epk_receipt = ${result?.data}");
-      epkwallet_result = result;
-      if (epkwallet_result?.code == 0) {
-        temp_step = Erc2EpkStep.complete;
-      }
-    } else if (StringUtils.isNotEmpty(txhash)) {
+    // if (StringUtils.isNotEmpty(epkcid)) {
+    //   //发放EPK的结果
+    //   ResultObj result = await AccountMgr()
+    //       ?.currentAccount
+    //       ?.epikWallet
+    //       ?.messageReceipt(epkcid);
+    //   dlog("epk_receipt = ${result?.data}");
+    //   epkwallet_result = result;
+    //   if (epkwallet_result?.code == 0) {
+    //     temp_step = Erc2EpkStep.complete;
+    //   }
+    // } else
+    if (StringUtils.isNotEmpty(txhash)) {
       //本地有销毁记录
       //查询销毁结果
       ResultObj result =
@@ -155,12 +186,11 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
         // test
         // hdwallet_result.data="failed";
         // hdwallet_result.data = "pending";
-
         //交易记录查询成功
         if (hdwallet_result.data == "success") {
-          temp_step = Erc2EpkStep.submitepk;
+          temp_step = Erc2EpkStep.complete;
         } else {
-          temp_step = Erc2EpkStep.confirm_destroy;
+          temp_step = Erc2EpkStep.confirm_swap;
         }
       }
     }
@@ -170,6 +200,11 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
 
     closeStateLayout();
     closeLoadDialog();
+  }
+
+  @override
+  void onClickErrorWidget() {
+    refresh();
   }
 
   ///导航栏appBar中间部分 ，不满足可以自行重写
@@ -727,12 +762,14 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
 
   Widget getStep() {
     switch (current_step) {
-      case Erc2EpkStep.post_destroy:
-        return getStep_destroy();
-      case Erc2EpkStep.confirm_destroy:
+      // case Erc2EpkStep.post_destroy:
+      case Erc2EpkStep.swap:
+        return getStep_swap();
+      //case Erc2EpkStep.confirm_destroy:
+      case Erc2EpkStep.confirm_swap:
         return getStep_confirm();
-      case Erc2EpkStep.submitepk:
-        return getStep_submitepk();
+      // case Erc2EpkStep.submitepk:
+      //   return getStep_submitepk();
       case Erc2EpkStep.complete:
         return getStep_complete();
     }
@@ -740,7 +777,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
   }
 
   /// 发起销毁
-  Widget getStep_destroy() {
+  Widget getStep_swap() {
     if (_tec_erc20 == null)
       _tec_erc20 = new TextEditingController.fromValue(TextEditingValue(
         text: text_erc20,
@@ -786,7 +823,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
                           //"请输入兑换数量",
                           hintStyle:
                               TextStyle(color: ResColor.white_60, fontSize: 17),
-                          labelText: "销毁数量",
+                          labelText: "兑换数量",
                           labelStyle:
                               TextStyle(color: ResColor.white, fontSize: 17),
                         ),
@@ -838,11 +875,11 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
                   ],
                 ),
               ),
-              Divider(
-                height: 0.5,
-                thickness: 0.5,
-                color: ResColor.main,
-              ),
+              // Divider(
+              //   height: 0.5,
+              //   thickness: 0.5,
+              //   color: ResColor.main,
+              // ),
             ],
           ),
         ),
@@ -852,13 +889,46 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
     Widget items = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        getSubType("销毁ERC20-EPK"),
+        getSubType("兑换EPK"),
         input,
         Divider(
           color: ResColor.white_20,
           height: 1,
           thickness: 1,
         ),
+
+        Container(
+          width: double.infinity,
+margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                "最少兑换 ${StringUtils.formatNumAmount(config?.min_erc20_swap??"0",point: 8,supply0: false)}",
+                style:const TextStyle(
+                  fontSize: 14,
+                  color: ResColor.white_60,
+                ),
+              ),
+              Text(
+                "最多兑换 ${StringUtils.formatNumAmount(config?.max_erc20_swap??"0",point: 8,supply0: false)}",
+                style:const TextStyle(
+                  fontSize: 14,
+                  color: ResColor.white_60,
+                ),
+              ),
+              Text(
+                "手续费 ${config?.erc20_fee??"0"} ERC20-EPK",
+                style:const TextStyle(
+                  fontSize: 14,
+                  color: ResColor.white_60,
+                ),
+              ),
+            ],
+          ),
+        ),
+
         LoadingButton(
           height: 40,
           width: double.infinity,
@@ -870,7 +940,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
           progress_size: 20,
           padding: EdgeInsets.all(0),
           bg_borderradius: BorderRadius.circular(4),
-          text: Erc2EpkStep.post_destroy.name,
+          text: Erc2EpkStep.swap.name,
           textstyle: const TextStyle(
             color: ResColor.white,
             fontSize: 17,
@@ -879,18 +949,25 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
           loading: false,
           onclick: (lbtn) {
             // erc20-epk转账到空地址销毁
+
+            if(amount_erc20<config.min_erc20_swap  || amount_erc20>config.max_erc20_swap)
+            {
+              showToast("兑换数量限制 ${StringUtils.formatNumAmount(config.min_erc20_swap,point: 8,supply0: false)} - ${StringUtils.formatNumAmount(config.max_erc20_swap,point: 8,supply0: false)}");
+              return;
+            }
+
+
             BottomDialog.showPassWordInputDialog(
                 context, AccountMgr()?.currentAccount?.password, (password) {
               //点击确定回调
               showLoadDialog(
-                "正在销毁ERC20-EPK......",
+                "",
                 touchOutClose: false,
                 backClose: false,
                 onShow: () async {
                   String from_address =
                       AccountMgr()?.currentAccount?.hd_eth_address;
-                  String to_address =
-                      "0x000000000000000000000000000000000000dEaD";
+                  String to_address = config.erc20_address;
                   ResultObj<String> result = await AccountMgr()
                       .currentAccount
                       .hdwallet
@@ -930,10 +1007,12 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
                     setState(() {});
                   });
 
+                  await ApiWallet.swap2EPIK(DL_TepkLoginToken.getEntity().getToken(), tx);
+
                   MessageDialog.showMsgDialog(
                     context,
                     title: RSID.tip.text,
-                    msg: "销毁已提交",
+                    msg: "兑换已提交",
                     btnLeft: RSID.confirm.text,
                     onClickBtnLeft: (dialog) {
                       dialog.dismiss();
@@ -951,50 +1030,50 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
             });
           },
         ),
-        InkWell(
-          child: Text(
-            "已销毁记录补领EPK",
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.white,
-            ),
-          ),
-          onTap: () {
-            //  导入之前销毁记录的tx  进入下一步
-            BottomDialog.showTextInputDialog(
-                context, "请输入销毁记录的TxHash", "", "", 999, (txhash) async {
-              if (StringUtils.isNotEmpty(txhash) && txhash.startsWith("0x")) {
-                showLoadDialog("", touchOutClose: false, backClose: false);
-
-                // 检查txhash 能否进入下一步
-                //查询销毁结果
-                ResultObj result = await AccountMgr()
-                    ?.currentAccount
-                    ?.hdwallet
-                    ?.receipt(txhash);
-                dlog("erc20_receipt = ${result?.data}");
-
-                closeLoadDialog();
-
-                hdwallet_result = result;
-                if (hdwallet_result?.code == 0) {
-                  //交易记录查询成功
-                  setLocalTxHash_Erc20epk(txhash);
-                  if (hdwallet_result.data == "success") {
-                    current_step = Erc2EpkStep.submitepk;
-                  } else {
-                    current_step = Erc2EpkStep.confirm_destroy;
-                  }
-                  setState(() {});
-                  return;
-                }
-              }
-              showToast("TxHash无效");
-            }).then((value) {
-              closeInput();
-            });
-          },
-        ),
+        // InkWell(
+        //   child: Text(
+        //     "已销毁记录补领EPK",
+        //     style: TextStyle(
+        //       fontSize: 14,
+        //       color: Colors.white,
+        //     ),
+        //   ),
+        //   onTap: () {
+        //     //  导入之前销毁记录的tx  进入下一步
+        //     BottomDialog.showTextInputDialog(
+        //         context, "请输入销毁记录的TxHash", "", "", 999, (txhash) async {
+        //       if (StringUtils.isNotEmpty(txhash) && txhash.startsWith("0x")) {
+        //         showLoadDialog("", touchOutClose: false, backClose: false);
+        //
+        //         // 检查txhash 能否进入下一步
+        //         //查询销毁结果
+        //         ResultObj result = await AccountMgr()
+        //             ?.currentAccount
+        //             ?.hdwallet
+        //             ?.receipt(txhash);
+        //         dlog("erc20_receipt = ${result?.data}");
+        //
+        //         closeLoadDialog();
+        //
+        //         hdwallet_result = result;
+        //         if (hdwallet_result?.code == 0) {
+        //           //交易记录查询成功
+        //           setLocalTxHash_Erc20epk(txhash);
+        //           if (hdwallet_result.data == "success") {
+        //             current_step = Erc2EpkStep.complete;
+        //           } else {
+        //             current_step = Erc2EpkStep.confirm_swap;
+        //           }
+        //           setState(() {});
+        //           return;
+        //         }
+        //       }
+        //       showToast("TxHash无效");
+        //     }).then((value) {
+        //       closeInput();
+        //     });
+        //   },
+        // ),
       ],
     );
 
@@ -1011,15 +1090,14 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
     String txhash = getLocalTxHash_Erc20epk();
 
     List<Widget> items = [];
-    switch (hdwallet_result.data)
-    {
+    switch (hdwallet_result.data) {
       case "success":
         {}
         break;
       case "failed":
         {
           //failed交易失败
-          items.add(getSubType("销毁失败"));
+          items.add(getSubType("交易失败"));
           items.add(Row(
             children: [
               Expanded(
@@ -1063,11 +1141,11 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
             height: 40,
             gradient_bg: ResColor.lg_1,
             color_bg: Colors.transparent,
-            disabledColor:Colors.transparent,
+            disabledColor: Colors.transparent,
             progress_color: Colors.white,
             progress_size: 20,
             padding: EdgeInsets.all(0),
-            bg_borderradius:BorderRadius.circular(4) ,
+            bg_borderradius: BorderRadius.circular(4),
             text: "发起新的兑换",
             textstyle: const TextStyle(
               color: ResColor.white,
@@ -1079,8 +1157,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
               setLocalTxHash_Erc20epk(null);
               setLocalTxHash_epk(null);
               hdwallet_result = null;
-              epkwallet_result = null;
-              current_step = Erc2EpkStep.post_destroy;
+              current_step = Erc2EpkStep.swap;
               setState(() {});
             },
           ));
@@ -1089,7 +1166,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
       case "pending":
         {
           //pending交易等待中
-          items.add(getSubType("等待ERC20-EPK销毁确认"));
+          items.add(getSubType("等待交易确认"));
           items.add(Row(
             children: [
               Expanded(
@@ -1211,141 +1288,6 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
     );
   }
 
-  onClickSubmitepk(String txhash) async {
-    // 提交发放
-
-    showLoadDialog("", backClose: false, touchOutClose: false);
-
-    HttpJsonRes hrj = await ApiWallet.Erc2EpkSubmitTx(txhash);
-
-    closeLoadDialog();
-
-    if (hrj.code == 0) {
-      //epk交易hash
-      String epk_cid = hrj.jsonMap["cid"];
-
-      MessageDialog.showMsgDialog(
-        context,
-        title: RSID.tip.text,
-        msg: "已提交发放EPK",
-        btnLeft: RSID.confirm.text,
-        onClickBtnLeft: (dialog) {
-          dialog.dismiss();
-        },
-        onDismiss: (dialog) {
-          Future.delayed(Duration(milliseconds: 200)).then((value) {
-            setLocalTxHash_Erc20epk(null);
-            hdwallet_result = null;
-            setLocalTxHash_epk(epk_cid);
-            refresh();
-          });
-        },
-      );
-      return;
-    }
-
-    MessageDialog.showMsgDialog(
-      context,
-      title: RSID.tip.text,
-      msg: hrj?.msg ?? RSID.request_failed.text,
-      btnLeft: RSID.confirm.text,
-      onClickBtnLeft: (dialog) {
-        dialog.dismiss();
-      },
-      onDismiss: (dialog) {
-        // 发放epk请求失败
-        Future.delayed(Duration(milliseconds: 200)).then((value) {
-          setLocalTxHash_Erc20epk(null);
-          hdwallet_result = null;
-          current_step = Erc2EpkStep.post_destroy;
-          setState(() {});
-        });
-      },
-    );
-  }
-
-  ///发放epk
-  Widget getStep_submitepk() {
-    String txhash = getLocalTxHash_Erc20epk();
-
-    List<Widget> items = [];
-
-    {
-      // erc20  success交易成功
-      items.add(getSubType("ERC20-EPK已销毁"));
-
-      items.add(Row(
-        children: [
-          Expanded(
-            child: InkWell(
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              onTap: () {
-                DeviceUtils.copyText(txhash);
-                showToast("TxHash已复制");
-              },
-              child: TextEm(
-                "$txhash",
-                style: TextStyle(
-                  fontSize: 11,
-                  color: ResColor.white_60,
-                ),
-              ),
-            ),
-          ),
-          Container(
-            width: 30,
-          ),
-          InkWell(
-            child: Text(
-              "查看交易",
-              style: TextStyle(
-                fontSize: 11,
-                color: ResColor.o_1,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onTap: () {
-              lookEthTxhash(txhash);
-            },
-          ),
-        ],
-      ));
-
-      items.add(LoadingButton(
-        height: 40,
-        width: double.infinity,
-        margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
-        gradient_bg: ResColor.lg_1,
-        color_bg: Colors.transparent,
-        disabledColor: Colors.transparent,
-        progress_color: Colors.white,
-        progress_size: 20,
-        padding: EdgeInsets.all(0),
-        bg_borderradius: BorderRadius.circular(4),
-        text: Erc2EpkStep.submitepk.name,
-        textstyle: const TextStyle(
-          color: ResColor.white,
-          fontSize: 17,
-          fontWeight: FontWeight.bold,
-        ),
-        loading: false,
-        onclick: (lbtn) {
-          // 上报销毁交易
-          onClickSubmitepk(txhash);
-        },
-      ));
-    }
-
-    return Container(
-        margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
-        // padding: EdgeInsets.all(15),
-        width: double.infinity,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: items,
-        ));
-  }
 
   onClickAccelerateTx(String txhash) {
     // hd钱包加速交易
@@ -1365,351 +1307,83 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> {
 
   ///完成
   Widget getStep_complete() {
-    String epkcid = getLocalTxHash_epk();
 
     List<Widget> items = [];
-    switch (epkwallet_result.data)
-    {
-      case "success":
-        {
-          //成功
-          items.add(getSubType("EPK已到账"));
+    //成功
+    items.add(getSubType("兑换完成"));
 
-          items.add(Row(
-            children: [
-              Expanded(
-                child: InkWell(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onTap: () {
-                    DeviceUtils.copyText(epkcid);
-                    showToast("cid已复制");
-                  },
-                  child: TextEm(
-                    "$epkcid",
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: ResColor.white_60,
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                width: 30,
-              ),
-              InkWell(
-                child: Text(
-                  "查看交易",
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: ResColor.o_1,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onTap: () {
-                  lookEpkCid(epkcid);
-                },
-              ),
-            ],
-          ));
-
-
-          items.add(LoadingButton(
-            margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
-            height: 40,
-            gradient_bg: ResColor.lg_1,
-            color_bg: Colors.transparent,
-            disabledColor:Colors.transparent,
-            progress_color: Colors.white,
-            progress_size: 20,
-            padding: EdgeInsets.all(0),
-            bg_borderradius:BorderRadius.circular(4) ,
-            text: "发起新的兑换",
-            textstyle: const TextStyle(
-              color: ResColor.white,
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
+    items.add(Row(
+      children: [
+        Expanded(
+          child: TextEm(
+            "请在兑换记录中查看到账情况",
+            style: TextStyle(
+              fontSize: 11,
+              color: ResColor.white_60,
             ),
-            loading: false,
-            onclick: (lbtn) {
-              setLocalTxHash_Erc20epk(null);
-              setLocalTxHash_epk(null);
-              hdwallet_result = null;
-              epkwallet_result = null;
-              current_step = Erc2EpkStep.post_destroy;
-              setState(() {});
-            },
-          ));
-        }
-        break;
-      case "failed":
-        {
-          //failed交易失败
-          items.add(getSubType("发放EPK失败"));
+          ),
+        ),
+        // Expanded(
+        //   child: InkWell(
+        //     splashColor: Colors.transparent,
+        //     highlightColor: Colors.transparent,
+        //     onTap: () {
+        //       DeviceUtils.copyText(epkcid);
+        //       showToast("cid已复制");
+        //     },
+        //     child: TextEm(
+        //       "$epkcid",
+        //       style: TextStyle(
+        //         fontSize: 11,
+        //         color: ResColor.white_60,
+        //       ),
+        //     ),
+        //   ),
+        // ),
+        // Container(
+        //   width: 30,
+        // ),
+        // InkWell(
+        //   child: Text(
+        //     "查看交易",
+        //     style: TextStyle(
+        //       fontSize: 11,
+        //       color: ResColor.o_1,
+        //       fontWeight: FontWeight.bold,
+        //     ),
+        //   ),
+        //   onTap: () {
+        //     lookEpkCid(epkcid);
+        //   },
+        // ),
+      ],
+    ));
 
-          items.add(Row(
-            children: [
-              Expanded(
-                child: InkWell(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onTap: () {
-                    DeviceUtils.copyText(epkcid);
-                    showToast("cid已复制");
-                  },
-                  child: TextEm(
-                    "$epkcid",
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: ResColor.white_60,
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                width: 30,
-              ),
-              InkWell(
-                child: Text(
-                  "查看交易",
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: ResColor.o_1,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onTap: () {
-                  lookEpkCid(epkcid);
-                },
-              ),
-            ],
-          ));
-
-          items.add(LoadingButton(
-            margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
-            height: 40,
-            gradient_bg: ResColor.lg_1,
-            color_bg: Colors.transparent,
-            disabledColor:Colors.transparent,
-            progress_color: Colors.white,
-            progress_size: 20,
-            padding: EdgeInsets.all(0),
-            bg_borderradius:BorderRadius.circular(4) ,
-            text: "发起新的兑换",
-            textstyle: const TextStyle(
-              color: ResColor.white,
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
-            loading: false,
-            onclick: (lbtn) {
-              setLocalTxHash_Erc20epk(null);
-              setLocalTxHash_epk(null);
-              hdwallet_result = null;
-              epkwallet_result = null;
-              current_step = Erc2EpkStep.post_destroy;
-              setState(() {});
-            },
-          ));
-        }
-        break;
-      case "pending":
-        {
-          //pending交易等待中
-          items.add(getSubType("等待发放EPK到账"));
-          items.add(Row(
-            children: [
-              Expanded(
-                child: InkWell(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onTap: () {
-                    DeviceUtils.copyText(epkcid);
-                    showToast("cid已复制");
-                  },
-                  child: TextEm(
-                    "$epkcid",
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: ResColor.white_60,
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                width: 30,
-              ),
-              InkWell(
-                child: Text(
-                  "查看交易",
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: ResColor.o_1,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onTap: () {
-                  lookEpkCid(epkcid);
-                },
-              ),
-            ],
-          ));
-          items.add(Container(
-            height: 10,
-          ));
-          items.add(RichText(
-            text: TextSpan(
-              style: TextStyle(
-                fontFamily: fontFamily_def,
-              ),
-              children: [
-                TextSpan(
-                  text: "如长时间不上链可以",
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: ResColor.white,
-                  ),
-                ),
-                TextSpan(
-                  text: "询问客服",
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: ResColor.o_1,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () async {
-                      onClickServer();
-                    },
-                ),
-              ],
-            ),
-          ));
-
-          items.add(LoadingButton(
-            margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
-            height: 40,
-            color_bg: const Color(0xff424242),
-            disabledColor: ResColor.main,
-            progress_color: Colors.white,
-            progress_size: 20,
-            padding: EdgeInsets.all(0),
-            bg_borderradius: BorderRadius.circular(4),
-            text: "刷新",
-            textstyle: const TextStyle(
-              color: ResColor.white,
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
-            loading: false,
-            onclick: (lbtn) {
-              refresh();
-            },
-          ));
-        }
-        break;
-      default:
-        {
-          //未知
-          //failed交易失败
-          items.add(getSubType("未知状态"));
-
-          items.add(Row(
-            children: [
-              Expanded(
-                child: InkWell(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onTap: () {
-                    DeviceUtils.copyText(epkcid);
-                    showToast("cid已复制");
-                  },
-                  child: TextEm(
-                    "$epkcid",
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: ResColor.white_60,
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                width: 30,
-              ),
-              InkWell(
-                child: Text(
-                  "查看交易",
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: ResColor.o_1,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onTap: () {
-                  lookEpkCid(epkcid);
-                },
-              ),
-            ],
-          ));
-          items.add(Container(
-            height: 10,
-          ));
-          items.add(RichText(
-            text: TextSpan(
-              style: TextStyle(
-                fontFamily: fontFamily_def,
-              ),
-              children: [
-                TextSpan(
-                  text: "未知状态可以",
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: ResColor.white,
-                  ),
-                ),
-                TextSpan(
-                  text: "询问客服",
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: ResColor.o_1,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () async {
-                      onClickServer();
-                    },
-                ),
-              ],
-            ),
-          ));
-
-          items.add(LoadingButton(
-            margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
-            height: 40,
-            gradient_bg: ResColor.lg_1,
-            color_bg: Colors.transparent,
-            disabledColor:Colors.transparent,
-            progress_color: Colors.white,
-            progress_size: 20,
-            padding: EdgeInsets.all(0),
-            bg_borderradius:BorderRadius.circular(4) ,
-            text: "发起新的兑换",
-            textstyle: const TextStyle(
-              color: ResColor.white,
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
-            loading: false,
-            onclick: (lbtn) {
-              setLocalTxHash_Erc20epk(null);
-              setLocalTxHash_epk(null);
-              hdwallet_result = null;
-              epkwallet_result = null;
-              current_step = Erc2EpkStep.post_destroy;
-              setState(() {});
-            },
-          ));
-        }
-        break;
-    }
+    items.add(LoadingButton(
+      margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
+      height: 40,
+      gradient_bg: ResColor.lg_1,
+      color_bg: Colors.transparent,
+      disabledColor: Colors.transparent,
+      progress_color: Colors.white,
+      progress_size: 20,
+      padding: EdgeInsets.all(0),
+      bg_borderradius: BorderRadius.circular(4),
+      text: "发起新的兑换",
+      textstyle: const TextStyle(
+        color: ResColor.white,
+        fontSize: 17,
+        fontWeight: FontWeight.bold,
+      ),
+      loading: false,
+      onclick: (lbtn) {
+        setLocalTxHash_Erc20epk(null);
+        setLocalTxHash_epk(null);
+        hdwallet_result = null;
+        current_step = Erc2EpkStep.swap;
+        setState(() {});
+      },
+    ));
 
     return Container(
       margin: EdgeInsets.fromLTRB(0, 20, 0, 20),

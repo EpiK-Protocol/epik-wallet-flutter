@@ -63,7 +63,7 @@ abstract class DataLoader<Dt> {
   }
 
   /** 请求新数据 */
-  void refreshData(bool readCache) {
+  Future<void>  refreshData(bool readCache)async {
     setRequesting(true);
     if (lastIdMode) {
       lastId = null;
@@ -95,7 +95,7 @@ abstract class DataLoader<Dt> {
     };
 
     mJResponse = _mJResponse;
-    requestData(readCache, mJResponse);
+    await requestData(readCache, mJResponse);
     lastRefreshTime = DateTime.now().millisecondsSinceEpoch;
   }
 
@@ -151,7 +151,7 @@ abstract class DataLoader<Dt> {
   }
 
   /** 具体的请求数据方法 */
-  void requestData(bool readCache, JResponse callback);
+  Future<void>  requestData(bool readCache, JResponse callback);
 
   /**
    * 具体解析数据的方法<br>

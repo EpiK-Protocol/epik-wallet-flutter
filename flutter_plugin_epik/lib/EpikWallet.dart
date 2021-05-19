@@ -313,7 +313,7 @@ class EpikWallet {
   }
 
   /// 矿机 访问抵押 添加
-  Future<ResultObj<String>> retrievePledgeAdd(String toMinerID,String amount) async {
+  Future<ResultObj<String>> retrievePledgeAdd(String target,String toMinerID,String amount) async {
     try {
       String ret = await EpikPlugin.channel
           .invokeMethod("epik_wallet_retrievePledgeAdd", <String, dynamic>{
@@ -328,12 +328,58 @@ class EpikWallet {
     return null;
   }
 
-  /// 矿机 访问抵押 撤回
+  // 矿机 访问抵押 申请撤回  第一步     三天后解锁可以执行第二步
+  Future<ResultObj<String>> retrievePledgeApplyWithdraw(String toMinerID,String amount) async {
+    try {
+      String ret = await EpikPlugin.channel
+          .invokeMethod("epik_wallet_retrievePledgeApplyWithdraw", <String, dynamic>{
+        "toMinerID": toMinerID,
+        "amount":amount,
+      });
+      return ResultObj<String>(data:ret);
+    } catch (e,s) {
+      print(e);
+      return ResultObj<String>.fromError(e);
+    }
+    return null;
+  }
+
+  // 矿机 访问抵押 撤回 第二步
   Future<ResultObj<String>> retrievePledgeWithdraw(String toMinerID,String amount) async {
     try {
       String ret = await EpikPlugin.channel
           .invokeMethod("epik_wallet_retrievePledgeWithdraw", <String, dynamic>{
         "toMinerID": toMinerID,
+        "amount":amount,
+      });
+      return ResultObj<String>(data:ret);
+    } catch (e,s) {
+      print(e);
+      return ResultObj<String>.fromError(e);
+    }
+    return null;
+  }
+
+  Future<ResultObj<String>> retrievePledgeBind(String toMinerID,String amount) async {
+    try {
+      String ret = await EpikPlugin.channel
+          .invokeMethod("epik_wallet_retrievePledgeBind", <String, dynamic>{
+        "miner": toMinerID,
+        "amount":amount,
+      });
+      return ResultObj<String>(data:ret);
+    } catch (e,s) {
+      print(e);
+      return ResultObj<String>.fromError(e);
+    }
+    return null;
+  }
+  
+  Future<ResultObj<String>> retrievePledgeUnBind(String toMinerID,String amount) async {
+    try {
+      String ret = await EpikPlugin.channel
+          .invokeMethod("epik_wallet_retrievePledgeUnBind", <String, dynamic>{
+        "miner": toMinerID,
         "amount":amount,
       });
       return ResultObj<String>(data:ret);

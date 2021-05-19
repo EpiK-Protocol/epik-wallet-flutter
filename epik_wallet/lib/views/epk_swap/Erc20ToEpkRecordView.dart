@@ -1,7 +1,9 @@
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
+import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_wallet.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
+import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
 import 'package:epikwallet/model/Erc20ToEpkSwapRecord.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
 import 'package:epikwallet/utils/data/date_util.dart';
@@ -67,7 +69,7 @@ class Erc20ToEpkRecordViewState extends BaseWidgetState<Erc20ToEpkRecordView> {
     List<Erc20ToEpkSwapRecord> temp = [];
 
     isLoading = true;
-    HttpJsonRes hjr = await ApiWallet.Erc2EpkSwapRecords();
+    HttpJsonRes hjr = await ApiWallet.swapRecords(DL_TepkLoginToken.getEntity().getToken(), AccountMgr().currentAccount.hd_eth_address);
     isLoading = false;
 
     if (hjr?.code == 0) {
@@ -98,7 +100,7 @@ class Erc20ToEpkRecordViewState extends BaseWidgetState<Erc20ToEpkRecordView> {
 
     List<Erc20ToEpkSwapRecord> temp = [];
 
-    HttpJsonRes hjr = await ApiWallet.Erc2EpkSwapRecords();
+    HttpJsonRes hjr =  await ApiWallet.swapRecords(DL_TepkLoginToken.getEntity().getToken(), AccountMgr().currentAccount.hd_eth_address);//await ApiWallet.Erc2EpkSwapRecords();
     if (hjr?.code == 0) {
       temp = JsonArray.parseList<Erc20ToEpkSwapRecord>(
           JsonArray.obj2List(hjr.jsonMap["list"]),

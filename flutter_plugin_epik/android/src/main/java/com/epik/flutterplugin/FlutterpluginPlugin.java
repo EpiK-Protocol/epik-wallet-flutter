@@ -409,12 +409,28 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
                         }
                         case "epik_wallet_retrievePledgeAdd":{
                             // 矿机 访问抵押 添加
-                            ret = currentEpikWallet.retrievePledgeAdd((String) call.argument("toMinerID"),(String) call.argument("amount"));
+                            ret = currentEpikWallet.retrievePledgeAdd((String) call.argument("target"),(String) call.argument("toMinerID"),(String) call.argument("amount"));
                             break;
                         }
-                        case "epik_wallet_retrievePledgeWithdraw":{
-                            // 矿机 访问抵押 撤回
-                            ret = currentEpikWallet.retrievePledgeWithdraw((String) call.argument("toMinerID"),(String) call.argument("amount"));
+                        case "epik_wallet_retrievePledgeApplyWithdraw":{
+                            // 矿机 访问抵押 申请撤回  第一步 三天后可以执行第二部
+                            ret = currentEpikWallet.retrievePledgeApplyWithdraw((String) call.argument("toMinerID"),(String) call.argument("amount"));
+                            break;
+                        }
+                        case "epik_wallet_retrievePledgeWithdraw":
+                        {
+                            // 矿机 访问抵押 撤回 第二步
+                            ret = currentEpikWallet.retrievePledgeWithdraw((String) call.argument("toMinerID"), (String) call.argument("amount"));
+                            break;
+                        }
+                        case "epik_wallet_retrievePledgeBind":{
+                            // 矿机 访问抵押 绑定
+                            ret = currentEpikWallet.retrievePledgeBind((String) call.argument("miner"), (String) call.argument("amount"));
+                            break;
+                        }
+                        case "epik_wallet_retrievePledgeUnBind":{
+                            // 矿机 访问抵押 解绑
+                            ret = currentEpikWallet.retrievePledgeUnBind((String) call.argument("miner"), (String) call.argument("amount"));
                             break;
                         }
                         // 2021-03-25 新增  hd  ------------------------------

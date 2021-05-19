@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
-import 'package:epikwallet/logic/api/api_testnet.dart';
 import 'package:epikwallet/logic/api/api_wallet.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
@@ -177,7 +176,7 @@ class EpikWalletUtils {
         // 从api接口读取 使用 lasttime
         List<TepkOrder> temp;
         HttpJsonRes hjr = await ApiWallet.getTepkOrderList(
-            waccount.epik_EPK_address, lastTime, pagesize,epkHeight);
+            waccount.epik_EPK_address, lastTime, pagesize, epkHeight);
         if (hjr.code == 0) {
           temp = JsonArray.parseList<TepkOrder>(
               JsonArray.obj2List(hjr.jsonMap["list"]),
@@ -293,8 +292,51 @@ class WalletAccount {
   }
 
   saveDappTokens() {
+    SpUtils.putString("DappTokens_${dappTokenKey}", jsonEncode(tokenMap ?? {}));
+  }
+
+  String minerCurrent=null;
+  List<String> minerIdList = [];
+
+  String get minerIdListKey {
+    return epik_EPK_address?.hashCode?.toString() ?? "";
+  }
+
+  loadMinerIdList() {
+    Map<String, dynamic> temp = {};
+    try {
+      String text = SpUtils.getString("MinerIds_${minerIdListKey}");
+      if (StringUtils.isNotEmpty(text) && text.startsWith("{")) {
+        try {
+          temp = jsonDecode(text);
+        } catch (e, s) {
+          print(e);
+        }
+      }
+    } catch (e, s) {
+      print(e);
+    }
+    temp = temp ?? {};
+    minerIdList =List<String>.from( temp["list"] ?? []);
+    minerCurrent = temp["current"];
+    if(StringUtils.isEmpty(minerCurrent))
+      minerCurrent=getFirstMinerId();
+  }
+
+  saveMinerIdList() {
+    if(minerCurrent==null)
+      minerCurrent=getFirstMinerId();
     SpUtils.putString(
-        "DappTokens_${dappTokenKey}", jsonEncode(tokenMap ?? "{}"));
+        "MinerIds_${minerIdListKey}",
+        jsonEncode(<String, dynamic>{
+          "list": minerIdList ?? [],
+          "current":minerCurrent,
+        }));
+  }
+
+  String getFirstMinerId() {
+    if (minerIdList != null && minerIdList.length > 0) return minerIdList[0];
+    return null;
   }
 
   WalletAccount();

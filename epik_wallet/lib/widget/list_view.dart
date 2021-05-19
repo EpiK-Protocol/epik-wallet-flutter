@@ -253,13 +253,13 @@ class ListPageDefStateWidgetHeader {
       case ListPageDefStateType.EMPTY:
         return getEmptyWidgetHeader(
           state.msg ?? ResString.get(appContext, RSID.content_empty),//"暂无数据",
-          state.img ?? "assets/img/ic_content_empty.png",
+          state.img,// ?? "assets/img/ic_content_empty.png",
           onClickEmptyWidget: state.onClick,
         );
       case ListPageDefStateType.ERROR:
         return getErrorWidgetHeader(
           state.msg??ResString.get(appContext, RSID.net_error),//"网络错误",
-          state.img??"assets/img/ic_content_neterror.png",
+          state.img,//??"assets/img/ic_content_neterror.png",
           onClickErrorWidget: state.onClick,
         );
       case ListPageDefStateType.LOADING:

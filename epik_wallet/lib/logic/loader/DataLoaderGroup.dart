@@ -36,7 +36,7 @@ class DataLoaderGroup<tp, Dt> extends DataLoader<Dt> {
     return _current_type;
   }
 
-  void requestData(bool readCache, JResponse callback) {
+  Future<void> requestData(bool readCache, JResponse callback){
     _current_dl.requestData(
         readCache, callback); // callback 是group的, 然后调用group的parseData
   }
@@ -59,8 +59,8 @@ class DataLoaderGroup<tp, Dt> extends DataLoader<Dt> {
     _current_dl.setRequesting(requesting);
   }
 
-  void refreshData(bool readCache) {
-    _current_dl.refreshData(readCache);
+  Future<void> refreshData(bool readCache) async{
+    return _current_dl.refreshData(readCache);
   }
 
   void loadMoreData() {

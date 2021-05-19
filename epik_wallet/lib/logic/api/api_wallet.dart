@@ -6,6 +6,7 @@ import 'package:crypto/crypto.dart';
 import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
+import 'package:epikwallet/model/EpikErc20SwapConfig.dart';
 import 'package:epikwallet/model/prices.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
@@ -15,13 +16,13 @@ import 'package:epikwallet/utils/http/httputils.dart';
 class ApiWallet {
   // GET {{HOST}}/messages?address=t3v2m2rkfoaqcqavhazvuplnqjpn4tgfgrej5r7sjrv27sa2ulftepflbcjakzk3pw3fysrdznz6kw6l4aamja&from=&size=50
   static Future<HttpJsonRes> getTepkOrderList(
-      String address, String from, int size ,int epkHeight) async {
+      String address, String from, int size, int epkHeight) async {
     // String url = ServiceInfo.HOST + "/messages";
-    String url = "http://116.63.146.223:3002" + "/messages";//todo test
+    String url = "http://116.63.146.223:3002" + "/messages"; //todo test
     Map<String, dynamic> params = new Map();
     // address="t3v2m2rkfoaqcqavhazvuplnqjpn4tgfgrej5r7sjrv27sa2ulftepflbcjakzk3pw3fysrdznz6kw6l4aamja";
     params["address"] = address;
-    params["from"] = from??""; //Time: "2020-12-28T04:04:27Z"
+    params["from"] = from ?? ""; //Time: "2020-12-28T04:04:27Z"
     params["size"] = size;
     params["height"] = epkHeight;
     return await HttpUtil.instance.requestJson(true, url, params);
@@ -41,35 +42,43 @@ class ApiWallet {
 //  ###
   static Future<HttpJsonRes> Erc2EpkSubmitTx(String tx_hash) async {
     // String url = ServiceInfo.HOST + "/wallet/submitTx";
-    String url =  ServiceInfo.makeHostUrl("/wallet/submitTx");
+    String url = ServiceInfo.makeHostUrl("/wallet/submitTx");
     Map<String, dynamic> params = new Map();
 
-    int timestamp =( DateTime.now().toUtc().millisecondsSinceEpoch/1000).toInt();
+    int timestamp =
+        (DateTime.now().toUtc().millisecondsSinceEpoch / 1000).toInt();
 
     String text = "timestamp=${timestamp}&tx_hash=${tx_hash}";
     Digest digest = sha256.convert(utf8.encode(text));
 
-    String erc20_address  = AccountMgr()?.currentAccount?.hd_eth_address;
-    String epik_address=AccountMgr()?.currentAccount?.epik_EPK_address;
+    String erc20_address = AccountMgr()?.currentAccount?.hd_eth_address;
+    String epik_address = AccountMgr()?.currentAccount?.epik_EPK_address;
 
-    Uint8List epik_signature_byte = await AccountMgr()?.currentAccount?.epikWallet?.sign(epik_address, Uint8List.fromList(digest.bytes));
+    Uint8List epik_signature_byte = await AccountMgr()
+        ?.currentAccount
+        ?.epikWallet
+        ?.sign(epik_address, Uint8List.fromList(digest.bytes));
     String epik_signature = hex.encode(epik_signature_byte);
 
-    Uint8List erc20_signature_byte = await AccountMgr()?.currentAccount?.hdwallet.signHash(erc20_address, Uint8List.fromList(digest.bytes));
+    Uint8List erc20_signature_byte = await AccountMgr()
+        ?.currentAccount
+        ?.hdwallet
+        .signHash(erc20_address, Uint8List.fromList(digest.bytes));
     String erc20_signature = hex.encode(erc20_signature_byte);
 
     params["timestamp"] = timestamp;
-    params["erc20_address"] = erc20_address??"";
-    params["epik_address"] = epik_address??"";
+    params["erc20_address"] = erc20_address ?? "";
+    params["epik_address"] = epik_address ?? "";
     params["tx_hash"] = tx_hash;
     params["epik_signature"] = epik_signature; //epk钱包签名 timestamp=%d&tx_hash=%s
-    params["erc20_signature"] = erc20_signature; //hd钱包签名 timestamp=%d&tx_hash=%s
+    params["erc20_signature"] =
+        erc20_signature; //hd钱包签名 timestamp=%d&tx_hash=%s
 
     String jsondata = jsonEncode(params);
 
-    return await HttpUtil.instance.requestJson(false, url, null,data: jsondata);
+    return await HttpUtil.instance
+        .requestJson(false, url, null, data: jsondata);
   }
-
 
 //  #正在执行中的EPIK兑换记录
 //  GET {{HOST}}/wallet/runningSwap
@@ -77,29 +86,28 @@ class ApiWallet {
 //  ###
   static Future<HttpJsonRes> Erc2EpkRunningSwap() {
     // String url = ServiceInfo.HOST + "/wallet/runningSwap";
-    String url =  ServiceInfo.makeHostUrl("/wallet/runningSwap");
+    String url = ServiceInfo.makeHostUrl("/wallet/runningSwap");
     Map<String, dynamic> params = new Map();
-    params["erc20_address"]=AccountMgr()?.currentAccount?.hd_eth_address;
+    params["erc20_address"] = AccountMgr()?.currentAccount?.hd_eth_address;
     return HttpUtil.instance.requestJson(true, url, params);
   }
-
 
 //  #EPIK兑换记录
 //  GET {{HOST}}/wallet/swapRecords
 //  Content-Type: application/json
 //  ###
-  static Future<HttpJsonRes> Erc2EpkSwapRecords() {
-    // String url = ServiceInfo.HOST + "/wallet/swapRecords";
-    String url =  ServiceInfo.makeHostUrl("/wallet/swapRecords");
-    Map<String, dynamic> params = new Map();
-    params["erc20_address"]=AccountMgr()?.currentAccount?.hd_eth_address;
-    return HttpUtil.instance.requestJson(true, url, params);
-  }
+//   static Future<HttpJsonRes> Erc2EpkSwapRecords() {
+//     // String url = ServiceInfo.HOST + "/wallet/swapRecords";
+//     String url = ServiceInfo.makeHostUrl("/wallet/swapRecords");
+//     Map<String, dynamic> params = new Map();
+//     params["erc20_address"] = AccountMgr()?.currentAccount?.hd_eth_address;
+//     return HttpUtil.instance.requestJson(true, url, params);
+//   }
 
   ///EPIK钱包币种报价
   static Future<HttpJsonRes> getCurrencyPrice() {
     // String url = ServiceInfo.HOST + "/wallet/price";
-    String url =  ServiceInfo.makeHostUrl("/wallet/price");
+    String url = ServiceInfo.makeHostUrl("/wallet/price");
     return HttpUtil.instance.requestJson(true, url, null);
   }
 
@@ -111,7 +119,7 @@ class ApiWallet {
     if (res != null && res.code == 0) {
       ret = JsonArray.parseList<Prices>(
           JsonArray.obj2List(res?.jsonMap["prices"]),
-              (json) => Prices.fromJson(json));
+          (json) => Prices.fromJson(json));
     }
     if (ret != null && ret.length > 0) {
       _last_prices = ret;
@@ -123,29 +131,98 @@ class ApiWallet {
 
   static Future<HttpJsonRes> checkUniswapOrder(UniswapOrder order) {
 //    https://tx.epik-protocol.io/api?module=transaction&action=getstatus&txhash=0x182a8257c552c79ba36d628f123f47bbcfda55482735d4ce433d97ddae1ea01a
-    String url ="https://tx.epik-protocol.io/api?module=transaction&action=getstatus&txhash=${order.hash}";
+    String url =
+        "https://tx.epik-protocol.io/api?module=transaction&action=getstatus&txhash=${order.hash}";
     return HttpUtil.instance.requestJson(true, url, null);
   }
 
-  static Future<HttpJsonRes> getUniswapEpkKline(DateTime start, DateTime end)
-  {
+  static Future<HttpJsonRes> getUniswapEpkKline(DateTime start, DateTime end) {
     DateTime dt0 = DateTime.now();
     Dlog.p("cccmax", "本地 ${dt0.toIso8601String()}  isutc=${dt0.isUtc}");
     // UTC时间
     String time =
         DateUtil.formatDate(dt0.toUtc(), format: "yyyy-MM-ddTHH:mm:ss") + "Z";
-    Dlog.p("cccmax", "转UTC "+time);
+    Dlog.p("cccmax", "转UTC " + time);
     // 本地北京时间
     DateTime dt = DateTime.tryParse(time).toLocal();
     Dlog.p("cccmax", "转本地 ${dt.toIso8601String()}  isutc=${dt.isUtc}");
 
-
     //https://explorer.epik-protocol.io/api/wallet/kline?start=2020-11-10T18:00:00Z&end=2020-11-15T14:00:00Z
     // String url = ServiceInfo.HOST+"/wallet/kline";
-    String url =  ServiceInfo.makeHostUrl("/wallet/kline");
+    String url = ServiceInfo.makeHostUrl("/wallet/kline");
     Map<String, dynamic> params = new Map();
-    params["start"] = DateUtil.formatDate(start.toUtc(), format: "yyyy-MM-ddTHH:mm:ss") + "Z";
-    params["end"] = DateUtil.formatDate(end.toUtc(), format: "yyyy-MM-ddTHH:mm:ss") + "Z";
+    params["start"] =
+        DateUtil.formatDate(start.toUtc(), format: "yyyy-MM-ddTHH:mm:ss") + "Z";
+    params["end"] =
+        DateUtil.formatDate(end.toUtc(), format: "yyyy-MM-ddTHH:mm:ss") + "Z";
     return HttpUtil.instance.requestJson(true, url, params);
+  }
+
+  /// ERC20EPK<->EPIK, 双向兑换的config设置
+  static Future<EpikErc20SwapConfig> getSwapConfig() async {
+    String url = ServiceInfo.makeHostUrl("/wallet/swapConfig");
+
+    Map<String, dynamic> params = new Map();
+
+    Map<String, dynamic> headers = {"token": null};
+
+    HttpJsonRes hjr = await HttpUtil.instance.requestJson(true, url, params, headers: headers);
+    if(hjr?.code==0)
+    {
+      return EpikErc20SwapConfig.fromJson(hjr.jsonMap["config"]);
+    }
+    return null;
+  }
+
+  /// ERC20EPK->EPIK, 提交erc20epk交易记录
+  static Future<HttpJsonRes> swap2EPIK(String token, String erc20_txhash) {
+    String url = ServiceInfo.makeHostUrl("/wallet/submitERC20Tx");
+
+    Map<String, dynamic> params = new Map();
+    params["tx_hash"] = erc20_txhash;
+
+    Map<String, dynamic> headers = {"token": token};
+
+    return HttpUtil.instance.requestJson(false, url, null,
+        data: jsonEncode(params), headers: headers);
+  }
+
+  /// EPIK->ERC20EPK, 提交epik交易记录
+  static Future<HttpJsonRes> swap2ERC20EPK(String token, String epik_cid) {
+    String url = ServiceInfo.makeHostUrl("/wallet/submitEPIKTx");
+
+    Map<String, dynamic> params = new Map();
+    params["cid"] = epik_cid;
+
+    Map<String, dynamic> headers = {"token": token};
+
+    return HttpUtil.instance.requestJson(false, url, null,
+        data: jsonEncode(params), headers: headers);
+  }
+
+  /// EPIK <-> ERC20  双向兑换记录
+  static Future<HttpJsonRes> swapRecords(String token, String erc20_address) {
+    String url = ServiceInfo.makeHostUrl("/wallet/swapRecords");
+
+    Map<String, dynamic> params = new Map();
+    params["erc20_address"] = erc20_address;
+
+    Map<String, dynamic> headers = {"token": token};
+
+    return HttpUtil.instance.requestJson(true, url, params, headers: headers);
+  }
+
+  /// EPIK <-> ERC20  查询单个兑换记录  erc20 或 epik 任何一个交易记录 就可以查询
+  static Future<HttpJsonRes> swapRecord(String token,
+      {String erc20_tx_hash, String epik_cid}) {
+    String url = ServiceInfo.makeHostUrl("/wallet/swapRecords");
+
+    Map<String, dynamic> params = new Map();
+    if (erc20_tx_hash != null) params["erc20_tx_hash"] = erc20_tx_hash;
+    if (epik_cid != null) params["epik_cid"] = epik_cid;
+
+    Map<String, dynamic> headers = {"token": token};
+
+    return HttpUtil.instance.requestJson(true, url, params, headers: headers);
   }
 }

@@ -76,11 +76,12 @@ class StringUtils {
     return def;
   }
 
-  static const RollupSize_Units = ["GB", "MB", "KB", "B"];
+  static const RollupSize_Units = ["TB","GB", "MB", "KB", "B"];
+  static const RollupSize_Units1 = ["T","G", "M", "K", ""];
 
   /** 返回文件大小字符串 */
-  static String getRollupSize(int size) {
-    int idx = 3;
+  static String getRollupSize(int size,{List<String> units = RollupSize_Units}) {
+    int idx = 4;
     int r1 = 0;
     String result = "";
     while (idx >= 0) {
@@ -90,11 +91,11 @@ class StringUtils {
         r1 = (r1 * 100) ~/ 1024;
         if (r1 > 0) {
           if (r1 >= 10)
-            result = "$s1.$r1${RollupSize_Units[idx]}";
+            result = "$s1.$r1${units[idx]}";
           else
-            result = "$s1.0$r1${RollupSize_Units[idx]}";
+            result = "$s1.0$r1${units[idx]}";
         } else
-          result = s1.toString() + RollupSize_Units[idx];
+          result = s1.toString() + units[idx];
         break;
       }
       r1 = s1;

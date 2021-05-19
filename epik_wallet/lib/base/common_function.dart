@@ -38,6 +38,9 @@ abstract class BaseFuntion {
 
   Color bodyBackgroundColor =ResColor.b_1;// Colors.white;
 
+  Color proressBackgroundColor = ResColor.b_1;
+  Color errorBackgroundColor = ResColor.b_1;
+
   //标题字体大小
   double _appBarCenterTextSize = 20; //根据需求变更
   String _appBarTitle;
@@ -155,7 +158,7 @@ abstract class BaseFuntion {
     return Container(
       //错误页面中心可以自己调整
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-      color: bodyBackgroundColor,//Colors.white,
+      color: errorBackgroundColor,//Colors.white,
       width: double.infinity,
       height: double.infinity,
       child: Center(
@@ -202,7 +205,7 @@ abstract class BaseFuntion {
     return Container(
       //错误页面中心可以自己调整
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-      color: bodyBackgroundColor,//Colors.white,
+      color: proressBackgroundColor,//Colors.white,
       width: double.infinity,
       height: double.infinity,
       child: Center(

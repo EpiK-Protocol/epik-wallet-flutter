@@ -7,6 +7,11 @@ enum EventTag {
   // 主页面右侧抽屉菜单 打开或关闭
   MAIN_RIGHT_DRAWER,
 
+  // 主页面右侧抽屉菜单 矿机ID 打开或关闭
+  MAIN_RIGHT_DRAWER_MINER,
+
+  // 当前的矿机ID 发生变更
+  MINER_CURRENT_CHENGED,
 
   // 本地账号列表变更
   LOCAL_ACCOUNT_LIST_CHANGE,

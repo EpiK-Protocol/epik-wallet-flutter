@@ -42,7 +42,7 @@ class DL_TepkLoginToken extends DataLoader<String> {
   }
 
   @override
-  void requestData(bool readCache, JResponse callback) {
+  Future<void>  requestData(bool readCache, JResponse callback) {
     // ApiTestNet.login(account).then((httpjsonres) {
     //   callback(httpjsonres, false);
     // });
