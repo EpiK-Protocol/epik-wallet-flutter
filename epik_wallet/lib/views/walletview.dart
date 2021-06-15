@@ -7,6 +7,7 @@ import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
+import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
@@ -65,6 +66,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     headerlist.add("exchange_epk");
     headerlist.add("hunter_reward");
     headerlist.add("uniswap");
+    headerlist.add("testminingprofit");
   }
 
   @override
@@ -73,11 +75,24 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     eventMgr.add(EventTag.LOCAL_ACCOUNT_LIST_CHANGE, eventCallback_account);
     eventMgr.add(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
     eventMgr.add(EventTag.UPDATE_SERVER_CONFIG, eventCallback_account);
+    eventMgr.add(EventTag.BALANCE_UPDATE, eventCallback_balance);
     refresh();
   }
 
   eventCallback_account(obj) {
     refresh();
+  }
+
+  eventCallback_balance(obj) {
+    if(AccountMgr().currentAccount!=null)
+    {
+      data_list_item = AccountMgr().currentAccount.currencyList;
+      balance = StringUtils.formatNumAmount(
+          AccountMgr().currentAccount.total_usd,
+          point: 2);
+      setState(() {
+      });
+    }
   }
 
   @override
@@ -86,6 +101,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     eventMgr.remove(
         EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
     eventMgr.remove(EventTag.UPDATE_SERVER_CONFIG, eventCallback_account);
+    eventMgr.remove(EventTag.BALANCE_UPDATE, eventCallback_balance);
     super.dispose();
   }
 
@@ -322,21 +338,25 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
       case "exchange_epk":
         return headerItemBuild(
           localImage: "assets/img/ic_erc20_to_epk.png",
-          text: "ERC20-EPK 兑换 EPK",
+          text: RSID.main_wv_7.text,//"ERC20-EPK 兑换 EPK",
           onclick: () {
-            ViewGT.showErc20ToEpkView(context);
+            showToast(RSID.main_wv_10.text);
+            // ViewGT.showErc20ToEpkView(context);
           },
           position: position,
+            uninvalid:true,
         );
       case "hunter_reward":
         {
           return headerItemBuild(
             localImage: "assets/img/ic_dapp_bounty_swap.png",
-            text: "领取赏金猎人奖励",
+            text: RSID.main_wv_8.text,//"领取赏金猎人奖励",
             onclick: () {
-              ViewGT.showTakeBountyView(context);
+              showToast(RSID.main_wv_10.text);
+              // ViewGT.showTakeBountyView(context);
             },
             position: position,
+            uninvalid:true,
           );
         }
         break;
@@ -344,7 +364,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
         {
           return headerItemBuild(
             localImage: "assets/img/256x256_App_Icon_Pink.png",
-            text: "ERC20-EPK Uniswap 交易",
+            text: RSID.main_wv_9.text,//"ERC20-EPK Uniswap 交易",
             onclick: () {
               ViewGT.showTransactionView2(context);
             },
@@ -352,6 +372,28 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
           );
         }
         break;
+      case "testminingprofit":{
+        return headerItemBuild(
+          localImage: "assets/img/ic_epk_2.png",
+          text: RSID.main_mv_8.text,
+          onclick: () async{
+            String mining_id=AccountMgr()?.currentAccount?.mining_id;
+            if(StringUtils.isEmpty(mining_id))
+            {
+              showLoadDialog("");
+              await DL_TepkLoginToken.getEntity().refreshData(false);
+              closeLoadDialog();
+            }
+            mining_id=AccountMgr()?.currentAccount?.mining_id;
+            if(StringUtils.isEmpty(mining_id))
+            {
+              return;
+            }
+            ViewGT.showMiningProfitView(context, mining_id);
+          },
+          position: position,
+        );
+      }break;
     }
 
     return new Padding(
@@ -365,6 +407,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     String text,
     VoidCallback onclick,
     int position,
+    bool uninvalid=false,
   }) {
     bool isend = position >= headerlist.length - 1;
     return  Container(
@@ -399,7 +442,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                         text,
                         style: TextStyle(
                           fontSize: 14,
-                          color: ResColor.white,
+                          color: uninvalid?ResColor.white_60:ResColor.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -411,6 +454,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                         "assets/img/ic_arrow_right_1.png",
                         width: 7,
                         height: 11,
+                        color: uninvalid?ResColor.white_60:null,
                       ),
                     ),
                   ],

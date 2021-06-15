@@ -185,19 +185,19 @@ class _GeneralWebViewState extends BaseWidgetState<GeneralWebView> {
     );
   }
 
-  SystemUiOverlayStyle last;
+  // SystemUiOverlayStyle last;
 
   @override
   void onCreate() {
     // TODO: implement onCreate
     dlog("onCreate");
-    last = DeviceUtils.system_bar_current;
-    DeviceUtils.setSystemBarStyle(DeviceUtils.system_bar_dark);
+    // last = DeviceUtils.system_bar_current;
+    // DeviceUtils.setSystemBarStyle(DeviceUtils.system_bar_dark);
   }
 
   @override
   void dispose() {
-    DeviceUtils.setSystemBarStyle(last);
+    // DeviceUtils.setSystemBarStyle(last);
     if (_webViewController != null) {
       if (clearCache == true) _webViewController.clearCache();
       _webViewController = null;

@@ -97,6 +97,11 @@ abstract class BaseInnerWidgetState<T extends BaseInnerWidget> extends State<T>
     }
   }
 
+  onResume()
+  {
+    print("onResume ${getWidgetName()}");
+  }
+
   //新加内容
   AppLifecycleState _state;
 

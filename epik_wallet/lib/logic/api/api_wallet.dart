@@ -7,6 +7,7 @@ import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/EpikErc20SwapConfig.dart';
+import 'package:epikwallet/model/auth/RemoteAuth.dart';
 import 'package:epikwallet/model/prices.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
@@ -17,8 +18,9 @@ class ApiWallet {
   // GET {{HOST}}/messages?address=t3v2m2rkfoaqcqavhazvuplnqjpn4tgfgrej5r7sjrv27sa2ulftepflbcjakzk3pw3fysrdznz6kw6l4aamja&from=&size=50
   static Future<HttpJsonRes> getTepkOrderList(
       String address, String from, int size, int epkHeight) async {
-    // String url = ServiceInfo.HOST + "/messages";
-    String url = "http://116.63.146.223:3002" + "/messages"; //todo test
+    String url = ServiceInfo.makeHostUrl("/messages");
+    // String url = "http://116.63.146.223:3002" + "/messages"; // test
+    // String url = "https://explorer.epik-protocol.io/api" + "/messages"; //todo
     Map<String, dynamic> params = new Map();
     // address="t3v2m2rkfoaqcqavhazvuplnqjpn4tgfgrej5r7sjrv27sa2ulftepflbcjakzk3pw3fysrdznz6kw6l4aamja";
     params["address"] = address;
@@ -166,9 +168,9 @@ class ApiWallet {
 
     Map<String, dynamic> headers = {"token": null};
 
-    HttpJsonRes hjr = await HttpUtil.instance.requestJson(true, url, params, headers: headers);
-    if(hjr?.code==0)
-    {
+    HttpJsonRes hjr = await HttpUtil.instance
+        .requestJson(true, url, params, headers: headers);
+    if (hjr?.code == 0) {
       return EpikErc20SwapConfig.fromJson(hjr.jsonMap["config"]);
     }
     return null;
@@ -224,5 +226,53 @@ class ApiWallet {
     Map<String, dynamic> headers = {"token": token};
 
     return HttpUtil.instance.requestJson(true, url, params, headers: headers);
+  }
+
+  static Future<HttpJsonRes> sendRemoteAuth(RemoteAuth ra) async {
+    String url = ra.callback;
+    String epik_address = AccountMgr()?.currentAccount?.epik_EPK_address;
+
+
+    //原文解base64得bytes
+    Uint8List plain_bytes = base64.decode(ra.plain);
+    Dlog.p("sendRemoteAuth", "plain=${ra.plain}");
+    Dlog.p("sendRemoteAuth", "decodedPlain=${plain_bytes}");
+
+    //原文的bytes提取sha256摘要
+    Digest digest = sha256.convert(plain_bytes);
+    Uint8List plain_sha256 = Uint8List.fromList(digest.bytes);
+
+    //钱包签名
+    Uint8List epik_signature_byte = await AccountMgr()
+        ?.currentAccount
+        ?.epikWallet
+        ?.sign(epik_address,  plain_sha256);
+    Dlog.p("sendRemoteAuth", "epik_signature_byte=${epik_signature_byte}");
+
+    //签名做base64
+    String epik_signature_base64 = base64.encode(epik_signature_byte);
+    Dlog.p("sendRemoteAuth", "epik_signature_base64=${epik_signature_base64}");
+
+
+    Map<String, dynamic> headers = {
+      "address": epik_address,
+      "signature": epik_signature_base64,
+      "plain":ra.plain,
+    };
+
+    HttpJsonRes hjr =await HttpUtil.instance
+        .requestJson(false, url, null, data:"", headers: headers);
+    Dlog.p("sendRemoteAuth", "hjr code=${hjr.code}");
+    Dlog.p("sendRemoteAuth", "httpstate ${hjr.httpStatusCode} ${hjr.httpStatusMessage}");
+
+    if(hjr.code!=0)
+    {
+      if(hjr.httpStatusCode==200)
+      {
+        hjr.code=0;
+      }
+    }
+
+    return hjr;
   }
 }

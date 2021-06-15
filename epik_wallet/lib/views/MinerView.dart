@@ -7,9 +7,12 @@ import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
+import 'package:epikwallet/logic/api/api_mainnet.dart';
+import 'package:epikwallet/model/MinerCoinbaseList.dart';
 import 'package:epikwallet/model/MinerInfo.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
+import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/mainview.dart';
@@ -33,9 +36,9 @@ extension MinerSubpageTypeEx on MinerSubpageType {
   String getName() {
     switch (this) {
       case MinerSubpageType.pledge:
-        return "抵押"; //ResString.get(appContext, RSID.bts_5); //"全部";
+        return RSID.minerview_1.text;//"抵押"; //ResString.get(appContext, RSID.bts_5); //"全部";
       case MinerSubpageType.withdraw:
-        return "赎回"; //ResString.get(appContext, RSID.bts_6); //"社群";
+        return RSID.minerview_2.text;//"赎回"; //ResString.get(appContext, RSID.bts_6); //"社群";
       default:
         return "";
     }
@@ -77,6 +80,8 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
     setAppBarVisible(false);
     setAppBarBackColor(Colors.transparent);
     setTopBarBackColor(Colors.transparent);
+
+    // resizeToAvoidBottomPadding = true;
 
     eventMgr.add(EventTag.BALANCE_UPDATE, eventmgr_callback);
     eventMgr.add(EventTag.MINER_CURRENT_CHENGED, eventmgr_callback_chengedCurrentId);
@@ -136,9 +141,13 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
       return;
     }
 
+
+    await AccountMgr().currentAccount.getMinerListOnline();
+
     AccountMgr().currentAccount.loadMinerIdList();
+
     minerid = AccountMgr().currentAccount.minerCurrent;
-    if (StringUtils.isEmpty(minerid)) {
+    if (StringUtils.isEmpty(minerid) && AccountMgr()?.currentAccount?.minerCoinbaseList?.hasData!=true) {
       _MinerStateType = MinerStateType.needminerid;
       closeStateLayout();
       isLoading = false;
@@ -156,6 +165,8 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
       print("minerinfo" + robj.data);
       mi = MinerInfo.fromJson(jsonDecode(robj.data));
       mi?.minerid=minerid;
+    }else{
+      showToast(robj.errorMsg);
     }
 
     if (mi != null) {
@@ -165,6 +176,7 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
     } else {
       _MinerStateType = null;
       errorBackgroundColor = Colors.transparent;
+      statelayout_margin=EdgeInsets.only(top: getAppBarHeight()+getTopBarHeight());
       setErrorWidgetVisible(true);
     }
     isLoading = false;
@@ -178,6 +190,8 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
     isLoading = true;
     // proressBackgroundColor = Colors.transparent;
     // setLoadingWidgetVisible(true);
+
+    AccountMgr().currentAccount.getMinerListOnline();
 
     EpikWalletUtils.requestBalance(AccountMgr().currentAccount);
 
@@ -264,7 +278,7 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
                   autofocus: false,
                   maxLines: 1,
                   // hint: "请输入MinerID",
-                  label: "请输入MinerID",
+                  label: RSID.minerview_3.text,//"请输入MinerID",
                   regexp: r'(\d|[a-z]|[A-Z])+',
                   onChanged: (text, classtype) {
                     minerid_input = text.toString().trim();
@@ -276,7 +290,7 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
                   color_bg: Colors.transparent,
                   disabledColor: Colors.transparent,
                   height: 40,
-                  text: "添加",
+                  text: RSID.minerview_4.text,//"添加",
                   textstyle: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -285,7 +299,7 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
                   bg_borderradius: BorderRadius.circular(4),
                   onclick: (lbtn) {
                     if (StringUtils.isEmpty(minerid_input)) {
-                      showToast("请输入MinerID");
+                      showToast(RSID.minerview_3.text);//"请输入MinerID");
                       return;
                     }
                     closeInput();
@@ -373,7 +387,7 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
         children: [
           Expanded(
             child: Text(
-              "存储矿工",
+      RSID.minerview_5.text,// "存储矿工",
               style: TextStyle(
                 fontSize: 20,
                 color: Colors.white,
@@ -458,14 +472,14 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
 
   Widget getMinerCard1() {
     List<Widget> items = [
-      getRowText("当前算例",
+      getRowText(RSID.minerview_6.text,//"当前算例",
           "${minerInfo.mining_power_s} / ${minerInfo.total_power_s} (${minerInfo.power_percent})"),
       getRowText("CoinBase", minerInfo.coin_base ?? ""),
-      getRowText("账户余额",
+      getRowText(RSID.minerview_7.text,//"账户余额",
           "${StringUtils.formatNumAmount(minerInfo.getBalance(), point: 8, supply0: false)}"),
-      getRowText("锁定余额",
+      getRowText(RSID.minerview_8.text,//"锁定余额",
           "${StringUtils.formatNumAmount(minerInfo.vesting, point: 8, supply0: false)}"),
-      getRowText("可提余额",
+      getRowText(RSID.minerview_9.text,//"可提余额",
           "${StringUtils.formatNumAmount(minerInfo.available_balance, point: 8, supply0: false)}"),
     ];
 
@@ -486,13 +500,14 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
 
   Widget getMinerCard2() {
     List<Widget> items = [
-      getRowText("矿工基础抵押",
+      getRowText("Owner",minerInfo.owner),
+      getRowText(RSID.minerview_10.text,//"矿工基础抵押",
           "${StringUtils.formatNumAmount(minerInfo.mining_pledged, point: 8, supply0: false)}"),
-      getRowText("我的基础抵押",
+      getRowText(RSID.minerview_11.text,//"我的基础抵押",
           "${StringUtils.formatNumAmount(minerInfo.my_mining_pledge, point: 8, supply0: false)}"),
-      getRowText("流量抵押余额",
+      getRowText(RSID.minerview_12.text,//"流量抵押余额",
           "${StringUtils.formatNumAmount(minerInfo.retrieve_balance, point: 8, supply0: false)}"),
-      getRowText("流量抵押锁定",
+      getRowText(RSID.minerview_13.text,//"流量抵押锁定",
           "${StringUtils.formatNumAmount(minerInfo.retrieve_locked, point: 8, supply0: false)}"),
       Container(height: 20),
       LinearPercentIndicator(
@@ -511,7 +526,7 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
         linearGradient: ResColor.lg_1,
       ),
       Container(height: 10),
-      getRowText("当日访问流量", "5Gb / 10Gb"),
+      getRowText(RSID.minerview_14.text,/*"当日访问流量",*/ "${minerInfo.getRetrieveNumerator()} / ${minerInfo.getRetrieveDenominator()}"),
     ];
 
     return Container(

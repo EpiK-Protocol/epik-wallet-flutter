@@ -213,7 +213,7 @@
                 resultSync(@"");
             }
         }else if ([@"epik_wallet_balance" isEqualToString:call.method]) {
-            if (self->_hdWallet){
+            if (self->_epikWallet){
                 NSString *balance = [self->_epikWallet balance:arguments[@"addr"] error:&err];
                 if (!err) {
                     resultSync(balance);
@@ -222,7 +222,7 @@
                 err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
             }
         }else if ([@"epik_wallet_export" isEqualToString:call.method]) {
-            if (self->_hdWallet){
+            if (self->_epikWallet){
                 NSString *privateKey = [self->_epikWallet export:arguments[@"addr"] error:&err];
                 if (!err) {
                     resultSync(privateKey);
@@ -231,7 +231,7 @@
                 err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
             }
         }else if ([@"epik_wallet_import" isEqualToString:call.method]) {
-            if (self->_hdWallet){
+            if (self->_epikWallet){
                NSString *addr = [self->_epikWallet import:arguments[@"privateKey"] error:&err];
                 if (!err) {
                     resultSync(addr);
@@ -240,7 +240,7 @@
                 err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
             }
         }else if ([@"epik_wallet_generateKey" isEqualToString:call.method]) {
-            if (self->_hdWallet){
+            if (self->_epikWallet){
                 NSString *address = [self->_epikWallet generateKey:arguments[@"t"] seed:[arguments[@"seed"] data] path:arguments[@"path"] error:&err];
                 if (!err) {
                     resultSync(address);
@@ -249,7 +249,7 @@
                 err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
             }
         }else if ([@"epik_wallet_hasAddr" isEqualToString:call.method]) {
-            if (self->_hdWallet){
+            if (self->_epikWallet){
                 BOOL has = [self->_epikWallet hasAddr:arguments[@"addr"]];
                 if (!err) {
                     resultSync([NSNumber numberWithBool:has]);
@@ -257,17 +257,20 @@
             }else{
                 err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
             }
-        }else if ([@"epik_wallet_messageList" isEqualToString:call.method]) {
-            if (self->_hdWallet){
-                NSString *messages = [self->_epikWallet messageList:[arguments[@"toHeight"] intValue] addr:arguments[@"addr"] error:&err];
-                if (!err) {
-                    resultSync(messages);
-                }
-            }else{
-                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
-            }
-        }else if ([@"epik_wallet_setDefault" isEqualToString:call.method]) {
-            if (self->_hdWallet){
+        }
+//        Deprecated  2021-03-25 从SDK中删除
+//        else if ([@"epik_wallet_messageList" isEqualToString:call.method]) {
+//            if (self->_hdWallet){
+//                NSString *messages = [self->_epikWallet messageList:[arguments[@"toHeight"] intValue] addr:arguments[@"addr"] error:&err];
+//                if (!err) {
+//                    resultSync(messages);
+//                }
+//            }else{
+//                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+//            }
+//        }
+        else if ([@"epik_wallet_setDefault" isEqualToString:call.method]) {
+            if (self->_epikWallet){
                 [self->_epikWallet setDefault:arguments[@"addr"] error:&err];
                 if (!err) {
                     resultSync(@"");
@@ -276,7 +279,7 @@
                 err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
             }
         }else if ([@"epik_wallet_setRPC" isEqualToString:call.method]) {
-            if (self->_hdWallet){
+            if (self->_epikWallet){
                 [self->_epikWallet setRPC:arguments[@"url"] token:arguments[@"token"] error:&err];
                 if (!err) {
                     resultSync(@"");
@@ -285,7 +288,7 @@
                 err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
             }
         }else if ([@"epik_wallet_sign" isEqualToString:call.method]) {
-            if (self->_hdWallet){
+            if (self->_epikWallet){
                 NSData *sign = [self->_epikWallet sign:arguments[@"addr"] hash:[arguments[@"hash"] data] error:&err];
                 if (!err) {
                     resultSync([FlutterStandardTypedData typedDataWithBytes:sign]);
@@ -294,7 +297,7 @@
                 err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
             }
         }else if ([@"epik_wallet_send" isEqualToString:call.method]) {
-            if (self->_hdWallet){
+            if (self->_epikWallet){
                 NSString *txHash = [self->_epikWallet send:arguments[@"to"] amount:arguments[@"amount"] error:&err];
                 if (!err) {
                     resultSync(txHash);
@@ -302,7 +305,214 @@
             }else{
                 err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
             }
-        }else {
+        }
+        // 2021-03-25 新增  epik  ------------------------------
+        else if ([@"epik_wallet_createExpert" isEqualToString:call.method]) {
+            // 创建领域专家 applicationHash
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet createExpert:arguments[@"applicationHash"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_expertInfo" isEqualToString:call.method]) {
+            // 专家详情
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet expertInfo:arguments[@"addr"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_expertList" isEqualToString:call.method]) {
+            // 专家列表
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet expertList:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_messageReceipt" isEqualToString:call.method]) {
+            // 消息回执
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet messageReceipt:arguments[@"cidStr"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_voteRescind" isEqualToString:call.method]) {
+            // 投票撤销
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet voteRescind:arguments[@"candidate"] amount:arguments[@"amount"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_voteSend" isEqualToString:call.method]) {
+            // 投票
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet voteSend:arguments[@"candidate"] amount:arguments[@"amount"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_voteWithdraw" isEqualToString:call.method]) {
+            // 投票提现
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet voteWithdraw:arguments[@"to"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_voterInfo" isEqualToString:call.method]) {
+            // 投票信息
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet voterInfo:arguments[@"addr"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }
+        // 2021-04-19 新增  epik  ------------------------------
+        else if ([@"epik_wallet_minerInfo" isEqualToString:call.method]) {
+            // 矿机信息
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet minerInfo:arguments[@"minerID"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_minerPledgeAdd" isEqualToString:call.method]) {
+            // 矿机 基础抵押 添加
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet minerPledgeAdd:arguments[@"toMinerID"] amount:arguments[@"amount"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_minerPledgeWithdraw" isEqualToString:call.method]) {
+            // 矿机 基础抵押 撤回
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet minerPledgeWithdraw:arguments[@"toMinerID"] amount:arguments[@"amount"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_retrievePledgeAdd" isEqualToString:call.method]) {
+            // 矿机 访问抵押 添加
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet retrievePledgeAdd:arguments[@"target"] miner:arguments[@"toMinerID"] amount:arguments[@"amount"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_retrievePledgeApplyWithdraw" isEqualToString:call.method]) {
+            // 矿机 访问抵押 申请撤回  第一步 三天后可以执行第二部
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet retrievePledgeApplyWithdraw:arguments[@"toMinerID"] amount:arguments[@"amount"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_retrievePledgeWithdraw" isEqualToString:call.method]) {
+            // 矿机 访问抵押 撤回 第二步
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet retrievePledgeWithdraw:arguments[@"toMinerID"] amount:arguments[@"amount"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_retrievePledgeBind" isEqualToString:call.method]) {
+            // 矿机 访问抵押 绑定
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet retrievePledgeBind:arguments[@"miner"] amount:arguments[@"amount"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_retrievePledgeUnBind" isEqualToString:call.method]) {
+            // 矿机 访问抵押 解绑
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet retrievePledgeUnBind:arguments[@"miner"] amount:arguments[@"amount"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }
+        // 2021-03-25 新增  hd  ------------------------------
+        else if ([@"hd_wallet_accelerateTx" isEqualToString:call.method]) {
+            // AccelerateTx 加速交易
+            if (self->_hdWallet){
+                NSString *ret = [self->_hdWallet accelerateTx:arguments[@"srcTxHash"] gasRate:[arguments[@"gasRate"] doubleValue] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"hd_wallet_cancelTx" isEqualToString:call.method]) {
+            // CancelTx 取消交易
+            if (self->_hdWallet){
+                NSString *ret = [self->_hdWallet cancelTx:arguments[@"srcTxHash"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"hd_wallet_receipt" isEqualToString:call.method]) {
+            // receipt
+            if (self->_hdWallet){
+                NSString *ret = [self->_hdWallet receipt:arguments[@"txHash"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"hd_wallet_export" isEqualToString:call.method]) {
+            // hd钱包导出私钥
+            if (self->_hdWallet){
+                NSString *ret = [self->_hdWallet export:arguments[@"addr"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }
+        else {
             resultSync(FlutterMethodNotImplemented);
         }
         if (err) {

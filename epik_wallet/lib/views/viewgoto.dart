@@ -4,6 +4,7 @@ import 'package:epikwallet/model/BountyTask.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/Dapp.dart';
 import 'package:epikwallet/model/Expert.dart';
+import 'package:epikwallet/model/VoterInfo.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/views/bounty/bountydetailview.dart';
@@ -30,6 +31,7 @@ import 'package:epikwallet/views/uniswap/uniswapview.dart';
 import 'package:epikwallet/views/wallet/accountdetailview.dart';
 import 'package:epikwallet/views/wallet/create/createwalletview.dart';
 import 'package:epikwallet/views/wallet/exprot/exportepikprivatekeyview.dart';
+import 'package:epikwallet/views/wallet/exprot/exportethprivatekeyview.dart';
 import 'package:epikwallet/views/wallet/fixpasswordview.dart';
 import 'package:epikwallet/views/wallet/import/importwalletview.dart';
 import 'package:epikwallet/views/web/generalwebview.dart';
@@ -129,9 +131,9 @@ class ViewGT {
   // }
 
   /// 挖矿奖励
-  // static showMiningProfitView(BuildContext context, String mining_id) {
-  //   showView(context, MiningProfitView(mining_id));
-  // }
+  static showMiningProfitView(BuildContext context, String mining_id) {
+    showView(context, MiningProfitView(mining_id));
+  }
 
   /// 充币
   static showCurrencyDepositView(BuildContext context,
@@ -146,14 +148,19 @@ class ViewGT {
   }
 
   /// 扫描二维码
-  static showQrcodeScanView(BuildContext context) {
-    showView(context, QrcodeScanView());
+  static Future showQrcodeScanView(BuildContext context) {
+    return showView(context, QrcodeScanView());
   }
 
   /// 导出epik钱包的私钥
   static showExportEpikPrivateKeyView(
       BuildContext context, WalletAccount walletAccount) {
     showView(context, ExportEpikPrivateKeyView(walletAccount));
+  }
+  /// 导出Eth钱包的私钥
+  static showExportEthPrivateKeyView(
+      BuildContext context, WalletAccount walletAccount) {
+    showView(context, ExportEthPrivateKeyView(walletAccount));
   }
 
   /// 修改钱包密码
@@ -201,9 +208,9 @@ class ViewGT {
     showView(context, ApplyExpertView());
   }
 
-  static Future showExpertInfoView(BuildContext context,Expert expert)
+  static Future showExpertInfoView(BuildContext context,Expert expert,VoterInfo voterinfo)
   {
-   return  showView(context, ExpertInfoView(expert));
+   return  showView(context, ExpertInfoView(expert,voterinfo));
   }
 
   static showErc20ToEpkView(BuildContext context)

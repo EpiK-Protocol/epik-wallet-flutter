@@ -55,7 +55,8 @@ class ApiMainNet {
   }
 
   static Future<HttpJsonRes> expertBaseInfomation() {
-    String url = "http://116.63.146.223:3002/baseInfomation";
+    String url = ServiceInfo.makeHostUrl("/baseInfomation");
+    // String url = "http://116.63.146.223:3002/baseInfomation";// test
     Map<String, dynamic> params = new Map();
     return HttpUtil.instance.requestJson(true, url, params);
   }
@@ -85,7 +86,7 @@ class ApiMainNet {
     // Map<String, dynamic> params = new Map();
     // params["offset"]=size*page;
     // params["offset"]=size;
-    return HttpUtil.instance.requestJson(true, url, params, needToken: true);
+    return HttpUtil.instance.requestJson(true, url, params,);
   }
 
 //  #领域专家资料
@@ -104,7 +105,16 @@ class ApiMainNet {
     } else if (StringUtils.isNotEmpty(expert_id)) {
       params["expert_id"] = expert_id; //专家ID
     }
-    return HttpUtil.instance.requestJson(true, url, params, needToken: true);
+    return HttpUtil.instance.requestJson(true, url, params,);
+  }
+
+  ///获取epik地址关联的矿机
+  static Future<HttpJsonRes> getMiners(String epikAddress)
+  {
+    String url =  ServiceInfo.makeHostUrl("/mainnet/controlMiners");
+    Map<String, dynamic> params = new Map();
+    params["address"] = epikAddress;
+    return HttpUtil.instance.requestJson(true, url, params);
   }
 
 //  #领域专家资料注册
@@ -140,6 +150,6 @@ class ApiMainNet {
       "owner": owner,
     };
     return HttpUtil.instance
-        .requestJson(false, url, null, data: params, needToken: true);
+        .requestJson(false, url, null, data: params,);
   }
 }

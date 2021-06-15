@@ -1,3 +1,4 @@
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/utils/data/date_util.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 
@@ -22,7 +23,7 @@ extension ExpertStatusEx on ExpertStatus {
   static ExpertStatus ofString(String text) {
     if (text.contains("registered")) return ExpertStatus.registered;
     if (text.contains("nominated")) return ExpertStatus.nominated;
-    if (text.contains("normal")) return ExpertStatus.normal;
+    if (text.contains("normal") || text.contains("qualified")) return ExpertStatus.normal;
     if (text.contains("blocked")) return ExpertStatus.blocked;
     if (text.contains("disqualified")) return ExpertStatus.disqualified;
 
@@ -32,15 +33,15 @@ extension ExpertStatusEx on ExpertStatus {
   String getString() {
     switch (this) {
       case ExpertStatus.registered:
-        return "已注册";
+        return RSID.expertview_9.text;//"已注册";
       case ExpertStatus.nominated:
-        return "已审核";
+        return RSID.expertview_10.text;//"已审核";
       case ExpertStatus.normal:
-        return "活跃的";
+        return RSID.expertview_11.text;//"活跃的";
       case ExpertStatus.blocked:
-        return "黑名单";
+        return RSID.expertview_12.text;//"黑名单";
       case ExpertStatus.disqualified:
-        return "黑名单";
+        return RSID.expertview_13.text;//"黑名单";
     }
   }
 }
@@ -52,7 +53,8 @@ class Expert {
   // 收益
   String income; //"Reward" :"0",
   //状态
-  String status; //"normal(votes not enough)"
+  int status=0;
+  String statusDesc;
   //差多少票
   String required_vote; // "100000"
   //数据量？
@@ -65,6 +67,8 @@ class Expert {
   double vote_d = 0;
   double required_vote_d = 0;
 
+  String domain;
+
   String getRequiredVoteStr() {
     if (required_vote_d > 0)
       return "  /  ${StringUtils.formatNumAmount(required_vote)}";
@@ -76,15 +80,26 @@ class Expert {
       id = json["id"]; //json["ID"];//"ID": "f01000",
       vote = json["vote"]; //json["VoteAmount"]; //"VoteAmount": "8500",
       income = json["income"]; //json["Reward"]; //"Reward" :"0",
-      status = json["status"];
+
+      // "Status":1,"StatusDesc":"qualified",
+      status = StringUtils.parseInt(json["status"],0);
+      statusDesc=json["status_desc"];
+
       required_vote = json["required_vote"];
       data_count = json["data_count"];
       application_hash = json["application_hash"];
 
-      status_e = ExpertStatusEx.ofString(status);
+      status_e = ExpertStatusEx.ofString(statusDesc);
 
       vote_d = StringUtils.parseDouble(vote, 0);
       required_vote_d = StringUtils.parseDouble(required_vote, 0);
+
+
+      String TotalReward = json["total_reward"];
+      income=StringUtils.bigNumDownsizing(TotalReward);
+
+      domain = json["domain"];
+
     } catch (e, s) {
       print(s);
     }
@@ -120,8 +135,10 @@ class Expert {
       String TotalReward = json["TotalReward"];
       income=StringUtils.bigNumDownsizing(TotalReward);
 
-      status = json["StatusDesc"];
-      status_e = ExpertStatusEx.ofString(status);
+      status = StringUtils.parseInt(json["Status"],0);
+      statusDesc=json["StatusDesc"];
+      // "Status":1,"StatusDesc":"qualified"
+      status_e = ExpertStatusEx.ofString(statusDesc);
 
       data_count = json["DataCount"];
 
@@ -184,7 +201,9 @@ class ExpertInfo {
       plain = json["plain"];
       created_at = json["created_at"];
 
+      // "Status":1,"StatusDesc":"qualified"
       status= json["status"];//资料审核状态
+
       reason=json["reason"];//原因
 
       dt_created_at = DateUtil.getDateTime(created_at,isUtc: false) ?? DateTime.now();

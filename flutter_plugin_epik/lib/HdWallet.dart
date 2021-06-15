@@ -418,4 +418,16 @@ class HdWallet {
     }
     return null;
   }
+
+  // // hd钱包导出私钥
+  Future<String> export(String addr) async {
+    try {
+      String privateKey = await EpikPlugin.channel
+          .invokeMethod("hd_wallet_export", <String, dynamic>{"addr": addr});
+      return privateKey;
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
 }

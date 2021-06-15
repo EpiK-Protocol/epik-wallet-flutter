@@ -3,7 +3,12 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:epikwallet/localstring/LocaleConfig.dart';
+import 'package:epikwallet/model/Upgrade.dart';
+import 'package:epikwallet/utils/Dlog.dart';
+import 'package:epikwallet/utils/RegExpUtil.dart';
+import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/string_utils.dart';
+import 'package:package_info/package_info.dart';
 
 class HttpUtil {
   // 工厂模式
@@ -70,6 +75,8 @@ class HttpUtil {
     return future;
   }
 
+  PackageInfo packageinfo;
+
 //get请求
   Future<HttpJsonRes> requestJson(
     bool isGet,
@@ -81,31 +88,61 @@ class HttpUtil {
     bool needToken = false,
     bool sendLanguageType = true,
   }) async {
+    if (packageinfo == null) packageinfo = await PackageInfo.fromPlatform();
+
     HttpJsonRes mHttpJsonRes = new HttpJsonRes();
     Response response;
 
-    Map<String, dynamic> def_headers = Map();
+    Map<String, dynamic> def_headers = {
+      "os": Platform.operatingSystem,
+      //android ios ...
+      "osversion": DeviceUtils().getSysVersion(),
+      //系统版本
+      "appversion": packageinfo?.version,
+      //应用版本
+      "appbuildnum": packageinfo.buildNumber,
+      //编译序号(小版本号)
+      "codeversion": code_version,
+      //代码版本
+      "manufacturer": DeviceUtils().getManufacturer(),
+      //厂商
+      "physical": DeviceUtils().isPhysicalDevice(),
+      //是否为真实设备
+      "deviceid": DeviceUtils().getDeviceId(),
+      //设备ID，ios是uuid ，android是设备+应用签名的ID
+      "devicename": DeviceUtils().getDeviceName(),
+      //设备名
+    };
 
-//    if (needToken) {
-//      if (StringUtils.isNotEmpty(AccountMgr().currentAccount.access_token)) {
-//        def_headers["token"] = AccountMgr().currentAccount.access_token;
-//      } else {
-//        print("httputils  requestJson  no token");uspav_2
-//      }
-//    }
+    def_headers.forEach((key, value) {
+      // print(key);
+      // print(value);
+      if (value != null &&
+          RegExpUtil.re_ascii_00_7f_not.hasMatch(value.toString())) {
+        def_headers[key] = Uri.encodeFull(value); //非基础字符 转义
+        // print("$value--->${def_headers[key]}");
+      }
+    });
 
-    if(sendLanguageType)
-    {
+   // if (needToken) {
+   //   if (StringUtils.isNotEmpty(AccountMgr().currentAccount.access_token)) {
+   //     def_headers["token"] = AccountMgr().currentAccount.access_token;
+   //   } else {
+   //     print("httputils  requestJson  no token");
+   //   }
+   // }
+
+    if (sendLanguageType) {
       // language:zh-cn
-      def_headers["language"] =LocaleConfig.currentIsZh()? "zh-cn":"en-us";
+      def_headers["language"] = LocaleConfig.currentIsZh() ? "zh-cn" : "en-us";
     }
 
     if (headers != null && headers.length > 0) {
       def_headers.addEntries(headers.entries);
-      print("def_headers=$def_headers");
     }
+    print("def_headers=$def_headers");
 
-    Options options = Options(headers: def_headers);
+    RequestOptions options = RequestOptions(headers: def_headers);
     print("options=$options");
 
     try {
@@ -126,8 +163,9 @@ class HttpUtil {
             "  params=" +
             params.toString() +
             " formData=" +
-            formData.toString()+
-            " data="+data?.toString());
+            formData.toString() +
+            " data=" +
+            data?.toString());
 
         if (params != null) {
           params.keys.forEach((key) {
@@ -168,10 +206,16 @@ class HttpUtil {
       }
     }
 
-    print("httputils response=" + response.toString() + "  from=" + url);
-    print( "  from=" + url);
+    Dlog.p("httputils",
+        "httputils response=" + response.toString() + "  from=" + url,
+        printAll: true);
 
-    if (response != null && response.data != null) {
+    if (response != null) {
+      mHttpJsonRes.httpStatusCode = response.statusCode;
+      mHttpJsonRes.httpStatusMessage = response.statusMessage;
+    }
+
+    if (response?.data != null) {
       try {
         if (response.data is String) {
           print("requestJson ---- string = ${response.data}");
@@ -219,4 +263,7 @@ class HttpJsonRes {
   int code = 0;
   String msg = "";
   Map<String, dynamic> jsonMap;
+
+  int httpStatusCode;
+  String httpStatusMessage;
 }

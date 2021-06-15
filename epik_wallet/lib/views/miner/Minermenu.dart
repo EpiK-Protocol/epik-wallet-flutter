@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
+import 'package:epikwallet/model/MinerCoinbaseList.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
@@ -29,12 +31,15 @@ class _MinerMenuState extends BaseInnerWidgetState<MinerMenu> {
   List<String> data = [];
   String cMinerId;
 
+  MinerCoinbaseList minerCoinbaseList;
+
   /// 功能模式 0选择 1删除
   int action = 0;
 
   @override
   void initState() {
     super.initState();
+    minerCoinbaseList = AccountMgr()?.currentAccount?.minerCoinbaseList;
   }
 
   @override
@@ -59,8 +64,9 @@ class _MinerMenuState extends BaseInnerWidgetState<MinerMenu> {
   setAction(int a) {
     /// 功能模式 0选择 1删除
     action = a;
-    setAppBarTitle(action == 0 ? "选择MinerID" : "删除MinerID");
-    setAppBarRightTitle(action == 0 ? "删除" : RSID.cancel.text);
+    // setAppBarTitle(action == 0 ? "选择MinerID" : "删除MinerID");
+    setAppBarTitle(action == 0 ? RSID.minermenu_1.text : RSID.minermenu_2.text);
+    setAppBarRightTitle(action == 0 ? RSID.minermenu_3.text : RSID.cancel.text);
   }
 
   @override
@@ -69,7 +75,6 @@ class _MinerMenuState extends BaseInnerWidgetState<MinerMenu> {
     data = List<String>.from(AccountMgr()?.currentAccount?.minerIdList ?? []);
     cMinerId = AccountMgr()?.currentAccount?.minerCurrent;
   }
-
 
   @override
   void dispose() {
@@ -136,14 +141,71 @@ class _MinerMenuState extends BaseInnerWidgetState<MinerMenu> {
     );
   }
 
+  Widget subtitle(String title)
+  {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 17,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget buildWidget(BuildContext context) {
     List<Widget> items = [];
-    for (int i = 0; i < data.length; i++) {
-      if (action == 0) {
-        items.add(buildItem(data[i], data[i]==cMinerId));
-      } else {
-        items.add(buildItemDel(data[i], data[i]==cMinerId));
+
+    //选择模式
+    if (action == 0) {
+
+      bool hasseleted = false;
+      //在线id
+      if (minerCoinbaseList?.hasCoinbased == true) {
+        items.add(subtitle("CoinBased"));
+        minerCoinbaseList.coinbased.forEach((element) {
+          if(hasseleted==false && element == cMinerId)
+          {
+            hasseleted=true;
+          }
+          items.add(buildItem(element, element == cMinerId));
+        });
+      }
+      if (minerCoinbaseList?.haspledged == true) {
+        items.add(subtitle("Pledged"));
+        minerCoinbaseList.pledged.forEach((element) {
+          if(hasseleted==false && element == cMinerId)
+          {
+            hasseleted=true;
+          }
+          items.add(buildItem(element, element == cMinerId));
+        });
+      }
+
+      //本地minerid
+      if (data != null && data.length > 0) {
+        items.add(subtitle("Local"));
+        for (int i = 0; i < data.length; i++) {
+          if(minerCoinbaseList?.containsMinerid(data[i])==true){
+            continue;
+          }
+          items.add(buildItem(data[i], hasseleted==false?data[i] == cMinerId:false));
+        }
+      }
+    } else {
+      //删除模式
+      //本地minerid
+      for (int i = 0; i < data.length; i++) {
+        // if (action == 0) {
+        //   items.add(buildItem(data[i], data[i] == cMinerId));
+        // } else {
+          items.add(buildItemDel(data[i], data[i] == cMinerId));
+        // }
       }
     }
 
@@ -170,7 +232,7 @@ class _MinerMenuState extends BaseInnerWidgetState<MinerMenu> {
                     height: 40,
                     color_bg: const Color(0xff3a3a3a),
                     disabledColor: const Color(0xff3a3a3a),
-                    text: "添加MinerID",
+                    text: RSID.minermenu_4.text,//"添加MinerID",
                     onclick: (lbtn) {
                       clickAdd();
                     },
@@ -303,26 +365,24 @@ class _MinerMenuState extends BaseInnerWidgetState<MinerMenu> {
   onClickItemDel(String minerID, bool isCurrent) {
     // 删除某个ID
     data.remove(minerID);
-    if(isCurrent)
-    {
-      cMinerId =  data != null && data.length > 0 ?  data[0] : null;
+    if (isCurrent) {
+      cMinerId = data != null && data.length > 0 ? data[0] : null;
     }
-    setState(() {
-    });
+    setState(() {});
   }
 
   onClickItem(String minerID, bool isCurrent) {
     //  选择某个ID
-    cMinerId=minerID;
-    setState(() {
-    });
-    Future.delayed(Duration(milliseconds: 100)).then((value){
+    cMinerId = minerID;
+    setState(() {});
+    Future.delayed(Duration(milliseconds: 100)).then((value) {
       finish();
     });
   }
 
   void clickAdd() {
-    BottomDialog.showTextInputDialog(context, "添加MinerID", "", "请输入MinerID", 50,
+    // BottomDialog.showTextInputDialog(context, "添加MinerID", "", "请输入MinerID", 50,
+    BottomDialog.showTextInputDialog(context, RSID.minermenu_4.text, "", RSID.minermenu_5.text, 50,
         (value) {
       if (StringUtils.isNotEmpty(value)) {
         data.add(value.trim());
@@ -331,7 +391,7 @@ class _MinerMenuState extends BaseInnerWidgetState<MinerMenu> {
     });
   }
 
-  void save(){
+  void save() {
     bool currentChenged = false;
     if (AccountMgr().currentAccount.minerCurrent != cMinerId) {
       AccountMgr().currentAccount.minerCurrent = cMinerId;
@@ -340,9 +400,8 @@ class _MinerMenuState extends BaseInnerWidgetState<MinerMenu> {
     AccountMgr().currentAccount.minerIdList = data;
     AccountMgr().currentAccount.saveMinerIdList();
 
-    if(currentChenged)
-    {
-      eventMgr.send(EventTag.MINER_CURRENT_CHENGED,true);
+    if (currentChenged) {
+      eventMgr.send(EventTag.MINER_CURRENT_CHENGED, true);
     }
   }
 }

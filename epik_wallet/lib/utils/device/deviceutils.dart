@@ -122,6 +122,65 @@ class DeviceUtils {
     }
   }
 
+  String getDeviceName() {
+    if (isAndroid) {
+      return  [androidDeviceInfo?.brand,androidDeviceInfo?.model].join("_") ?? "android";
+    } else if (isIos) {
+      return  [iosDeviceInfo?.name,iosDeviceInfo?.systemVersion].join("_") ?? "ios";
+    } else {
+      return "unknow";
+    }
+  }
+
+  bool _isPhysicalDevice;
+
+  ///是否为真实物理设备  false模拟器
+  bool isPhysicalDevice() {
+    if (_isPhysicalDevice == null) {
+      if (androidDeviceInfo != null) {
+        _isPhysicalDevice = androidDeviceInfo?.isPhysicalDevice ?? true;
+      } else if (iosDeviceInfo != null) {
+        _isPhysicalDevice = iosDeviceInfo?.isPhysicalDevice ?? true;
+      }
+    }
+    return _isPhysicalDevice ?? true;
+  }
+
+  String manufacturer;
+
+  /// 厂商名
+  String getManufacturer() {
+    manufacturer==null;
+    if (manufacturer == null) {
+      if (androidDeviceInfo != null) {
+        manufacturer = androidDeviceInfo?.manufacturer?.toLowerCase() ?? "";
+      } else if (iosDeviceInfo != null) {
+        manufacturer = "apple";
+      }
+    }
+    return manufacturer ?? "";
+  }
+
+  String _osVersion;
+
+  String getSysVersion()
+  {
+    if(_osVersion==null)
+    {
+      if (isAndroid)
+      {
+        _osVersion = androidDeviceInfo?.version?.sdkInt?.toString() ;
+      }else if(isIos)
+      {
+        _osVersion = iosDeviceInfo?.systemVersion;
+      }
+
+      if(_osVersion==null)
+        _osVersion = Platform.operatingSystemVersion;
+    }
+    return _osVersion??"";
+  }
+
   static const SystemUiOverlayStyle system_bar_light = SystemUiOverlayStyle(
     //顶部状态栏
     statusBarColor: null,

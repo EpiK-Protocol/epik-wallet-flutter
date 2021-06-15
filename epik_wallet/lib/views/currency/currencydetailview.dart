@@ -356,7 +356,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                     style: TextStyle(
                       color: ResColor.white_80,
                       fontSize: 14,
-                      fontWeight:FontWeight.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
@@ -690,8 +690,9 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                 width: 20,
               ),
               Text(
-                ResString.get(
-                    context, item.isWithdraw ? RSID.withdraw : RSID.deposit),
+                ResString.get(context,
+                        item.isWithdraw ? RSID.withdraw : RSID.deposit) +
+                    (item.exitCode != 0 ? " Error" : ""),
                 //  item.isWithdraw ? "转账" : "收款",
                 style: TextStyle(
                   fontSize: 14,
@@ -896,6 +897,20 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     ).then((data) {
       dataCallback(data);
     });
+
+    EpikWalletUtils.requestBalance(AccountMgr().currentAccount).then((value) {
+      if(isDestory)
+        return;
+      setState(() {
+        if (StringUtils.isNotEmpty(widget?.currencyAsset?.balance)) {
+          balance = StringUtils.formatNumAmount(widget.currencyAsset.balance,
+              point: 8, supply0: false);
+        }
+        // else {
+        //   balance = "--";
+        // }
+      });
+    });
   }
 
   bool get usePage {
@@ -958,6 +973,22 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     if (isLoading) {
       return;
     }
+
+
+    EpikWalletUtils.requestBalance(AccountMgr().currentAccount).then((value) {
+      if(isDestory)
+        return;
+      setState(() {
+        if (StringUtils.isNotEmpty(widget?.currencyAsset?.balance)) {
+          balance = StringUtils.formatNumAmount(widget.currencyAsset.balance,
+              point: 8, supply0: false);
+        }
+        // else {
+        //   balance = "--";
+        // }
+      });
+    });
+
     page = 0;
     lastEpkEndHeight = 0; //lastTime = null;
     isLoading = true;

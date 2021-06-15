@@ -32,7 +32,7 @@ class ResString {
 
   static Map<String, Map<RSID, String>> _localizedValues = {
     'en': map_en,
-    'zh': map_zh,
+    'zh': map_zh, //todo
   };
 
   static ResString of(BuildContext context) {

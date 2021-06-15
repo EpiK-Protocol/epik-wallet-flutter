@@ -9,6 +9,7 @@ import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_mainnet.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/Expert.dart';
+import 'package:epikwallet/model/VoterInfo.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/ClickUtil.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
@@ -26,8 +27,9 @@ import 'package:flutter/widgets.dart';
 ///领域专家详情
 class ExpertInfoView extends BaseWidget {
   Expert expert;
+  VoterInfo voterinfo;
 
-  ExpertInfoView(this.expert);
+  ExpertInfoView(this.expert,this.voterinfo);
 
   @override
   BaseWidgetState<BaseWidget> getState() {
@@ -65,6 +67,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
         .epikWallet
         .voterInfo(AccountMgr().currentAccount.epik_EPK_address)
         .then((value) {
+      dlog("voterInfo");
       dlog(value.data);
     });
     //   {
@@ -82,10 +85,22 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
   refresh() async {
     setLoadingWidgetVisible(true);
 
+    ResultObj<String>  robj =await AccountMgr()
+        ?.currentAccount
+        ?.epikWallet
+        ?.voterInfo(AccountMgr()?.currentAccount?.epik_EPK_address);
+    if(robj.isSuccess)
+    {
+      dlog("voterInfo");
+      dlog(robj.data);
+      widget?.voterinfo?.parseJson(jsonDecode(robj.data));
+    }
+
     ResultObj<String> resultObj = await AccountMgr()
         .currentAccount
         .epikWallet
         .expertInfo(widget.expert.id);
+    dlog("expertInfo");
     dlog(resultObj?.data);
     // {"Owner":"f0101","Type":0,"ApplicationHash":"","Proposer":"f0101","ApplyNewOwner":"f0101","ApplyNewOwnerEpoch":-1,"LostEpoch":-1,"Status":2,"StatusDesc":"normal(votes not enough)","ImplicatedTimes":0,"DataCount":368,"CurrentVotes":"59542785500000000000000","RequiredVotes":"100000000000000000000000","TotalReward":"4406399999999999999987"}
     if (resultObj.isSuccess && resultObj.data != null) {
@@ -114,7 +129,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    setAppBarTitle("领域专家详情");
+    setAppBarTitle(RSID.expertinfoview_0.text);//"领域专家详情");
   }
 
   @override
@@ -247,7 +262,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
             //垂直方向上子控件的其实位置
             children: [
               Text(
-                "领域: ",
+                RSID.expertview_7.text+": ",//"领域: ",
                 style: TextStyle(
                   color: ResColor.white,
                   fontSize: 12,
@@ -276,7 +291,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
               margin: EdgeInsets.only(right: 6),
             ),
             Text(
-              "个人简介",
+              RSID.expertinfoview_1.text,//"个人简介",
               style: TextStyle(
                 color: ResColor.white,
                 fontSize: 14,
@@ -309,7 +324,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
                 margin: EdgeInsets.only(right: 6),
               ),
               Text(
-                "开源协议",
+                RSID.expertinfoview_2.text,//"开源协议",
                 style: TextStyle(
                   color: ResColor.white,
                   fontSize: 14,
@@ -345,7 +360,8 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
       // ),
       // Container(height: 20),
       Text(
-        "状态: ${widget.expert?.status_e?.getString()}",
+        // "状态: ${widget.expert?.statusDesc}"
+        "${RSID.expertinfoview_3.text}: ${widget.expert?.statusDesc}",
         style: TextStyle(
           color: ResColor.white,
           fontSize: 14,
@@ -369,7 +385,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
         //垂直方向上子控件的其实位置
         children: [
           Text(
-            "投票: ",
+            RSID.expertinfoview_4.text+": ",//"投票: ",
             style: TextStyle(
               color: ResColor.white,
               fontSize: 14,
@@ -386,7 +402,8 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
       ),
       Container(height: 20),
       Text(
-        "收益: ${StringUtils.formatNumAmount(widget.expert.income)} EPK",
+        //收益
+        "${RSID.expertinfoview_5.text}: ${StringUtils.formatNumAmount(widget.expert.income)} EPK",
         style: TextStyle(
           color: ResColor.white,
           fontSize: 14,
@@ -457,7 +474,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
       child: Row(
         children: [
           Text(
-            "已投 EPK",
+            "${RSID.expertinfoview_6.text} EPK",//已投
             style: TextStyle(
               fontSize: 14,
               color: Colors.white,
@@ -466,7 +483,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
           Container(width: 7),
           Expanded(
             child: Text(
-              "0.0000 TODO",
+              StringUtils.formatNumAmount(widget?.voterinfo?.getCandidateById(widget.expert.id)??"0",point: 8),// "0.0000 TODO",
               style: TextStyle(
                 fontSize: 24,
                 color: ResColor.o_1,
@@ -544,8 +561,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
                           contentPadding: EdgeInsets.fromLTRB(0, -15, 0, 0),
-                          // hintText: ResString.get(context, RSID.bexv_5),
-                          hintText: "请输入数额",
+                          hintText: RSID.expertinfoview_7.text,//"请输入数额",
                           hintStyle:
                               TextStyle(color: Colors.white, fontSize: 17),
                         ),
@@ -615,7 +631,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
     List<Widget> inputs = [
       Container(height: 15),
       getInputWidget(
-        btnText: "追加投票",
+        btnText:  RSID.expertinfoview_8.text,//"追加投票",
         tec: _tec_vote,
         onChanged: (text) {
           text_vote = _tec_vote.text.trim();
@@ -639,7 +655,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
       ),
       Container(height: 15),
       getInputWidget(
-          btnText: "撤回投票",
+          btnText:  RSID.expertinfoview_9.text,//"撤回投票",
           tec: _tec_rescind,
           onChanged: (text) {
             text_rescind = _tec_rescind.text.trim();
@@ -647,18 +663,25 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
           },
           btnOnClick: () {
             onClickVoteRescind();
-          }),
-      Container(height: 15),
-      getInputWidget(
-          btnText: "提取EPK",
-          tec: _tec_withdraw,
-          onChanged: (text) {
-            text_withdraw = _tec_withdraw.text.trim();
-            amount_withdraw = StringUtils.parseDouble(text_withdraw, 0);
           },
-          btnOnClick: () {
-            onClickVoteWithdraw();
-          }),
+        maxOnClick: () {
+          _tec_rescind = null;
+          text_rescind = widget?.voterinfo?.getCandidateById(widget.expert.id)??"0";
+          amount_rescind = StringUtils.parseDouble(text_rescind, 0);
+          setState(() {});
+        },
+      ),
+      // Container(height: 15),
+      // getInputWidget(
+      //     btnText: RSID.expertinfoview_10.text,// "提取EPK",
+      //     tec: _tec_withdraw,
+      //     onChanged: (text) {
+      //       text_withdraw = _tec_withdraw.text.trim();
+      //       amount_withdraw = StringUtils.parseDouble(text_withdraw, 0);
+      //     },
+      //     btnOnClick: () {
+      //       onClickVoteWithdraw();
+      //     }),
     ];
 
     return inputs;
@@ -668,7 +691,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
     // 投票
 
     if (amount_vote <= 0) {
-      showToast("请输入数量");
+      showToast( RSID.expertinfoview_11.text);//"请输入数量");
       return;
     }
 
@@ -692,7 +715,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
             if (resultObj.isSuccess) {
               String hash = resultObj.data;
               dlog(hash);
-              showToast("已投票");
+              showToast( RSID.expertinfoview_12.text);//"已投票");
             } else {
               showToast(resultObj?.errorMsg ?? RSID.request_failed.text);
             }
@@ -706,7 +729,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
     //撤回投票 然后可以提取
 
     if (amount_rescind <= 0) {
-      showToast("请输入数量");
+      showToast(RSID.expertinfoview_11.text);//"请输入数量");
       return;
     }
 
@@ -730,7 +753,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
             if (resultObj.isSuccess) {
               String hash = resultObj.data;
               dlog(hash);
-              showToast("已撤回");
+              showToast(RSID.expertinfoview_13.text);//"已撤回");
             } else {
               showToast(resultObj?.errorMsg ?? RSID.request_failed.text);
             }
@@ -768,7 +791,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
             if (resultObj.isSuccess) {
               String hash = resultObj.data;
               dlog(hash);
-              showToast("已提取");
+              showToast(RSID.expertinfoview_14.text);//"已提取");
             } else {
               showToast(resultObj?.errorMsg ?? RSID.request_failed.text);
             }

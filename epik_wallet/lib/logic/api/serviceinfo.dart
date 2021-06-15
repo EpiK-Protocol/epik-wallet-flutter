@@ -33,7 +33,7 @@ class ServiceInfo {
   static final String schemename = "epikwallet";
 
   ///epik 浏览器 查看交易详情
-  static final String epik_msg_web="http://116.63.146.223:4001/#/message/detail?cid="; //todo
+  static final String epik_msg_web="https://explorer.epik-protocol.io/#/message/detail?cid="; //
   ///eth 浏览器 查看交易详情
   static final String ether_tx_web="https://cn.etherscan.com/tx/";
 
@@ -46,8 +46,8 @@ class ServiceInfo {
   }
 
   static String get HOST {
-    // return serverConfig?.WalletAPI ?? _HOST;
-    return "http://116.63.146.223:3003"; //todo
+    return serverConfig?.WalletAPI ?? _HOST;
+    // return "http://116.63.146.223:3003"; //todo
   }
 
   static String get hd_RpcUrl {

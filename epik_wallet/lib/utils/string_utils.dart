@@ -1,4 +1,5 @@
 import 'package:epikwallet/utils/Dlog.dart';
+import 'package:epikwallet/utils/RegExpUtil.dart';
 import 'package:flutter/cupertino.dart';
 
 class StringUtils {
@@ -78,6 +79,7 @@ class StringUtils {
 
   static const RollupSize_Units = ["TB","GB", "MB", "KB", "B"];
   static const RollupSize_Units1 = ["T","G", "M", "K", ""];
+  static const RollupSize_Units2 = ["Tb","Gb", "Mb", "Kb", ""];
 
   /** 返回文件大小字符串 */
   static String getRollupSize(int size,{List<String> units = RollupSize_Units}) {
@@ -229,7 +231,14 @@ class StringUtils {
       if(index==0)
         list.insert(0,"0");
       String ret = list.join();
-      return ret;
+
+      String ret1 = ret.replaceAll(RegExpUtil.re_end_zero, "");
+      if(ret1.endsWith("."))
+        ret1=ret1.substring(0,ret1.length-1);
+
+      // print("bigNumDownsizing $ret => $ret1");
+
+      return ret1;
     }
     return num;
   }

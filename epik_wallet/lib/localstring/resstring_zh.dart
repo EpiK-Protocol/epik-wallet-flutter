@@ -63,6 +63,8 @@ Map<RSID, String> map_zh = {
   RSID.eepkv_3: "复制私钥",
   RSID.eepkv_4: "温馨提示",//导出提示
   RSID.eepkv_5: "您正在导出的是测试币 EPK的私钥，EPK是测试网测试币，仅在测试网预挖中使用，没有交易价值。泄露此私钥有可能会导致测试币的损失，但与钱包的ERC-20资产无关，用户无需担心ERC-20钱包里的资产安全。同时，在代接矿机中，代接方有可能需要EPK的私钥来进行代理抵押。",
+  RSID.eepkv_6: "导出ETH私钥",
+  RSID.eepkv_7: "远程授权",
 
   //AccountDetailView 钱包账号详情
   RSID.adv_1: "修改密码",
@@ -127,7 +129,12 @@ Map<RSID, String> map_zh = {
   RSID.main_wv_2: "创建钱包",
   RSID.main_wv_3: "已有钱包",
   RSID.main_wv_4: "导入钱包",
-  RSID.main_wv_5: "主网",
+  RSID.main_wv_5: "测试网5.0",//主网
+  RSID.main_wv_6: "总资产",
+  RSID.main_wv_7: "ERC20-EPK 兑换 EPK",
+  RSID.main_wv_8: "领取赏金猎人奖励",
+  RSID.main_wv_9: "ERC20-EPK Uniswap 交易",
+  RSID.main_wv_10: "暂未开放",
 
   //WalletMenu 首页_钱包侧滑菜单
   RSID.main_mw_1: "选择钱包",
@@ -136,7 +143,6 @@ Map<RSID, String> map_zh = {
   RSID.main_mw_4: "暂不",
   RSID.main_mw_5: "确定清除",
   RSID.main_mw_6: "检测【%s】为无效钱包，是否清除？",
-  RSID.main_wv_6: "总资产",
 
   //TransactionView 首页_交易
   RSID.main_tv_1: "请先登录钱包",
@@ -162,6 +168,7 @@ Map<RSID, String> map_zh = {
   RSID.mpv_1: "预挖收益",
   RSID.mpv_2: "挖出数量\nEPK",
   RSID.mpv_3: "奖励数量\nERC20-EPK",
+  RSID.mpv_4: "总奖励\nERC20-EPK",
 
   //MiningSignupView 预挖报名
   RSID.msv_1: "预挖报名",
@@ -217,6 +224,7 @@ Map<RSID, String> map_zh = {
   //----------------------------------------views.qrcode.*
   //QrcodeScanView 扫描二维码
   RSID.qsv_1: "扫一扫",
+  RSID.qsv_2: "无效二维码",
 
   //----------------------------------------views.uniswap.*
   //UniswapView 外壳
@@ -360,5 +368,103 @@ Map<RSID, String> map_zh = {
   RSID.bus_2: "已通过",
   RSID.bus_3: "失败",
   RSID.bus_4: "已拒绝",
+
+  //----------------------------------------MinerView
+  RSID.minerview_1:"抵押",
+  RSID.minerview_2:"赎回",
+  RSID.minerview_3:"请输入MinerID",
+  RSID.minerview_4:"添加",
+  RSID.minerview_5:"存储矿工",
+  RSID.minerview_6:"当前算力",
+  RSID.minerview_7:"账户余额",
+  RSID.minerview_8:"锁定余额",
+  RSID.minerview_9:"可提余额",
+  RSID.minerview_10:"矿工基础抵押",
+  RSID.minerview_11:"我的基础抵押",
+  RSID.minerview_12:"流量抵押余额",
+  RSID.minerview_13:"流量抵押锁定",
+  RSID.minerview_14:"当日访问流量",
+  //---add
+  RSID.minerview_15:"注意：\n- 知识矿工需要启动实体矿机才能参与挖矿\n- 知识矿工需要完成1000EPK的矿工基础抵押才能获得出块资格\n- 知识矿工需要从网络里读取新文件，存储新文件才能增加算力，增大出块概率 \n- 1EPK=10Mb的每日访问流量，每日已用访问流量将会返还\n- 您可以在任何时候赎回抵押的EPK",
+  RSID.minerview_16:" EPK 可用",
+  RSID.minerview_17:"访问流量抵押",
+  RSID.minerview_18:"交易已提交",
+  RSID.minerview_19:"查看交易",
+  RSID.minerview_20:"添加抵押交易已提交",
+  //---withdraw
+  RSID.minerview_21:"注意：\n- 仅能赎回自己抵押的EPK\n- 如果你当前已经消耗了一部分访问流量，则无法赎回全部的访问流量抵押，请尝试减少赎回的数量\n- 矿工基础抵押赎回中的EPK将会立刻到账\n- 访问流量抵押的EPK需要在解锁操作3天后才能赎回",
+  RSID.minerview_22:" EPK 赎回",
+  RSID.minerview_23:" EPK 可解锁",
+  RSID.minerview_24:" 解锁",
+  RSID.minerview_25:"访问流量抵押",
+  RSID.minerview_26:"赎回抵押交易已提交",
+  RSID.minerview_27:"解锁抵押交易已提交",
+  //---MinerMenu
+  RSID.minermenu_1:"选择MinerID",
+  RSID.minermenu_2:"删除MinerID",
+  RSID.minermenu_3:"删除",
+  RSID.minermenu_4:"添加MinerID",
+  RSID.minermenu_5:"请输入MinerID",
+
+  //----------------------------------------ExpertView
+  RSID.expertview_1:"全部",
+  RSID.expertview_2:"领域专家",
+  RSID.expertview_3:"当前年化收益",
+  RSID.expertview_4:"已投",
+  RSID.expertview_5:"累计收益",
+  RSID.expertview_6:"申请成为领域专家",
+  RSID.expertview_7:"领域",
+  RSID.expertview_8:"收益",
+  RSID.expertview_9:"已注册",//registered
+  RSID.expertview_10:"已审核",//nominated
+  RSID.expertview_11:"活跃的",//normal
+  RSID.expertview_12:"黑名单",//blocked
+  RSID.expertview_13:"黑名单",//disqualified
+  RSID.expertview_14:"可提现收益",
+  RSID.expertview_15:"请输入提取数量",
+  //ApplyExpertView
+  RSID.applyexpertview_1:"申请领域专家",
+  RSID.applyexpertview_2:"您的申请已提交，请等待审核结果。",
+  RSID.applyexpertview_3:"再次申请",
+  RSID.applyexpertview_4:"您的申请已通过",
+  RSID.applyexpertview_5:"申请须知",
+  RSID.applyexpertview_6:"费用",
+  RSID.applyexpertview_7:"提交申请",
+  RSID.applyexpertview_8:"请输入姓名",
+  RSID.applyexpertview_9:"请输入手机号",
+  RSID.applyexpertview_10:"请输入邮箱",
+  RSID.applyexpertview_11:"请输入领域",
+  RSID.applyexpertview_12:"请输入个人介绍",
+  RSID.applyexpertview_13:"很遗憾，您的申请未通过。",
+  RSID.applyexpertview_14:"原因",
+  RSID.applyexpertview_15:"您可以更新申请表重新提交审核",
+  RSID.applyexpertview_16:"姓名(公开)",
+  RSID.applyexpertview_17:"手机号(非公开)",
+  RSID.applyexpertview_18:"邮箱(非公开)",
+  RSID.applyexpertview_19:"想申请的领域(公开)",
+  RSID.applyexpertview_20:"请从教育背景，工作经历，影响力等方面介绍自己",
+  RSID.applyexpertview_21:"个人介绍(公开)",
+  RSID.applyexpertview_22:"知识图谱数据默认遵循无任何限制的开源协议，如对开源协议有任何特殊要求，请填写如下（选填）",
+  RSID.applyexpertview_23:"开源协议(公开)",
+  RSID.applyexpertview_24:"交易确认中",
+  RSID.applyexpertview_25:"领域专家申请已提交，请等待审核。",
+  //ExpertInfoView
+  RSID.expertinfoview_0:"领域专家详情",
+  RSID.expertinfoview_1:"个人简介",
+  RSID.expertinfoview_2:"开源协议",
+  RSID.expertinfoview_3:"状态",
+  RSID.expertinfoview_4:"投票",
+  RSID.expertinfoview_5:"收益",
+  RSID.expertinfoview_6:"已投",
+  RSID.expertinfoview_7:"请输入数额",
+  RSID.expertinfoview_8:"追加投票",
+  RSID.expertinfoview_9:"撤回投票",
+  RSID.expertinfoview_10:"提取EPK收益",
+  RSID.expertinfoview_11:"请输入数量",
+  RSID.expertinfoview_12:"已投票",
+  RSID.expertinfoview_13:"已撤回",
+  RSID.expertinfoview_14:"已提取",
+
+
 
 };

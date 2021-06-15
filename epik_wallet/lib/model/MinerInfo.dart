@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:epikwallet/utils/string_utils.dart';
 
 class MinerInfo {
@@ -18,7 +20,7 @@ class MinerInfo {
   String mining_pledged; //":"1000",
   // 我的基础抵押
   String my_mining_pledge; //":"0",
-  // 流量抵押余额
+  // 流量抵押余额 流量总量
   String retrieve_balance; //":"0",
   // 流量抵押锁定
   String retrieve_locked; //":"0",
@@ -33,7 +35,7 @@ class MinerInfo {
   double power_percent_d=0;
   String power_percent="";
 
-  double   available_balance_d,vesting_d,mining_pledged_d,retrieve_balance_d,retrieve_locked_d;
+  double   available_balance_d,vesting_d,mining_pledged_d,retrieve_balance_d,retrieve_locked_d,retrieve_day_expend_d;
 
   double getBalance()
   {
@@ -72,17 +74,48 @@ class MinerInfo {
       mining_pledged_d=StringUtils.parseDouble(mining_pledged, 0);
       retrieve_balance_d=StringUtils.parseDouble(retrieve_balance, 0);
       retrieve_locked_d=StringUtils.parseDouble(retrieve_locked, 0);
+      retrieve_day_expend_d = StringUtils.parseDouble(retrieve_day_expend, 0);
 
     } catch (e, s) {
       print(s);
     }
   }
 
-  // double debrisPercent=0;
 
+  String r_Numerator;
+  //流量分子
+  String getRetrieveNumerator()
+  {
+    //retrieve_day_expend_d *10M
+    if(r_Numerator==null)
+    {
+      int num = (retrieve_day_expend_d * 1024*1024).toInt() ;
+      r_Numerator = StringUtils.getRollupSize(num,units: StringUtils.RollupSize_Units2);
+    }
+    return r_Numerator;
+  }
+
+  String r_Denominator;
+  //流量分母
+  String getRetrieveDenominator()
+  {
+    //retrieve_balance_d *10M
+    if(r_Denominator==null)
+    {
+      int num = (retrieve_balance_d * 1024*1024).toInt() ;
+      r_Denominator = StringUtils.getRollupSize(num,units: StringUtils.RollupSize_Units2);
+    }
+    return r_Denominator;
+  }
+
+  double debrisPercent;
   double getRetrievePercent() {
-    // debrisPercent = debrisTotal == 0 ? 0 : debrisCount / debrisTotal;
-    // debrisPercent = max(0, min(debrisPercent, 1));
-    return 0.5;
+    if(debrisPercent==null)
+    {
+      debrisPercent = retrieve_balance_d == 0 ? 0 : retrieve_day_expend_d / retrieve_balance_d;
+      debrisPercent = max(0, min(debrisPercent, 1));
+    }
+    print("debrisPercent = $debrisPercent");
+    return debrisPercent;
   }
 }

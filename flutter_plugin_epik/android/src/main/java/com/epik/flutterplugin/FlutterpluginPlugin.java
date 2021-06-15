@@ -456,6 +456,12 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
                             ret = currentHdWallet.receipt(txHash);
                             break;
                         }
+                        case "hd_wallet_export":
+                        {
+                            // hd钱包导出私钥
+                            ret = currentHdWallet.export((String) call.argument("addr"));
+                            break;
+                        }
                         default:
                         {
                             reslutNotImplementedMainThread(result);

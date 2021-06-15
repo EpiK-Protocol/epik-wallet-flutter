@@ -1,12 +1,18 @@
+import 'dart:convert';
 import 'dart:ui';
 
+import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
+import 'package:epikwallet/dialog/bottom_dialog.dart';
+import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_mainnet.dart';
+import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/Expert.dart';
 import 'package:epikwallet/model/ExpertBaseInfo.dart';
+import 'package:epikwallet/model/VoterInfo.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
@@ -41,7 +47,7 @@ extension ExpertStateTypeEx on ExpertStateType {
   String getName() {
     switch (this) {
       case ExpertStateType.ALL:
-        return "全部";
+        return RSID.expertview_1.text; //"全部";
       case ExpertStateType.REGISTERED:
         return ExpertStatus.registered.getString();
       case ExpertStateType.NOMINATED:
@@ -97,8 +103,24 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
     setAppBarBackColor(Colors.transparent);
     setTopBarBackColor(Colors.transparent);
 
+    eventMgr.add(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
+
     refresh();
   }
+
+  eventCallback_account(obj) {
+    voterinfo = VoterInfo();
+    refresh();
+  }
+
+  @override
+  void dispose() {
+    eventMgr.remove(
+        EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
+    super.dispose();
+  }
+
+  VoterInfo voterinfo;
 
   bool isFirst = true;
 
@@ -111,6 +133,18 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
     isLoading = true;
 
     page = 0;
+
+    ResultObj<String> robj = await AccountMgr()
+        ?.currentAccount
+        ?.epikWallet
+        ?.voterInfo(AccountMgr()?.currentAccount?.epik_EPK_address);
+    dlog("voterInfo");
+    dlog(robj.data);
+    if (voterinfo == null) voterinfo = VoterInfo();
+    if (robj.isSuccess) {
+      voterinfo.parseJson(jsonDecode(robj.data));
+    }
+
     HttpJsonRes hjr_info = await ApiMainNet.expertBaseInfomation();
     if (hjr_info.code == 0) {
       expertInfomation =
@@ -202,7 +236,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
               child: Row(
                 children: [
                   Text(
-                    "领域专家",
+                    RSID.expertview_2.text, //"领域专家",
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -212,9 +246,9 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
                 ],
               ),
             ),
-            Container(height: 20),
+            // Container(height: 20),
             Text(
-              "当前年化收益",
+              RSID.expertview_3.text, //"当前年化收益",
               style: const TextStyle(
                 color: ResColor.white_80,
                 fontSize: 14,
@@ -237,11 +271,12 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
               ),
             ),
             Container(height: 10),
+
             Row(
               children: [
                 Expanded(
                   child: Text(
-                    "已投: ${expertInfomation?.TotalVote_f ?? 0} EPK",
+                    "${RSID.expertview_4.text}: ${expertInfomation?.TotalVote_f ?? 0} EPK", //已投
                     textAlign: TextAlign.left,
                     style: const TextStyle(
                       color: Colors.white,
@@ -251,7 +286,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
                 ),
                 Expanded(
                   child: Text(
-                    "累计收益: ${expertInfomation?.TotalVoteReward_f ?? 0} EPK",
+                    "${RSID.expertview_5.text}: ${expertInfomation?.TotalVoteReward_f ?? 0} EPK", //累计收益
                     textAlign: TextAlign.right,
                     style: const TextStyle(
                       color: Colors.white,
@@ -301,7 +336,52 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
             //     ),),
             //   ],
             // ),
-            // Container(height: 5),
+            Container(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    "${RSID.expertview_14.text}: ${StringUtils.formatNumAmount(voterinfo?.WithdrawableRewards ?? 0, point: 2)} EPK",
+                    //已投
+                    textAlign: TextAlign.left,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    onClickVoteWithdraw();
+                  },
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(
+                          RSID.expertinfoview_10.text,
+                          //"兑换",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(4, 0, 0, 0),
+                          child: Image.asset(
+                            "assets/img/ic_arrow_right_1.png",
+                            width: 7,
+                            height: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -330,7 +410,8 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
       color_bg: Colors.transparent,
       disabledColor: Colors.transparent,
       height: 40,
-      text: "申请成为领域专家",
+      text: RSID.expertview_6.text,
+      //"申请成为领域专家",
       textstyle: TextStyle(
         color: Colors.white,
         fontSize: 14,
@@ -338,10 +419,10 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
       ),
       bg_borderradius: BorderRadius.circular(4),
       onclick: (lbtn) {
-        if (AccountMgr().currentAccount == null)
-        {
+        if (AccountMgr().currentAccount == null) {
           showToast(RSID.main_bv_7.text);
-          eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX,  main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
+          eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX,
+              main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
           return;
         }
         ViewGT.showApplyExpertView(context);
@@ -485,17 +566,15 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
   }
 
   onItemClick(int position) {
-
-    if (AccountMgr().currentAccount == null)
-    {
+    if (AccountMgr().currentAccount == null) {
       showToast(RSID.main_bv_7.text);
-      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX,  main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
+      eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX,
+          main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
       return;
     }
 
-
     Expert item = data_experts_show[position];
-    ViewGT.showExpertInfoView(context, item).then((value) {
+    ViewGT.showExpertInfoView(context, item, voterinfo).then((value) {
       // dlog("showExpertInfoView result =${value}");
       setState(() {});
     });
@@ -555,7 +634,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
             Row(
               children: [
                 Text(
-                  "领域: xxx",
+                  "${RSID.expertview_7.text}: ${item.domain??""}", //领域
                   style: TextStyle(
                     fontSize: 12,
                     color: ResColor.white,
@@ -564,7 +643,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
                 ),
                 Expanded(
                   child: Text(
-                    "收益: ${StringUtils.formatNumAmount(item.income)} EPK",
+                    "${RSID.expertview_8.text}: ${StringUtils.formatNumAmount(item.income)} EPK", //收益
                     textAlign: TextAlign.end,
                     style: TextStyle(
                       fontSize: 12,
@@ -602,6 +681,17 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
     //  刷新
     // HttpJsonRes hjr = await ApiMainNet.experts(page, pageSize);
     // dataCallback(hjr);
+
+    ResultObj<String> robj = await AccountMgr()
+        ?.currentAccount
+        ?.epikWallet
+        ?.voterInfo(AccountMgr()?.currentAccount?.epik_EPK_address);
+    dlog("voterInfo");
+    dlog(robj.data);
+    if (voterinfo == null) voterinfo = VoterInfo();
+    if (robj.isSuccess) {
+      voterinfo.parseJson(jsonDecode(robj.data));
+    }
 
     HttpJsonRes hjr_info = await ApiMainNet.expertBaseInfomation();
     if (hjr_info.code == 0) {
@@ -697,5 +787,97 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
       print(e);
     }
     return Container();
+  }
+
+  void onClickVoteWithdraw() {
+    //提取EPK
+
+    // if (amount_withdraw <= 0) {
+    //   showToast("请输入数量");
+    //   return;
+    // }
+
+    closeInput();
+
+    // BottomDialog.showTextInputDialog(context, RSID.expertview_15.text, "", "Max ${StringUtils.formatNumAmount(voterinfo?.WithdrawableRewards??"0",point: 10)}", 10, (value) {
+    //
+    //   double amount = StringUtils.parseDouble(value, 0);
+    //   if(amount>0)
+    //   {
+    //     BottomDialog.showPassWordInputDialog(
+    //       context,
+    //       AccountMgr().currentAccount.password,
+    //           (password) {
+    //         //点击确定回调 , 已验证密码, 并且已关闭dialog
+    //         showLoadDialog(
+    //           "",
+    //           touchOutClose: false,
+    //           backClose: false,
+    //           onShow: () async {
+    //             ResultObj<String> resultObj = await AccountMgr()
+    //                 .currentAccount
+    //                 .epikWallet
+    //                 .voteWithdraw(AccountMgr().currentAccount.epik_EPK_address);
+    //             closeLoadDialog();
+    //             if (resultObj.isSuccess) {
+    //               String hash = resultObj.data;
+    //               dlog(hash);
+    //               showToast(RSID.expertinfoview_14.text);//"已提取");
+    //             } else {
+    //               showToast(resultObj?.errorMsg ?? RSID.request_failed.text);
+    //             }
+    //           },
+    //         );
+    //       },
+    //     );
+    //   }
+    //
+    // },autoBtnString: RSID.main_bv_4.text,autoBtnContent: voterinfo?.WithdrawableRewards??"0");
+
+    BottomDialog.showPassWordInputDialog(
+      context,
+      AccountMgr().currentAccount.password,
+      (password) {
+        //点击确定回调 , 已验证密码, 并且已关闭dialog
+        showLoadDialog(
+          "",
+          touchOutClose: false,
+          backClose: false,
+          onShow: () async {
+            ResultObj<String> resultObj = await AccountMgr()
+                .currentAccount
+                .epikWallet
+                .voteWithdraw(AccountMgr().currentAccount.epik_EPK_address);
+            closeLoadDialog();
+            if (resultObj.isSuccess) {
+              String hash = resultObj.data;
+              dlog(hash);
+              // showToast(RSID.expertinfoview_14.text);//"已提取");
+
+              MessageDialog.showMsgDialog(
+                context,
+                title: RSID.expertinfoview_10.text,
+                //"提取EPK收益",
+                msg: "${RSID.minerview_18.text}\n$hash",
+                //交易已提交
+                btnLeft: RSID.minerview_19.text,
+                //"查看交易",
+                btnRight: RSID.isee.text,
+                onClickBtnLeft: (dialog) {
+                  dialog.dismiss();
+                  String url = ServiceInfo.epik_msg_web + hash;
+                  ViewGT.showGeneralWebView(context, RSID.berlv_4.text, url);
+                },
+                onClickBtnRight: (dialog) {
+                  dialog.dismiss();
+                },
+              );
+            } else {
+              showToast(resultObj?.errorMsg ?? RSID.request_failed.text);
+            }
+          },
+        );
+      },
+    );
   }
 }

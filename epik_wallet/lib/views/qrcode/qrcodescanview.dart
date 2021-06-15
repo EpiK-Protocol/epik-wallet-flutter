@@ -52,7 +52,7 @@ class _QrcodeScanViewState extends BaseWidgetState<QrcodeScanView>
           Vibrate.feedback(FeedbackType.success);
         });
         eventMgr.send(EventTag.SCAN_QRCODE_RESULT,data);
-        finish(); //结束当前页面
+        finish(data); //结束当前页面
       }
     });
 

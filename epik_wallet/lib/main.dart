@@ -7,6 +7,7 @@ import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/Upgrade.dart';
 import 'package:epikwallet/utils/CupertinoLocalizationsDelegate.dart';
+import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/sp_utils/sp_utils.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
@@ -68,6 +69,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initOther() async {
     await SpUtils().init(); // 初始化存储工具
+    await DeviceUtils().initPlatInfo();
     await ServiceInfo.loadConfig(); //加载本地缓存的配置
     await AccountMgr().load(); // 加载钱包账户
     ServiceInfo.requestConfig(); //请求新的服务配置

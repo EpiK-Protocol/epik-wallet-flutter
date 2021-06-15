@@ -319,7 +319,7 @@ class BountyDetailViewState extends BaseWidgetState<BountyDetailView> {
     double top = getAppBarHeight() + getTopBarHeight();
 
     String countdown = widget?.bountyTask?.getCountdownString();
-    countdown = "1天 01:12:34";
+    // countdown = "1天 01:12:34";
 
     return Column(
       children: [

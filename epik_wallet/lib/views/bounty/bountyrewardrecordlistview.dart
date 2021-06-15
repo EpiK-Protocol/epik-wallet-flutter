@@ -82,11 +82,11 @@ class BountyRewardRecordListviewState
           (json) => BountyUserRewardRecord.fromJson(json));
 
       // test
-      int size = datalist.length + data.length;
-      for (int i = size; i < size + 20; i++) {
-        data.add((BountyUserRewardRecord.fromJson(jsonDecode(
-            '{"id":1,"created_at":"2020-10-10T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","bounty_id":1,"title":"案件水电费","miner_id":"241b7750-e601-54ad-9145-33837529dbbb","bonus":${i},"status":"done","description":"asdfa"}'))));
-      }
+      // int size = datalist.length + data.length;
+      // for (int i = size; i < size + 20; i++) {
+      //   data.add((BountyUserRewardRecord.fromJson(jsonDecode(
+      //       '{"id":1,"created_at":"2020-10-10T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","bounty_id":1,"title":"案件水电费","miner_id":"241b7750-e601-54ad-9145-33837529dbbb","bonus":${i},"status":"done","description":"asdfa"}'))));
+      // }
     }
 
     if (data != null) {

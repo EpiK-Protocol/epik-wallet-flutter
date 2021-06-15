@@ -65,8 +65,7 @@ class LoadingButton extends StatefulWidget {
   setLoading(bool isloading) {
     this.loading = isloading;
     if (key != null && key is GlobalKey) {
-      (key as GlobalKey).currentState?.setState(() {
-      });
+      (key as GlobalKey).currentState?.setState(() {});
     }
   }
 }
@@ -88,57 +87,147 @@ class LoadingButtonState extends State<LoadingButton> {
               borderRadius: widget.bg_borderradius,
               gradient: widget.gradient_bg,
             ),
-      child: FlatButton(
-        // padding: EdgeInsets.all(0),
-        padding: widget.padding,
-        onPressed: (widget.loading == false && widget.onclick != null)
-            ? () {
-                if (widget.preventDoubleClick == true &&
-                    ClickUtil.isFastDoubleClick()) {
-                  // print("cccmax 防止双击连点");
-                  return;
-                }
-                widget.onclick(widget);
-              }
-            : null,
-        onLongPress: (widget.loading == false && widget.onLongClick != null)
-            ? () {
-                if (widget.preventDoubleClick == true &&
-                    ClickUtil.isFastDoubleClick()) {
-                  // print("cccmax 防止双击连点");
-                  return;
-                }
-                widget.onLongClick(widget);
-              }
-            : null,
-        color: widget.color_bg,
-        disabledColor: widget.disabledColor,
-        highlightColor: widget.highlightColor,
-        splashColor: widget.splashColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: widget.bg_borderradius,
-          side: widget.side,
-        ),
+      child: getTextButton(), //getFlatButton(),
+    );
+  }
 
-        child: widget.loading == true
-            ? Container(
-                width: widget.progress_size,
-                height: widget.progress_size,
-                padding: EdgeInsets.all(2),
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation(widget.progress_color),
-                ),
-              )
-            : Container(
-                // height: 30,
-                alignment: Alignment.center,
-                child: Text(
-                  widget.text,
-                  textAlign: TextAlign.center,
-                  style: widget.textstyle,
-                ),
+  @Deprecated("快不能用了")
+  Widget getFlatButton() {
+    return FlatButton(
+      // padding: EdgeInsets.all(0),
+      padding: widget.padding,
+      onPressed: (widget.loading == false && widget.onclick != null)
+          ? () {
+              if (widget.preventDoubleClick == true &&
+                  ClickUtil.isFastDoubleClick()) {
+                // print("cccmax 防止双击连点");
+                return;
+              }
+              widget.onclick(widget);
+            }
+          : null,
+      onLongPress: (widget.loading == false && widget.onLongClick != null)
+          ? () {
+              if (widget.preventDoubleClick == true &&
+                  ClickUtil.isFastDoubleClick()) {
+                // print("cccmax 防止双击连点");
+                return;
+              }
+              widget.onLongClick(widget);
+            }
+          : null,
+      color: widget.color_bg,
+      disabledColor: widget.disabledColor,
+      highlightColor: widget.highlightColor,
+      splashColor: widget.splashColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: widget.bg_borderradius,
+        side: widget.side,
+      ),
+
+      child: widget.loading == true
+          ? Container(
+              width: widget.progress_size,
+              height: widget.progress_size,
+              padding: EdgeInsets.all(2),
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation(widget.progress_color),
               ),
+            )
+          : Container(
+              // height: 30,
+              alignment: Alignment.center,
+              child: Text(
+                widget.text,
+                textAlign: TextAlign.center,
+                style: widget.textstyle,
+              ),
+            ),
+    );
+  }
+
+  Widget getTextButton() {
+    return TextButton(
+      onPressed: (widget.loading == false && widget.onclick != null)
+          ? () {
+              if (widget.preventDoubleClick == true &&
+                  ClickUtil.isFastDoubleClick()) {
+                // print("cccmax 防止双击连点");
+                return;
+              }
+              widget.onclick(widget);
+            }
+          : null,
+      onLongPress: (widget.loading == false && widget.onLongClick != null)
+          ? () {
+              if (widget.preventDoubleClick == true &&
+                  ClickUtil.isFastDoubleClick()) {
+                // print("cccmax 防止双击连点");
+                return;
+              }
+              widget.onLongClick(widget);
+            }
+          : null,
+      child: widget.loading == true
+          ? Container(
+              width: widget.progress_size,
+              height: widget.progress_size,
+              padding: EdgeInsets.all(2),
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation(widget.progress_color),
+              ),
+            )
+          : Container(
+              // height: 30,
+              alignment: Alignment.center,
+              child: Text(
+                widget.text,
+                textAlign: TextAlign.center,
+                style: widget.textstyle,
+              ),
+            ),
+      style: ButtonStyle(
+        //padding
+        padding: MaterialStateProperty.all(widget.padding),
+        //阴影
+        elevation: MaterialStateProperty.all(0),
+
+        //背景色
+        backgroundColor:
+            MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+          // case MaterialState.hovered: //悬停：
+          // case MaterialState.focused://焦点
+          // case MaterialState.pressed://按住
+          // case MaterialState.dragged://拖拽
+          // case MaterialState.selected://选中
+          // case MaterialState.disabled://禁用
+          // case MaterialState.error://错误
+
+          if (states.contains(MaterialState.disabled)) {
+            //禁用时
+            return widget.disabledColor;
+          } else if (states.contains(MaterialState.pressed)) {
+            //按住时
+            return widget.highlightColor;
+          }
+          //默认
+          return widget.color_bg;
+        }),
+
+        //前景色 控制btn里的文本和icon颜色
+        // foregroundColor:MaterialStateProperty.all(Colors.white),
+
+        //设置水波纹颜色
+        overlayColor: MaterialStateProperty.all(widget.splashColor),
+
+        shape: MaterialStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: widget.bg_borderradius, //圆角
+            side: widget.side, //描边
+          ),
+        ),
       ),
     );
   }

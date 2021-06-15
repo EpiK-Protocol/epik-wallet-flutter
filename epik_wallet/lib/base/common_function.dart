@@ -68,6 +68,7 @@ abstract class BaseFuntion {
 
   double bottomVsrtical = 0; //作为内部页面距离底部的高度
 
+  EdgeInsets statelayout_margin = EdgeInsets.fromLTRB(0, 0, 0, 0);
 
   Color get appBarContentColor=>_appBarContentColor;
   double get appBarCenterTextSize=>_appBarCenterTextSize;
@@ -157,35 +158,34 @@ abstract class BaseFuntion {
   Widget getErrorWidget() {
     return Container(
       //错误页面中心可以自己调整
+      margin: statelayout_margin,
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       color: errorBackgroundColor,//Colors.white,
       width: double.infinity,
       height: double.infinity,
-      child: Center(
-        child: InkWell(
-          onTap: () {
-            onClickErrorWidget();
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              if(_errImgPath!=null)
+      child: InkWell(
+        onTap: () {
+          onClickErrorWidget();
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            if(_errImgPath!=null)
               Image(
                 image: AssetImage(_errImgPath),
                 width: 150,
                 height: 150,
               ),
-              Container(
-                margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                child: Text(_errorContentMesage,
-                    style: TextStyle(
-                      fontWeight: _fontWidget,
-                      fontSize: 14,
-                      color: ResColor.white_60,
-                    )),
-              ),
-            ],
-          ),
+            Container(
+              margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+              child: Text(_errorContentMesage,
+                  style: TextStyle(
+                    fontWeight: _fontWidget,
+                    fontSize: 14,
+                    color: ResColor.white_60,
+                  )),
+            ),
+          ],
         ),
       ),
     );
@@ -204,6 +204,7 @@ abstract class BaseFuntion {
   Widget getLoadingWidget() {
     return Container(
       //错误页面中心可以自己调整
+      margin: statelayout_margin,
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       color: proressBackgroundColor,//Colors.white,
       width: double.infinity,
@@ -383,6 +384,7 @@ abstract class BaseFuntion {
       },
       child: Container(
         //错误页面中心可以自己调整
+        margin: statelayout_margin,
         padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
         color: bodyBackgroundColor,//Colors.white,
         width: double.infinity,

@@ -31,10 +31,11 @@ class MinerPledgeAddView extends StatefulWidget {
 }
 
 class MinerPledgeAddViewState extends State<MinerPledgeAddView> {
-  TextEditingController _tec_base, _tec_retrieve;
+  TextEditingController _tec_base, _tec_retrieve, _tec_retrieve_bind;
 
   String getDesText() {
-    return "注意：\n- 知识矿工需要启动实体矿机才能参与挖矿\n- 知识矿工需要完成1000EPK的矿工基础抵押才能获得出块资格\n- 知识矿工需要从网络里读取新文件，存储新文件才能增加算力，增大出块概率 \n- 1EPK=10Mb的每日访问流量，每日已用访问流量将会返还\n- 您可以在任何时候赎回抵押的EPK";
+    // return "注意：\n- 知识矿工需要启动实体矿机才能参与挖矿\n- 知识矿工需要完成1000EPK的矿工基础抵押才能获得出块资格\n- 知识矿工需要从网络里读取新文件，存储新文件才能增加算力，增大出块概率 \n- 1EPK=10Mb的每日访问流量，每日已用访问流量将会返还\n- 您可以在任何时候赎回抵押的EPK";
+    return RSID.minerview_15.text;
   }
 
   @override
@@ -60,18 +61,34 @@ class MinerPledgeAddViewState extends State<MinerPledgeAddView> {
         ),
       ));
 
+    if(_tec_retrieve_bind==null)
+      _tec_retrieve_bind = new TextEditingController.fromValue(TextEditingValue(
+        text: "",
+        selection: new TextSelection.fromPosition(
+          TextPosition(affinity: TextAffinity.downstream, offset: "".length),
+        ),
+      ));
+
     List<Widget> items = [
-      getRowText("矿工基础抵押", "${balance} EPK 可用"),
+      getRowText(RSID.minerview_10.text, "${balance}${RSID.minerview_16.text}"),//矿工基础抵押  000 EPK 可用
       getInputRow(
-          controller: _tec_base, btnText: "添加", onClick: onClickBaseAdd),
+          controller: _tec_base, btnText: RSID.minerview_4.text, onClick: onClickBaseAdd),//添加
       Container(
         height: 20,
       ),
-      getRowText("访问流量抵押", "${balance} EPK 可用"),
+      getRowText(RSID.minerview_17.text, "${balance}${RSID.minerview_16.text}"),//"访问流量抵押"  000 EPK 可用
       getInputRow(
           controller: _tec_retrieve,
-          btnText: "添加",
+          btnText: RSID.minerview_4.text,//"添加",
           onClick: onClickRetrieveAdd),
+      // Container(
+      //   height: 20,
+      // ),
+      // getRowText("访问流量抵押绑定", "${balance} EPK 可用"),
+      // getInputRow(
+      //     controller: _tec_retrieve_bind,
+      //     btnText: "绑定",
+      //     onClick: onClickRetrieveBindAdd),
       Container(
         margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
         width: double.infinity,
@@ -252,9 +269,9 @@ class MinerPledgeAddViewState extends State<MinerPledgeAddView> {
 
         MessageDialog.showMsgDialog(
           context,
-          title: "矿工基础抵押",
-          msg: "交易已提交\n$cid",
-          btnLeft: "添加抵押查看交易",
+          title: RSID.minerview_10.text,//"矿工基础抵押",
+          msg: "${RSID.minerview_18.text}\n$cid",//交易已提交
+          btnLeft: RSID.minerview_19.text,//"查看交易",
           btnRight: RSID.isee.text,
           onClickBtnLeft: (dialog) {
             dialog.dismiss();
@@ -290,7 +307,7 @@ class MinerPledgeAddViewState extends State<MinerPledgeAddView> {
       ResultObj<String> robj = await AccountMgr()
           .currentAccount
           .epikWallet
-          .retrievePledgeAdd("target",widget.minerinfo.owner, amount.trim()); //todo target
+          .retrievePledgeAdd(widget.minerinfo.owner,widget.minerinfo.minerid, amount.trim());
 
       LoadingDialog.cloasLoadDialog(context);
 
@@ -303,9 +320,9 @@ class MinerPledgeAddViewState extends State<MinerPledgeAddView> {
 
         MessageDialog.showMsgDialog(
           context,
-          title: "访问流量抵押",
-          msg: "添加抵押交易已提交\n$cid",
-          btnLeft: "查看交易",
+          title: RSID.minerview_17.text,//"访问流量抵押",
+          msg: "${RSID.minerview_20.text}\n$cid",//添加抵押交易已提交
+          btnLeft: RSID.minerview_19.text,//"查看交易",
           btnRight: RSID.isee.text,
           onClickBtnLeft: (dialog) {
             dialog.dismiss();
@@ -321,4 +338,55 @@ class MinerPledgeAddViewState extends State<MinerPledgeAddView> {
       }
     });
   }
+
+  // onClickRetrieveBindAdd(LoadingButton lbtn, String amount) {
+  //   double num = StringUtils.parseDouble(amount, 0);
+  //   if (num <= 0) {
+  //     ToastUtils.showToastCenter(RSID.uspav_4.text);
+  //     return;
+  //   }
+  //
+  //   closeInput();
+  //
+  //   BottomDialog.showPassWordInputDialog(
+  //       context, AccountMgr().currentAccount.password, (value) async {
+  //     LoadingDialog.showLoadDialog(context, "",
+  //         touchOutClose: false, backClose: false);
+  //
+  //
+  //     // 流量抵押 需要用owner  不是用minerid
+  //     ResultObj<String> robj = await AccountMgr()
+  //         .currentAccount
+  //         .epikWallet
+  //         .retrievePledgeBind(widget.minerinfo.minerid, amount.trim()); //todo bind
+  //
+  //     LoadingDialog.cloasLoadDialog(context);
+  //
+  //     if (robj?.isSuccess) {
+  //       String cid = robj
+  //           .data; //bafy2bzaceaa4fwwhrn5oqjsxe5vumlibispulwdzf4uskh4silxlfo4qh6cu6
+  //       // getting key address: failed to get account actor state for f022202: unknown actor code bafkqaetfobvs6mjpon2g64tbm5sw22lomvza
+  //       _tec_base = null;
+  //       setState(() {});
+  //
+  //       MessageDialog.showMsgDialog(
+  //         context,
+  //         title: "访问流量抵押",
+  //         msg: "添加抵押绑定交易已提交\n$cid",
+  //         btnLeft: "查看交易",
+  //         btnRight: RSID.isee.text,
+  //         onClickBtnLeft: (dialog) {
+  //           dialog.dismiss();
+  //           String url = ServiceInfo.epik_msg_web + cid;
+  //           ViewGT.showGeneralWebView(context, RSID.berlv_4.text, url);
+  //         },
+  //         onClickBtnRight: (dialog) {
+  //           dialog.dismiss();
+  //         },
+  //       );
+  //     } else {
+  //       ToastUtils.showToastCenter(robj?.errorMsg ?? RSID.request_failed.text);
+  //     }
+  //   });
+  // }
 }

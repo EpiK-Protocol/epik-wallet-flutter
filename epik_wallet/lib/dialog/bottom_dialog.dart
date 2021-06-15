@@ -19,8 +19,8 @@ class BottomDialog {
   static Future showBottomPop(
     BuildContext context,
     Widget widget, {
-    double radius_top = 20,//15,
-    Color bgColor = ResColor.b_4,//Colors.white,
+    double radius_top = 20, //15,
+    Color bgColor = ResColor.b_4, //Colors.white,
     bool dragClose = true, // 是否可以向下拖拽关闭
     bool outbackClose = true, // 是否可以外部返回关闭  触摸外部阴影、back按键
   }) {
@@ -99,7 +99,7 @@ class BottomDialog {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 17,
-                      fontWeight:FontWeight.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -116,7 +116,7 @@ class BottomDialog {
                       color: Colors.transparent,
                       child: Icon(
                         Icons.close,
-                        color: ResColor.white_60,//Color(0xff666666),
+                        color: ResColor.white_60, //Color(0xff666666),
                         size: 14,
                       ),
                     ),
@@ -179,7 +179,8 @@ class BottomDialog {
           Divider(
             height: 1,
             thickness: 1,
-            color: ResColor.white_20,//Colors.blue,
+            color: ResColor.white_20,
+            //Colors.blue,
             indent: 30,
             endIndent: 30,
           ),
@@ -191,11 +192,12 @@ class BottomDialog {
             color_bg: Colors.transparent,
             disabledColor: Colors.transparent,
             bg_borderradius: BorderRadius.circular(4),
-            text:RSID.confirm.text, //"确定",
+            text: RSID.confirm.text,
+            //"确定",
             textstyle: TextStyle(
               color: Colors.white,
               fontSize: 17,
-              fontWeight:FontWeight.bold,
+              fontWeight: FontWeight.bold,
             ),
             onclick: (lbtn) {
               if (StringUtils.isEmpty(password)) {
@@ -222,26 +224,32 @@ class BottomDialog {
       ),
     );
 
-    return showBottomPop(context, widget,);
+    return showBottomPop(
+      context,
+      widget,
+    );
   }
 
   ///普通文本输入弹窗
   static Future showTextInputDialog(
-      BuildContext context,
-      String title,
-      String oldText,
-      String hint,
-      int maxLength,
-      ValueChanged<String> callback) {
+    BuildContext context,
+    String title,
+    String oldText,
+    String hint,
+    int maxLength,
+    ValueChanged<String> callback, {
+    String autoBtnString,
+    String autoBtnContent,
+  }) {
     String _text = oldText ?? "";
     TextEditingController tec = TextEditingController(text: _text);
 
-    Color dialogbg=ResColor.b_4;//Colors.white;
-    Color titleColor = Colors.white;//Colors.black;
-    Color closeIconColor = Colors.white;//Color(0xff666666);
-    Color hintColor = Colors.white70;// Color(0xff999999);
-    Color textColor = Colors.white;//Color(0xff333333);
-    Color dividerColor = ResColor.white_20;//Colors.blue;
+    Color dialogbg = ResColor.b_4; //Colors.white;
+    Color titleColor = Colors.white; //Colors.black;
+    Color closeIconColor = Colors.white; //Color(0xff666666);
+    Color hintColor = Colors.white70; // Color(0xff999999);
+    Color textColor = Colors.white; //Color(0xff333333);
+    Color dividerColor = ResColor.white_20; //Colors.blue;
 
     Widget widget = Container(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
@@ -261,7 +269,7 @@ class BottomDialog {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 17,
-                      fontWeight:FontWeight.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -278,7 +286,7 @@ class BottomDialog {
                       color: Colors.transparent,
                       child: Icon(
                         Icons.close,
-                        color: ResColor.white_60,//Color(0xff666666),
+                        color: ResColor.white_60, //Color(0xff666666),
                         size: 14,
                       ),
                     ),
@@ -287,53 +295,87 @@ class BottomDialog {
               ],
             ),
           ),
-          Container(
-            width: double.infinity,
-            height: 55,
-            padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
-            child: TextField(
-              autofocus: true,
-              //自动获取焦点， 自动弹出输入法
-              controller: tec,
-              textAlign: TextAlign.left,
-              keyboardType: TextInputType.text,
-              //获取焦点时,启用的键盘类型
-              maxLines: 1,
-              // 输入框最大的显示行数
-              maxLengthEnforced: true,
-              //是否允许输入的字符长度超过限定的字符长度
-              obscureText: false,
-              //是否是密码
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(maxLength),
-              ],
-              // 这里限制长度 不会有数量提示
-              decoration: InputDecoration(
-                // 以下属性可用来去除TextField的边框
-                border: InputBorder.none,
-                errorBorder: InputBorder.none,
-                focusedErrorBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                contentPadding: EdgeInsets.fromLTRB(0, 0, 0, -10),
-                hintText: hint,
-                hintStyle: TextStyle(color: hintColor, fontSize: 17),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  height: 55,
+                  padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
+                  child: TextField(
+                    autofocus: true,
+                    //自动获取焦点， 自动弹出输入法
+                    controller: tec,
+                    textAlign: TextAlign.left,
+                    keyboardType: TextInputType.text,
+                    //获取焦点时,启用的键盘类型
+                    maxLines: 1,
+                    // 输入框最大的显示行数
+                    maxLengthEnforced: true,
+                    //是否允许输入的字符长度超过限定的字符长度
+                    obscureText: false,
+                    //是否是密码
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(maxLength),
+                    ],
+                    // 这里限制长度 不会有数量提示
+                    decoration: InputDecoration(
+                      // 以下属性可用来去除TextField的边框
+                      border: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      focusedErrorBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      contentPadding: EdgeInsets.fromLTRB(0, 0, 0, -10),
+                      hintText: hint,
+                      hintStyle: TextStyle(color: hintColor, fontSize: 17),
+                    ),
+                    cursorWidth: 2.0,
+                    //光标宽度
+                    cursorRadius: Radius.circular(2),
+                    //光标圆角弧度
+                    cursorColor: textColor,
+                    //Colors.black,
+                    //光标颜色
+                    style: TextStyle(fontSize: 16, color: textColor),
+                    onChanged: (text) {
+                      _text = text;
+                    },
+                    onSubmitted: (value) {
+                      // 当用户确定已经完成编辑时触发
+                    }, // 是否隐藏输入的内容
+                  ),
+                ),
               ),
-              cursorWidth: 2.0,
-              //光标宽度
-              cursorRadius: Radius.circular(2),
-              //光标圆角弧度
-              cursorColor: textColor,//Colors.black,
-              //光标颜色
-              style: TextStyle(fontSize: 16, color: textColor),
-              onChanged: (text) {
-                _text = text;
-              },
-              onSubmitted: (value) {
-                // 当用户确定已经完成编辑时触发
-              }, // 是否隐藏输入的内容
-            ),
+              if (autoBtnString != null && autoBtnContent != null)
+                InkWell(
+                  onTap: () {
+                    _text = autoBtnContent;
+                    // TextEditingController tec = TextEditingController(text: _text);
+                    tec.text = _text;
+                    tec.selection = new TextSelection.fromPosition(
+                      TextPosition(
+                          affinity: TextAffinity.downstream,
+                          offset: _text.length),
+                    );
+                  },
+                  child: Container(
+                    padding: EdgeInsets.only(left: 15),
+                    child: Text(
+                      autoBtnString,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        // fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              Container(
+                width: 30,
+              ),
+            ],
           ),
           Divider(
             height: 1,
@@ -348,7 +390,8 @@ class BottomDialog {
             color_bg: Colors.transparent,
             disabledColor: Colors.transparent,
             height: 40,
-            text:RSID.confirm.text, //"确定",
+            text: RSID.confirm.text,
+            //"确定",
             textstyle: TextStyle(
               color: Colors.white,
               fontSize: 17,
@@ -356,13 +399,13 @@ class BottomDialog {
             ),
             bg_borderradius: BorderRadius.circular(4),
             onclick: (lbtn) {
-                    if (StringUtils.isEmpty(_text.trim())) {
-                      ToastUtils.showToast(hint);
-                      return;
-                    }
+              if (StringUtils.isEmpty(_text.trim())) {
+                ToastUtils.showToast(hint);
+                return;
+              }
 
-                    Navigator.pop(context);
-                    callback(_text);
+              Navigator.pop(context);
+              callback(_text);
             },
           ),
           // Container(
@@ -399,8 +442,7 @@ class BottomDialog {
       ),
     );
 
-    return showBottomPop(context, widget,
-        radius_top: 15, bgColor: dialogbg);
+    return showBottomPop(context, widget, radius_top: 15, bgColor: dialogbg);
   }
 
   /// 交易枷锁 成功后在callback中返回新的交易hash
@@ -442,7 +484,7 @@ class BottomDialog {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 17,
-                      fontWeight:FontWeight.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -459,7 +501,7 @@ class BottomDialog {
                       color: Colors.transparent,
                       child: Icon(
                         Icons.close,
-                        color: ResColor.white_60,//Color(0xff666666),
+                        color: ResColor.white_60, //Color(0xff666666),
                         size: 14,
                       ),
                     ),
@@ -625,21 +667,21 @@ class BottomDialog {
             color_bg: Colors.transparent,
             disabledColor: Colors.transparent,
             bg_borderradius: BorderRadius.circular(4),
-            text:RSID.confirm.text, //"确定",
+            text: RSID.confirm.text,
+            //"确定",
             textstyle: TextStyle(
               color: Colors.white,
               fontSize: 17,
-              fontWeight:FontWeight.bold,
+              fontWeight: FontWeight.bold,
             ),
             onclick: (lbtn) async {
               double _gasrate = StringUtils.parseDouble(_text, 0);
 
-              if (_gasrate == null ) {
+              if (_gasrate == null) {
                 ToastUtils.showToastCenter("请输入加速Gas比例");
                 return;
               }
-              if( _gasrate < 1)
-              {
+              if (_gasrate < 1) {
                 ToastUtils.showToastCenter("Gas比例需要>1");
                 return;
               }
@@ -650,8 +692,7 @@ class BottomDialog {
 
               //关闭输入法
               try {
-                FocusScope.of(context)
-                    .requestFocus(new FocusNode());
+                FocusScope.of(context).requestFocus(new FocusNode());
               } catch (e) {
                 print(e);
               }
@@ -660,28 +701,27 @@ class BottomDialog {
               lbtn.setLoading(true);
 
               ResultObj<String> resultobj =
-              await walletaccount.hdwallet.accelerateTx(txHash, _gasrate);
+                  await walletaccount.hdwallet.accelerateTx(txHash, _gasrate);
 
               lbtn.setLoading(false);
 
               if (resultobj.code != 0) {
-
                 Navigator.of(context).pop();
-                Future.delayed(Duration(milliseconds: 200)).then((value){
+                Future.delayed(Duration(milliseconds: 200)).then((value) {
                   MessageDialog.showMsgDialog(
                     context,
                     title: RSID.tip.text,
-                    msg: "ERROR: ${resultobj?.errorMsg ?? RSID.request_failed.text}",
+                    msg:
+                        "ERROR: ${resultobj?.errorMsg ?? RSID.request_failed.text}",
                     btnLeft: RSID.confirm.text,
                     onClickBtnLeft: (dialog) {
                       dialog.dismiss();
                     },
                   );
                 });
-              }else{
-
+              } else {
                 Navigator.of(context).pop();
-                Future.delayed(Duration(milliseconds: 200)).then((value){
+                Future.delayed(Duration(milliseconds: 200)).then((value) {
                   MessageDialog.showMsgDialog(
                     context,
                     title: RSID.tip.text,
@@ -691,13 +731,12 @@ class BottomDialog {
                       dialog.dismiss();
                     },
                     onDismiss: (dialog) {
-                      if(callback!=null){
+                      if (callback != null) {
                         callback(resultobj.data);
                       }
                     },
                   );
                 });
-
               }
             },
           )
@@ -705,6 +744,9 @@ class BottomDialog {
       ),
     );
 
-    return showBottomPop(context, widget,);
+    return showBottomPop(
+      context,
+      widget,
+    );
   }
 }

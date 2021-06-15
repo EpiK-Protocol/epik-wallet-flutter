@@ -1,5 +1,3 @@
-
-
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/main.dart';
 
@@ -8,7 +6,6 @@ extension RSID_ex on RSID {
     return ResString.get(appContext, this);
   }
 }
-
 
 enum RSID {
   //base
@@ -71,6 +68,8 @@ enum RSID {
   eepkv_3,
   eepkv_4,
   eepkv_5,
+  eepkv_6,
+  eepkv_7,
   //AccountDetailView 钱包账号详情
   adv_1,
   adv_2,
@@ -128,7 +127,11 @@ enum RSID {
   main_wv_3,
   main_wv_4,
   main_wv_5,
-  main_wv_6,//总资产
+  main_wv_6, //总资产
+  main_wv_7, //ERC20-EPK 兑换 EPK
+  main_wv_8, //领取赏金猎人奖励
+  main_wv_9, //ERC20-EPK Uniswap 交易
+  main_wv_10, //暂未开通
   //WalletMenu 首页_钱包侧滑菜单
   main_mw_1,
   main_mw_2,
@@ -159,6 +162,7 @@ enum RSID {
   mpv_1,
   mpv_2,
   mpv_3,
+  mpv_4,
   //MiningSignupView 预挖报名
   msv_1,
   msv_2,
@@ -212,6 +216,7 @@ enum RSID {
   //----------------------------------------views.qrcode.*
   //QrcodeScanView 扫描二维码
   qsv_1,
+  qsv_2,
 
   //----------------------------------------views.uniswap.*
   //UniswapView 外壳
@@ -351,4 +356,101 @@ enum RSID {
   bus_2,
   bus_3,
   bus_4,
+
+  //----------------------------------------MinerView
+  minerview_1, //抵押
+  minerview_2, //赎回
+  minerview_3, //请输入MinerID
+  minerview_4, //添加
+  minerview_5, //存储矿工
+  minerview_6, //当前算力
+  minerview_7, //账户余额
+  minerview_8, //锁定余额
+  minerview_9, //可提余额
+  minerview_10, //矿工基础抵押
+  minerview_11, //我的基础抵押
+  minerview_12, //流量抵押余额
+  minerview_13, //流量抵押锁定
+  minerview_14, //当日访问流量
+  //---add
+  minerview_15, //注意：\n- 知识矿工需要启动实体矿机才能参与挖矿\n- 知识矿工需要完成1000EPK的矿工基础抵押才能获得出块资格\n- 知识矿工需要从网络里读取新文件，存储新文件才能增加算力，增大出块概率 \n- 1EPK=10Mb的每日访问流量，每日已用访问流量将会返还\n- 您可以在任何时候赎回抵押的EPK
+  minerview_16, // EPK 可用
+  minerview_17, //访问流量抵押
+  minerview_18, //交易已提交
+  minerview_19, //查看交易
+  minerview_20, //添加抵押交易已提交
+  //---withdraw
+  minerview_21, //注意：\n- 仅能赎回自己抵押的EPK\n- 如果你当前已经消耗了一部分访问流量，则无法赎回全部的访问流量抵押，请尝试减少赎回的数量\n- 矿工基础抵押赎回中的EPK将会立刻到账\n- 访问流量抵押的EPK需要在解锁操作3天后才能赎回\n
+  minerview_22, // EPK 赎回
+  minerview_23, // EPK 可解锁
+  minerview_24, // 解锁
+  minerview_25, //访问流量抵押
+  minerview_26, //赎回抵押交易已提交
+  minerview_27, //解锁抵押交易已提交
+  //---MinerMenu
+  minermenu_1, //选择MinerID
+  minermenu_2, //删除MinerID
+  minermenu_3, //删除
+  minermenu_4, //添加MinerID
+  minermenu_5, //请输入MinerID
+
+  //----------------------------------------ExpertView
+  expertview_1, //全部
+  expertview_2, //领域专家
+  expertview_3, //当前年化收益
+  expertview_4, //已投
+  expertview_5, //累计收益
+  expertview_6, //申请成为领域专家
+  expertview_7, //领域
+  expertview_8, //收益
+  expertview_9, //已注册//registered
+  expertview_10, //已审核//nominated
+  expertview_11, //活跃的//normal
+  expertview_12, //黑名单//blocked
+  expertview_13, //黑名单//disqualified
+  expertview_14, //可提现收益
+  expertview_15,
+  //ApplyExpertView
+  applyexpertview_1, //申请领域专家
+  applyexpertview_2, //您的申请已提交，请等待审核结果。
+  applyexpertview_3, //再次申请
+  applyexpertview_4, //您的申请已通过
+  applyexpertview_5, //申请须知
+  applyexpertview_6, //费用
+  applyexpertview_7, //提交申请
+  applyexpertview_8, //请输入姓名
+  applyexpertview_9, //请输入手机号
+  applyexpertview_10, //请输入邮箱
+  applyexpertview_11, //请输入领域
+  applyexpertview_12, //请输入个人介绍
+  applyexpertview_13, //很遗憾，您的申请未通过。
+  applyexpertview_14, //原因
+  applyexpertview_15, //您可以更新申请表重新提交审核
+  applyexpertview_16, //姓名(公开)
+  applyexpertview_17, //手机号(非公开)
+  applyexpertview_18, //邮箱(非公开)
+  applyexpertview_19, //想申请的领域(公开)
+  applyexpertview_20, //请从教育背景，工作经历，影响力等方面介绍自己
+  applyexpertview_21, //个人介绍(公开)
+  applyexpertview_22, //知识图谱数据默认遵循无任何限制的开源协议，如对开源协议有任何特殊要求，请填写如下（选填）
+  applyexpertview_23, //开源协议(公开)
+  applyexpertview_24, //交易确认中
+  applyexpertview_25, //领域专家申请已提交，请等待审核。
+  //ExpertInfoView
+  expertinfoview_0, //领域专家详情
+  expertinfoview_1, //个人简介
+  expertinfoview_2, //开源协议
+  expertinfoview_3, //状态
+  expertinfoview_4, //投票
+  expertinfoview_5, //收益
+  expertinfoview_6, //已投
+  expertinfoview_7, //请输入数额
+  expertinfoview_8, //追加投票
+  expertinfoview_9, //撤回投票
+  expertinfoview_10, //提取EPK
+  expertinfoview_11, //请输入数量
+  expertinfoview_12, //已投票
+  expertinfoview_13, //已撤回
+  expertinfoview_14, //已提取
+
 }

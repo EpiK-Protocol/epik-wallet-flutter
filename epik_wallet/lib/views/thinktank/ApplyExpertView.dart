@@ -29,7 +29,8 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    setAppBarTitle("申请领域专家");
+    // setAppBarTitle("申请领域专家");
+    setAppBarTitle(RSID.applyexpertview_1.text);
   }
 
   @override
@@ -40,7 +41,7 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
     setAppBarVisible(false);
     setAppBarBackColor(Colors.transparent);
     setTopBarBackColor(Colors.transparent);
-// resizeToAvoidBottomPadding=true;
+    resizeToAvoidBottomPadding=true;
     refresh();
   }
 
@@ -64,7 +65,7 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
             MessageDialog.showMsgDialog(
               context,
               title: RSID.tip.text,
-              msg: "您的申请已提交，请等待审核结果。",
+              msg: RSID.applyexpertview_2.text,//"您的申请已提交，请等待审核结果。",
               backClose: false,
               touchOutClose: false,
               btnRight: RSID.isee.text,
@@ -72,7 +73,7 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
                 dialog.dismiss();
                 finish();
               },
-              btnLeft: "再次申请",
+              btnLeft: RSID.applyexpertview_3.text,//"再次申请",
               onClickBtnLeft: (dialog) {
                 setFormData(null);
                 setState(() {});
@@ -85,7 +86,7 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
             MessageDialog.showMsgDialog(
               context,
               title: RSID.tip.text,
-              msg: "您的申请已通过",
+              msg: RSID.applyexpertview_4.text,//"您的申请已通过",
               backClose: false,
               touchOutClose: false,
               btnRight: RSID.isee.text,
@@ -93,7 +94,7 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
                 dialog.dismiss();
                 finish();
               },
-              btnLeft: "再次申请",
+              btnLeft: RSID.applyexpertview_3.text,//"再次申请",
               onClickBtnLeft: (dialog) {
                 setFormData(null);
                 setState(() {});
@@ -132,7 +133,7 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              "申请须知",
+              RSID.applyexpertview_5.text,//"申请须知",
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.white,
@@ -160,7 +161,7 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
         Row(
           children: [
             Text(
-              "费用",
+              RSID.applyexpertview_6.text,//"费用",
               style: TextStyle(
                 fontSize: 11,
                 color: ResColor.white_60,
@@ -185,7 +186,7 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
           color_bg: Colors.transparent,
           disabledColor: Colors.transparent,
           height: 40,
-          text: "提交申请",
+          text: RSID.applyexpertview_7.text,//"提交申请",
           textstyle: TextStyle(
             color: Colors.white,
             fontSize: 17,
@@ -197,23 +198,23 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
             closeInput();
 
             if (StringUtils.isEmpty(formData["name"])) {
-              showToast("请输入姓名");
+              showToast(RSID.applyexpertview_8.text);//"请输入姓名");
               return;
             }
             if (StringUtils.isEmpty(formData["phone"])) {
-              showToast("请输入手机号");
+              showToast(RSID.applyexpertview_9.text);//"请输入手机号");
               return;
             }
             if (StringUtils.isEmpty(formData["email"])) {
-              showToast("请输入邮箱");
+              showToast(RSID.applyexpertview_10.text);//"请输入邮箱");
               return;
             }
             if (StringUtils.isEmpty(formData["domain"])) {
-              showToast("请输入领域");
+              showToast(RSID.applyexpertview_11.text);//"请输入领域");
               return;
             }
             if (StringUtils.isEmpty(formData["des"])) {
-              showToast("请输入个人介绍");
+              showToast(RSID.applyexpertview_12.text);//"请输入个人介绍");
               return;
             }
 
@@ -283,7 +284,8 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        "很遗憾，您的申请未通过。\n原因: ${expertInfo_old?.reason ?? ""}\n您可以更新申请表重新提交审核",
+        // "很遗憾，您的申请未通过。\n原因: ${expertInfo_old?.reason ?? ""}\n您可以更新申请表重新提交审核",
+        "${RSID.applyexpertview_13.text}\n${RSID.applyexpertview_14.text}: ${expertInfo_old?.reason ?? ""}\n${RSID.applyexpertview_15.text}",
         style: TextStyle(
           color: ResColor.warning_text,
           fontSize: 14,
@@ -317,36 +319,36 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
       {
         "key": "name",
         "type": "text_input",
-        "t_label": "姓名(公开)",
+        "t_label": RSID.applyexpertview_16.text,//"姓名(公开)",
         "maxLines": 1,
         "maxLength": null,
       },
       {
         "key": "phone",
         "type": "text_input",
-        "t_label": "手机号(非公开)",
+        "t_label": RSID.applyexpertview_17.text,//"手机号(非公开)",
         "maxLines": 1,
         "maxLength": null,
       },
       {
         "key": "email",
         "type": "text_input",
-        "t_label": "邮箱(非公开)",
+        "t_label": RSID.applyexpertview_18.text,//"邮箱(非公开)",
         "maxLines": 1,
         "maxLength": null,
       },
       {
         "key": "domain",
         "type": "text_input",
-        "t_label": "想申请的领域(公开)",
+        "t_label": RSID.applyexpertview_19.text,//"想申请的领域(公开)",
         "maxLines": 1,
         "maxLength": null,
       },
       {
         "key": "des",
         "type": "text_input",
-        "des": "请从教育背景，工作经历，影响力等方面介绍自己",
-        "t_label": "个人介绍(公开)",
+        "des": RSID.applyexpertview_20.text,//"请从教育背景，工作经历，影响力等方面介绍自己",
+        "t_label": RSID.applyexpertview_21.text,//"个人介绍(公开)",
         "minLines": 1,
         "maxLines": -1,
         "maxLength": null,
@@ -354,8 +356,8 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
       {
         "key": "agreement",
         "type": "text_input",
-        "des": "知识图谱数据默认遵循无任何限制的开源协议，如对开源协议有任何特殊要求，请填写如下（选填）",
-        "t_label": "开源协议(公开)",
+        "des": RSID.applyexpertview_22.text,//"知识图谱数据默认遵循无任何限制的开源协议，如对开源协议有任何特殊要求，请填写如下（选填）",
+        "t_label": RSID.applyexpertview_23.text,//"开源协议(公开)",
         "minLines": 1,
         "maxLines": -1,
         "maxLength": null,
@@ -405,7 +407,7 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
 
     if (StringUtils.isNotEmpty(hash)) {
       showLoadDialog(
-        "交易确认中",
+        RSID.applyexpertview_24.text,//"交易确认中",
         backClose: false,
         touchOutClose: false,
         onShow: () async {
@@ -419,7 +421,7 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
             MessageDialog.showMsgDialog(
               context,
               title: RSID.tip.text,
-              msg: "领域专家申请已提交，请等待审核。",
+              msg:RSID.applyexpertview_25.text,// "领域专家申请已提交，请等待审核。",
               btnRight: RSID.confirm.text,
               onClickBtnRight: (dialog) {
                 dialog.dismiss();

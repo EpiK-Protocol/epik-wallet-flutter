@@ -8,6 +8,13 @@ class RegExpUtil {
   static RegExp re_noChs = RegExp(r'[^\u4e00-\u9fa5]+');
   /// 基础ascii码从0到127
   static RegExp re_ascii_00_7f = RegExp(r'[\u0000-\u007f]+');
+  /// 基础ascii码从0到127以外的字符
+  static RegExp re_ascii_00_7f_not = RegExp(r'[^\u0000-\u007f]+');
+
+  //字符串末尾的0
+  static RegExp re_end_zero = RegExp(r"(?<=.+)(0+)$");
+  //字符串开头的0
+  static RegExp re_start_zero = RegExp(r"^(0+)(?<=.+)");
 
 
 

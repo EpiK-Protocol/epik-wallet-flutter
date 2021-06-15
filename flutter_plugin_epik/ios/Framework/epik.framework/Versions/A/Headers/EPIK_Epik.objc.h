@@ -67,6 +67,19 @@
  */
 - (NSString* _Nonnull)balance:(NSString* _Nullable)addr error:(NSError* _Nullable* _Nullable)error;
 /**
+ * CreateExpert 创建领域专家
+ */
+- (NSString* _Nonnull)createExpert:(NSString* _Nullable)applicationHash error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)createSendMessage:(NSString* _Nullable)to amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
+/**
+ * ExpertInfo 专家信息
+ */
+- (NSString* _Nonnull)expertInfo:(NSString* _Nullable)addr error:(NSError* _Nullable* _Nullable)error;
+/**
+ * ExpertList ...
+ */
+- (NSString* _Nonnull)expertList:(NSError* _Nullable* _Nullable)error;
+/**
  * Export ...
  */
 - (NSString* _Nonnull)export:(NSString* _Nullable)addr error:(NSError* _Nullable* _Nullable)error;
@@ -82,14 +95,24 @@
  * Import ...
  */
 - (NSString* _Nonnull)import:(NSString* _Nullable)privateKey error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)messageCID:(NSString* _Nullable)message error:(NSError* _Nullable* _Nullable)error;
 /**
- * MessageList ...
+ * MessageReceipt ...
  */
-- (NSString* _Nonnull)messageList:(int64_t)toHeight addr:(NSString* _Nullable)addr error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)messageReceipt:(NSString* _Nullable)cidStr error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)minerInfo:(NSString* _Nullable)minerID error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)minerPledgeAdd:(NSString* _Nullable)toMinerID amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)minerPledgeWithdraw:(NSString* _Nullable)toMinerID amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)retrievePledgeAdd:(NSString* _Nullable)target miner:(NSString* _Nullable)miner amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)retrievePledgeApplyWithdraw:(NSString* _Nullable)toMinerID amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)retrievePledgeBind:(NSString* _Nullable)miner amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)retrievePledgeUnBind:(NSString* _Nullable)miner amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)retrievePledgeWithdraw:(NSString* _Nullable)toMinerID amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
 /**
  * Send ...
  */
 - (NSString* _Nonnull)send:(NSString* _Nullable)to amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)sendRawMessage:(NSString* _Nullable)message signature:(NSData* _Nullable)signature error:(NSError* _Nullable* _Nullable)error;
 /**
  * SetDefault ...
  */
@@ -102,11 +125,24 @@
  * Sign ...
  */
 - (NSData* _Nullable)sign:(NSString* _Nullable)addr hash:(NSData* _Nullable)hash error:(NSError* _Nullable* _Nullable)error;
+- (NSData* _Nullable)signCID:(NSString* _Nullable)addr cidStr:(NSString* _Nullable)cidStr error:(NSError* _Nullable* _Nullable)error;
+/**
+ * VoteRescind 撤销
+ */
+- (NSString* _Nonnull)voteRescind:(NSString* _Nullable)candidate amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
+/**
+ * VoteSend 投票
+ */
+- (NSString* _Nonnull)voteSend:(NSString* _Nullable)candidate amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
+/**
+ * VoteWithdraw 提现
+ */
+- (NSString* _Nonnull)voteWithdraw:(NSString* _Nullable)to error:(NSError* _Nullable* _Nullable)error;
+/**
+ * VoterInfo 投票信息
+ */
+- (NSString* _Nonnull)voterInfo:(NSString* _Nullable)addr error:(NSError* _Nullable* _Nullable)error;
 @end
-
-FOUNDATION_EXPORT NSString* _Nonnull EPIK_EpikBigIntDiv(NSString* _Nullable balance, long decimals);
-
-FOUNDATION_EXPORT NSString* _Nonnull EPIK_EpikBigIntMul(NSString* _Nullable balance, long decimals);
 
 /**
  * NewWallet ...

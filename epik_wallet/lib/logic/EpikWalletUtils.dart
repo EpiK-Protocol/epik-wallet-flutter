@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
+import 'package:epikwallet/logic/account_mgr.dart';
+import 'package:epikwallet/logic/api/api_mainnet.dart';
 import 'package:epikwallet/logic/api/api_wallet.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/EthOrder.dart';
+import 'package:epikwallet/model/MinerCoinbaseList.dart';
 import 'package:epikwallet/model/TepkOrder.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/model/prices.dart';
@@ -295,7 +298,7 @@ class WalletAccount {
     SpUtils.putString("DappTokens_${dappTokenKey}", jsonEncode(tokenMap ?? {}));
   }
 
-  String minerCurrent=null;
+  String minerCurrent = null;
   List<String> minerIdList = [];
 
   String get minerIdListKey {
@@ -317,26 +320,45 @@ class WalletAccount {
       print(e);
     }
     temp = temp ?? {};
-    minerIdList =List<String>.from( temp["list"] ?? []);
+    minerIdList = List<String>.from(temp["list"] ?? []);
     minerCurrent = temp["current"];
-    if(StringUtils.isEmpty(minerCurrent))
-      minerCurrent=getFirstMinerId();
+    if (StringUtils.isEmpty(minerCurrent)) minerCurrent = getFirstMinerId();
+    if (StringUtils.isEmpty(minerCurrent))
+    {
+      if(minerCoinbaseList?.hasCoinbased==true)
+      {
+        minerCurrent = minerCoinbaseList.coinbased[0];
+      }else if(minerCoinbaseList?.haspledged==true)
+      {
+        minerCurrent = minerCoinbaseList.pledged[0];
+      }
+    }
   }
 
   saveMinerIdList() {
-    if(minerCurrent==null)
-      minerCurrent=getFirstMinerId();
+    if (minerCurrent == null) minerCurrent = getFirstMinerId();
     SpUtils.putString(
         "MinerIds_${minerIdListKey}",
         jsonEncode(<String, dynamic>{
           "list": minerIdList ?? [],
-          "current":minerCurrent,
+          "current": minerCurrent,
         }));
   }
 
   String getFirstMinerId() {
     if (minerIdList != null && minerIdList.length > 0) return minerIdList[0];
     return null;
+  }
+
+  //在线保存的minerid
+  MinerCoinbaseList minerCoinbaseList;
+
+  Future<void> getMinerListOnline() async {
+    HttpJsonRes hjr = await ApiMainNet.getMiners(
+        AccountMgr().currentAccount.epik_EPK_address);
+    if (hjr.code == 0) {
+      minerCoinbaseList = MinerCoinbaseList.from(hjr.jsonMap);
+    }
   }
 
   WalletAccount();

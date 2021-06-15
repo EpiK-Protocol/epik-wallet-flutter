@@ -54,14 +54,16 @@ class _MainViewState extends BaseWidgetState<MainView> {
   List<GlobalKey<BaseInnerWidgetState>> keyList;
 
   // 子页面
-  List<BaseInnerWidget> subViews;
+  // List<BaseInnerWidget> subViews;
+  List<Widget> subViews;
 
   @override
   void initState() {
     isTopBarShow = false; //状态栏是否显示
     isAppBarShow = false; //导航栏是否显示
-
     viewSystemUiOverlayStyle= DeviceUtils.system_bar_main;
+
+    resizeToAvoidBottomPadding=true;
 
     navigationColor = ResColor.b_2;
     super.initState();
@@ -86,10 +88,11 @@ class _MainViewState extends BaseWidgetState<MainView> {
 
     keyList = <GlobalKey<BaseInnerWidgetState>>[];
 
-    subViews = <BaseInnerWidget>[];
+    subViews = <Widget>[];//<BaseInnerWidget>[];
 
     main_subviewTypes.forEach((subtype) {
-      GlobalKey key = GlobalKey();
+      final GlobalKey<BaseInnerWidgetState> key = GlobalKey();
+
       switch (subtype) {
         // case MainSubViewType.MININGVIEW:
         //   subViews.add(MiningView(key));
@@ -122,6 +125,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
 
     Scaffold scaffold = Scaffold(
       key: key_scaffold,
+      resizeToAvoidBottomInset: resizeToAvoidBottomPadding,
       backgroundColor: Colors.transparent,
       // body: IndexedStack(
       //   index: currentIndex,
@@ -229,6 +233,8 @@ class _MainViewState extends BaseWidgetState<MainView> {
   }
 
   Widget getDarkBottomNavigationBar() {
+    // if (AccountMgr().currentAccount == null)
+    //   return Container();
     return SafeArea(
       bottom: true,
       top: false,
@@ -445,11 +451,21 @@ class _MainViewState extends BaseWidgetState<MainView> {
   }
 
   void _onItemTapped(int index) {
-    if (index == 2) {
-      if (AccountMgr().currentAccount == null) {
-        index = 1;
+    // if (index == 2) {
+    //   if (AccountMgr().currentAccount == null) {
+    //     index = 1;
+    //   }
+    // }
+    if (AccountMgr().currentAccount == null)
+    {
+      int page_wallet = main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW);
+      if(index!=page_wallet)
+      {
+        index=page_wallet;
       }
     }
+
+
     closeInput();
 
     setState(() {

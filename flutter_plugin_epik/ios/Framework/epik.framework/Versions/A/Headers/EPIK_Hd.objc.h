@@ -54,6 +54,10 @@
 - (nonnull instancetype)initWithRef:(_Nonnull id)ref;
 - (nonnull instancetype)init;
 /**
+ * AccelerateTx 加速交易
+ */
+- (NSString* _Nonnull)accelerateTx:(NSString* _Nullable)srcTxHash gasRate:(double)gasRate error:(NSError* _Nullable* _Nullable)error;
+/**
  * Accounts ...
  */
 - (NSString* _Nonnull)accounts;
@@ -62,6 +66,10 @@
  */
 - (NSString* _Nonnull)balance:(NSString* _Nullable)address error:(NSError* _Nullable* _Nullable)error;
 /**
+ * CancelTx 取消交易
+ */
+- (NSString* _Nonnull)cancelTx:(NSString* _Nullable)srcTxHash error:(NSError* _Nullable* _Nullable)error;
+/**
  * Contains ...
  */
 - (BOOL)contains:(NSString* _Nullable)address;
@@ -69,6 +77,11 @@
  * Derive ...
  */
 - (NSString* _Nonnull)derive:(NSString* _Nullable)path pin:(BOOL)pin error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)export:(NSString* _Nullable)address error:(NSError* _Nullable* _Nullable)error;
+/**
+ * Receipt  ...
+ */
+- (NSString* _Nonnull)receipt:(NSString* _Nullable)txHash error:(NSError* _Nullable* _Nullable)error;
 /**
  * SetRPC ...
  */

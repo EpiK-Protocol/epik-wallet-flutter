@@ -63,6 +63,8 @@ Map<RSID, String> map_en = {
   RSID.eepkv_3: "Copy private key",//"复制私钥",
   RSID.eepkv_4: "Reminder",//导出提示
   RSID.eepkv_5: "What you are exporting is the private key of the test token tEPK. tEPK is a test token of the test network, which is only used in the test network pre-mining and has no transaction value. Leaking this private key may lead to the loss of test tokens, but it has nothing to do with the ERC-20 assets in the wallet. You need not worry about the safety of the assets in the ERC-20 wallet. Meanwhile, in the proxy miner, the proxy party may need the private key of tEPK for proxy collateral.",
+  RSID.eepkv_6: "Export ETH private key",//"导出ETH私钥",
+  RSID.eepkv_7: "Remote authorization",//"远程授权",
 
   //AccountDetailView 钱包账号详情 Wallet details
   RSID.adv_1: "Change password",//"修改密码",
@@ -127,7 +129,12 @@ Map<RSID, String> map_en = {
   RSID.main_wv_2: "Create wallet",//"创建钱包",
   RSID.main_wv_3: "Already have a wallet",//"已有钱包",
   RSID.main_wv_4: "Import wallet",//"导入钱包",
-  RSID.main_wv_5: "Main network",//"主网",
+  RSID.main_wv_5: "Test network 5.0",//"Main network",//"主网",
+  RSID.main_wv_6: "Total assets",// "总资产",
+  RSID.main_wv_7: "ERC20-EPK swap for EPK",//ERC20-EPK 兑换 EPK
+  RSID.main_wv_8: "Get the bounty hunter reward",//"领取赏金猎人奖励",
+  RSID.main_wv_9: "ERC20-EPK Uniswap",//ERC20-EPK Uniswap 交易
+  RSID.main_wv_10: "Not yet open",//"暂未开通",
 
   //WalletMenu 首页_钱包侧滑菜单
   RSID.main_mw_1: "Choose wallet",//"钱包",
@@ -136,7 +143,6 @@ Map<RSID, String> map_en = {
   RSID.main_mw_4: "Not now",//"暂不",
   RSID.main_mw_5: "Confirm to delete",//"确定清除",
   RSID.main_mw_6: "Check [%s] is an invalid wallet, delete or not?",//"检测【%s】为无效钱包，是否清除？",
-  RSID.main_wv_6: "Total assets",// "总资产",
 
   //TransactionView 首页_交易 Homepage exchange
   RSID.main_tv_1: "Please log in the wallet",//"请先登录钱包",
@@ -160,8 +166,9 @@ Map<RSID, String> map_en = {
   //----------------------------------------views.mining.*
   //MiningProfitView 预挖收益 Pre-mining profit
   RSID.mpv_1: "Pre-mining profit",//"预挖收益",
-  RSID.mpv_2: "mined\nEPK",//"挖出数量\ntEPK",
-  RSID.mpv_3: "granted\nERC20-EPK",//"奖励数量\nERC20-EPK",
+  RSID.mpv_2: "Mined\nEPK",//"挖出数量\ntEPK",
+  RSID.mpv_3: "Granted\nERC20-EPK",//"奖励数量\nERC20-EPK",
+  RSID.mpv_4: "Total bonus\nERC20-EPK",//"总奖励\nERC20-EPK",
 
 //MiningSignupView 预挖报名 Register for pre-mining
   RSID.msv_1: "Register for pre-mining",//"预挖报名",
@@ -217,6 +224,7 @@ Map<RSID, String> map_en = {
   //----------------------------------------views.qrcode.*
   //QrcodeScanView 扫描二维码 Scan QR code
   RSID.qsv_1: "Scan",//"扫一扫",
+  RSID.qsv_2: "Invalid QR code",//"无效二维码",
 
   //----------------------------------------views.uniswap.*
   //UniswapView 外壳
@@ -359,4 +367,102 @@ Map<RSID, String> map_en = {
   RSID.bus_2: "Passed",//"已通过",
   RSID.bus_3: "Failed",//"失败",
   RSID.bus_4: "Rejected",//"已拒绝",
+
+  //----------------------------------------MinerView
+  RSID.minerview_1:"Pledge",//"抵押",
+  RSID.minerview_2:"Withdraw",//"赎回",
+  RSID.minerview_3:"Please enter MinerID",//"请输入MinerID",
+  RSID.minerview_4:"Add",//"添加",
+  RSID.minerview_5:"Storage miner",//"存储矿工",
+  RSID.minerview_6:"Current power",//"当前算例",
+  RSID.minerview_7:"Account balance",//"账户余额",
+  RSID.minerview_8:"Lock balance",//"锁定余额",
+  RSID.minerview_9:"Extractable balance",//"可提余额",
+  RSID.minerview_10:"Base pledge",//"矿工基础抵押",
+  RSID.minerview_11:"My base pledge",//"我的基础抵押",
+  RSID.minerview_12:"Retrieve balance",//"流量抵押余额",
+  RSID.minerview_13:"Retrieve locked",//"流量抵押锁定",
+  RSID.minerview_14:"Retrieve expend",//"当日访问流量",
+  //---add
+  RSID.minerview_15:"Notice:\n- Knowledge miners need to start the entity miner to participate in mining\n- Knowledge miners need to complete the basic pledge of 1000 EPK in order to obtain the qualification of block production\n- Knowledge miners need to read new files from the network and store new files in order to increase computing power and block probability\n- 1EPK = 10Mb daily access traffic, daily used access traffic will be returned\n- You can redeem the pledged EPK at any time",
+  RSID.minerview_16:" EPK available",//可用 available
+  RSID.minerview_17:"Retrieve pledge",//"访问流量抵押",
+  RSID.minerview_18:"Transaction submitted",//"交易已提交",
+  RSID.minerview_19:"View details",//"查看交易",
+  RSID.minerview_20:"Add pledge submitted",//"添加抵押交易已提交",
+  //---withdraw
+  RSID.minerview_21:"Notice:\n- Only redeem EPK of its own pledge\n- If you have consumed part of the access traffic at present, you cannot redeem all the access traffic pledge. Please try to reduce the amount of redemption\n- The EPK in the miner's basic pledge redemption will arrive immediately\n- EPK accessing traffic pledge can only be redeemed after 3 days of unlocking operation",
+  RSID.minerview_22:" EPK redeem",//赎回
+  RSID.minerview_23:" EPK can be unlocked",//可解锁
+  RSID.minerview_24:" unlocked",//解锁
+  RSID.minerview_25:"Retrieve pledge",//"访问流量抵押",
+  RSID.minerview_26:"Redemption submitted",//"赎回抵押交易已提交",
+  RSID.minerview_27:"Unlock submitted",//"解锁抵押交易已提交",
+  //---MinerMenu
+  RSID.minermenu_1:"Choose MinerID",//"选择MinerID",
+  RSID.minermenu_2:"Delete MinerID",//"删除MinerID",
+  RSID.minermenu_3:"Delete",//删除
+  RSID.minermenu_4:"Add MinerID",//"添加MinerID",
+  RSID.minermenu_5:"Enter MinerID", //输入MinnerID
+
+  //----------------------------------------ExpertView todo
+  RSID.expertview_1:"All",//"全部",
+  RSID.expertview_2:"Domain experts",//"领域专家",
+  RSID.expertview_3:"Current ARR",//"当前年化收益",  “ARR” Annualized Rate Of Return
+  RSID.expertview_4:"Voted",//"已投",
+  RSID.expertview_5:"Profit",//"累计收益",
+  RSID.expertview_6:"Apply to be domain expert",//"申请成为领域专家",
+  RSID.expertview_7:"Domain",//"领域",
+  RSID.expertview_8:"profit",//"收益",
+  RSID.expertview_9:"Registered",//"已注册",//registered
+  RSID.expertview_10:"Nominated",//"已审核",//nominated
+  RSID.expertview_11:"Qualified",//"活跃的",//normal qualified
+  RSID.expertview_12:"Blocked",//"黑名单",//blocked
+  RSID.expertview_13:"Blocked",//"黑名单",//disqualified
+  RSID.expertview_14:"Withdrawable profit",//"可提现收益",
+  RSID.expertview_15:"Enter number of withdrawals",//"请输入提取数量",
+  //ApplyExpertView
+  RSID.applyexpertview_1:"Apply for domain expert",//"申请领域专家",
+  RSID.applyexpertview_2:"Your application has been submitted. Please wait for the result.",//"您的申请已提交，请等待审核结果。",
+  RSID.applyexpertview_3:"Apply again",//"再次申请",
+  RSID.applyexpertview_4:"Your application has passed",//"您的申请已通过",
+  RSID.applyexpertview_5:"Notice",//"申请须知",
+  RSID.applyexpertview_6:"Fee",//"费用",
+  RSID.applyexpertview_7:"Submit application",//"提交申请",
+  RSID.applyexpertview_8:"Please enter your name",//"请输入姓名",
+  RSID.applyexpertview_9:"Please enter mobile phone number",//"请输入手机号",
+  RSID.applyexpertview_10:"Please enter email",//"请输入邮箱",
+  RSID.applyexpertview_11:"Please enter domain",//"请输入领域",
+  RSID.applyexpertview_12:"Please enter your profile",//"请输入个人介绍",
+  RSID.applyexpertview_13:"Sorry, your application has not passed.",//"很遗憾，您的申请未通过。",
+  RSID.applyexpertview_14:"Reason",//"原因",
+  RSID.applyexpertview_15:"You can update the application form and submit it for review again",//"您可以更新申请表重新提交审核",
+  RSID.applyexpertview_16:"Name (public)",//"姓名(公开)",
+  RSID.applyexpertview_17:"Mobile phone number (private)",//"手机号(非公开)",
+  RSID.applyexpertview_18:"Email (private)",//"邮箱(非公开)",
+  RSID.applyexpertview_19:"Domain (public)",//"想申请的领域(公开)",
+  RSID.applyexpertview_20:"Please introduce yourself in terms of educational background, work experience and influence",//"请从教育背景，工作经历，影响力等方面介绍自己",
+  RSID.applyexpertview_21:"Personal introduction (public)",//"个人介绍(公开)",
+  RSID.applyexpertview_22:"The knowledge map data is subject to open source agreement without any restrictions by default. If there are any special requirements for open source protocol, please fill in the following. (optional)",//"知识图谱数据默认遵循无任何限制的开源协议，如对开源协议有任何特殊要求，请填写如下（选填）",
+  RSID.applyexpertview_23:"Open Source License (public)",//"开源协议(公开)",
+  RSID.applyexpertview_24:"Waiting for transaction confirmation",//"交易确认中",
+  RSID.applyexpertview_25:"Domain expert application has been submitted, please wait for review.",//"领域专家申请已提交，请等待审核。",
+  //ExpertInfoView
+  RSID.expertinfoview_0:"Details of expert",//"领域专家详情",
+  RSID.expertinfoview_1:"Personal profile",//"个人简介",
+  RSID.expertinfoview_2:"Open Source License",//"开源协议",
+  RSID.expertinfoview_3:"State",//"状态",
+  RSID.expertinfoview_4:"Vote",//"投票",
+  RSID.expertinfoview_5:"Profit",//"收益",
+  RSID.expertinfoview_6:"Voted",//"已投",
+  RSID.expertinfoview_7:"Enter amount",//"请输入数额",
+  RSID.expertinfoview_8:"Add vote",//"追加投票",
+  RSID.expertinfoview_9:"Revoke",//"撤回投票",
+  RSID.expertinfoview_10:"Withdraw",//"提取EPK收益",
+  RSID.expertinfoview_11:"Please enter the amount",//"请输入数量",
+  RSID.expertinfoview_12:"Voted",//"已投票",
+  RSID.expertinfoview_13:"Revoked",//"已撤回",
+  RSID.expertinfoview_14:"Withdrawed",//"已提取",
+
+
 };

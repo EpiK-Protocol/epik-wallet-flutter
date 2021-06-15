@@ -318,6 +318,7 @@ class EpikWallet {
       String ret = await EpikPlugin.channel
           .invokeMethod("epik_wallet_retrievePledgeAdd", <String, dynamic>{
         "toMinerID": toMinerID,
+        "target":target,
         "amount":amount,
       });
       return ResultObj<String>(data:ret);
