@@ -135,6 +135,7 @@ Map<RSID, String> map_en = {
   RSID.main_wv_8: "Get the bounty hunter reward",//"领取赏金猎人奖励",
   RSID.main_wv_9: "ERC20-EPK Uniswap",//ERC20-EPK Uniswap 交易
   RSID.main_wv_10: "Not yet open",//"暂未开通",
+  RSID.main_wv_11:"Wallet setting",//钱包设置
 
   //WalletMenu 首页_钱包侧滑菜单
   RSID.main_mw_1: "Choose wallet",//"钱包",

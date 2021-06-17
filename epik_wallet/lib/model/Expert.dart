@@ -21,8 +21,10 @@ enum ExpertStatus {
 
 extension ExpertStatusEx on ExpertStatus {
   static ExpertStatus ofString(String text) {
+    //0
     if (text.contains("registered")) return ExpertStatus.registered;
     if (text.contains("nominated")) return ExpertStatus.nominated;
+    //1
     if (text.contains("normal") || text.contains("qualified")) return ExpertStatus.normal;
     if (text.contains("blocked")) return ExpertStatus.blocked;
     if (text.contains("disqualified")) return ExpertStatus.disqualified;

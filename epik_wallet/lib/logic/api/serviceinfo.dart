@@ -50,6 +50,10 @@ class ServiceInfo {
     // return "http://116.63.146.223:3003"; //todo
   }
 
+  static String get codeHost{
+    return _HOST;
+  }
+
   static String get hd_RpcUrl {
 //    return _hd_RpcUrl;
     return serverConfig?.ETHAPI ?? _hd_RpcUrl; // 正式地址

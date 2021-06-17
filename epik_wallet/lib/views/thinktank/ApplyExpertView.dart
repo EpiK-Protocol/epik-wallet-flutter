@@ -123,31 +123,32 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
 
   @override
   Widget getAppBarRight({Color color}) {
-    return InkWell(
-      onTap: () {
-        // todo 申请须知网页
-      },
-      child: Container(
-        padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              RSID.applyexpertview_5.text,//"申请须知",
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.white,
-              ),
-            ),
-            Icon(
-              Icons.help_outline,
-              color: Colors.white,
-              size: 14,
-            ),
-          ],
-        ),
-      ),
-    );
+    return Container();
+    // return InkWell(
+    //   onTap: () {
+    //     // todo 申请须知网页
+    //   },
+    //   child: Container(
+    //     padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+    //     child: Row(
+    //       mainAxisSize: MainAxisSize.min,
+    //       children: <Widget>[
+    //         Text(
+    //           RSID.applyexpertview_5.text,//"申请须知",
+    //           style: TextStyle(
+    //             fontSize: 14,
+    //             color: Colors.white,
+    //           ),
+    //         ),
+    //         Icon(
+    //           Icons.help_outline,
+    //           color: Colors.white,
+    //           size: 14,
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 
   @override

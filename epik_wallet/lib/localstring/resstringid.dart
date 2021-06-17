@@ -132,6 +132,7 @@ enum RSID {
   main_wv_8, //领取赏金猎人奖励
   main_wv_9, //ERC20-EPK Uniswap 交易
   main_wv_10, //暂未开通
+  main_wv_11,//钱包设置
   //WalletMenu 首页_钱包侧滑菜单
   main_mw_1,
   main_mw_2,

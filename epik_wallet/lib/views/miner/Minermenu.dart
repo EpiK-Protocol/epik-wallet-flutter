@@ -189,12 +189,17 @@ class _MinerMenuState extends BaseInnerWidgetState<MinerMenu> {
 
       //本地minerid
       if (data != null && data.length > 0) {
-        items.add(subtitle("Local"));
+        List<Widget> locals = [];
         for (int i = 0; i < data.length; i++) {
           if(minerCoinbaseList?.containsMinerid(data[i])==true){
             continue;
           }
-          items.add(buildItem(data[i], hasseleted==false?data[i] == cMinerId:false));
+          locals.add(buildItem(data[i], hasseleted==false?data[i] == cMinerId:false));
+        }
+        if(locals.length>0)
+        {
+          items.add(subtitle("Local"));
+          items.addAll(locals);
         }
       }
     } else {

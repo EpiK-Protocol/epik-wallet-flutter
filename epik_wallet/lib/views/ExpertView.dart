@@ -581,7 +581,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
   }
 
   Widget itemWidgetBuild(BuildContext context, int position) {
-    Expert item = data_experts[position];
+    Expert item = data_experts_show[position];//data_experts[position];
 
     return Container(
       margin: EdgeInsets.fromLTRB(0, 6, 0, 0),
@@ -633,6 +633,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
             Container(height: 10),
             Row(
               children: [
+                if(StringUtils.isNotEmpty(item?.domain))
                 Text(
                   "${RSID.expertview_7.text}: ${item.domain??""}", //领域
                   style: TextStyle(
@@ -773,6 +774,9 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
       });
     }
     data_experts_show = data;
+    data_experts_show.forEach((element) {
+      print(element.id);
+    });
     if (data == null || data.length == 0) {
       _ListPageDefState.type = ListPageDefStateType.EMPTY;
     } else {

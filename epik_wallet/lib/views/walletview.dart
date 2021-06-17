@@ -249,83 +249,102 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
       ),
       child:
       Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
           getAppBar(),
-          InkWell(
-            onTap: () {
-              onClickWalletName();
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  RSID.main_wv_6.text, //"总资产",
-                  style: TextStyle(
-                    color: ResColor.white_80,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Container(
-                  height: 5,
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 5),
-                      child: Text(
-                        r"$ ",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontFamily: "DIN_Condensed_Bold",
-                        ),
-                      ),
-                    ),
-                    DiffScaleText(
-                      text: balance,
-                      textStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: 40,
-                        fontFamily: "DIN_Condensed_Bold",
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      "≈ " +
-                          StringUtils.formatNumAmount(
-                              AccountMgr().currentAccount.total_btc,
-                              point: 8),
-                      style: TextStyle(
-                        color: ResColor.white_80,
-                        fontSize: 14,
-                        fontFamily: "DIN_Condensed_Bold",
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      child: Text(
-                        " BTC",
-                        style: TextStyle(
-                          color: ResColor.white_80,
-                          fontSize: 14,
-                          fontFamily: "DIN_Condensed_Bold",
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+         Expanded(child:  InkWell(
+           onTap: () {
+             onClickWalletName();
+           },
+           child: Column(
+             crossAxisAlignment: CrossAxisAlignment.center,
+             mainAxisAlignment: MainAxisAlignment.start,
+             children: <Widget>[
+               Text(
+                 RSID.main_wv_6.text, //"总资产",
+                 style: TextStyle(
+                   color: ResColor.white_80,
+                   fontSize: 14,
+                   fontWeight: FontWeight.bold,
+                 ),
+               ),
+               Container(
+                 height: 5,
+               ),
+               Row(
+                 mainAxisSize: MainAxisSize.min,
+                 children: <Widget>[
+                   Padding(
+                     padding: EdgeInsets.only(top: 5),
+                     child: Text(
+                       r"$ ",
+                       style: TextStyle(
+                         color: Colors.white,
+                         fontSize: 20,
+                         fontFamily: "DIN_Condensed_Bold",
+                       ),
+                     ),
+                   ),
+                   DiffScaleText(
+                     text: balance,
+                     textStyle: TextStyle(
+                       color: Colors.white,
+                       fontSize: 40,
+                       fontFamily: "DIN_Condensed_Bold",
+                     ),
+                   ),
+                 ],
+               ),
+               Row(
+                 mainAxisSize: MainAxisSize.min,
+                 children: <Widget>[
+                   Text(
+                     "≈ " +
+                         StringUtils.formatNumAmount(
+                             AccountMgr().currentAccount.total_btc,
+                             point: 8),
+                     style: TextStyle(
+                       color: ResColor.white_80,
+                       fontSize: 14,
+                       fontFamily: "DIN_Condensed_Bold",
+                     ),
+                   ),
+                   Padding(
+                     padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                     child: Text(
+                       " BTC",
+                       style: TextStyle(
+                         color: ResColor.white_80,
+                         fontSize: 14,
+                         fontFamily: "DIN_Condensed_Bold",
+                       ),
+                     ),
+                   ),
+                 ],
+               ),
+               //todo
+               Expanded(
+                 child: Container(
+                   width: double.infinity,
+                   alignment: Alignment.centerRight,
+                   padding:EdgeInsets.fromLTRB(15, 0, 21, 0),
+                   child: Row(
+                     mainAxisSize: MainAxisSize.min,
+                     children: <Widget>[
+                       Text(
+                         RSID.main_wv_11.text+"  ",//钱包设置
+                         style: TextStyle(
+                           fontSize: 14,
+                           color: Colors.white70,
+                         ),
+                       ),
+                      Icon(Icons.settings_outlined,size: 14,color: Colors.white70,),
+                     ],
+                   ),
+                 ),
+               ),
+             ],
+           ),
+         ),),
         ],
       ),
     );
@@ -333,7 +352,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
 
   Widget headerBuilder(BuildContext context, int position) {
     // ["header","exchange_epk","hunter_reward"]
-    print("position=$position  headerlist.size=${headerlist.length}");
+    // print("position=$position  headerlist.size=${headerlist.length}");
     switch (headerlist[position]) {
       case "exchange_epk":
         return headerItemBuild(
