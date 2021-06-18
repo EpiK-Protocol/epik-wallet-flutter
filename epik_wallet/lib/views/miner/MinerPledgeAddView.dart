@@ -307,7 +307,7 @@ class MinerPledgeAddViewState extends State<MinerPledgeAddView> {
       ResultObj<String> robj = await AccountMgr()
           .currentAccount
           .epikWallet
-          .retrievePledgeAdd(widget.minerinfo.owner,widget.minerinfo.minerid, amount.trim());
+          .retrievePledgeAdd(widget.minerinfo.owner,""/*widget.minerinfo.minerid*/, amount.trim());
 
       LoadingDialog.cloasLoadDialog(context);
 

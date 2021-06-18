@@ -411,8 +411,8 @@ Map<RSID, String> map_zh = {
   RSID.expertview_1:"全部",
   RSID.expertview_2:"领域专家",
   RSID.expertview_3:"当前年化收益",
-  RSID.expertview_4:"已投",
-  RSID.expertview_5:"累计收益",
+  RSID.expertview_4:"全网总票数",//"已投",
+  RSID.expertview_5:"全网总收益",//"累计收益",
   RSID.expertview_6:"申请成为领域专家",
   RSID.expertview_7:"领域",
   RSID.expertview_8:"收益",
@@ -423,6 +423,8 @@ Map<RSID, String> map_zh = {
   RSID.expertview_13:"黑名单",//disqualified
   RSID.expertview_14:"可提现收益",
   RSID.expertview_15:"请输入提取数量",
+  RSID.expertview_16:"当前没有收益可提取",
+  RSID.expertview_17:"您已投出",
   //ApplyExpertView
   RSID.applyexpertview_1:"申请领域专家",
   RSID.applyexpertview_2:"您的申请已提交，请等待审核结果。",

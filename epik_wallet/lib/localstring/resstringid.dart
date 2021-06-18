@@ -411,6 +411,8 @@ enum RSID {
   expertview_13, //黑名单//disqualified
   expertview_14, //可提现收益
   expertview_15,
+  expertview_16,//"当前没有收益可提取",
+  expertview_17,
   //ApplyExpertView
   applyexpertview_1, //申请领域专家
   applyexpertview_2, //您的申请已提交，请等待审核结果。

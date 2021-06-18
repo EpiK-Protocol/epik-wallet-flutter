@@ -11,9 +11,11 @@ import 'package:epikwallet/logic/api/api_wallet.dart';
 import 'package:epikwallet/model/auth/RemoteAuth.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/res_color.dart';
+import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/LoadingButton.dart';
+import 'package:epikwallet/widget/text/TextEllipsisMiddle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -178,16 +180,28 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
                       Container(height: 10),
                       InkWell(
                         onTap: () {
-                          clickCopyEther(widget.walletaccount);
+                          if(StringUtils.isNotEmpty(widget?.walletaccount?.mining_id))
+                          {
+                            clickCopyID(widget.walletaccount);
+                          }
                         },
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Container(width: 30),
+                            Container(width: 30,height: 35,),
+                            Text(
+                              "ID: ",
+                              // maxLines: 3,
+                              // overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: ResColor.white,
+                                fontSize: 12,
+                              ),
+                            ),
                             Expanded(
-                              child: Text(
-                                "ETH:\n" + widget.walletaccount.hd_eth_address,
-                                maxLines: 3,
+                              child: TextEm(
+                                widget?.walletaccount?.mining_id ?? "",
+                                maxLines: 1,
                                 // overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   color: ResColor.white,
@@ -205,7 +219,49 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
                           ],
                         ),
                       ),
-                      Container(height: 10),
+                      // Container(height: 20),
+                      InkWell(
+                        onTap: () {
+                          clickCopyEther(widget.walletaccount);
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Container(width: 30,
+                              height: 35,
+                            ),
+                            Text(
+                              "ETH: ",
+                              // maxLines: 3,
+                              // overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: ResColor.white,
+                                fontSize: 12,
+                              ),
+                            ),
+                            Expanded(
+                              child: TextEm(
+                                // "ETH:\n" + widget.walletaccount.hd_eth_address,
+                                widget.walletaccount.hd_eth_address,
+                                maxLines: 1,
+                                // overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: ResColor.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                            Container(width: 10),
+                            Icon(
+                              Icons.content_copy,
+                              color: ResColor.white,
+                              size: 14,
+                            ),
+                            Container(width: 20),
+                          ],
+                        ),
+                      ),
+                      // Container(height: 20),
                       InkWell(
                         onTap: () {
                           clickCopyEpik(widget.walletaccount);
@@ -213,12 +269,21 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Container(width: 30),
+                            Container(width: 30,height: 35,),
+                            Text(
+                              "EpiK: ",
+                              // maxLines: 3,
+                              // overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: ResColor.white,
+                                fontSize: 12,
+                              ),
+                            ),
                             Expanded(
-                              child: Text(
-                                "EpiK:\n" +
-                                    widget.walletaccount.epik_EPK_address,
-                                maxLines: 3,
+                              child: TextEm(
+                                // "EpiK:\n" + widget.walletaccount.epik_EPK_address,
+                                widget.walletaccount.epik_EPK_address,
+                                maxLines: 1,
                                 // overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   color: ResColor.white,
@@ -236,6 +301,7 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
                           ],
                         ),
                       ),
+
                     ],
                   ),
                 ],
@@ -385,6 +451,13 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
   clickCopyEpik(WalletAccount wa) {
     dlog("clickCopy");
     DeviceUtils.copyText(wa.epik_EPK_address);
+//    ToastUtils.showToast("已复制到剪切板");
+    ToastUtils.showToast(ResString.get(context, RSID.copied));
+  }
+
+  clickCopyID(WalletAccount wa) {
+    dlog("clickCopy");
+    DeviceUtils.copyText(wa.mining_id);
 //    ToastUtils.showToast("已复制到剪切板");
     ToastUtils.showToast(ResString.get(context, RSID.copied));
   }

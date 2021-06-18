@@ -171,7 +171,7 @@ class StringUtils {
 
   /// 格式化金额，中文缩略成w(万),其他语言缩略成M(百万)\K(千)
   static String formatNumAmountLocaleUnit(double amount, BuildContext context,
-      {int point: 2, bool supply0 = false}) {
+      {int point: 2, bool supply0 = false, bool needZhUnit=true}) {
     String languageCode="zh";
 
     try {
@@ -185,7 +185,7 @@ class StringUtils {
 
     double x = 1;
     String u = "";
-    if (languageCode == "zh") {
+    if (languageCode == "zh" && needZhUnit) {
       //中文
       if (amount > 10000) {
         x=10000;
@@ -193,10 +193,22 @@ class StringUtils {
       }
     } else {
       //其他语言
-      if (amount > 1000000) {
+      if (amount >= 1000000000000000000) {
+        x = 1000000000000000000; // 1,000,000,000,000,000,000 =  1E
+        u = "E";
+      } else if (amount >= 1000000000000000) {
+        x = 1000000000000000; // 1,000,000,000,000,000 =  1P
+        u = "P";
+      } else if (amount >= 1000000000000) {
+        x = 1000000000000; // 1,000,000,000,000 =  1T
+        u = "T";
+      } else if (amount >= 1000000000) {
+        x = 1000000000; // 1,000,000,000 =  1G
+        u = "G";
+      } else if (amount >= 1000000) {
         x = 1000000; // 1,000,000 =  1M
         u = "M";
-      } else if (amount > 1000) {
+      } else if (amount >= 1000) {
         x = 1000; // 1,000 = 1K
         u = "K";
       }
@@ -205,6 +217,7 @@ class StringUtils {
     String ret =
         "${StringUtils.formatNumAmount(amount / x, point: point, supply0: supply0)}" +
             u;
+    // print("$amount  =>  $ret");
     return ret;
   }
 

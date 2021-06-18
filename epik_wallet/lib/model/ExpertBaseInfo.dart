@@ -1,3 +1,4 @@
+import 'package:epikwallet/main.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 
 class ExpertInfomation {
@@ -32,9 +33,12 @@ class ExpertInfomation {
 
       AnnualizedRate_d = StringUtils.parseDouble(AnnualizedRate, 0) * 100;
 
-      TotalVote_f=StringUtils.formatNumAmount(TotalVote);
-      AvgVote_f=StringUtils.formatNumAmount(AvgVote);
-      TotalVoteReward_f =StringUtils.formatNumAmount(TotalVoteReward);
+      // TotalVote_f=StringUtils.formatNumAmount(TotalVote);
+      TotalVote_f = StringUtils.formatNumAmountLocaleUnit(StringUtils.parseDouble(TotalVote, 0), appContext,needZhUnit: false);
+      // AvgVote_f=StringUtils.formatNumAmount(AvgVote);
+      AvgVote_f = StringUtils.formatNumAmountLocaleUnit(StringUtils.parseDouble(AvgVote, 0), appContext,needZhUnit: false);
+      // TotalVoteReward_f =StringUtils.formatNumAmount(TotalVoteReward);
+      TotalVoteReward_f = StringUtils.formatNumAmountLocaleUnit(StringUtils.parseDouble(TotalVoteReward, 0), appContext,needZhUnit: false);
 
     } catch (e, s) {
       print(s);

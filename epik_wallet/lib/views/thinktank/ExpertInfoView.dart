@@ -4,9 +4,11 @@ import 'dart:ui';
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
+import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_mainnet.dart';
+import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/Expert.dart';
 import 'package:epikwallet/model/VoterInfo.dart';
@@ -17,6 +19,7 @@ import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
+import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -713,9 +716,25 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
                 .voteSend(widget.expert.id, text_vote);
             closeLoadDialog();
             if (resultObj.isSuccess) {
-              String hash = resultObj.data;
-              dlog(hash);
-              showToast( RSID.expertinfoview_12.text);//"已投票");
+              // String hash = resultObj.data;
+              // dlog(hash);
+              // showToast( RSID.expertinfoview_12.text);//"已投票");
+              String cid = resultObj.data;
+              MessageDialog.showMsgDialog(
+                context,
+                title: RSID.expertinfoview_8.text,//"撤回投票",
+                msg: "${RSID.minerview_18.text}\n$cid",//交易已提交
+                btnLeft: RSID.minerview_19.text,//"查看交易",
+                btnRight: RSID.isee.text,
+                onClickBtnLeft: (dialog) {
+                  dialog.dismiss();
+                  String url = ServiceInfo.epik_msg_web + cid;
+                  ViewGT.showGeneralWebView(context, RSID.berlv_4.text, url);
+                },
+                onClickBtnRight: (dialog) {
+                  dialog.dismiss();
+                },
+              );
             } else {
               showToast(resultObj?.errorMsg ?? RSID.request_failed.text);
             }
@@ -752,8 +771,24 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
             closeLoadDialog();
             if (resultObj.isSuccess) {
               String hash = resultObj.data;
-              dlog(hash);
-              showToast(RSID.expertinfoview_13.text);//"已撤回");
+              // dlog(hash);
+              // showToast(RSID.expertinfoview_13.text);//"已撤回");
+              String cid = resultObj.data;
+              MessageDialog.showMsgDialog(
+                context,
+                title: RSID.expertinfoview_9.text,//"撤回投票",
+                msg: "${RSID.minerview_18.text}\n$cid",//交易已提交
+                btnLeft: RSID.minerview_19.text,//"查看交易",
+                btnRight: RSID.isee.text,
+                onClickBtnLeft: (dialog) {
+                  dialog.dismiss();
+                  String url = ServiceInfo.epik_msg_web + cid;
+                  ViewGT.showGeneralWebView(context, RSID.berlv_4.text, url);
+                },
+                onClickBtnRight: (dialog) {
+                  dialog.dismiss();
+                },
+              );
             } else {
               showToast(resultObj?.errorMsg ?? RSID.request_failed.text);
             }
@@ -763,41 +798,41 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
     );
   }
 
-  void onClickVoteWithdraw() {
-    //提取EPK
-
-    // if (amount_withdraw <= 0) {
-    //   showToast("请输入数量");
-    //   return;
-    // }
-
-    closeInput();
-
-    BottomDialog.showPassWordInputDialog(
-      context,
-      AccountMgr().currentAccount.password,
-      (password) {
-        //点击确定回调 , 已验证密码, 并且已关闭dialog
-        showLoadDialog(
-          "",
-          touchOutClose: false,
-          backClose: false,
-          onShow: () async {
-            ResultObj<String> resultObj = await AccountMgr()
-                .currentAccount
-                .epikWallet
-                .voteWithdraw(AccountMgr().currentAccount.epik_EPK_address);
-            closeLoadDialog();
-            if (resultObj.isSuccess) {
-              String hash = resultObj.data;
-              dlog(hash);
-              showToast(RSID.expertinfoview_14.text);//"已提取");
-            } else {
-              showToast(resultObj?.errorMsg ?? RSID.request_failed.text);
-            }
-          },
-        );
-      },
-    );
-  }
+  // void onClickVoteWithdraw() {
+  //   //提取EPK
+  //
+  //   // if (amount_withdraw <= 0) {
+  //   //   showToast("请输入数量");
+  //   //   return;
+  //   // }
+  //
+  //   closeInput();
+  //
+  //   BottomDialog.showPassWordInputDialog(
+  //     context,
+  //     AccountMgr().currentAccount.password,
+  //     (password) {
+  //       //点击确定回调 , 已验证密码, 并且已关闭dialog
+  //       showLoadDialog(
+  //         "",
+  //         touchOutClose: false,
+  //         backClose: false,
+  //         onShow: () async {
+  //           ResultObj<String> resultObj = await AccountMgr()
+  //               .currentAccount
+  //               .epikWallet
+  //               .voteWithdraw(AccountMgr().currentAccount.epik_EPK_address);
+  //           closeLoadDialog();
+  //           if (resultObj.isSuccess) {
+  //             String hash = resultObj.data;
+  //             dlog(hash);
+  //             showToast(RSID.expertinfoview_14.text);//"已提取");
+  //           } else {
+  //             showToast(resultObj?.errorMsg ?? RSID.request_failed.text);
+  //           }
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 }

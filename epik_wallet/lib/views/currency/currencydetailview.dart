@@ -658,7 +658,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     if (data_list_item != null && position < data_list_item.length) {
       var item = data_list_item[position];
       if (item is TepkOrder) {
-        return itemWidgetBuild_tepk(item);
+        return itemWidgetBuild_epk(item);
       } else {
         return itemWidgetBuild_eth((item as EthOrder));
       }
@@ -669,7 +669,19 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     }
   }
 
-  Widget itemWidgetBuild_tepk(TepkOrder item) {
+  Widget itemWidgetBuild_epk(TepkOrder item) {
+
+    String title = "";
+    String codestring = item.getCodeTextFilter();
+    if(StringUtils.isEmpty(codestring))
+    {
+      //  item.isWithdraw ? "转账" : "收款",
+      title=ResString.get(context,
+          item.isWithdraw ? RSID.withdraw : RSID.deposit);
+    }else{
+      title=codestring;
+    }
+
     return Container(
       width: double.infinity,
       // height: 80,
@@ -690,10 +702,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                 width: 20,
               ),
               Text(
-                ResString.get(context,
-                        item.isWithdraw ? RSID.withdraw : RSID.deposit) +
-                    (item.exitCode != 0 ? " Error" : ""),
-                //  item.isWithdraw ? "转账" : "收款",
+               title,
                 style: TextStyle(
                   fontSize: 14,
                   color: item.isWithdraw ? ResColor.r_1 : ResColor.g_1,

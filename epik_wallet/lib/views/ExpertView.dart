@@ -94,6 +94,8 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
   bool isLoading = false;
   bool hasMore = false;
 
+  List<ExpertStateType> tabTypes = [];
+
   @override
   void initStateConfig() {
     navigationColor = ResColor.b_2;
@@ -102,6 +104,21 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
     setAppBarVisible(false);
     setAppBarBackColor(Colors.transparent);
     setTopBarBackColor(Colors.transparent);
+
+    tabTypes = [
+      ExpertStateType.ALL,
+
+      ///新申请的
+      // ExpertStateType.REGISTERED,
+      ///审核通过
+      ExpertStateType.NOMINATED,
+
+      ///正常可用状态
+      ExpertStateType.NORMAL,
+
+      ///黑名单
+      ExpertStateType.BLACK,
+    ];
 
     eventMgr.add(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
 
@@ -235,12 +252,55 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
               height: getAppBarHeight(),
               child: Row(
                 children: [
+                  Expanded(child:
                   Text(
                     RSID.expertview_2.text, //"领域专家",
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
+                    ),
+                  ),),
+                  InkWell(
+                    onTap: () {
+                      if ((voterinfo?.withdrawablerewards_d ?? 0) > 0) {
+                        onClickVoteWithdraw();
+                      } else {
+                        showToast(RSID.expertview_16.text);
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            RSID.expertinfoview_10.text,
+                            //"兑换",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: (voterinfo?.withdrawablerewards_d ?? 0) > 0
+                                  ? Colors.white
+                                  : Colors.white60,
+                              fontWeight:
+                                  (voterinfo?.withdrawablerewards_d ?? 0) > 0
+                                      ? FontWeight.bold
+                                      : null,
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.fromLTRB(4, 0, 0, 0),
+                            child: Image.asset(
+                              "assets/img/ic_arrow_right_1.png",
+                              width: 7,
+                              height: 11,
+                              color: (voterinfo?.withdrawablerewards_d ?? 0) > 0
+                                  ? Colors.white
+                                  : Colors.white60,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -341,7 +401,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
               children: [
                 Expanded(
                   child: Text(
-                    "${RSID.expertview_14.text}: ${StringUtils.formatNumAmount(voterinfo?.WithdrawableRewards ?? 0, point: 2)} EPK",
+                    "${RSID.expertview_17.text}: ${voterinfo?.getAllvoterF() ?? 0} EPK",
                     //已投
                     textAlign: TextAlign.left,
                     style: const TextStyle(
@@ -350,36 +410,18 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
                     ),
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    onClickVoteWithdraw();
-                  },
-                  child: Container(
-                    padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          RSID.expertinfoview_10.text,
-                          //"兑换",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.fromLTRB(4, 0, 0, 0),
-                          child: Image.asset(
-                            "assets/img/ic_arrow_right_1.png",
-                            width: 7,
-                            height: 11,
-                          ),
-                        ),
-                      ],
+                Expanded(
+                  child: Text(
+                    "${RSID.expertview_14.text}: ${voterinfo?.getWithdrawableRewardsF() ?? 0} EPK",
+                    //可提收益
+                    textAlign: TextAlign.right,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
                     ),
                   ),
                 ),
+
               ],
             ),
           ],
@@ -433,12 +475,14 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
   TabController tabcontroller;
 
   Widget getTabs() {
-    int index = ExpertStateType.values.indexOf(pageIndex);
+    // int index = ExpertStateType.values.indexOf(pageIndex);
+    int index = tabTypes.indexOf(pageIndex);
 
     if (tabcontroller == null)
       tabcontroller = TabController(
           initialIndex: index,
-          length: ExpertStateType.values.length,
+          // length: ExpertStateType.values.length,
+          length: tabTypes.length,
           vsync: this);
 
     return Container(
@@ -449,7 +493,8 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
         children: [
           Expanded(
             child: TabBar(
-              tabs: ExpertStateType.values.map((item) {
+              //ExpertStateType.values.map
+              tabs: tabTypes.map((item) {
                 return Container(
                   alignment: Alignment.bottomCenter,
                   child: Text(item.getName()),
@@ -480,7 +525,8 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
               indicatorSize: TabBarIndicatorSize.label,
               indicatorWeight: 4,
               onTap: (position) {
-                ExpertStateType value = ExpertStateType.values[position];
+                // ExpertStateType value = ExpertStateType.values[position];
+                ExpertStateType value = tabTypes[position];
                 onClickTab(value);
               },
             ),
@@ -581,7 +627,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
   }
 
   Widget itemWidgetBuild(BuildContext context, int position) {
-    Expert item = data_experts_show[position];//data_experts[position];
+    Expert item = data_experts_show[position]; //data_experts[position];
 
     return Container(
       margin: EdgeInsets.fromLTRB(0, 6, 0, 0),
@@ -633,15 +679,15 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
             Container(height: 10),
             Row(
               children: [
-                if(StringUtils.isNotEmpty(item?.domain))
-                Text(
-                  "${RSID.expertview_7.text}: ${item.domain??""}", //领域
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: ResColor.white,
-                    fontWeight: FontWeight.bold,
+                if (StringUtils.isNotEmpty(item?.domain))
+                  Text(
+                    "${RSID.expertview_7.text}: ${item.domain ?? ""}", //领域
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: ResColor.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
                 Expanded(
                   child: Text(
                     "${RSID.expertview_8.text}: ${StringUtils.formatNumAmount(item.income)} EPK", //收益
@@ -769,7 +815,11 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
             break;
           case ExpertStateType.ALL:
           default:
-            data.add(item);
+            {
+              // data.add(item);
+              if (item.status_e != ExpertStatus.registered) data.add(item);
+            }
+            break;
         }
       });
     }

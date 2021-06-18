@@ -410,8 +410,8 @@ Map<RSID, String> map_en = {
   RSID.expertview_1:"All",//"全部",
   RSID.expertview_2:"Domain experts",//"领域专家",
   RSID.expertview_3:"Current ARR",//"当前年化收益",  “ARR” Annualized Rate Of Return
-  RSID.expertview_4:"Voted",//"已投",
-  RSID.expertview_5:"Profit",//"累计收益",
+  RSID.expertview_4:"Total voted",//"全网总票数",//"已投",
+  RSID.expertview_5:"Total profit",//"全网总收益",//"累计收益",
   RSID.expertview_6:"Apply to be domain expert",//"申请成为领域专家",
   RSID.expertview_7:"Domain",//"领域",
   RSID.expertview_8:"profit",//"收益",
@@ -422,6 +422,8 @@ Map<RSID, String> map_en = {
   RSID.expertview_13:"Blocked",//"黑名单",//disqualified
   RSID.expertview_14:"Withdrawable profit",//"可提现收益",
   RSID.expertview_15:"Enter number of withdrawals",//"请输入提取数量",
+  RSID.expertview_16:"There is no profit to draw at present",//"当前没有收益可提取",
+  RSID.expertview_17:"Your voted",//"您已投出",
   //ApplyExpertView
   RSID.applyexpertview_1:"Apply for domain expert",//"申请领域专家",
   RSID.applyexpertview_2:"Your application has been submitted. Please wait for the result.",//"您的申请已提交，请等待审核结果。",

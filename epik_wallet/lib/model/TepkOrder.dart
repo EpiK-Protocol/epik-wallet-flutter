@@ -127,7 +127,11 @@ class TepkOrder {
       {
         exitCode = j_Receipt["ExitCode"];
         gas_Used = StringUtils.parseDouble(j_Receipt["GasUsed"], 0);
-      }
+      }else
+        {
+          exitCode==null;
+          gas_Used==0;
+        }
     } catch (e) {
       print(e);
     }
@@ -176,5 +180,14 @@ class TepkOrder {
       case 10:return"SysErrorIllegalArgument";
       default:return"Error";
     }
+  }
+
+  String getCodeTextFilter()
+  {
+    if(exitCode==null)
+      return "Pending";
+    if(exitCode==0)
+      return "";
+    return "Error";
   }
 }
