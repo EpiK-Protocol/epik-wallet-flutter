@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
@@ -6,6 +7,8 @@ import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_mainnet.dart';
 import 'package:epikwallet/logic/api/api_wallet.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
+import 'package:epikwallet/main.dart';
+import 'package:epikwallet/model/CoinbaseInfo.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/EthOrder.dart';
 import 'package:epikwallet/model/MinerCoinbaseList.dart';
@@ -248,6 +251,11 @@ class WalletAccount {
   EpikWallet epikWallet;
 
   String eth_suggestGas = "0";
+  double eth_suggestGas_d=0;
+  double epik_gas_transfer = 0;
+  //如果是很小的小数 会变成 0.29n 这样  后面需要拼接EPK显示
+  String epik_gas_transfer_format = "";
+
   UniswapInfo uniswapinfo;
 
   UniswapHistoryMgr uhMgr;
@@ -309,6 +317,7 @@ class WalletAccount {
     Map<String, dynamic> temp = {};
     try {
       String text = SpUtils.getString("MinerIds_${minerIdListKey}");
+      Dlog.p("minerview", text ?? "");
       if (StringUtils.isNotEmpty(text) && text.startsWith("{")) {
         try {
           temp = jsonDecode(text);
@@ -322,15 +331,16 @@ class WalletAccount {
     temp = temp ?? {};
     minerIdList = List<String>.from(temp["list"] ?? []);
     minerCurrent = temp["current"];
+    Dlog.p("minerview", "aa minerCurrent=$minerCurrent");
     if (StringUtils.isEmpty(minerCurrent)) minerCurrent = getFirstMinerId();
-    if (StringUtils.isEmpty(minerCurrent))
-    {
-      if(minerCoinbaseList?.hasCoinbased==true)
-      {
+    Dlog.p("minerview", "bb minerCurrent=$minerCurrent");
+    if (StringUtils.isEmpty(minerCurrent)) {
+      if (minerCoinbaseList?.hasCoinbased == true) {
         minerCurrent = minerCoinbaseList.coinbased[0];
-      }else if(minerCoinbaseList?.haspledged==true)
-      {
+        Dlog.p("minerview", "cc minerCurrent=$minerCurrent");
+      } else if (minerCoinbaseList?.haspledged == true) {
         minerCurrent = minerCoinbaseList.pledged[0];
+        Dlog.p("minerview", "dd minerCurrent=$minerCurrent");
       }
     }
   }
@@ -354,11 +364,43 @@ class WalletAccount {
   MinerCoinbaseList minerCoinbaseList;
 
   Future<void> getMinerListOnline() async {
-    HttpJsonRes hjr = await ApiMainNet.getMiners(
-        AccountMgr().currentAccount.epik_EPK_address);
+    String address = AccountMgr().currentAccount.epik_EPK_address;
+    HttpJsonRes hjr = await ApiMainNet.getMiners(address);
     if (hjr.code == 0) {
       minerCoinbaseList = MinerCoinbaseList.from(hjr.jsonMap);
     }
+  }
+
+  //在线获取的 和本地的 全部 minerid 并且去重
+  List<String> getAllMinerList() {
+    List<String> ret = [];
+    if (minerCoinbaseList?.coinbased != null) {
+      ret.addAll(minerCoinbaseList?.coinbased);
+    }
+    if (minerCoinbaseList?.pledged != null) {
+      ret.addAll(minerCoinbaseList?.pledged);
+    }
+    if (minerIdList != null) {
+      ret.addAll(minerIdList);
+    }
+    print("minerview aaa");
+    ret = ret.toSet().toList(); // 去重
+    print("minerview bbb");
+    return ret;
+  }
+
+  CoinbaseInfo coinbaseinfo;
+
+  Future<void> getCoinbaseInfo() async {
+    String address = AccountMgr().currentAccount.epik_EPK_address;
+    // address = "f0100"; //todo test
+    ResultObj<String> robj_ci =
+        await AccountMgr().currentAccount.epikWallet.coinbaseInfo(address);
+    Dlog.p("epikwalletutils", "coinbaseinfo=${robj_ci.data}");
+    if (robj_ci?.isSuccess) {
+      coinbaseinfo = CoinbaseInfo.fromJson(jsonDecode(robj_ci.data));
+    }
+    eventMgr.send(EventTag.COINBASEINFO_UPDATE);
   }
 
   WalletAccount();
@@ -409,6 +451,7 @@ class WalletAccount {
     String gas = await hdwallet?.suggestGas();
     if (gas != null) {
       eth_suggestGas = gas;
+      eth_suggestGas_d = StringUtils.parseDouble(eth_suggestGas, 0);
       Dlog.p("uploadSuggestGas", "$gas");
     }
     eventMgr.send(EventTag.UPLOAD_SUGGESTGAS, eth_suggestGas);
@@ -422,5 +465,34 @@ class WalletAccount {
     Dlog.p("uploadUniswapInfo",
         " epk=${uniswapinfo?.EPK}  usdt=${uniswapinfo?.USDT}  share=${uniswapinfo?.Share}  uni=${uniswapinfo.UNI}");
     return uniswapinfo;
+  }
+
+  Future<double> uploadEpikGasTransfer() async {
+    ResultObj<String> robj = await epikWallet?.gasEstimateGasLimit();
+    if (robj?.isSuccess == true) {
+      String gas = robj.data;
+      if (gas != null) {
+        gas = StringUtils.bigNumDownsizing(gas ?? "0");
+        epik_gas_transfer = StringUtils.parseDouble(gas, 0);
+
+        // epik_gas_transfer_format
+
+        if (epik_gas_transfer > 0.001) {
+          epik_gas_transfer_format = StringUtils.formatNumAmountLocaleUnit(
+              StringUtils.parseDouble(epik_gas_transfer, 0), appContext,
+              needZhUnit: false);
+        } else {
+          String a = StringUtils.getRollupSize(
+              (epik_gas_transfer * pow(10, 18)).toInt(),
+              radix: 1000,
+              extraUp: 100,
+              units: StringUtils.RollupSize_Units3);
+          epik_gas_transfer_format = a;
+        }
+        Dlog.p("epikgas", epik_gas_transfer_format);
+      }
+    }
+    eventMgr.send(EventTag.UPLOAD_EPIK_GAS_TRANSFER, epik_gas_transfer);
+    return epik_gas_transfer;
   }
 }

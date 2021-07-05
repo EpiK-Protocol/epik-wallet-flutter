@@ -41,4 +41,8 @@ enum EventTag {
 
   //绑定社交账号
   BIND_SOCIAL_ACCCOUNT,
+
+  COINBASEINFO_UPDATE,
+
+  UPLOAD_EPIK_GAS_TRANSFER,
 }

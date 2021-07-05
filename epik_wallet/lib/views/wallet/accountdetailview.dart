@@ -1,13 +1,17 @@
+import 'dart:convert';
 import 'dart:ui';
 
+import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
+import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_wallet.dart';
+import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/auth/RemoteAuth.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/res_color.dart';
@@ -551,21 +555,65 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
           ViewGT.showQrcodeScanView(context).then((value) {
             RemoteAuth ra = RemoteAuth.fromString(value);
             if (ra == null) {
-              showToast("无效二维码");
+              showToast(RSID.qsv_2.text);
               return;
             }
 
-            BottomDialog.showPassWordInputDialog(
-                context, widget.walletaccount.password, (value) async {
-              showLoadDialog("");
-              ApiWallet.sendRemoteAuth(ra).then((hjr) {
+            if(RemoteAuth.code_version < ra.v )
+            {
+              showToast(RSID.qsv_3.text);
+              return;
+            }
+
+
+            if(ra.isSign)
+            {
+              //单纯远程签名 回调授权
+              BottomDialog.showPassWordInputDialog(
+                  context, widget.walletaccount.password, (value) async {
+                showLoadDialog("");
+                ApiWallet.sendRemoteAuth(ra).then((hjr) {
+                  closeLoadDialog();
+                  if(hjr.code!=0)
+                  {
+                    showToast(hjr.msg);
+                  }
+                });
+              });
+            }else if(ra.isDeal)
+            {
+              // 交易签名  如扫码支付
+              BottomDialog.showRemoteAuthMessageDialog(context,  widget.walletaccount, ra, (value)async {
+
+                showLoadDialog("");
+
+                String message = jsonEncode(ra.m);
+                ResultObj<String> robj = await widget.walletaccount.epikWallet.signAndSendMessage(widget.walletaccount.epik_EPK_address, message);
+
                 closeLoadDialog();
-                if(hjr.code!=0)
-                {
-                  showToast(hjr.msg);
+
+                if(robj?.isSuccess == true){
+                  String cid = robj.data;
+                  MessageDialog.showMsgDialog(
+                    context,
+                    title: RSID.dlg_bd_5.text,//"发送交易",
+                    msg: "${RSID.minerview_18.text}\n$cid",//交易已提交
+                    btnLeft: RSID.minerview_19.text,//"查看交易",
+                    btnRight: RSID.isee.text,
+                    onClickBtnLeft: (dialog) {
+                      dialog.dismiss();
+                      String url = ServiceInfo.epik_msg_web + cid;
+                      ViewGT.showGeneralWebView(context, RSID.berlv_4.text, url);
+                    },
+                    onClickBtnRight: (dialog) {
+                      dialog.dismiss();
+                    },
+                  );
+                } else {
+                  ToastUtils.showToastCenter(robj?.errorMsg ?? RSID.request_failed.text);
                 }
               });
-            });
+            }
           });
         }
         break;

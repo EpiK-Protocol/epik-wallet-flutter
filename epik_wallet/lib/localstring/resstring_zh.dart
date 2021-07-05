@@ -20,12 +20,18 @@ Map<RSID, String> map_zh = {
   RSID.completed: "已完成",
   RSID.request_failed: "请求失败",
   RSID.request_failed_retry: "请求失败,请稍后重试",
+  RSID.request_failed_retry_click: "加载失败, 点击重试",
   RSID.content_empty: "暂无数据",
   RSID.no_more: "没有更多了",
   RSID.net_error: "网络错误",
   RSID.takephoto: "拍照",
   RSID.gallery: "相册",
   RSID.unknown:"未知",
+  RSID.request_error:"请求错误",
+  RSID.network_exception:"网络异常",
+  RSID.network_exception_retry:"网络异常,请稍后重试",//  "Request failed. Please try again later.",
+  RSID.connect_timeout:"连接超时",
+  RSID.cancel_request:"取消请求",// Cancel request
 
   //----------------------------------------dialog.*
   //BottomDialog
@@ -33,6 +39,7 @@ Map<RSID, String> map_zh = {
   RSID.dlg_bd_2: "请输入钱包密码",
   RSID.dlg_bd_3: "请输入密码",
   RSID.dlg_bd_4: "密码不正确",
+  RSID.dlg_bd_5: "发送交易",
 
   //----------------------------------------views.wallet.*
   //ImportWalletView 导入钱包
@@ -62,7 +69,7 @@ Map<RSID, String> map_zh = {
   RSID.eepkv_2: "已复制私钥",
   RSID.eepkv_3: "复制私钥",
   RSID.eepkv_4: "温馨提示",//导出提示
-  RSID.eepkv_5: "您正在导出的是测试币 EPK的私钥，EPK是测试网测试币，仅在测试网预挖中使用，没有交易价值。泄露此私钥有可能会导致测试币的损失，但与钱包的ERC-20资产无关，用户无需担心ERC-20钱包里的资产安全。同时，在代接矿机中，代接方有可能需要EPK的私钥来进行代理抵押。",
+  RSID.eepkv_5: "您正在导出的是测试币EPK的私钥，EPK是测试网测试币，仅在测试网节点中使用，没有交易价值。泄露此私钥有可能会导致测试币的损失，但与钱包的ERC-20资产无关，用户无需担心ERC-20钱包里的资产安全。同时，在代接节点机中，代接方有可能需要EPK的私钥来进行代理抵押。",
   RSID.eepkv_6: "导出ETH私钥",
   RSID.eepkv_7: "远程授权",
 
@@ -111,7 +118,7 @@ Map<RSID, String> map_zh = {
   RSID.mainview_3: "交易",
   RSID.mainview_4: "活动",//"赏金",
   RSID.mainview_5: "专家",
-  RSID.mainview_6: "矿工",
+  RSID.mainview_6: "节点",//"矿工",
 
   //MiningView 首页_挖矿
   RSID.main_mv_1: "预挖排行",
@@ -121,7 +128,7 @@ Map<RSID, String> map_zh = {
   RSID.main_mv_5: "累计奖励: ",
   RSID.main_mv_6: "报名",
   RSID.main_mv_7: "审核中\n(一般在24小时内完成)",
-  RSID.main_mv_8: "预挖奖励",
+  RSID.main_mv_8: "测试网收益",//"预挖奖励",
   RSID.main_mv_9: "报名已被拒绝",
 
   //WalletView 首页_钱包
@@ -166,7 +173,7 @@ Map<RSID, String> map_zh = {
 
   //----------------------------------------views.mining.*
   //MiningProfitView 预挖收益
-  RSID.mpv_1: "预挖收益",
+  RSID.mpv_1: "测试网收益",//"预挖收益",
   RSID.mpv_2: "挖出数量\nEPK",
   RSID.mpv_3: "奖励数量\nERC20-EPK",
   RSID.mpv_4: "总奖励\nERC20-EPK",
@@ -221,11 +228,14 @@ Map<RSID, String> map_zh = {
   RSID.cwv_10: "转账金额不能是0",
   RSID.cwv_11: "转账失败",
   RSID.cwv_12: "操作成功!",
+  RSID.cwv_13: "手续费: ",
+  RSID.cwv_14:"余额不足",
 
   //----------------------------------------views.qrcode.*
   //QrcodeScanView 扫描二维码
   RSID.qsv_1: "扫一扫",
   RSID.qsv_2: "无效二维码",
+  RSID.qsv_3: "暂不支持",
 
   //----------------------------------------views.uniswap.*
   //UniswapView 外壳
@@ -373,39 +383,45 @@ Map<RSID, String> map_zh = {
   //----------------------------------------MinerView
   RSID.minerview_1:"抵押",
   RSID.minerview_2:"赎回",
-  RSID.minerview_3:"请输入MinerID",
+  RSID.minerview_3:"请输入NodeID",//"请输入MinerID",
   RSID.minerview_4:"添加",
-  RSID.minerview_5:"存储矿工",
+  RSID.minerview_5:"存储节点",//"存储矿工",
   RSID.minerview_6:"当前算力",
   RSID.minerview_7:"账户余额",
   RSID.minerview_8:"锁定余额",
   RSID.minerview_9:"可提余额",
-  RSID.minerview_10:"矿工基础抵押",
+  RSID.minerview_10:"节点基础抵押",//"矿工基础抵押",
   RSID.minerview_11:"我的基础抵押",
   RSID.minerview_12:"流量抵押余额",
   RSID.minerview_13:"流量抵押锁定",
   RSID.minerview_14:"当日访问流量",
   //---add
-  RSID.minerview_15:"注意：\n- 知识矿工需要启动实体矿机才能参与挖矿\n- 知识矿工需要完成1000EPK的矿工基础抵押才能获得出块资格\n- 知识矿工需要从网络里读取新文件，存储新文件才能增加算力，增大出块概率 \n- 1EPK=10Mb的每日访问流量，每日已用访问流量将会返还\n- 您可以在任何时候赎回抵押的EPK",
+  RSID.minerview_15:"注意：\n- 知识节点启动实体节点机才能参与存储\n- 知识节点需要完成1000EPK的节点基础抵押才能获得出块资格\n- 知识节点需要从网络里读取新文件，存储新文件才能增加算力，增大出块概率 \n- 1EPK=10Mb的每日访问流量，每日已用访问流量将会返还\n- 您可以在任何时候赎回抵押的EPK",//"注意：\n- 知识矿工需要启动实体矿机才能参与挖矿\n- 知识矿工需要完成1000EPK的矿工基础抵押才能获得出块资格\n- 知识矿工需要从网络里读取新文件，存储新文件才能增加算力，增大出块概率 \n- 1EPK=10Mb的每日访问流量，每日已用访问流量将会返还\n- 您可以在任何时候赎回抵押的EPK",
   RSID.minerview_16:" EPK 可用",
   RSID.minerview_17:"访问流量抵押",
   RSID.minerview_18:"交易已提交",
   RSID.minerview_19:"查看交易",
   RSID.minerview_20:"添加抵押交易已提交",
   //---withdraw
-  RSID.minerview_21:"注意：\n- 仅能赎回自己抵押的EPK\n- 如果你当前已经消耗了一部分访问流量，则无法赎回全部的访问流量抵押，请尝试减少赎回的数量\n- 矿工基础抵押赎回中的EPK将会立刻到账\n- 访问流量抵押的EPK需要在解锁操作3天后才能赎回",
-  RSID.minerview_22:" EPK 赎回",
+  RSID.minerview_21:"注意：\n- 仅能赎回自己抵押的EPK\n- 如果你当前已经消耗了一部分访问流量，则无法赎回全部的访问流量抵押，请尝试减少赎回的数量\n- 节点基础抵押赎回中的EPK将会立刻到账\n- 访问流量抵押的EPK需要在解锁操作3天后才能赎回",//"注意：\n- 仅能赎回自己抵押的EPK\n- 如果你当前已经消耗了一部分访问流量，则无法赎回全部的访问流量抵押，请尝试减少赎回的数量\n- 矿工基础抵押赎回中的EPK将会立刻到账\n- 访问流量抵押的EPK需要在解锁操作3天后才能赎回",
+  RSID.minerview_22:" EPK 可赎回",
   RSID.minerview_23:" EPK 可解锁",
   RSID.minerview_24:" 解锁",
   RSID.minerview_25:"访问流量抵押",
   RSID.minerview_26:"赎回抵押交易已提交",
   RSID.minerview_27:"解锁抵押交易已提交",
+  RSID.minerview_28:"我的流量抵押",
+  RSID.minerview_29:"剩余高度",
+  RSID.minerview_30:"Coinbase提取",
   //---MinerMenu
-  RSID.minermenu_1:"选择MinerID",
-  RSID.minermenu_2:"删除MinerID",
+  RSID.minermenu_1:"选择NodeID",//"选择MinerID",
+  RSID.minermenu_2:"删除NodeID",//"删除MinerID",
   RSID.minermenu_3:"删除",
-  RSID.minermenu_4:"添加MinerID",
-  RSID.minermenu_5:"请输入MinerID",
+  RSID.minermenu_4:"添加NodeID",//"添加MinerID",
+  RSID.minermenu_5:"请输入NodeID",//"请输入MinerID",
+  RSID.minermenu_6:"一键抵押",//
+  RSID.minermenu_7:"全选",
+  RSID.minermenu_8:"取消",
 
   //----------------------------------------ExpertView
   RSID.expertview_1:"全部",

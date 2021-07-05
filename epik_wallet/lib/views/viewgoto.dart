@@ -18,6 +18,8 @@ import 'package:epikwallet/views/epk_swap/BountyDappTakeView.dart';
 import 'package:epikwallet/views/epk_swap/Erc20ToEpkRecordView.dart';
 import 'package:epikwallet/views/epk_swap/Erc20ToEpkView.dart';
 import 'package:epikwallet/views/epk_swap/BountyDappListView.dart';
+import 'package:epikwallet/views/miner/MinerBatchPledgeView.dart';
+import 'package:epikwallet/views/miner/Minermenu.dart';
 import 'package:epikwallet/views/mining/miningprofitview.dart';
 import 'package:epikwallet/views/mining/miningsignupview.dart';
 import 'package:epikwallet/views/qrcode/qrcodescanview.dart';
@@ -239,5 +241,10 @@ class ViewGT {
   static showTransactionView2(BuildContext context)
   {
     showView(context, TransactionView2());
+  }
+
+  static showMinerBatchPledgeView(BuildContext context,List<String> mineridList_all, Map<String, MinerGroupType> groupTypeMap)
+  {
+    showView(context, MinerBatchPledgeView(mineridList_all, groupTypeMap));
   }
 }

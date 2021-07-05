@@ -24,7 +24,10 @@ class TepkOrder {
 
   Map<String,dynamic> cidmap=null;
 
+  //retrievalfund  storageminer vesting votefund
   String actorName="";
+  //Transfer Withdraw Vote  ConfirmUpdateWorkerKey Pledge Rescind  WithdrawBalance  AddPledge
+  String MethodName = "";
 
   // 0 是ok 已完成  其他都是错误失败
   int exitCode=null;
@@ -121,6 +124,7 @@ class TepkOrder {
       cidmap=json["CID"];
 
       actorName=jsonobj["ActorName"];
+      MethodName=jsonobj["MethodName"];
 
       Map<String, dynamic> j_Receipt = jsonobj["Receipt"];
       if(j_Receipt!=null)

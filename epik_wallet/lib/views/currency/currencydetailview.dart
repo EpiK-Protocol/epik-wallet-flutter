@@ -673,11 +673,21 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
 
     String title = "";
     String codestring = item.getCodeTextFilter();
+    Color title_color=Colors.white60;
     if(StringUtils.isEmpty(codestring))
     {
-      //  item.isWithdraw ? "转账" : "收款",
-      title=ResString.get(context,
-          item.isWithdraw ? RSID.withdraw : RSID.deposit);
+      if(StringUtils.isNotEmpty(item.actorName))
+      {
+        // title= item.actorName;
+        title= item.MethodName;
+      }else
+        {
+          //  item.isWithdraw ? "转账" : "收款",
+          title=ResString.get(context,
+              item.isWithdraw ? RSID.withdraw : RSID.deposit);
+          title_color=  item.isWithdraw ? ResColor.r_1 : ResColor.g_1;
+
+        }
     }else{
       title=codestring;
     }
@@ -701,27 +711,28 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
               Container(
                 width: 20,
               ),
-              Text(
-               title,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: item.isWithdraw ? ResColor.r_1 : ResColor.g_1,
-                  fontWeight: FontWeight.bold,
-                ),
+              Expanded(
+                  child:Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color:title_color,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
               ),
+
               Container(
                 width: 20,
               ),
-              Expanded(
-                child: Text(
-                  item.numDirection +
-                      StringUtils.formatNumAmount(item.value_d, point: 8),
-                  textAlign: TextAlign.end,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+              Text(
+                item.numDirection +
+                    StringUtils.formatNumAmount(item.value_d, point: 8),
+                textAlign: TextAlign.end,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               Container(
@@ -896,6 +907,10 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     setState(() {
       _ListPageDefState.type = ListPageDefStateType.LOADING;
     });
+
+    AccountMgr().currentAccount.uploadSuggestGas();
+    AccountMgr().currentAccount.uploadEpikGasTransfer();
+
     //lastTime: lastTime,
     EpikWalletUtils.getOrderList(
       AccountMgr().currentAccount,
@@ -983,6 +998,8 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
       return;
     }
 
+    AccountMgr().currentAccount.uploadSuggestGas();
+    AccountMgr().currentAccount.uploadEpikGasTransfer();
 
     EpikWalletUtils.requestBalance(AccountMgr().currentAccount).then((value) {
       if(isDestory)

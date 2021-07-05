@@ -6,6 +6,7 @@ import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
+import 'package:epikwallet/model/auth/RemoteAuth.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
@@ -445,7 +446,7 @@ class BottomDialog {
     return showBottomPop(context, widget, radius_top: 15, bgColor: dialogbg);
   }
 
-  /// 交易枷锁 成功后在callback中返回新的交易hash
+  /// 交易加速 成功后在callback中返回新的交易hash
   static Future showEthAccelerateTx(
       BuildContext context, WalletAccount walletaccount, String txHash,
       {String oldText = "", ValueChanged<String> callback}) {
@@ -740,6 +741,220 @@ class BottomDialog {
               }
             },
           )
+        ],
+      ),
+    );
+
+    return showBottomPop(
+      context,
+      widget,
+    );
+  }
+
+  ///远程授权消息  密码输入弹窗  用于EPIK远程付款
+  static Future showRemoteAuthMessageDialog(
+      BuildContext context,
+      WalletAccount walletaccount,
+      RemoteAuth ra,
+      ValueChanged<String> callback) {
+    String password = "";
+    TextEditingController tec = TextEditingController(text: password);
+
+    Widget getRow(String left, String right, {bool bold = false}) {
+      return Container(
+        padding: EdgeInsets.fromLTRB(30, 0, 30, 5),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              left,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.white,
+              ),
+            ),
+            Container(
+              width: 30,
+            ),
+            Expanded(
+              child: Text(
+                right,
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.white,
+                  fontWeight: bold ? FontWeight.bold : null,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    List<Widget> getRemoteInfo(RemoteAuth _ra) {
+      List<Widget> items = [];
+      items.add(getRow("from:", walletaccount.epik_EPK_address));
+      if (_ra.m != null) {
+        _ra.m.forEach((key, value) {
+          String left = key ?? "";
+          String right = value?.toString() ?? "";
+          bool bold = false;
+          if (left == "value") {
+            try {
+              right = StringUtils.bigNumDownsizing(right ?? "0");
+              right = StringUtils.formatNumAmount(right, point: 18) + " EPK";
+              bold = true;
+            } catch (e) {
+              print(e);
+            }
+          }
+          items.add(getRow(left + ":", right ?? "", bold: bold));
+        });
+      }
+      return items;
+    }
+
+    Widget widget = Container(
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+      width: double.infinity,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
+            height: 58,
+            width: double.infinity,
+            child: Stack(
+              children: <Widget>[
+                Align(
+                  alignment: FractionalOffset.center,
+                  child: Text(
+                    RSID.dlg_bd_5.text, //"发送交易",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: FractionalOffset.centerRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      // 关闭
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      width: 58,
+                      height: 58,
+                      color: Colors.transparent,
+                      child: Icon(
+                        Icons.close,
+                        color: ResColor.white_60, //Color(0xff666666),
+                        size: 14,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ...getRemoteInfo(ra),
+          Container(
+            width: double.infinity,
+            height: 44,
+            padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+            child: TextField(
+              autofocus: true,
+              //自动获取焦点， 自动弹出输入法
+              controller: tec,
+              textAlign: TextAlign.left,
+              keyboardType: TextInputType.text,
+              //获取焦点时,启用的键盘类型
+              maxLines: 1,
+              // 输入框最大的显示行数
+              maxLengthEnforced: true,
+              //是否允许输入的字符长度超过限定的字符长度
+              obscureText: true,
+              //是否是密码
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(20),
+              ],
+              // 这里限制长度 不会有数量提示
+              decoration: InputDecoration(
+                // 以下属性可用来去除TextField的边框
+                border: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                hintText: ResString.get(context, RSID.dlg_bd_2),
+                //"请输入钱包密码",
+                // hintStyle: TextStyle(color: Color(0xff999999), fontSize: 16),
+                hintStyle: TextStyle(color: ResColor.white_60, fontSize: 17),
+              ),
+              cursorWidth: 2.0,
+              //光标宽度
+              cursorRadius: Radius.circular(2),
+              //光标圆角弧度
+              cursorColor: Colors.white,
+              //光标颜色
+              style: TextStyle(fontSize: 17, color: Colors.white),
+              onChanged: (text) {
+                text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
+                password = text;
+              },
+              onSubmitted: (value) {
+                // 当用户确定已经完成编辑时触发
+              }, // 是否隐藏输入的内容
+            ),
+          ),
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: ResColor.white_20,
+            //Colors.blue,
+            indent: 30,
+            endIndent: 30,
+          ),
+          LoadingButton(
+            margin: EdgeInsets.fromLTRB(30, 20, 30, 20),
+            width: double.infinity,
+            height: 40,
+            gradient_bg: ResColor.lg_1,
+            color_bg: Colors.transparent,
+            disabledColor: Colors.transparent,
+            bg_borderradius: BorderRadius.circular(4),
+            text: RSID.confirm.text,
+            //"确定",
+            textstyle: TextStyle(
+              color: Colors.white,
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+            ),
+            onclick: (lbtn) {
+              if (StringUtils.isEmpty(password)) {
+//                  ToastUtils.showToast("请输入密码");
+                ToastUtils.showToast(ResString.get(context, RSID.dlg_bd_3));
+                return;
+              }
+
+              if (walletaccount.password != password) {
+//                    ToastUtils.showToast("密码不正确");
+                ToastUtils.showToast(ResString.get(context, RSID.dlg_bd_4));
+                return;
+              }
+
+              Navigator.pop(context);
+              try {
+                callback(password);
+              } catch (e) {
+                print(e);
+              }
+            },
+          ),
         ],
       ),
     );

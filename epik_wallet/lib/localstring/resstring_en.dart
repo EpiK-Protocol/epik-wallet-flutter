@@ -20,12 +20,19 @@ Map<RSID, String> map_en = {
   RSID.completed: "Completed",//"已完成",
   RSID.request_failed: "Request failed",//"请求失败",
   RSID.request_failed_retry: "Request failed. Please try again later.",//"请求失败,请稍后重试",
+  RSID.request_failed_retry_click: "Request failed. Click to try again.",
   RSID.content_empty: "No data available",//"暂无数据",
   RSID.no_more: "No more",//"没有更多了",
   RSID.net_error: "Network error",//"网络错误",
   RSID.takephoto: "Take a photo",//"拍照",
   RSID.gallery: "Album",//"相册",
   RSID.unknown:"Unknown",//未知
+  RSID.request_error:"Request error",//"请求错误",
+  RSID.network_exception:"Network exception",//"网络异常",
+  RSID.network_exception_retry:"Network exception. Please try again later.",//"网络异常,请稍后重试",
+  RSID.connect_timeout:"Connect timeout",//"连接超时",
+  RSID.cancel_request:"Cancel request",//"取消请求",
+
 
   //----------------------------------------dialog.*
   //BottomDialog
@@ -33,6 +40,7 @@ Map<RSID, String> map_en = {
   RSID.dlg_bd_2: "Please enter your wallet password",//"请输入钱包密码",
   RSID.dlg_bd_3: "Please enter your password.",//"请输入密码",
   RSID.dlg_bd_4: "The password is incorrect.",//"密码不正确",
+  RSID.dlg_bd_5: "Send transaction",// "发送交易",
 
   //----------------------------------------views.wallet.*
   //ImportWalletView 导入钱包.  Import wallet
@@ -62,7 +70,7 @@ Map<RSID, String> map_en = {
   RSID.eepkv_2: "Copied private key",//"已复制私钥",
   RSID.eepkv_3: "Copy private key",//"复制私钥",
   RSID.eepkv_4: "Reminder",//导出提示
-  RSID.eepkv_5: "What you are exporting is the private key of the test token tEPK. tEPK is a test token of the test network, which is only used in the test network pre-mining and has no transaction value. Leaking this private key may lead to the loss of test tokens, but it has nothing to do with the ERC-20 assets in the wallet. You need not worry about the safety of the assets in the ERC-20 wallet. Meanwhile, in the proxy miner, the proxy party may need the private key of tEPK for proxy collateral.",
+  RSID.eepkv_5: "What you are exporting is the private key of the test token tEPK. tEPK is a test token of the test network, which is only used in the test network node and has no transaction value. Leaking this private key may lead to the loss of test tokens, but it has nothing to do with the ERC-20 assets in the wallet. You need not worry about the safety of the assets in the ERC-20 wallet. Meanwhile, in the proxy node, the proxy party may need the private key of tEPK for proxy collateral.",
   RSID.eepkv_6: "Export ETH private key",//"导出ETH私钥",
   RSID.eepkv_7: "Remote authorization",//"远程授权",
 
@@ -111,7 +119,7 @@ Map<RSID, String> map_en = {
   RSID.mainview_3: "Trade",//"交易",
   RSID.mainview_4: "Activitys",//活动，//"Bounty",//"赏金",//
   RSID.mainview_5: "Expert",//专家
-  RSID.mainview_6: "Minner",
+  RSID.mainview_6: "Node",//"Minner",//"节点"
 
   //MiningView 首页_挖矿 Homepage mine
   RSID.main_mv_1: "Pre-mining ranking",//"预挖排行",
@@ -121,7 +129,7 @@ Map<RSID, String> map_en = {
   RSID.main_mv_5: "Bonus acumulated: ",//"累计奖励: ",
   RSID.main_mv_6: "Register",//"报名",
   RSID.main_mv_7: "Under Review\n(Normally take less than 24 hours to approve)",//"审核中",
-  RSID.main_mv_8: "Pre-mining bonus",//"预挖奖励",
+  RSID.main_mv_8: "Test net profit",//"Pre-mining bonus",//"预挖奖励", 测试网收益
   RSID.main_mv_9: "Register rejected",//"报名已被拒绝",
 
   //WalletView 首页_钱包 Homapage wallet
@@ -166,7 +174,7 @@ Map<RSID, String> map_en = {
 
   //----------------------------------------views.mining.*
   //MiningProfitView 预挖收益 Pre-mining profit
-  RSID.mpv_1: "Pre-mining profit",//"预挖收益",
+  RSID.mpv_1: "Test net profit",//"Pre-mining profit",//"预挖收益",
   RSID.mpv_2: "Mined\nEPK",//"挖出数量\ntEPK",
   RSID.mpv_3: "Granted\nERC20-EPK",//"奖励数量\nERC20-EPK",
   RSID.mpv_4: "Total bonus\nERC20-EPK",//"总奖励\nERC20-EPK",
@@ -221,11 +229,14 @@ Map<RSID, String> map_en = {
   RSID.cwv_10: "Transfer amount can't be 0",//"转账金额不能是0",
   RSID.cwv_11: "Failed to transfer",//"转账失败",
   RSID.cwv_12: "Success!",//"操作成功!",
+  RSID.cwv_13: "Fee: ",
+  RSID.cwv_14:"The balance is not enough",//"余额不足",
 
   //----------------------------------------views.qrcode.*
   //QrcodeScanView 扫描二维码 Scan QR code
   RSID.qsv_1: "Scan",//"扫一扫",
   RSID.qsv_2: "Invalid QR code",//"无效二维码",
+  RSID.qsv_3: "Numbered Mode",//"暂不支持",
 
   //----------------------------------------views.uniswap.*
   //UniswapView 外壳
@@ -372,39 +383,46 @@ Map<RSID, String> map_en = {
   //----------------------------------------MinerView
   RSID.minerview_1:"Pledge",//"抵押",
   RSID.minerview_2:"Withdraw",//"赎回",
-  RSID.minerview_3:"Please enter MinerID",//"请输入MinerID",
+  RSID.minerview_3:"Please enter NoteID",//"请输入MinerID",
   RSID.minerview_4:"Add",//"添加",
-  RSID.minerview_5:"Storage miner",//"存储矿工",
+  RSID.minerview_5:"Storage node",//"存储矿工",
   RSID.minerview_6:"Current power",//"当前算例",
   RSID.minerview_7:"Account balance",//"账户余额",
   RSID.minerview_8:"Lock balance",//"锁定余额",
   RSID.minerview_9:"Extractable balance",//"可提余额",
-  RSID.minerview_10:"Base pledge",//"矿工基础抵押",
+  RSID.minerview_10:"Node base pledge",//"矿工基础抵押",
   RSID.minerview_11:"My base pledge",//"我的基础抵押",
   RSID.minerview_12:"Retrieve balance",//"流量抵押余额",
   RSID.minerview_13:"Retrieve locked",//"流量抵押锁定",
   RSID.minerview_14:"Retrieve expend",//"当日访问流量",
+  RSID.minerview_15:"My retrieve pledge",//"我的流量抵押",
   //---add
-  RSID.minerview_15:"Notice:\n- Knowledge miners need to start the entity miner to participate in mining\n- Knowledge miners need to complete the basic pledge of 1000 EPK in order to obtain the qualification of block production\n- Knowledge miners need to read new files from the network and store new files in order to increase computing power and block probability\n- 1EPK = 10Mb daily access traffic, daily used access traffic will be returned\n- You can redeem the pledged EPK at any time",
+  RSID.minerview_15:"Notice:\n- Knowledge nodes need to start the entity miner to participate in storage\n- Knowledge nodes need to complete the basic pledge of 1000 EPK in order to obtain the qualification of block production\n- Knowledge nodes need to read new files from the network and store new files in order to increase computing power and block probability\n- 1EPK = 10Mb daily access traffic, daily used access traffic will be returned\n- You can redeem the pledged EPK at any time",
   RSID.minerview_16:" EPK available",//可用 available
   RSID.minerview_17:"Retrieve pledge",//"访问流量抵押",
   RSID.minerview_18:"Transaction submitted",//"交易已提交",
   RSID.minerview_19:"View details",//"查看交易",
   RSID.minerview_20:"Add pledge submitted",//"添加抵押交易已提交",
   //---withdraw
-  RSID.minerview_21:"Notice:\n- Only redeem EPK of its own pledge\n- If you have consumed part of the access traffic at present, you cannot redeem all the access traffic pledge. Please try to reduce the amount of redemption\n- The EPK in the miner's basic pledge redemption will arrive immediately\n- EPK accessing traffic pledge can only be redeemed after 3 days of unlocking operation",
-  RSID.minerview_22:" EPK redeem",//赎回
+  RSID.minerview_21:"Notice:\n- Only redeem EPK of its own pledge\n- If you have consumed part of the access traffic at present, you cannot redeem all the access traffic pledge. Please try to reduce the amount of redemption\n- The EPK in the node's basic pledge redemption will arrive immediately\n- EPK accessing traffic pledge can only be redeemed after 3 days of unlocking operation",
+  RSID.minerview_22:" EPK can redeem",//赎回
   RSID.minerview_23:" EPK can be unlocked",//可解锁
   RSID.minerview_24:" unlocked",//解锁
   RSID.minerview_25:"Retrieve pledge",//"访问流量抵押",
   RSID.minerview_26:"Redemption submitted",//"赎回抵押交易已提交",
   RSID.minerview_27:"Unlock submitted",//"解锁抵押交易已提交",
+  RSID.minerview_28:"My retrieve pledge",//"我的流量抵押",
+  RSID.minerview_29:"Remaining height",//"剩余高度",
+  RSID.minerview_30:"Coinbase Withdraw",//"Coinbase提取",
   //---MinerMenu
-  RSID.minermenu_1:"Choose MinerID",//"选择MinerID",
-  RSID.minermenu_2:"Delete MinerID",//"删除MinerID",
+  RSID.minermenu_1:"Choose NoteID",//"选择MinerID",
+  RSID.minermenu_2:"Delete NoteID",//"删除MinerID",
   RSID.minermenu_3:"Delete",//删除
-  RSID.minermenu_4:"Add MinerID",//"添加MinerID",
-  RSID.minermenu_5:"Enter MinerID", //输入MinnerID
+  RSID.minermenu_4:"Add NoteID",//"添加MinerID",
+  RSID.minermenu_5:"Enter NoteID", //输入MinnerID
+  RSID.minermenu_6:"Batch pledge",//"一键抵押",//
+  RSID.minermenu_7:"All",//"全选",
+  RSID.minermenu_8:"Cancel",//"取消",
 
   //----------------------------------------ExpertView todo
   RSID.expertview_1:"All",//"全部",
@@ -420,7 +438,7 @@ Map<RSID, String> map_en = {
   RSID.expertview_11:"Qualified",//"活跃的",//normal qualified
   RSID.expertview_12:"Blocked",//"黑名单",//blocked
   RSID.expertview_13:"Blocked",//"黑名单",//disqualified
-  RSID.expertview_14:"Withdrawable profit",//"可提现收益",
+  RSID.expertview_14:"Withdrawable",//"可提现收益", //profit
   RSID.expertview_15:"Enter number of withdrawals",//"请输入提取数量",
   RSID.expertview_16:"There is no profit to draw at present",//"当前没有收益可提取",
   RSID.expertview_17:"Your voted",//"您已投出",

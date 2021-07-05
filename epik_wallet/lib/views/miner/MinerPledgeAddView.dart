@@ -2,6 +2,7 @@ import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/dialog/loading_dialog.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
+import 'package:epikwallet/localstring/LocaleConfig.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
@@ -221,7 +222,7 @@ class MinerPledgeAddViewState extends State<MinerPledgeAddView> {
           text: btnText,
           textstyle: TextStyle(
             color: Colors.white,
-            fontSize: 17,
+            fontSize: LocaleConfig.currentIsZh()?17:12,
             fontWeight: FontWeight.bold,
           ),
           onclick: (lbtn) {
@@ -241,6 +242,10 @@ class MinerPledgeAddViewState extends State<MinerPledgeAddView> {
   }
 
   onClickBaseAdd(LoadingButton lbtn, String amount) async {
+
+    if(widget.minerinfo==null)
+      return;
+
     double num = StringUtils.parseDouble(amount, 0);
     if (num <= 0) {
       ToastUtils.showToastCenter(RSID.uspav_4.text);
@@ -289,6 +294,10 @@ class MinerPledgeAddViewState extends State<MinerPledgeAddView> {
   }
 
   onClickRetrieveAdd(LoadingButton lbtn, String amount) {
+
+    if(widget.minerinfo==null)
+      return;
+
     double num = StringUtils.parseDouble(amount, 0);
     if (num <= 0) {
       ToastUtils.showToastCenter(RSID.uspav_4.text);
@@ -339,54 +348,5 @@ class MinerPledgeAddViewState extends State<MinerPledgeAddView> {
     });
   }
 
-  // onClickRetrieveBindAdd(LoadingButton lbtn, String amount) {
-  //   double num = StringUtils.parseDouble(amount, 0);
-  //   if (num <= 0) {
-  //     ToastUtils.showToastCenter(RSID.uspav_4.text);
-  //     return;
-  //   }
-  //
-  //   closeInput();
-  //
-  //   BottomDialog.showPassWordInputDialog(
-  //       context, AccountMgr().currentAccount.password, (value) async {
-  //     LoadingDialog.showLoadDialog(context, "",
-  //         touchOutClose: false, backClose: false);
-  //
-  //
-  //     // 流量抵押 需要用owner  不是用minerid
-  //     ResultObj<String> robj = await AccountMgr()
-  //         .currentAccount
-  //         .epikWallet
-  //         .retrievePledgeBind(widget.minerinfo.minerid, amount.trim()); //todo bind
-  //
-  //     LoadingDialog.cloasLoadDialog(context);
-  //
-  //     if (robj?.isSuccess) {
-  //       String cid = robj
-  //           .data; //bafy2bzaceaa4fwwhrn5oqjsxe5vumlibispulwdzf4uskh4silxlfo4qh6cu6
-  //       // getting key address: failed to get account actor state for f022202: unknown actor code bafkqaetfobvs6mjpon2g64tbm5sw22lomvza
-  //       _tec_base = null;
-  //       setState(() {});
-  //
-  //       MessageDialog.showMsgDialog(
-  //         context,
-  //         title: "访问流量抵押",
-  //         msg: "添加抵押绑定交易已提交\n$cid",
-  //         btnLeft: "查看交易",
-  //         btnRight: RSID.isee.text,
-  //         onClickBtnLeft: (dialog) {
-  //           dialog.dismiss();
-  //           String url = ServiceInfo.epik_msg_web + cid;
-  //           ViewGT.showGeneralWebView(context, RSID.berlv_4.text, url);
-  //         },
-  //         onClickBtnRight: (dialog) {
-  //           dialog.dismiss();
-  //         },
-  //       );
-  //     } else {
-  //       ToastUtils.showToastCenter(robj?.errorMsg ?? RSID.request_failed.text);
-  //     }
-  //   });
-  // }
+
 }

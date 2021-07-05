@@ -24,6 +24,10 @@ class ServerConfig {
       EPKToken = json["EPKToken"];
       SignWeixin = json["SignWeixin"];
       SignTele = json["SignTele"];
+
+      //TODO TEST
+      // EPKAPI = "ws://116.63.146.223:1234/rpc/v0";
+      // EPKToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.AO1oyT-WtXCMDH4FW-1v3mnvGFR6-zqz4O2VdnfKboQ";
     } catch (e) {
       print("ServerConfig.fromJson error");
       print(e);

@@ -211,15 +211,18 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
             headerCreator: headerBuilder,
 //      itemWidgetCreator: itemWidgetBuild,
             itemWidgetCreator: (context, position) {
+              bool isend = position >= data_list_item.length - 1;
+              if(position==0)
+                isend=true;
               return Container(
-                  margin: EdgeInsets.fromLTRB(0, position==0?10:0, 0, 0),
+                  margin: position==0? EdgeInsets.fromLTRB(0, 10, 0, 10): null,
                   child:Material(
                     color: ResColor.b_2,
                     child: InkWell(
                       highlightColor: ResColor.white_10,
                       splashColor: ResColor.white_10,
                       onTap: () => onItemClick(position),
-                      child: itemWidgetBuild2(context, position),
+                      child: itemWidgetBuild2(context, position,isend),
                     ),
                   ),
               );
@@ -671,12 +674,10 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
   }
 
   Widget itemWidgetBuild2(
-    BuildContext context, int position,
+    BuildContext context, int position,bool isend,
   ) {
     if (data_list_item != null && position < data_list_item.length)
     {
-      bool isend = position >= data_list_item.length - 1;
-
       CurrencyAsset ca = data_list_item[position];
 
       return  Container(
@@ -1001,6 +1002,9 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     isLoading = true;
     setLoadingWidgetVisible(true);
 
+    AccountMgr().currentAccount.uploadSuggestGas();
+    AccountMgr().currentAccount.uploadEpikGasTransfer();
+
     EpikWalletUtils.requestBalance(AccountMgr().currentAccount).then((value) {
       isLoading = false;
       data_list_item = AccountMgr().currentAccount.currencyList;
@@ -1021,6 +1025,8 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
 
   Future<void> _pullRefreshCallback() async {
     await EpikWalletUtils.requestBalance(AccountMgr().currentAccount);
+    AccountMgr().currentAccount.uploadSuggestGas();
+    AccountMgr().currentAccount.uploadEpikGasTransfer();
     setState(() {
       isLoading = false;
       data_list_item = AccountMgr().currentAccount.currencyList;

@@ -6,6 +6,7 @@ import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
+import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
@@ -401,18 +402,26 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
                 if (widget.currencyAsset.cs == CurrencySymbol.ETH) {
                   //eth转账 gas就是eth 所以全部金额 要减掉gas
                   try {
-                    String suggestGas =
-                        widget.walletaccount.eth_suggestGas ?? "0";
                     double _a = StringUtils.parseDouble(amount, 0);
-                    double _gas = StringUtils.parseDouble(suggestGas, 0);
+                    double _gas = widget?.walletaccount?.eth_suggestGas_d??0;
                     _a -= _gas;
                     if (_a < 0) _a = 0;
-                    // print("amount=$amount");
-                    // print("_a=$_a");
-                    // print("suggestGas=$suggestGas");
-                    // print("_gas=$_gas");
                     amount = StringUtils.formatNumAmount(_a,
                             point: 18, supply0: false)
+                        .replaceAll(",", "");
+                    // print("$amount");
+                  } catch (e) {
+                    print(e);
+                  }
+                }else if(widget.currencyAsset.cs == CurrencySymbol.EPK)
+                {
+                  try {
+                    double _a = StringUtils.parseDouble(amount, 0);
+                    double _gas = widget?.walletaccount?.epik_gas_transfer??0;
+                    _a -= _gas;
+                    if (_a < 0) _a = 0;
+                    amount = StringUtils.formatNumAmount(_a,
+                        point: 18, supply0: false)
                         .replaceAll(",", "");
                     // print("$amount");
                   } catch (e) {
@@ -456,7 +465,22 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
       ),
     );
 
-    if (widget.currencyAsset.cs != CurrencySymbol.EPK) {
+    if (widget.currencyAsset.networkType == CurrencySymbol.EPK){
+      views.add(
+        Container(
+          width: double.infinity,
+          margin: EdgeInsets.fromLTRB(20, 5, 20, 0),
+          child: Text(
+              RSID.cwv_13.text +widget.walletaccount.epik_gas_transfer_format+"EPK",
+            textAlign: TextAlign.end,
+            style: TextStyle(
+              color: ResColor.white_40,
+              fontSize: 14,
+            ),
+          ),
+        ),
+      );
+    }else if (widget.currencyAsset.networkType == CurrencySymbol.ETH) {
       views.add(
         Container(
           width: double.infinity,
@@ -599,6 +623,34 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
       showToast(ResString.get(context, RSID.cwv_10)); //"转账金额不能是0");
       return false;
     }
+
+    if(widget.currencyAsset.networkType == CurrencySymbol.EPK)
+    {
+      // EPK
+      if(widget.currencyAsset.getBalanceDouble() < widget.walletaccount.epik_gas_transfer + amount_d)
+      {
+        showToast(RSID.cwv_14.text);//余额不足
+        return false;
+      }
+    }else if(widget.currencyAsset.networkType == CurrencySymbol.ETH){
+      //ETH
+      if(widget.currencyAsset.cs == CurrencySymbol.ETH)
+      {
+        if(widget.currencyAsset.getBalanceDouble() < widget.walletaccount.eth_suggestGas_d + amount_d)
+        {
+          showToast(RSID.cwv_14.text);//余额不足
+          return false;
+        }
+      }else{
+        // USDT EPK-ERC20等 eth上的token
+        if(widget.currencyAsset.getBalanceDouble() < amount_d)
+        {
+          showToast(RSID.cwv_14.text);//余额不足
+          return false;
+        }
+      }
+    }
+
 
     return true;
   }

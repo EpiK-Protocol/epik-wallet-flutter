@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:epikwallet/localstring/LocaleConfig.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/model/Upgrade.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
@@ -187,22 +188,22 @@ class HttpUtil {
           if (err.type == DioErrorType.CANCEL) {
 //            print("---请求取消---");
             mHttpJsonRes.code = -3; //取消
-            mHttpJsonRes.msg = "取消请求";
+            mHttpJsonRes.msg = RSID.cancel_request.text;//"取消请求";
           } else if (err.type == DioErrorType.CONNECT_TIMEOUT ||
               err.type == DioErrorType.RECEIVE_TIMEOUT) {
             mHttpJsonRes.code = -2; //超时
-            mHttpJsonRes.msg = "连接超时";
+            mHttpJsonRes.msg = RSID.connect_timeout.text;//"连接超时";
           }
         } else if (err is SocketException) {
           mHttpJsonRes.code = -2; //网络异常
-          mHttpJsonRes.msg = "网络异常";
+          mHttpJsonRes.msg = RSID.network_exception.text;//"网络异常";
         } else {
           mHttpJsonRes.code = -1; //请求错误
-          mHttpJsonRes.msg = "请求错误";
+          mHttpJsonRes.msg = RSID.request_error.text;//"请求错误";
         }
       } catch (err2) {
         mHttpJsonRes.code = -2; //网络异常
-        mHttpJsonRes.msg = "网络异常,请稍后重试";
+        mHttpJsonRes.msg = RSID.network_exception_retry.text;//"网络异常,请稍后重试";
       }
     }
 
@@ -251,7 +252,7 @@ class HttpUtil {
     } else {
       if (mHttpJsonRes.msg.isEmpty) {
         mHttpJsonRes.code = -1; //请求错误
-        mHttpJsonRes.msg = "请求错误";
+        mHttpJsonRes.msg = RSID.request_error.text;//"请求错误";
       }
     }
 

@@ -26,12 +26,18 @@ enum RSID {
   completed,
   request_failed,
   request_failed_retry,
+  request_failed_retry_click,
   content_empty,
   no_more,
   net_error,
   takephoto,
   gallery,
   unknown,
+  request_error,//请求错误
+  network_exception,//网络异常
+  network_exception_retry,//网络异常,请稍后重试  "Request failed. Please try again later.",
+  connect_timeout,//连接超时
+  cancel_request,//取消请求 Cancel request
 
   //----------------------------------------dialog.*
   //BottomDialog
@@ -39,6 +45,7 @@ enum RSID {
   dlg_bd_2,
   dlg_bd_3,
   dlg_bd_4,
+  dlg_bd_5,
 
   //----------------------------------------views.wallet.*
   //ImportWalletView 导入钱包
@@ -213,11 +220,14 @@ enum RSID {
   cwv_10,
   cwv_11,
   cwv_12,
+  cwv_13,
+  cwv_14,
 
   //----------------------------------------views.qrcode.*
   //QrcodeScanView 扫描二维码
   qsv_1,
   qsv_2,
+  qsv_3,
 
   //----------------------------------------views.uniswap.*
   //UniswapView 外壳
@@ -382,18 +392,24 @@ enum RSID {
   minerview_20, //添加抵押交易已提交
   //---withdraw
   minerview_21, //注意：\n- 仅能赎回自己抵押的EPK\n- 如果你当前已经消耗了一部分访问流量，则无法赎回全部的访问流量抵押，请尝试减少赎回的数量\n- 矿工基础抵押赎回中的EPK将会立刻到账\n- 访问流量抵押的EPK需要在解锁操作3天后才能赎回\n
-  minerview_22, // EPK 赎回
+  minerview_22, // EPK 可赎回
   minerview_23, // EPK 可解锁
   minerview_24, // 解锁
   minerview_25, //访问流量抵押
   minerview_26, //赎回抵押交易已提交
   minerview_27, //解锁抵押交易已提交
+  minerview_28,//我的流量抵押
+  minerview_29,//剩余高度
+  minerview_30,//"Coinbase提取",
   //---MinerMenu
   minermenu_1, //选择MinerID
   minermenu_2, //删除MinerID
   minermenu_3, //删除
   minermenu_4, //添加MinerID
   minermenu_5, //请输入MinerID
+  minermenu_6, //一键抵押
+  minermenu_7, //一键抵押
+  minermenu_8, //一键抵押
 
   //----------------------------------------ExpertView
   expertview_1, //全部

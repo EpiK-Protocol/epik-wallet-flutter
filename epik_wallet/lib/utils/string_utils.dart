@@ -1,4 +1,5 @@
-import 'package:epikwallet/utils/Dlog.dart';
+import 'dart:math';
+
 import 'package:epikwallet/utils/RegExpUtil.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -77,37 +78,75 @@ class StringUtils {
     return def;
   }
 
-  static const RollupSize_Units = ["TB","GB", "MB", "KB", "B"];
-  static const RollupSize_Units1 = ["T","G", "M", "K", ""];
-  static const RollupSize_Units2 = ["Tb","Gb", "Mb", "Kb", ""];
+  static const RollupSize_Units = ["TB", "GB", "MB", "KB", "B"];
+  static const RollupSize_Units1 = ["T", "G", "M", "K", ""];
+  static const RollupSize_Units2 = ["Tb", "Gb", "Mb", "Kb", ""];
+  static const RollupSize_Units3 = [
+    "m",
+    "μ",
+    "n",
+    "p",
+    "f",
+    "a"
+  ]; //"a", "f", "p", "n", "μ", "m"
 
   /** 返回文件大小字符串 */
-  static String getRollupSize(int size,{List<String> units = RollupSize_Units}) {
-    int idx = 4;
-    int r1 = 0;
-    String result = "";
-    while (idx >= 0) {
-      int s1 = size % 1024;
-      size = size >> 10;
-      if (size == 0 || idx == 0) {
-        r1 = (r1 * 100) ~/ 1024;
-        if (r1 > 0) {
-          if (r1 >= 10)
-            result = "$s1.$r1${units[idx]}";
-          else
-            result = "$s1.0$r1${units[idx]}";
-        } else
-          result = s1.toString() + units[idx];
+  static String getRollupSize(int size,
+      {int radix = 1024,
+      int extraUp = 0,
+      int fractionDigits = 2,
+      List<String> units = RollupSize_Units}) {
+    print("getRollupSize size=$size radix=$radix");
+
+    double num = 0;
+    String numstr = "0";
+    String unit = "";
+
+    int maxIndex = units.length - 1; //  4 3 2 1 0
+    int index = maxIndex;
+    while (index >= 0) {
+      int power = pow(radix, index);
+      // print("getRollupSize index=$index  pow=$power");
+      if (size >= power) {
+        num = 1.0 * size / power;
         break;
       }
-      r1 = s1;
-      idx--;
+      if (index > 0)
+        index--;
+      else
+        break;
     }
+
+    //额外进位
+    if (extraUp > 0 && num >= extraUp && index != maxIndex) {
+      index++;
+      num = num / radix;
+      // print("getRollupSize extraUp=$extraUp  num=$num  index=$index");
+    }
+
+    if (num == 0) {
+      numstr = "0";
+    } else {
+      numstr = num.toStringAsFixed(fractionDigits);
+      // print("getRollupSize numstr=$numstr");
+        while (numstr.contains(".") && (numstr.endsWith("0") || numstr.endsWith("."))) {
+          numstr = numstr.substring(0, numstr.length - 1);
+          // print("getRollupSize del0  $numstr");
+        }
+    }
+
+    // print("getRollupSize maxIndex=$maxIndex index=$index units.size=${units.length}");
+    unit = units[maxIndex - index];
+
+    if (isEmpty(numstr)) numstr = "0";
+
+    String result = "$numstr$unit";
+    print("getRollupSize  result=$result");
     return result;
   }
 
   static String formatNumAmount(num, {int point: 2, bool supply0 = false}) {
-    try{
+    try {
       if (num != null) {
         double dnum = double.parse(num.toString());
         String str = dnum.toString();
@@ -128,7 +167,7 @@ class StringUtils {
         for (int index = 0, i = val.length - 1; i >= 0; index++, i--) {
           // 除以三没有余数、不等于零并且不等于1 就加个逗号
           if (index % 3 == 0 && index != 0) // && i != 1
-              {
+          {
             val[i] = val[i] + ',';
           }
         }
@@ -160,19 +199,17 @@ class StringUtils {
       } else {
         return "0.0";
       }
-    }catch(e,s)
-    {
+    } catch (e, s) {
       print(e);
       print(s);
-      return  "0";
+      return "0";
     }
-
   }
 
   /// 格式化金额，中文缩略成w(万),其他语言缩略成M(百万)\K(千)
   static String formatNumAmountLocaleUnit(double amount, BuildContext context,
-      {int point: 2, bool supply0 = false, bool needZhUnit=true}) {
-    String languageCode="zh";
+      {int point: 2, bool supply0 = false, bool needZhUnit = true}) {
+    String languageCode = "zh";
 
     try {
       Locale _locale = Localizations.localeOf(context);
@@ -188,8 +225,8 @@ class StringUtils {
     if (languageCode == "zh" && needZhUnit) {
       //中文
       if (amount > 10000) {
-        x=10000;
-        u="w";
+        x = 10000;
+        u = "w";
       }
     } else {
       //其他语言
@@ -223,31 +260,24 @@ class StringUtils {
 
   ///100000123456789012345678 ->  100000.123456789012345678
   ///                                      1200000000000000
-  static String bigNumDownsizing(String num,{int bit=18})
-  {
+  static String bigNumDownsizing(String num, {int bit = 18}) {
     num = num?.trim();
-    if(num!=null && num.length<=bit)
-    {
-
-      int zero = bit-num.length;
-        zero+=2;
-      for(int i=0;i<zero;i++)
-      {
-        num="0"+num;
+    if (num != null && num.length <= bit) {
+      int zero = bit - num.length;
+      zero += 2;
+      for (int i = 0; i < zero; i++) {
+        num = "0" + num;
       }
     }
-    if(num!=null&& num.length>bit && num.contains(".")==false)
-    {
-      List<String> list =  num.split("");
-      int index = list.length-18;
+    if (num != null && num.length > bit && num.contains(".") == false) {
+      List<String> list = num.split("");
+      int index = list.length - 18;
       list.insert(index, ".");
-      if(index==0)
-        list.insert(0,"0");
+      if (index == 0) list.insert(0, "0");
       String ret = list.join();
 
       String ret1 = ret.replaceAll(RegExpUtil.re_end_zero, "");
-      if(ret1.endsWith("."))
-        ret1=ret1.substring(0,ret1.length-1);
+      if (ret1.endsWith(".")) ret1 = ret1.substring(0, ret1.length - 1);
 
       // print("bigNumDownsizing $ret => $ret1");
 
@@ -256,10 +286,8 @@ class StringUtils {
     return num;
   }
 
-  static double bigNumDownsizingDouble(String num,{int bit=18})
-  {
-    String text =  bigNumDownsizing(num,bit: 18);
+  static double bigNumDownsizingDouble(String num, {int bit = 18}) {
+    String text = bigNumDownsizing(num, bit: 18);
     return parseDouble(text, 0);
   }
-
 }

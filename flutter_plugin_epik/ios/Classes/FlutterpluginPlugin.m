@@ -430,9 +430,9 @@
                 err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
             }
         }else if ([@"epik_wallet_retrievePledgeApplyWithdraw" isEqualToString:call.method]) {
-            // 矿机 访问抵押 申请撤回  第一步 三天后可以执行第二部
+            // 矿机 访问抵押 申请撤回  第一步 三天后可以执行第二部 minerid 改成owner
             if (self->_epikWallet){
-                NSString *ret = [self->_epikWallet retrievePledgeApplyWithdraw:arguments[@"toMinerID"] amount:arguments[@"amount"] error:&err];
+                NSString *ret = [self->_epikWallet retrievePledgeApplyWithdraw:arguments[@"target"] amount:arguments[@"amount"] error:&err];
                 if (!err) {
                     resultSync(ret);
                 }
@@ -442,7 +442,9 @@
         }else if ([@"epik_wallet_retrievePledgeWithdraw" isEqualToString:call.method]) {
             // 矿机 访问抵押 撤回 第二步
             if (self->_epikWallet){
-                NSString *ret = [self->_epikWallet retrievePledgeWithdraw:arguments[@"toMinerID"] amount:arguments[@"amount"] error:&err];
+                // NSString *ret = [self->_epikWallet retrievePledgeWithdraw:arguments[@"toMinerID"] amount:arguments[@"amount"] error:&err];
+                // 20210624删除toMinerID
+                NSString *ret = [self->_epikWallet retrievePledgeWithdraw:arguments[@"amount"] error:&err];
                 if (!err) {
                     resultSync(ret);
                 }
@@ -510,6 +512,71 @@
                 }
             }else{
                 err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }
+        ///----- 20210624 epik 新增
+        else if ([@"epik_wallet_coinbaseInfo" isEqualToString:call.method]) {
+            //epik钱包coinbase信息
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet coinbaseInfo:arguments[@"addr"]  error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"epikWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_coinbaseWithdraw" isEqualToString:call.method]) {
+            //coinbase提取
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet coinbaseWithdraw: &err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"epikWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_minerPledgeOneClick" isEqualToString:call.method]) {
+            //矿机批量抵押
+            if (self->_epikWallet){
+                [self->_epikWallet minerPledgeOneClick:arguments[@"minerStr"] error: &err];
+                NSString *ret = @"ok";
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"epikWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_gasEstimateGasLimit" isEqualToString:call.method]) {
+            // 查询epik手续费  actor ：transfer交易
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet gasEstimateGasLimit:arguments[@"actor"] error: &err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"epikWallet is Nil"}];
+            }
+        }
+        ///----- 20210705 epik 新增
+        else if ([@"epik_wallet_signAndSendMessage" isEqualToString:call.method]) {
+            //String signAndSendMessage(String addr, String message)
+            if (self->_epikWallet){
+                NSString *cid = [self->_epikWallet signAndSendMessage:arguments[@"addr"] message:[arguments[@"message"] data] error:&err];
+                if (!err) {
+                    resultSync(cid);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"epikWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_signCID" isEqualToString:call.method]) {
+            //byte[] signCID(String addr, String message)
+            if (self->_epikWallet){
+                NSData *ret = [self->_epikWallet signCID:arguments[@"addr"] cidStr:[arguments[@"cidStr"] data] error:&err];
+                if (!err) {
+                    resultSync([FlutterStandardTypedData typedDataWithBytes:ret]);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"epikWallet is Nil"}];
             }
         }
         else {

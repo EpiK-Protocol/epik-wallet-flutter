@@ -229,13 +229,13 @@ class ApiWallet {
   }
 
   static Future<HttpJsonRes> sendRemoteAuth(RemoteAuth ra) async {
-    String url = ra.callback;
+    String url = ra.c;//ra.callback;
     String epik_address = AccountMgr()?.currentAccount?.epik_EPK_address;
 
 
     //原文解base64得bytes
-    Uint8List plain_bytes = base64.decode(ra.plain);
-    Dlog.p("sendRemoteAuth", "plain=${ra.plain}");
+    Uint8List plain_bytes = base64.decode(ra.p);//base64.decode(ra.plain);
+    Dlog.p("sendRemoteAuth", "plain=${ra.p}");
     Dlog.p("sendRemoteAuth", "decodedPlain=${plain_bytes}");
 
     //原文的bytes提取sha256摘要
@@ -257,7 +257,7 @@ class ApiWallet {
     Map<String, dynamic> headers = {
       "address": epik_address,
       "signature": epik_signature_base64,
-      "plain":ra.plain,
+      "plain":ra.p,//ra.plain,
     };
 
     HttpJsonRes hjr =await HttpUtil.instance

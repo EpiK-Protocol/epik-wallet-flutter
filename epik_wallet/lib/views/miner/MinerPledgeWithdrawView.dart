@@ -2,6 +2,7 @@ import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/dialog/loading_dialog.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
+import 'package:epikwallet/localstring/LocaleConfig.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
@@ -91,15 +92,15 @@ class MinerPledgeWithdrawViewState extends State<MinerPledgeWithdrawView> {
     List<Widget> items=[
 
       //矿工基础抵押   000  EPK 赎回
-      getRowText(RSID.minerview_10.text, "${StringUtils.formatNumAmount(widget.minerinfo.my_mining_pledge,supply0:  false,point: 8)}${RSID.minerview_22.text}"),
+      getRowText(RSID.minerview_10.text, widget.minerinfo==null? "":"${StringUtils.formatNumAmount(widget.minerinfo.my_mining_pledge,supply0:  false,point: 8)}${RSID.minerview_22.text}"),
       getInputRow(controller: _tec_base,btnText: RSID.minerview_2.text,onClick: onClickBaseWithdraw),//赎回
       Container(height: 20,),
       //流量抵押锁定   000  EPK 可解锁
-      getRowText(RSID.minerview_13.text, "${StringUtils.formatNumAmount(widget.minerinfo.retrieve_locked,supply0:  false,point: 8)}${RSID.minerview_23.text}"),
+      getRowText(RSID.minerview_13.text,widget.minerinfo==null? "": "${StringUtils.formatNumAmount(widget.minerinfo.my_retrieve_pledge,supply0:  false,point: 8)}${RSID.minerview_23.text}"),
       getInputRow(controller: _tec_retrieve_apply,btnText: RSID.minerview_24.text,onClick: onClickRetrieveApplyWithdraw),//解锁
       Container(height: 20,),
-      //访问流量抵押  000  EPK 赎回
-      getRowText(RSID.minerview_25.text, "${StringUtils.formatNumAmount(widget.minerinfo.retrieve_balance_d-widget.minerinfo.retrieve_locked_d,supply0: false,point: 8)}${RSID.minerview_22.text}"),
+      //访问流量抵押  000  EPK 赎回    ，   剩余高度 xxxx
+      getRowText(RSID.minerview_25.text, widget.minerinfo==null? "":(widget.minerinfo.retrieve_unlock_epoch_left_d>0 ? "${RSID.minerview_29.text} ${widget.minerinfo.retrieve_unlock_epoch_left}" :"${StringUtils.formatNumAmount(widget.minerinfo.retrieve_locked_d,supply0: false,point: 8)}${RSID.minerview_22.text}")),
       getInputRow(controller: _tec_retrieve_withdraw,btnText:  RSID.minerview_2.text,onClick: onClickRetrieveWithdraw),//赎回
       // Container(height: 20,),
       // getRowText("访问流量抵押解绑", ""),
@@ -232,7 +233,7 @@ class MinerPledgeWithdrawViewState extends State<MinerPledgeWithdrawView> {
           text:btnText,
           textstyle: TextStyle(
             color: Colors.white,
-            fontSize: 17,
+            fontSize: LocaleConfig.currentIsZh()?17:12,
             fontWeight:FontWeight.bold,
           ),
           onclick: (lbtn) {
@@ -255,6 +256,9 @@ class MinerPledgeWithdrawViewState extends State<MinerPledgeWithdrawView> {
 
   onClickBaseWithdraw(LoadingButton lbtn, String amount) async
   {
+    if(widget.minerinfo==null)
+      return;
+
     double num = StringUtils.parseDouble(amount, 0);
     if (num <= 0) {
       ToastUtils.showToastCenter(RSID.uspav_4.text);
@@ -304,6 +308,9 @@ class MinerPledgeWithdrawViewState extends State<MinerPledgeWithdrawView> {
 
   onClickRetrieveApplyWithdraw(LoadingButton lbtn, String amount) async
   {
+    if(widget.minerinfo==null)
+      return;
+
     double num = StringUtils.parseDouble(amount, 0);
     if (num <= 0) {
       ToastUtils.showToastCenter(RSID.uspav_4.text);
@@ -320,7 +327,7 @@ class MinerPledgeWithdrawViewState extends State<MinerPledgeWithdrawView> {
       ResultObj<String> robj = await AccountMgr()
           .currentAccount
           .epikWallet
-          .retrievePledgeApplyWithdraw(widget.minerinfo.minerid, amount.trim());
+          .retrievePledgeApplyWithdraw(widget.minerinfo.owner, amount.trim());
 
       LoadingDialog.cloasLoadDialog(context);
 
@@ -353,6 +360,10 @@ class MinerPledgeWithdrawViewState extends State<MinerPledgeWithdrawView> {
 
   onClickRetrieveWithdraw(LoadingButton lbtn, String amount) async
   {
+
+    if(widget.minerinfo==null)
+      return;
+
     double num = StringUtils.parseDouble(amount, 0);
     if (num <= 0) {
       ToastUtils.showToastCenter(RSID.uspav_4.text);
@@ -369,7 +380,7 @@ class MinerPledgeWithdrawViewState extends State<MinerPledgeWithdrawView> {
       ResultObj<String> robj = await AccountMgr()
           .currentAccount
           .epikWallet
-          .retrievePledgeWithdraw(widget.minerinfo.minerid, amount.trim());
+          .retrievePledgeWithdraw( amount.trim());//widget.minerinfo.minerid,
 
       LoadingDialog.cloasLoadDialog(context);
 
@@ -399,56 +410,5 @@ class MinerPledgeWithdrawViewState extends State<MinerPledgeWithdrawView> {
       }
     });
   }
-
-  // onClickRetrieveUnbind(LoadingButton lbtn, String amount) {
-  //   double num = StringUtils.parseDouble(amount, 0);
-  //   if (num <= 0) {
-  //     ToastUtils.showToastCenter(RSID.uspav_4.text);
-  //     return;
-  //   }
-  //
-  //   closeInput();
-  //
-  //   BottomDialog.showPassWordInputDialog(
-  //       context, AccountMgr().currentAccount.password, (value) async {
-  //     LoadingDialog.showLoadDialog(context, "",
-  //         touchOutClose: false, backClose: false);
-  //
-  //
-  //     // 流量抵押 需要用owner  不是用minerid
-  //     ResultObj<String> robj = await AccountMgr()
-  //         .currentAccount
-  //         .epikWallet
-  //         .retrievePledgeUnBind(widget.minerinfo.minerid, amount.trim()); //todo unbind
-  //
-  //     LoadingDialog.cloasLoadDialog(context);
-  //
-  //     if (robj?.isSuccess) {
-  //       String cid = robj
-  //           .data; //bafy2bzaceaa4fwwhrn5oqjsxe5vumlibispulwdzf4uskh4silxlfo4qh6cu6
-  //       // getting key address: failed to get account actor state for f022202: unknown actor code bafkqaetfobvs6mjpon2g64tbm5sw22lomvza
-  //       _tec_base = null;
-  //       setState(() {});
-  //
-  //       MessageDialog.showMsgDialog(
-  //         context,
-  //         title: "访问流量抵押",
-  //         msg: "添加抵押解绑交易已提交\n$cid",
-  //         btnLeft: "查看交易",
-  //         btnRight: RSID.isee.text,
-  //         onClickBtnLeft: (dialog) {
-  //           dialog.dismiss();
-  //           String url = ServiceInfo.epik_msg_web + cid;
-  //           ViewGT.showGeneralWebView(context, RSID.berlv_4.text, url);
-  //         },
-  //         onClickBtnRight: (dialog) {
-  //           dialog.dismiss();
-  //         },
-  //       );
-  //     } else {
-  //       ToastUtils.showToastCenter(robj?.errorMsg ?? RSID.request_failed.text);
-  //     }
-  //   });
-  // }
 
 }

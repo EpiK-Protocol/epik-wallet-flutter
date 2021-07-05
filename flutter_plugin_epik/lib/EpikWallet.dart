@@ -151,11 +151,12 @@ class EpikWallet {
   /// 创建领域专家
   Future<ResultObj<String>> createExpert(String applicationHash) async {
     try {
-      String ret =await EpikPlugin.channel.invokeMethod("epik_wallet_createExpert",<String,dynamic>{
-        "applicationHash":applicationHash,
+      String ret = await EpikPlugin.channel.invokeMethod(
+          "epik_wallet_createExpert", <String, dynamic>{
+        "applicationHash": applicationHash,
       });
-      return ResultObj<String>(data:ret);
-    } catch (e,s) {
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
       print(e);
       return ResultObj<String>.fromError(e);
     }
@@ -169,8 +170,8 @@ class EpikWallet {
           .invokeMethod("epik_wallet_expertInfo", <String, dynamic>{
         "addr": addr,
       });
-      return ResultObj<String>(data:ret);
-    } catch (e,s) {
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
       print(e);
       return ResultObj<String>.fromError(e);
     }
@@ -188,14 +189,14 @@ class EpikWallet {
   }
 
   /// 消息回执
-  Future<ResultObj<String>>  messageReceipt(String cidStr) async {
+  Future<ResultObj<String>> messageReceipt(String cidStr) async {
     try {
       String ret = await EpikPlugin.channel
           .invokeMethod("epik_wallet_messageReceipt", <String, dynamic>{
         "cidStr": cidStr,
       });
-      return ResultObj<String>(data:ret);
-    } catch (e,s) {
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
       print(e);
       return ResultObj<String>.fromError(e);
     }
@@ -210,8 +211,8 @@ class EpikWallet {
         "candidate": candidate,
         "amount": amount,
       });
-      return ResultObj<String>(data:ret);
-    } catch (e,s) {
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
       print(e);
       return ResultObj<String>.fromError(e);
     }
@@ -226,8 +227,8 @@ class EpikWallet {
         "candidate": candidate,
         "amount": amount,
       });
-      return ResultObj<String>(data:ret);
-    } catch (e,s) {
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
       print(e);
       return ResultObj<String>.fromError(e);
     }
@@ -241,8 +242,8 @@ class EpikWallet {
           .invokeMethod("epik_wallet_voteWithdraw", <String, dynamic>{
         "to": to,
       });
-      return ResultObj<String>(data:ret);
-    } catch (e,s) {
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
       print(e);
       return ResultObj<String>.fromError(e);
     }
@@ -256,8 +257,8 @@ class EpikWallet {
           .invokeMethod("epik_wallet_voterInfo", <String, dynamic>{
         "addr": addr,
       });
-      return ResultObj<String>(data:ret);
-    } catch (e,s) {
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
       print(e);
       return ResultObj<String>.fromError(e);
     }
@@ -272,8 +273,8 @@ class EpikWallet {
           .invokeMethod("epik_wallet_minerInfo", <String, dynamic>{
         "minerID": minerID,
       });
-      return ResultObj<String>(data:ret);
-    } catch (e,s) {
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
       print(e);
       return ResultObj<String>.fromError(e);
     }
@@ -281,15 +282,16 @@ class EpikWallet {
   }
 
   ///矿机 基础抵押 添加
-  Future<ResultObj<String>> minerPledgeAdd(String toMinerID,String amount) async {
+  Future<ResultObj<String>> minerPledgeAdd(String toMinerID,
+      String amount) async {
     try {
       String ret = await EpikPlugin.channel
           .invokeMethod("epik_wallet_minerPledgeAdd", <String, dynamic>{
         "toMinerID": toMinerID,
-        "amount":amount,
+        "amount": amount,
       });
-      return ResultObj<String>(data:ret);
-    } catch (e,s) {
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
       print(e);
       return ResultObj<String>.fromError(e);
     }
@@ -297,15 +299,16 @@ class EpikWallet {
   }
 
   ///矿机 基础抵押 撤回
-  Future<ResultObj<String>> minerPledgeWithdraw(String toMinerID,String amount) async {
+  Future<ResultObj<String>> minerPledgeWithdraw(String toMinerID,
+      String amount) async {
     try {
       String ret = await EpikPlugin.channel
           .invokeMethod("epik_wallet_minerPledgeWithdraw", <String, dynamic>{
         "toMinerID": toMinerID,
-        "amount":amount,
+        "amount": amount,
       });
-      return ResultObj<String>(data:ret);
-    } catch (e,s) {
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
       print(e);
       return ResultObj<String>.fromError(e);
     }
@@ -313,32 +316,35 @@ class EpikWallet {
   }
 
   /// 矿机 访问抵押 添加
-  Future<ResultObj<String>> retrievePledgeAdd(String target,String toMinerID,String amount) async {
+  Future<ResultObj<String>> retrievePledgeAdd(String target, String toMinerID,
+      String amount) async {
     try {
       String ret = await EpikPlugin.channel
           .invokeMethod("epik_wallet_retrievePledgeAdd", <String, dynamic>{
         "toMinerID": toMinerID,
-        "target":target,
-        "amount":amount,
+        "target": target,
+        "amount": amount,
       });
-      return ResultObj<String>(data:ret);
-    } catch (e,s) {
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
       print(e);
       return ResultObj<String>.fromError(e);
     }
     return null;
   }
 
-  // 矿机 访问抵押 申请撤回  第一步     三天后解锁可以执行第二步
-  Future<ResultObj<String>> retrievePledgeApplyWithdraw(String toMinerID,String amount) async {
+  // 矿机 访问抵押 申请撤回  第一步     三天后解锁可以执行第二步  第一个参数改为owner
+  Future<ResultObj<String>> retrievePledgeApplyWithdraw(String owner,
+      String amount) async {
     try {
       String ret = await EpikPlugin.channel
-          .invokeMethod("epik_wallet_retrievePledgeApplyWithdraw", <String, dynamic>{
-        "toMinerID": toMinerID,
-        "amount":amount,
+          .invokeMethod(
+          "epik_wallet_retrievePledgeApplyWithdraw", <String, dynamic>{
+        "target": owner,
+        "amount": amount,
       });
-      return ResultObj<String>(data:ret);
-    } catch (e,s) {
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
       print(e);
       return ResultObj<String>.fromError(e);
     }
@@ -346,47 +352,155 @@ class EpikWallet {
   }
 
   // 矿机 访问抵押 撤回 第二步
-  Future<ResultObj<String>> retrievePledgeWithdraw(String toMinerID,String amount) async {
+  Future<ResultObj<String>> retrievePledgeWithdraw(/*String toMinerID,*/
+      String amount) async {
     try {
       String ret = await EpikPlugin.channel
           .invokeMethod("epik_wallet_retrievePledgeWithdraw", <String, dynamic>{
-        "toMinerID": toMinerID,
-        "amount":amount,
+        // "toMinerID": toMinerID, //20210624删除toMinerID
+        "amount": amount,
       });
-      return ResultObj<String>(data:ret);
-    } catch (e,s) {
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
       print(e);
       return ResultObj<String>.fromError(e);
     }
     return null;
   }
 
-  Future<ResultObj<String>> retrievePledgeBind(String toMinerID,String amount) async {
+  Future<ResultObj<String>> retrievePledgeBind(String toMinerID,
+      String amount) async {
     try {
       String ret = await EpikPlugin.channel
           .invokeMethod("epik_wallet_retrievePledgeBind", <String, dynamic>{
         "miner": toMinerID,
-        "amount":amount,
+        "amount": amount,
       });
-      return ResultObj<String>(data:ret);
-    } catch (e,s) {
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
       print(e);
       return ResultObj<String>.fromError(e);
     }
     return null;
   }
-  
-  Future<ResultObj<String>> retrievePledgeUnBind(String toMinerID,String amount) async {
+
+  Future<ResultObj<String>> retrievePledgeUnBind(String toMinerID,
+      String amount) async {
     try {
       String ret = await EpikPlugin.channel
           .invokeMethod("epik_wallet_retrievePledgeUnBind", <String, dynamic>{
         "miner": toMinerID,
-        "amount":amount,
+        "amount": amount,
       });
-      return ResultObj<String>(data:ret);
-    } catch (e,s) {
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
       print(e);
       return ResultObj<String>.fromError(e);
+    }
+    return null;
+  }
+
+  //case "epik_wallet_coinbaseInfo":{
+//    ret = currentEpikWallet.coinbaseInfo((String) call.argument("addr"));
+//    break;
+//}
+  Future<ResultObj<String>> coinbaseInfo(String addr) async
+  {
+    try {
+      String ret = await EpikPlugin.channel
+          .invokeMethod("epik_wallet_coinbaseInfo", <String, dynamic>{
+        "addr": addr,
+      });
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
+      print(e);
+      return ResultObj<String>.fromError(e);
+    }
+    return null;
+  }
+
+//case "epik_wallet_coinbaseWithdraw":{
+//    ret = currentEpikWallet.coinbaseWithdraw();
+//    break;
+//}
+  Future<ResultObj<String>> coinbaseWithdraw() async
+  {
+    try {
+      String ret = await EpikPlugin.channel
+          .invokeMethod("epik_wallet_coinbaseWithdraw", <String, dynamic>{
+      });
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
+      print(e);
+      return ResultObj<String>.fromError(e);
+    }
+    return null;
+  }
+
+  // case "epik_wallet_minerPledgeOneClick":
+  // {
+  // currentEpikWallet.minerPledgeOneClick((String) call.argument("minerStr"));
+  // ret = "ok";
+  // break;
+  // }
+
+  Future<ResultObj<String>> minerPledgeOneClick(List<String> minerIds) async
+  {
+    try {
+      String ret = await EpikPlugin.channel
+          .invokeMethod("epik_wallet_minerPledgeOneClick", <String, dynamic>{
+        "minerStr": minerIds.join(","),
+      });
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
+      print(e);
+      return ResultObj<String>.fromError(e);
+    }
+    return null;
+  }
+
+  /// 查询epik手续费  actor ：transfer交易
+  Future<ResultObj<String>> gasEstimateGasLimit({String actor="transfer"}) async
+  {
+    try {
+      String ret = await EpikPlugin.channel
+          .invokeMethod("epik_wallet_gasEstimateGasLimit", <String, dynamic>{
+        "actor": actor,
+      });
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
+      print(e);
+      return ResultObj<String>.fromError(e);
+    }
+    return null;
+  }
+
+  ///----- 20210705 epik 新增
+  ///
+  //String signAndSendMessage(String addr, String message)
+  // ret = currentEpikWallet.signAndSendMessage((String) call.argument("addr"),(String) call.argument("message"));
+  Future<ResultObj<String>> signAndSendMessage(String addr, String message) async {
+    try {
+      String ret = await EpikPlugin.channel.invokeMethod(
+          "epik_wallet_signAndSendMessage", <String, dynamic>{"addr": addr, "message": message});
+      return ResultObj<String>(data: ret);
+    } catch (e, s) {
+      print(e);
+      return ResultObj<String>.fromError(e);
+    }
+    return null;
+  }
+
+  //byte[] signCID(String addr, String message)
+  // ret = currentEpikWallet.signCID((String) call.argument("addr"),(String) call.argument("cidStr"));
+  Future<ResultObj<Uint8List>> signCID(String addr, String cidStr) async {
+    try {
+      Uint8List ret = await EpikPlugin.channel.invokeMethod(
+          "epik_wallet_signCID", <String, dynamic>{"addr": addr, "cidStr": cidStr});
+      return ResultObj<Uint8List>(data: ret);
+    } catch (e, s) {
+      print(e);
+      return ResultObj<Uint8List>.fromError(e);
     }
     return null;
   }

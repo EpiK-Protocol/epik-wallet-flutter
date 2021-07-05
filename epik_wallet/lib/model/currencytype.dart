@@ -36,8 +36,8 @@ extension aaaa on CurrencySymbol {
   }
 
   CurrencySymbol get networkType {
-    if (this != CurrencySymbol.EPK) return CurrencySymbol.ETH;
-    return null;
+    if (this == CurrencySymbol.EPK) return CurrencySymbol.EPK;
+    return CurrencySymbol.ETH;
   }
 
   Prices getPriceUSD(List<Prices> priceslist) {

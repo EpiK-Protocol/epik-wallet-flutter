@@ -5,6 +5,7 @@ import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
+import 'package:epikwallet/localstring/LocaleConfig.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
@@ -330,100 +331,69 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView>
                 height: 1,
               ),
             ),
-            Container(height: 10),
-
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    "${RSID.expertview_4.text}: ${expertInfomation?.TotalVote_f ?? 0} EPK", //已投
-                    textAlign: TextAlign.left,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "${RSID.expertview_4.text}: ${expertInfomation?.TotalVote_f ?? 0} EPK", //已投
+                      textAlign: TextAlign.left,
+                      style:  TextStyle(
+                        color: Colors.white,
+                        fontSize: LocaleConfig.currentIsZh()?14:12,
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Text(
-                    "${RSID.expertview_5.text}: ${expertInfomation?.TotalVoteReward_f ?? 0} EPK", //累计收益
-                    textAlign: TextAlign.right,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
+                  Expanded(
+                    child: Text(
+                      "${RSID.expertview_5.text}: ${expertInfomation?.TotalVoteReward_f ?? 0} EPK", //累计收益
+                      textAlign: TextAlign.right,
+                      style:  TextStyle(
+                        color: Colors.white,
+                        fontSize: LocaleConfig.currentIsZh()?14:12,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            // Row(
-            //   children: [
-            //     Text(
-            //       "平均投票:",
-            //       style: const TextStyle(
-            //         color: Colors.white,
-            //         fontSize: 16,
-            //       ),
-            //     ),
-            //     Expanded(
-            //       child: Text(
-            //         "${expertInfomation?.AvgVote_f ?? 0} EPK",
-            //         textAlign: TextAlign.right,
-            //         style: const TextStyle(
-            //           color: Colors.white,
-            //           fontSize: 16,
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
-            // Row(
-            //   children: [
-            //     Text(
-            //       "专家奖励:",
-            //       style: const TextStyle(
-            //         color: Colors.white,
-            //         fontSize: 16,
-            //       ),
-            //     ),
-            //     Expanded(child: Text(
-            //       "${expertInfomation?.TotalExpertReward ?? 0} EPK",
-            //       textAlign: TextAlign.right,
-            //       style: const TextStyle(
-            //         color: Colors.white,
-            //         fontSize: 16,
-            //       ),
-            //     ),),
-            //   ],
-            // ),
-            Container(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    "${RSID.expertview_17.text}: ${voterinfo?.getAllvoterF() ?? 0} EPK",
-                    //已投
-                    textAlign: TextAlign.left,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
+            Container(
+              width: double.infinity,
+              // padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+              constraints: BoxConstraints(
+                minHeight:14.0+20,
+              ),
+              child:   Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "${RSID.expertview_17.text}: ${voterinfo?.getAllvoterF() ?? 0} EPK",
+                      //已投
+                      textAlign: TextAlign.left,
+                      style:  TextStyle(
+                        color: Colors.white,
+                        fontSize: LocaleConfig.currentIsZh()?14:12,
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Text(
-                    "${RSID.expertview_14.text}: ${voterinfo?.getWithdrawableRewardsF() ?? 0} EPK",
-                    //可提收益
-                    textAlign: TextAlign.right,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
+                  Expanded(
+                    child: Text(
+                      "${RSID.expertview_14.text}: ${voterinfo?.getWithdrawableRewardsF() ?? 0} EPK",
+                      //可提收益
+                      textAlign: TextAlign.right,
+                      style:  TextStyle(
+                        color: Colors.white,
+                        fontSize: LocaleConfig.currentIsZh()?14:12,
+                      ),
                     ),
                   ),
-                ),
 
-              ],
+                ],
+              ),
             ),
+
           ],
         ),
       ),

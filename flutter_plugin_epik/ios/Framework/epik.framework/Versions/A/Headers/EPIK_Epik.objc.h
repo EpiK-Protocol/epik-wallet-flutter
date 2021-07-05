@@ -66,6 +66,8 @@
  * Balance ...
  */
 - (NSString* _Nonnull)balance:(NSString* _Nullable)addr error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)coinbaseInfo:(NSString* _Nullable)addr error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)coinbaseWithdraw:(NSError* _Nullable* _Nullable)error;
 /**
  * CreateExpert 创建领域专家
  */
@@ -83,6 +85,7 @@
  * Export ...
  */
 - (NSString* _Nonnull)export:(NSString* _Nullable)addr error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)gasEstimateGasLimit:(NSString* _Nullable)actor error:(NSError* _Nullable* _Nullable)error;
 /**
  * GenerateKey t:bls,secp256k1
  */
@@ -102,12 +105,13 @@
 - (NSString* _Nonnull)messageReceipt:(NSString* _Nullable)cidStr error:(NSError* _Nullable* _Nullable)error;
 - (NSString* _Nonnull)minerInfo:(NSString* _Nullable)minerID error:(NSError* _Nullable* _Nullable)error;
 - (NSString* _Nonnull)minerPledgeAdd:(NSString* _Nullable)toMinerID amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
+- (BOOL)minerPledgeOneClick:(NSString* _Nullable)minerStr error:(NSError* _Nullable* _Nullable)error;
 - (NSString* _Nonnull)minerPledgeWithdraw:(NSString* _Nullable)toMinerID amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
 - (NSString* _Nonnull)retrievePledgeAdd:(NSString* _Nullable)target miner:(NSString* _Nullable)miner amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
-- (NSString* _Nonnull)retrievePledgeApplyWithdraw:(NSString* _Nullable)toMinerID amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)retrievePledgeApplyWithdraw:(NSString* _Nullable)target amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
 - (NSString* _Nonnull)retrievePledgeBind:(NSString* _Nullable)miner amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
 - (NSString* _Nonnull)retrievePledgeUnBind:(NSString* _Nullable)miner amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
-- (NSString* _Nonnull)retrievePledgeWithdraw:(NSString* _Nullable)toMinerID amount:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)retrievePledgeWithdraw:(NSString* _Nullable)amount error:(NSError* _Nullable* _Nullable)error;
 /**
  * Send ...
  */
@@ -125,6 +129,7 @@
  * Sign ...
  */
 - (NSData* _Nullable)sign:(NSString* _Nullable)addr hash:(NSData* _Nullable)hash error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)signAndSendMessage:(NSString* _Nullable)addr message:(NSString* _Nullable)message error:(NSError* _Nullable* _Nullable)error;
 - (NSData* _Nullable)signCID:(NSString* _Nullable)addr cidStr:(NSString* _Nullable)cidStr error:(NSError* _Nullable* _Nullable)error;
 /**
  * VoteRescind 撤销

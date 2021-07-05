@@ -1,49 +1,31 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:ui';
 
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
+import 'package:epikwallet/dialog/bottom_dialog.dart';
+import 'package:epikwallet/dialog/message_dialog.dart';
+import 'package:epikwallet/localstring/LocaleConfig.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
-import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
-import 'package:epikwallet/logic/api/api_mainnet.dart';
-import 'package:epikwallet/model/MinerCoinbaseList.dart';
-import 'package:epikwallet/model/MinerInfo.dart';
+import 'package:epikwallet/logic/api/serviceinfo.dart';
+import 'package:epikwallet/model/CoinbaseInfo.dart';
+import 'package:epikwallet/utils/data/date_util.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
-import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
+import 'package:epikwallet/utils/toast/toast.dart';
 import 'package:epikwallet/views/mainview.dart';
-import 'package:epikwallet/views/miner/MinerPledgeAddView.dart';
-import 'package:epikwallet/views/miner/MinerPledgeWithdrawView.dart';
+import 'package:epikwallet/views/miner/MinerSubView.dart';
+import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:epikwallet/widget/jsonform/base/jf_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 
 enum MinerStateType { needwallet, needminerid, subpage }
-
-enum MinerSubpageType {
-  pledge, //抵押
-  withdraw, //撤回,
-}
-
-extension MinerSubpageTypeEx on MinerSubpageType {
-  String getName() {
-    switch (this) {
-      case MinerSubpageType.pledge:
-        return RSID.minerview_1.text;//"抵押"; //ResString.get(appContext, RSID.bts_5); //"全部";
-      case MinerSubpageType.withdraw:
-        return RSID.minerview_2.text;//"赎回"; //ResString.get(appContext, RSID.bts_6); //"社群";
-      default:
-        return "";
-    }
-  }
-}
 
 ///矿工
 class MinerView extends BaseInnerWidget {
@@ -60,17 +42,16 @@ class MinerView extends BaseInnerWidget {
   }
 }
 
-class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProviderStateMixin{
+class MinnerViewState extends BaseInnerWidgetState<MinerView> {
   MinerStateType _MinerStateType;
-  String minerid;
 
   String minerid_input;
 
-  MinerInfo minerInfo;
+  List<String> mineridList = [];
 
-  // int pageIndex = 0;
-  MinerSubpageType _MinerSubpageType = MinerSubpageType.pledge;
-  TabController tabcontroller;
+  CoinbaseInfo get coinbaseInfo {
+    return AccountMgr().currentAccount.coinbaseinfo;
+  }
 
   @override
   void initStateConfig() {
@@ -84,35 +65,62 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
     // resizeToAvoidBottomPadding = true;
 
     eventMgr.add(EventTag.BALANCE_UPDATE, eventmgr_callback);
-    eventMgr.add(EventTag.MINER_CURRENT_CHENGED, eventmgr_callback_chengedCurrentId);
+    eventMgr.add(
+        EventTag.MINER_CURRENT_CHENGED, eventmgr_callback_chengedCurrentId);
     eventMgr.add(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
-
+    eventMgr.add(EventTag.COINBASEINFO_UPDATE, eventmgr_callback);
     refresh();
   }
 
-  eventmgr_callback(arg){
-    setState(() {
-    });
+  eventmgr_callback(arg) {
+    setState(() {});
   }
 
-
-  eventmgr_callback_chengedCurrentId(arg){
-    if(arg==true)
-    {
-      Future.delayed(Duration(milliseconds: 50)).then((value){
+  eventmgr_callback_chengedCurrentId(arg) {
+    // 在菜单里 切换了页面index
+    if (arg == true) {
+      dlog("eventmgr_callback_chengedCurrentId  a");
+      List<String> tempList =
+          AccountMgr().currentAccount.getAllMinerList() ?? [];
+      if (tempList?.toString() != mineridList?.toString()) {
+        dlog("eventmgr_callback_chengedCurrentId  b");
+        Future.delayed(Duration(milliseconds: 50)).then((value) {
+          refresh();
+        });
+      } else if (controller != null) {
+        dlog("eventmgr_callback_chengedCurrentId  c");
+        Future.delayed(Duration(milliseconds: 5)).then((value) {
+          try {
+            int index =
+                mineridList.indexOf(AccountMgr()?.currentAccount?.minerCurrent);
+            if (index >= 0) {
+              controller.animateToPage(index,
+                  duration: Duration(milliseconds: 300), curve: Curves.ease);
+            }
+          } catch (e) {
+            print(e);
+          }
+        });
+      }
+    } else {
+      //列表有编辑
+      dlog("eventmgr_callback_chengedCurrentId  f");
+      Future.delayed(Duration(milliseconds: 50)).then((value) {
         refresh();
       });
     }
   }
 
   eventCallback_account(obj) {
+    mineridList = null;
+    controller = null;
+    _MinerStateType = null;
     refresh();
   }
 
-  Widget getLoadingWidget()
-  {
+  Widget getLoadingWidget() {
     return GestureDetector(
-      onTap: (){},
+      onTap: () {},
       child: super.getLoadingWidget(),
     );
   }
@@ -120,8 +128,11 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
   @override
   void dispose() {
     eventMgr.remove(EventTag.BALANCE_UPDATE, eventmgr_callback);
-    eventMgr.remove(EventTag.MINER_CURRENT_CHENGED, eventmgr_callback_chengedCurrentId);
-    eventMgr.remove(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
+    eventMgr.remove(
+        EventTag.MINER_CURRENT_CHENGED, eventmgr_callback_chengedCurrentId);
+    eventMgr.remove(
+        EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
+    eventMgr.remove(EventTag.COINBASEINFO_UPDATE, eventmgr_callback);
     super.dispose();
   }
 
@@ -141,85 +152,72 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
       return;
     }
 
-
-    await AccountMgr().currentAccount.getMinerListOnline();
-
-    AccountMgr().currentAccount.loadMinerIdList();
-
-    minerid = AccountMgr().currentAccount.minerCurrent;
-    if (StringUtils.isEmpty(minerid) && AccountMgr()?.currentAccount?.minerCoinbaseList?.hasData!=true) {
-      _MinerStateType = MinerStateType.needminerid;
-      closeStateLayout();
-      isLoading = false;
-      return;
-    }
+    int time_start = DateUtil.getNowDateMs();
 
     isLoading = true;
     proressBackgroundColor = Colors.transparent;
     setLoadingWidgetVisible(true);
 
-    MinerInfo mi;
-    ResultObj<String> robj =
-        await AccountMgr().currentAccount.epikWallet.minerInfo(minerid);
-    if (robj?.isSuccess) {
-      print("minerinfo" + robj.data);
-      mi = MinerInfo.fromJson(jsonDecode(robj.data));
-      mi?.minerid=minerid;
-    }else{
-      showToast(robj.errorMsg);
+    dlog("getMinerListOnline");
+    await AccountMgr().currentAccount.getMinerListOnline();
+
+    dlog("loadMinerIdList");
+    AccountMgr().currentAccount.loadMinerIdList();
+
+    mineridList = AccountMgr().currentAccount.getAllMinerList() ?? [];
+    dlog("mineridList =${mineridList.length}");
+
+    dlog("getCoinbaseInfo");
+    await AccountMgr().currentAccount.getCoinbaseInfo();
+
+    int time_end = DateUtil.getNowDateMs();
+
+    int time = time_end - time_start;
+    if (time < 200) {
+      dlog("delayed ${200 - time} ");
+      await Future.delayed(Duration(milliseconds: 200 - time));
     }
 
-    if (mi != null) {
-      minerInfo = mi;
+    if (mineridList == null || mineridList?.length == 0) {
+      _MinerStateType = MinerStateType.needminerid;
+      closeStateLayout();
+    } else if (coinbaseInfo != null) {
       _MinerStateType = MinerStateType.subpage;
+
+      if (controller != null) {
+        try {
+          int index =
+              mineridList.indexOf(AccountMgr()?.currentAccount?.minerCurrent);
+          dlog("controller animateToPage index=$index");
+          if (index != controller.page) {
+            dlog("controller animateToPage index ${controller.page}");
+            Future.delayed(Duration(milliseconds: 50)).then((value) {
+              if (index >= 0) {
+                controller.animateToPage(index,
+                    duration: Duration(milliseconds: 300), curve: Curves.ease);
+              }
+            });
+          }
+        } catch (e) {
+          print(e);
+        }
+      }
+
       closeStateLayout();
     } else {
       _MinerStateType = null;
       errorBackgroundColor = Colors.transparent;
-      statelayout_margin=EdgeInsets.only(top: getAppBarHeight()+getTopBarHeight());
+      statelayout_margin =
+          EdgeInsets.only(top: getAppBarHeight() + getTopBarHeight());
       setErrorWidgetVisible(true);
     }
     isLoading = false;
   }
 
-
-  Future<void> _pullRefreshCallback() async {
-    if (isLoading) {
-      return;
-    }
-    isLoading = true;
-    // proressBackgroundColor = Colors.transparent;
-    // setLoadingWidgetVisible(true);
-
-    AccountMgr().currentAccount.getMinerListOnline();
-
-    EpikWalletUtils.requestBalance(AccountMgr().currentAccount);
-
-    MinerInfo mi;
-    ResultObj<String> robj =
-    await AccountMgr().currentAccount.epikWallet.minerInfo(minerid);
-    if (robj?.isSuccess) {
-      print("minerinfo" + robj.data);
-      mi = MinerInfo.fromJson(jsonDecode(robj.data));
-      mi?.minerid=minerid;
-    }
-
-    if (mi != null) {
-      minerInfo = mi;
-      _MinerStateType = MinerStateType.subpage;
-      closeStateLayout();
-    } else {
-      _MinerStateType = null;
-      errorBackgroundColor = Colors.transparent;
-      setErrorWidgetVisible(true);
-    }
-    isLoading=false;
-  }
-
   @override
   Widget buildWidget(BuildContext context) {
+    dlog("buildwidget ${_MinerStateType}");
     Widget widget;
-    // _MinerStateType = MinerStateType.needminerid; //todo test
     if (_MinerStateType == MinerStateType.needwallet) {
       widget = Container(
         alignment: Alignment.center,
@@ -264,7 +262,7 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
         children: [
           Container(
             width: double.infinity,
-            margin: EdgeInsets.fromLTRB(30, 30, 30, 40),
+            margin: EdgeInsets.fromLTRB(30, 110, 30, 40),
             padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
@@ -278,7 +276,8 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
                   autofocus: false,
                   maxLines: 1,
                   // hint: "请输入MinerID",
-                  label: RSID.minerview_3.text,//"请输入MinerID",
+                  label: RSID.minerview_3.text,
+                  //"请输入MinerID",
                   regexp: r'(\d|[a-z]|[A-Z])+',
                   onChanged: (text, classtype) {
                     minerid_input = text.toString().trim();
@@ -290,7 +289,8 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
                   color_bg: Colors.transparent,
                   disabledColor: Colors.transparent,
                   height: 40,
-                  text: RSID.minerview_4.text,//"添加",
+                  text: RSID.minerview_4.text,
+                  //"添加",
                   textstyle: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -299,7 +299,7 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
                   bg_borderradius: BorderRadius.circular(4),
                   onclick: (lbtn) {
                     if (StringUtils.isEmpty(minerid_input)) {
-                      showToast(RSID.minerview_3.text);//"请输入MinerID");
+                      showToast(RSID.minerview_3.text); //"请输入MinerID");
                       return;
                     }
                     closeInput();
@@ -314,30 +314,10 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
         ],
       );
     } else if (_MinerStateType == MinerStateType.subpage) {
-      List<Widget> items = [
-        Container(height: 45),
-        getMinerCard1(),
-        getMinerCard2(),
-        getPledgeCard(),
-      ];
-      Widget sv = SingleChildScrollView(
-        child: Container(
-          constraints: BoxConstraints(
-            minHeight:
-                getScreenHeight() - getTopBarHeight() - getAppBarHeight(),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: items,
-          ),
-        ),
-      );
-      widget =  RefreshIndicator(
-        displacement: 40,
-        color: ResColor.progress,
-        onRefresh: _pullRefreshCallback,
-        child: sv,
-//      key: key_refresh,
+      widget = Column(
+        children: [
+          Expanded(child: getPageView()),
+        ],
       );
     }
 
@@ -357,6 +337,14 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
             ),
             child: getAppbar(),
           ),
+          if (coinbaseInfo != null)
+            Positioned(
+              left: 0,
+              right: 0,
+              top: getAppBarHeight() + getTopBarHeight(),
+              bottom: 0,
+              child: getCoinBaseInfoView(),
+            ),
           Positioned(
             left: 0,
             right: 0,
@@ -364,15 +352,6 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
             bottom: 0,
             child: widget,
           ),
-          // if (isLoading == true)
-          //   Align(
-          //     alignment: FractionalOffset(0.5, 0.5),
-          //     child: CircularProgressIndicator(
-          //       strokeWidth: 2.0,
-          //       valueColor:
-          //           new AlwaysStoppedAnimation<Color>(ResColor.progress),
-          //     ),
-          //   ),
         ],
       ),
     );
@@ -387,7 +366,7 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
         children: [
           Expanded(
             child: Text(
-      RSID.minerview_5.text,// "存储矿工",
+              RSID.minerview_5.text, // "存储矿工",
               style: TextStyle(
                 fontSize: 20,
                 color: Colors.white,
@@ -395,8 +374,39 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
               ),
             ),
           ),
-          //  minerid 控制是否显示
-          if (StringUtils.isNotEmpty(minerid))
+          if ((coinbaseInfo?.vested_d ?? 0) > 0)
+            InkWell(
+              onTap: () {
+                // 提取coinbase
+                onClickWithdrawCoinbase();
+              },
+              child: Container(
+                height: double.infinity,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      RSID.minerview_30.text, // "Coinbase提取",
+                      style: TextStyle(
+                        fontSize: LocaleConfig.currentIsZh() ? 14 : 12,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    // Container(
+                    //   padding: EdgeInsets.fromLTRB(10, 2, 0, 0),
+                    //   child: Image.asset(
+                    //     "assets/img/ic_arrow_right_1.png",
+                    //     width: 7,
+                    //     height: 11,
+                    //   ),
+                    // ),
+                  ],
+                ),
+              ),
+            ),
+          // 菜单// todo
+          if (mineridList != null && mineridList.length > 0)
             InkWell(
               onTap: () {
                 //  菜单
@@ -405,26 +415,13 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
               },
               child: Container(
                 height: double.infinity,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "MinerID:" + minerid,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(10, 2, 0, 0),
-                      child: Image.asset(
-                        "assets/img/ic_arrow_right_1.png",
-                        width: 7,
-                        height: 11,
-                      ),
-                    ),
-                  ],
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                  child: Icon(
+                    Icons.menu,
+                    size: 20,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -444,7 +441,7 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
   Widget getRowText(String left, String right,
       {TextStyle leftstyle = const TextStyle(
         fontSize: 14,
-        color: ResColor.white_60,
+        color: ResColor.white, // ResColor.white_60,
       ),
       TextStyle rightstyle = const TextStyle(
         fontSize: 14,
@@ -470,27 +467,35 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
     );
   }
 
-  Widget getMinerCard1() {
+  Widget getCoinBaseInfoView() {
     List<Widget> items = [
-      getRowText(RSID.minerview_6.text,//"当前算例",
-          "${minerInfo.mining_power_s} / ${minerInfo.total_power_s} (${minerInfo.power_percent})"),
-      getRowText("CoinBase", minerInfo.coin_base ?? ""),
-      getRowText(RSID.minerview_7.text,//"账户余额",
-          "${StringUtils.formatNumAmount(minerInfo.getBalance(), point: 8, supply0: false)}"),
-      getRowText(RSID.minerview_8.text,//"锁定余额",
-          "${StringUtils.formatNumAmount(minerInfo.vesting, point: 8, supply0: false)}"),
-      getRowText(RSID.minerview_9.text,//"可提余额",
-          "${StringUtils.formatNumAmount(minerInfo.available_balance, point: 8, supply0: false)}"),
+      // getRowText("CoinBase", minerInfo.coin_base ?? ""),
+      // getRowText(RSID.minerview_7.text,//"账户余额",
+      //     "${StringUtils.formatNumAmount(minerInfo.getBalance(), point: 8, supply0: false)}"),
+      // getRowText(RSID.minerview_8.text,//"锁定余额",
+      //     "${StringUtils.formatNumAmount(minerInfo.vesting, point: 8, supply0: false)}"),
+      // getRowText(RSID.minerview_9.text,//"可提余额",
+      //     "${StringUtils.formatNumAmount(minerInfo.available_balance, point: 8, supply0: false)}"),
+      getRowText("CoinBase", coinbaseInfo?.Coinbase ?? "--"),
+      getRowText(
+          RSID.minerview_7.text, //"账户余额",
+          "${StringUtils.formatNumAmount(coinbaseInfo?.total_d ?? 0, point: 8, supply0: false)} EPK"),
+      getRowText(
+          RSID.minerview_8.text, //"锁定余额",
+          "${StringUtils.formatNumAmount(coinbaseInfo?.vesting_d ?? 0, point: 8, supply0: false)} EPK"),
+      getRowText(
+          RSID.minerview_9.text, //"可提余额",
+          "${StringUtils.formatNumAmount(coinbaseInfo?.vested_d ?? 0, point: 8, supply0: false)} EPK"),
     ];
 
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.fromLTRB(30, 0, 30, 10),
-      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: ResColor.b_2,
-      ),
+      margin: EdgeInsets.fromLTRB(30, 0, 30, 0),
+      // padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+      // decoration: BoxDecoration(
+      //   borderRadius: BorderRadius.circular(20),
+      //   color: ResColor.b_2,
+      // ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: items,
@@ -498,159 +503,79 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> with TickerProvide
     );
   }
 
-  Widget getMinerCard2() {
-    List<Widget> items = [
-      getRowText("Owner",minerInfo.owner),
-      getRowText(RSID.minerview_10.text,//"矿工基础抵押",
-          "${StringUtils.formatNumAmount(minerInfo.mining_pledged, point: 8, supply0: false)}"),
-      getRowText(RSID.minerview_11.text,//"我的基础抵押",
-          "${StringUtils.formatNumAmount(minerInfo.my_mining_pledge, point: 8, supply0: false)}"),
-      getRowText(RSID.minerview_12.text,//"流量抵押余额",
-          "${StringUtils.formatNumAmount(minerInfo.retrieve_balance, point: 8, supply0: false)}"),
-      getRowText(RSID.minerview_13.text,//"流量抵押锁定",
-          "${StringUtils.formatNumAmount(minerInfo.retrieve_locked, point: 8, supply0: false)}"),
-      Container(height: 20),
-      LinearPercentIndicator(
-        // width: double.infinity,
-        lineHeight: 5,
-        animation: true,
-        animationDuration: 200,
-        animateFromLastPercent: true,
-        // restartAnimation: true,
-        percent: minerInfo.getRetrievePercent(),
-        center: Text(""),
-        padding: EdgeInsets.only(left: 2.5, right: 2.5),
-        backgroundColor: ResColor.white_20,
-        linearStrokeCap: LinearStrokeCap.roundAll,
-        // progressColor: const Color(0xff57B836),
-        linearGradient: ResColor.lg_1,
-      ),
-      Container(height: 10),
-      getRowText(RSID.minerview_14.text,/*"当日访问流量",*/ "${minerInfo.getRetrieveNumerator()} / ${minerInfo.getRetrieveDenominator()}"),
-    ];
+  onClickWithdrawCoinbase() {
+    BottomDialog.showPassWordInputDialog(
+        context, AccountMgr().currentAccount.password, (value) async {
+      showLoadDialog("", touchOutClose: false, backClose: false);
 
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.fromLTRB(30, 0, 30, 10),
-      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: ResColor.b_2,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: items,
-      ),
-    );
-  }
+      ResultObj<String> robj =
+          await AccountMgr().currentAccount.epikWallet.coinbaseWithdraw();
 
-  Widget getPledgeCard() {
-    List<Widget> items = [
-      Container(
-        height: 52,
-        child: getTabbar(),
-      ),
-    getSubpage(),
-    ];
+      closeLoadDialog();
 
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.fromLTRB(30, 0, 30, 10),
-      padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: ResColor.b_2,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: items,
-      ),
-    );
-  }
+      if (robj?.isSuccess) {
+        String cid = robj
+            .data; //bafy2bzaceaa4fwwhrn5oqjsxe5vumlibispulwdzf4uskh4silxlfo4qh6cu6
 
-  Widget getTabbar() {
-    List<MinerSubpageType> items = MinerSubpageType.values;
-
-    if (tabcontroller == null)
-      tabcontroller = TabController(
-          initialIndex: MinerSubpageType.values.indexOf(_MinerSubpageType), length: items.length, vsync: this);
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      padding: EdgeInsets.fromLTRB(10, 0, 20, 0),
-      child: Row(
-        children: [
-          Expanded(
-            child: TabBar(
-              tabs: items.map((tyoe) {
-                return Container(
-                  alignment: Alignment.bottomCenter,
-                  child: Text(tyoe.getName()),
-                );
-              }).toList(),
-              controller: tabcontroller,
-              isScrollable: true,
-              labelPadding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-              labelColor: Colors.white,
-              labelStyle: TextStyle(
-                fontSize: 20,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                height: 1,
-              ),
-              unselectedLabelColor: ResColor.white_60,
-              unselectedLabelStyle: TextStyle(
-                fontSize: 14,
-                color: ResColor.white_60,
-                fontWeight: FontWeight.bold,
-                height: 1,
-              ),
-              indicator: BoxDecoration(
-                borderRadius: BorderRadius.circular(2),
-                gradient: ResColor.lg_1,
-              ),
-              indicatorPadding: EdgeInsets.fromLTRB(8, 42, 8, 6),
-              indicatorSize: TabBarIndicatorSize.label,
-              indicatorWeight: 4,
-              onTap: (value) {
-                onClickTab(MinerSubpageType.values[value]);
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  onClickTab(MinerSubpageType type) {
-    if (_MinerSubpageType == type) return;
-    _MinerSubpageType = type;
-    setState(() {
-//      _tabController.animateTo(index);
+        MessageDialog.showMsgDialog(
+          context,
+          title: "Coinbase提取",
+          msg: "${RSID.minerview_18.text}\n$cid",
+          //交易已提交
+          btnLeft: RSID.minerview_19.text,
+          //"查看交易",
+          btnRight: RSID.isee.text,
+          onClickBtnLeft: (dialog) {
+            dialog.dismiss();
+            String url = ServiceInfo.epik_msg_web + cid;
+            ViewGT.showGeneralWebView(context, RSID.berlv_4.text, url);
+          },
+          onClickBtnRight: (dialog) {
+            dialog.dismiss();
+          },
+        );
+      } else {
+        ToastUtils.showToastCenter(robj?.errorMsg ?? RSID.request_failed.text);
+      }
     });
-    // 切换数据类型
-    // refresh();
   }
 
-  Widget getSubpage()
-  {
-    // Container(
-    //   height:500,
-    //   child:  TabBarView(
-    //     controller: tabcontroller,
-    //     children: [
-    //       MinerPledgeAddView(minerInfo),
-    //       MinerPledgeWithdrawView(minerInfo),
-    //     ],
-    //   ),
-    // ),
-    switch(_MinerSubpageType)
-    {
-      case MinerSubpageType.pledge:
-       return MinerPledgeAddView(minerInfo);
-      case MinerSubpageType.withdraw:
-      return MinerPledgeWithdrawView(minerInfo);
+  PageController controller;
+
+  // TabController tabcontroller;
+
+  Widget getPageView() {
+    int itemCount = mineridList?.length ?? 0;
+    if (itemCount == 0) return Container();
+
+    if (controller == null) {
+      dlog("ee minerCurrent=${AccountMgr()?.currentAccount?.minerCurrent}");
+      if (StringUtils.isEmpty(AccountMgr()?.currentAccount?.minerCurrent)) {
+        AccountMgr().currentAccount.minerCurrent = mineridList[0];
+        dlog("ff minerCurrent=${AccountMgr()?.currentAccount?.minerCurrent}");
+      }
+      String currentminerid = AccountMgr().currentAccount.minerCurrent;
+      dlog("gg minerCurrent=${AccountMgr()?.currentAccount?.minerCurrent}");
+      int index = mineridList.indexOf(currentminerid);
+      controller = PageController(initialPage: index);
+      dlog("controller index=$index  currentminerid=$currentminerid");
+
+      // tabcontroller = TabController(initialIndex: index,length:itemCount,vsync: this);
     }
-    return Container();
+
+    return PageView.builder(
+      itemCount: itemCount,
+      controller: controller,
+      onPageChanged: (value) {
+        String currentminerid = mineridList[value];
+        AccountMgr().currentAccount.minerCurrent = currentminerid;
+        AccountMgr().currentAccount.saveMinerIdList();
+        dlog("onPageChanged index=$value  currentminerid=$currentminerid");
+      },
+      itemBuilder: (context, index) {
+        // subview构造 //todo
+        return MinerSubView(mineridList[index], 110);
+      },
+    );
   }
 }
