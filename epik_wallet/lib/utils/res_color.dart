@@ -34,6 +34,7 @@ class ResColor {
   static const Color b_2 = Color(0xff1d1d1d);
   static const Color b_3 = Color(0xff1f1f1f);
   static const Color b_4 = Color(0xff252525);
+  static const Color b_5 = Color(0xff333333);
 
 
   static const Color o_1 = Color(0xffF7AB00);

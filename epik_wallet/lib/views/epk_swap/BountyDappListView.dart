@@ -1,5 +1,6 @@
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/api/api_dapp.dart';
 import 'package:epikwallet/main.dart';
 import 'package:epikwallet/model/Dapp.dart';
@@ -41,7 +42,7 @@ class BountyDappListViewState extends BaseWidgetState<BountyDappListView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    setAppBarTitle("赏金猎人奖励");
+    setAppBarTitle(RSID.bdlv_1.text);//"赏金猎人奖励");
   }
 
 
@@ -95,7 +96,7 @@ class BountyDappListViewState extends BaseWidgetState<BountyDappListView> {
         alignment: Alignment.center,
         padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
         child: Text(
-          "领取须知",
+          RSID.bdlv_2.text,//"领取须知",
           style: TextStyle(
             color: Colors.white,
             fontSize: 17,
@@ -119,7 +120,7 @@ class BountyDappListViewState extends BaseWidgetState<BountyDappListView> {
             ),
             children: [
               TextSpan(
-                text: "赏金猎人奖励所需的EPK有EpiK知识基金提供。领取过程中，需要您提供",
+                text: RSID.bdlv_3_1.text,//"赏金猎人奖励所需的EPK有EpiK知识基金提供。领取过程中，需要您提供",
               ),
               TextSpan(
                 text: " Dapp ", //"知识大陆",
@@ -132,8 +133,8 @@ class BountyDappListViewState extends BaseWidgetState<BountyDappListView> {
                   },
               ),
               TextSpan(
-                text:
-                    "提供的领取令牌，领取金额有最小限额，只有余额大于最小限额才能领取。领取后您在知识大陆的EPK余额会减少，您领取的EPK将自动转入您当前的EpiK钱包。",
+                text:RSID.bdlv_3_2.text,
+                    //"提供的领取令牌，领取金额有最小限额，只有余额大于最小限额才能领取。领取后您在知识大陆的EPK余额会减少，您领取的EPK将自动转入您当前的EpiK钱包。",
               ),
             ],
           ),
@@ -144,7 +145,7 @@ class BountyDappListViewState extends BaseWidgetState<BountyDappListView> {
         padding: EdgeInsets.fromLTRB(0, 31, 0, 20),
 
         child: Text(
-          "风险提示",
+          RSID.bdlv_4.text,//"风险提示",
           style: TextStyle(
             color: Colors.white,
             fontSize: 17,
@@ -168,10 +169,10 @@ class BountyDappListViewState extends BaseWidgetState<BountyDappListView> {
             ),
             children: [
               TextSpan(
-                text: "请确保您没有泄露当前钱包助记词和私钥，否则强烈建议",
+                text:RSID.bdlv_5_1.text,// "请确保您没有泄露当前钱包助记词和私钥，否则强烈建议",
               ),
               TextSpan(
-                text: " 创建新钱包 ",
+                text:RSID.bdlv_5_2.text,// " 创建新钱包 ",
                 style: TextStyle(
                   color: Colors.white,
                 ),
@@ -182,7 +183,7 @@ class BountyDappListViewState extends BaseWidgetState<BountyDappListView> {
                   },
               ),
               TextSpan(
-                text: "，在新钱包中进行领取。",
+                text:RSID.bdlv_5_3.text,// "，在新钱包中进行领取。",
               ),
             ],
           ),

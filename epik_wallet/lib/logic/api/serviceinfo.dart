@@ -14,10 +14,13 @@ import 'package:epikwallet/utils/sp_utils/sp_utils.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 
 class ServiceInfo {
+  static const bool TEST_DEV_NET = true;
+
   static const String TAG = "ServiceInfo";
   static const String LOCAL_KEY = "serverconfig";
 
   static const String _HOST = "https://explorer.epik-protocol.io/api";
+  static const String _HOST_TEST = "http://116.63.146.223:3003";
 
   static final String _hd_RpcUrl =
       "https://mainnet.infura.io/v3/1bbd25bd3af94ca2b294f93c346f69cd";
@@ -33,25 +36,25 @@ class ServiceInfo {
   static final String schemename = "epikwallet";
 
   ///epik 浏览器 查看交易详情
-  static final String epik_msg_web="https://explorer.epik-protocol.io/#/message/detail?cid="; //
+  static final String epik_msg_web =
+      "https://explorer.epik-protocol.io/#/message/detail?cid="; //
   ///eth 浏览器 查看交易详情
-  static final String ether_tx_web="https://cn.etherscan.com/tx/";
+  static final String ether_tx_web = "https://cn.etherscan.com/tx/";
 
-  static String get server_wechat{
-    return  serverConfig?.SignWeixin ?? "Sigrid_EpiK";//"fengyunbzb";
+  static String get server_wechat {
+    return serverConfig?.SignWeixin ?? "Sigrid_EpiK"; //"fengyunbzb";
   }
 
-  static String get server_telegram{
-    return  serverConfig?.SignTele ?? "https://t.me/EpikProtocol";
+  static String get server_telegram {
+    return serverConfig?.SignTele ?? "https://t.me/EpikProtocol";
   }
 
   static String get HOST {
-    return serverConfig?.WalletAPI ?? _HOST;
-    // return "http://116.63.146.223:3003"; //todo
+    return serverConfig?.WalletAPI ?? (TEST_DEV_NET? _HOST_TEST : _HOST  );
   }
 
-  static String get codeHost{
-    return _HOST;
+  static String get codeHost {
+    return TEST_DEV_NET? _HOST_TEST : _HOST ;
   }
 
   static String get hd_RpcUrl {
@@ -126,8 +129,7 @@ class ServiceInfo {
     return makeUrl(HOST.trim(), url);
   }
 
-  static String makeUrl(String host,String url) {
-
+  static String makeUrl(String host, String url) {
     if (StringUtils.isEmpty(url)) return host;
     if (url.startsWith("http")) return url;
 
@@ -138,5 +140,4 @@ class ServiceInfo {
     else
       return host + "/" + url;
   }
-
 }

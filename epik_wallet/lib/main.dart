@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/buildConfig.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
@@ -71,6 +72,7 @@ class _MyAppState extends State<MyApp> {
     await SpUtils().init(); // 初始化存储工具
     await DeviceUtils().initPlatInfo();
     await ServiceInfo.loadConfig(); //加载本地缓存的配置
+    HdWallet.setDebug(ServiceInfo.TEST_DEV_NET ? true : false);
     await AccountMgr().load(); // 加载钱包账户
     ServiceInfo.requestConfig(); //请求新的服务配置
 

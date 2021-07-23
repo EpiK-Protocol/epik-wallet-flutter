@@ -191,6 +191,12 @@ dependencies:
   #各种进度指示器 https://pub.dev/packages/percent_indicator
   percent_indicator: ^2.1.9
 
+  # AB组件淡入淡出尺寸切换 或单个组件切换显示隐藏
+  animated_size_and_fade: ^2.0.0
+
+  #浮点精确计算
+  decimal: ^0.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -239,6 +245,7 @@ flutter:
     - assets/img/ic_eth_2.png
     - assets/img/ic_usdt_2.png
     - assets/img/ic_swap.png
+    - assets/img/ic_swap_2.png
     - assets/img/256x256_App_Icon_Pink.png
     - assets/img/ic_back.png
     - assets/img/ic_arrow_withdraw.png
@@ -248,6 +255,7 @@ flutter:
     - assets/img/ic_erc20_to_epk.png
     - assets/img/ic_uniswap_change_currency.png
     - assets/img/ic_delete_red.png
+    - assets/img/ic_epik_watermark.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

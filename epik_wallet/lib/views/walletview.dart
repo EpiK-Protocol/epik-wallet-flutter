@@ -3,10 +3,12 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
+import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
+import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/currencytype.dart';
@@ -84,14 +86,12 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
   }
 
   eventCallback_balance(obj) {
-    if(AccountMgr().currentAccount!=null)
-    {
+    if (AccountMgr().currentAccount != null) {
       data_list_item = AccountMgr().currentAccount.currencyList;
       balance = StringUtils.formatNumAmount(
           AccountMgr().currentAccount.total_usd,
           point: 2);
-      setState(() {
-      });
+      setState(() {});
     }
   }
 
@@ -132,7 +132,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
           ),
           Container(width: 10),
           Text(
-            "EpiK ${ResString.get(context, RSID.main_wv_5)}",
+            "EpiK ${ResString.get(context, RSID.main_wv_5)}${ServiceInfo.TEST_DEV_NET?" DEV":""}",
             style: TextStyle(
               fontSize: 14,
               color: Colors.white,
@@ -212,19 +212,19 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
 //      itemWidgetCreator: itemWidgetBuild,
             itemWidgetCreator: (context, position) {
               bool isend = position >= data_list_item.length - 1;
-              if(position==0)
-                isend=true;
+              if (position == 0) isend = true;
               return Container(
-                  margin: position==0? EdgeInsets.fromLTRB(0, 10, 0, 10): null,
-                  child:Material(
-                    color: ResColor.b_2,
-                    child: InkWell(
-                      highlightColor: ResColor.white_10,
-                      splashColor: ResColor.white_10,
-                      onTap: () => onItemClick(position),
-                      child: itemWidgetBuild2(context, position,isend),
-                    ),
+                margin:
+                    position == 0 ? EdgeInsets.fromLTRB(0, 10, 0, 10) : null,
+                child: Material(
+                  color: ResColor.b_2,
+                  child: InkWell(
+                    highlightColor: ResColor.white_10,
+                    splashColor: ResColor.white_10,
+                    onTap: () => onItemClick(position),
+                    child: itemWidgetBuild2(context, position, isend),
                   ),
+                ),
               );
             },
             scrollCallback: scrollCallback,
@@ -240,114 +240,133 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
   }
 
   Widget buildTopCard() {
-    double h1 = getTopBarHeight()+ getAppBarHeight();
+    double h1 = getTopBarHeight() + getAppBarHeight();
     double h2 = 128;
     return Container(
       width: double.infinity,
-      height: h1+h2,
+      height: h1 + h2,
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       decoration: BoxDecoration(
         gradient: ResColor.lg_1,
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
       ),
-      child:
-      Column(
+      child: Stack(
         children: [
-          getAppBar(),
-         Expanded(child:  InkWell(
-           onTap: () {
-             onClickWalletName();
-           },
-           child: Column(
-             crossAxisAlignment: CrossAxisAlignment.center,
-             mainAxisAlignment: MainAxisAlignment.start,
-             children: <Widget>[
-               Text(
-                 RSID.main_wv_6.text, //"总资产",
-                 style: TextStyle(
-                   color: ResColor.white_80,
-                   fontSize: 14,
-                   fontWeight: FontWeight.bold,
-                 ),
-               ),
-               Container(
-                 height: 5,
-               ),
-               Row(
-                 mainAxisSize: MainAxisSize.min,
-                 children: <Widget>[
-                   Padding(
-                     padding: EdgeInsets.only(top: 5),
-                     child: Text(
-                       r"$ ",
-                       style: TextStyle(
-                         color: Colors.white,
-                         fontSize: 20,
-                         fontFamily: "DIN_Condensed_Bold",
-                       ),
-                     ),
-                   ),
-                   DiffScaleText(
-                     text: balance,
-                     textStyle: TextStyle(
-                       color: Colors.white,
-                       fontSize: 40,
-                       fontFamily: "DIN_Condensed_Bold",
-                     ),
-                   ),
-                 ],
-               ),
-               Row(
-                 mainAxisSize: MainAxisSize.min,
-                 children: <Widget>[
-                   Text(
-                     "≈ " +
-                         StringUtils.formatNumAmount(
-                             AccountMgr().currentAccount.total_btc,
-                             point: 8),
-                     style: TextStyle(
-                       color: ResColor.white_80,
-                       fontSize: 14,
-                       fontFamily: "DIN_Condensed_Bold",
-                     ),
-                   ),
-                   Padding(
-                     padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                     child: Text(
-                       " BTC",
-                       style: TextStyle(
-                         color: ResColor.white_80,
-                         fontSize: 14,
-                         fontFamily: "DIN_Condensed_Bold",
-                       ),
-                     ),
-                   ),
-                 ],
-               ),
-               //todo
-               Expanded(
-                 child: Container(
-                   width: double.infinity,
-                   alignment: Alignment.centerRight,
-                   padding:EdgeInsets.fromLTRB(15, 0, 21, 0),
-                   child: Row(
-                     mainAxisSize: MainAxisSize.min,
-                     children: <Widget>[
-                       Text(
-                         RSID.main_wv_11.text+"  ",//钱包设置
-                         style: TextStyle(
-                           fontSize: 14,
-                           color: Colors.white70,
-                         ),
-                       ),
-                      Icon(Icons.settings_outlined,size: 14,color: Colors.white70,),
-                     ],
-                   ),
-                 ),
-               ),
-             ],
-           ),
-         ),),
+          //水印图标
+          Positioned(
+              left: -20,
+              bottom: 20,
+              width: 81,
+              height: 81,
+              child: Image.asset(
+                "assets/img/ic_epik_watermark.png",
+                color: Colors.white60,
+              )),
+          Column(
+            children: [
+              getAppBar(),
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    onClickWalletName();
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        RSID.main_wv_6.text, //"总资产",
+                        style: TextStyle(
+                          color: ResColor.white_80,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Container(
+                        height: 5,
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(top: 5),
+                            child: Text(
+                              r"$ ",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontFamily: "DIN_Condensed_Bold",
+                              ),
+                            ),
+                          ),
+                          DiffScaleText(
+                            text: balance,
+                            textStyle: TextStyle(
+                              color: Colors.white,
+                              fontSize: 40,
+                              fontFamily: "DIN_Condensed_Bold",
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            "≈ " +
+                                StringUtils.formatNumAmount(
+                                    AccountMgr().currentAccount.total_btc,
+                                    point: 8),
+                            style: TextStyle(
+                              color: ResColor.white_80,
+                              fontSize: 14,
+                              fontFamily: "DIN_Condensed_Bold",
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            child: Text(
+                              " BTC",
+                              style: TextStyle(
+                                color: ResColor.white_80,
+                                fontSize: 14,
+                                fontFamily: "DIN_Condensed_Bold",
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      //todo
+                      Expanded(
+                        child: Container(
+                          width: double.infinity,
+                          alignment: Alignment.centerRight,
+                          padding: EdgeInsets.fromLTRB(15, 0, 21, 0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text(
+                                RSID.main_wv_11.text + "  ", //钱包设置
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                              Icon(
+                                Icons.settings_outlined,
+                                size: 14,
+                                color: Colors.white70,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -359,26 +378,28 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     switch (headerlist[position]) {
       case "exchange_epk":
         return headerItemBuild(
-          localImage: "assets/img/ic_erc20_to_epk.png",
-          text: RSID.main_wv_7.text,//"ERC20-EPK 兑换 EPK",
+          localImage: "assets/img/ic_swap.png",//"assets/img/ic_erc20_to_epk.png",
+          text: RSID.main_wv_7.text,
+          //"ERC20-EPK 兑换 EPK",
           onclick: () {
-            showToast(RSID.main_wv_10.text);
-            // ViewGT.showErc20ToEpkView(context);
+            // showToast(RSID.main_wv_10.text);
+            ViewGT.showErc20ToEpkView(context); //todo test
           },
           position: position,
-            uninvalid:true,
+          // uninvalid: true,
         );
       case "hunter_reward":
         {
           return headerItemBuild(
             localImage: "assets/img/ic_dapp_bounty_swap.png",
-            text: RSID.main_wv_8.text,//"领取赏金猎人奖励",
+            text: RSID.main_wv_8.text,
+            //"领取赏金猎人奖励",
             onclick: () {
-              showToast(RSID.main_wv_10.text);
-              // ViewGT.showTakeBountyView(context);
+              // showToast(RSID.main_wv_10.text);
+              ViewGT.showTakeBountyView(context);
             },
             position: position,
-            uninvalid:true,
+            // uninvalid: true,
           );
         }
         break;
@@ -386,7 +407,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
         {
           return headerItemBuild(
             localImage: "assets/img/256x256_App_Icon_Pink.png",
-            text: RSID.main_wv_9.text,//"ERC20-EPK Uniswap 交易",
+            text: RSID.main_wv_9.text, //"ERC20-EPK Uniswap 交易",
             onclick: () {
               ViewGT.showTransactionView2(context);
             },
@@ -394,28 +415,28 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
           );
         }
         break;
-      case "testminingprofit":{
-        return headerItemBuild(
-          localImage: "assets/img/ic_epk_2.png",
-          text: RSID.main_mv_8.text,
-          onclick: () async{
-            String mining_id=AccountMgr()?.currentAccount?.mining_id;
-            if(StringUtils.isEmpty(mining_id))
-            {
-              showLoadDialog("");
-              await DL_TepkLoginToken.getEntity().refreshData(false);
-              closeLoadDialog();
-            }
-            mining_id=AccountMgr()?.currentAccount?.mining_id;
-            if(StringUtils.isEmpty(mining_id))
-            {
-              return;
-            }
-            ViewGT.showMiningProfitView(context, mining_id);
-          },
-          position: position,
-        );
-      }break;
+      case "testminingprofit":
+        {
+          return headerItemBuild(
+            localImage: "assets/img/ic_epk_2.png",
+            text: RSID.main_mv_8.text,
+            onclick: () async {
+              String mining_id = AccountMgr()?.currentAccount?.mining_id;
+              if (StringUtils.isEmpty(mining_id)) {
+                showLoadDialog("");
+                await DL_TepkLoginToken.getEntity().refreshData(false);
+                closeLoadDialog();
+              }
+              mining_id = AccountMgr()?.currentAccount?.mining_id;
+              if (StringUtils.isEmpty(mining_id)) {
+                return;
+              }
+              ViewGT.showMiningProfitView(context, mining_id);
+            },
+            position: position,
+          );
+        }
+        break;
     }
 
     return new Padding(
@@ -429,18 +450,18 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     String text,
     VoidCallback onclick,
     int position,
-    bool uninvalid=false,
+    bool uninvalid = false,
   }) {
     bool isend = position >= headerlist.length - 1;
-    return  Container(
-      margin: EdgeInsets.fromLTRB(0, position==0?10:0, 0, 0),
+    return Container(
+      margin: EdgeInsets.fromLTRB(0, position == 0 ? 10 : 0, 0, 0),
       child: Material(
         color: ResColor.b_2,
         child: InkWell(
           highlightColor: ResColor.white_10,
           splashColor: ResColor.white_10,
           onTap: onclick,
-          child:  Container(
+          child: Container(
             height: 65,
             width: double.infinity,
             // color: ResColor.b_2,
@@ -464,7 +485,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                         text,
                         style: TextStyle(
                           fontSize: 14,
-                          color: uninvalid?ResColor.white_60:ResColor.white,
+                          color: uninvalid ? ResColor.white_60 : ResColor.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -476,20 +497,19 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                         "assets/img/ic_arrow_right_1.png",
                         width: 7,
                         height: 11,
-                        color: uninvalid?ResColor.white_60:null,
+                        color: uninvalid ? ResColor.white_60 : null,
                       ),
                     ),
                   ],
                 ),
-
                 if (!isend)
                   Positioned(
                       bottom: 0,
                       left: 0,
                       right: 0,
                       child: Divider(
-                        height: 1/ScreenUtil.pixelRatio,
-                        thickness: 1/ScreenUtil.pixelRatio,
+                        height: 1 / ScreenUtil.pixelRatio,
+                        thickness: 1 / ScreenUtil.pixelRatio,
                         indent: 20,
                         color: ResColor.white_20,
                       )),
@@ -674,13 +694,14 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
   }
 
   Widget itemWidgetBuild2(
-    BuildContext context, int position,bool isend,
+    BuildContext context,
+    int position,
+    bool isend,
   ) {
-    if (data_list_item != null && position < data_list_item.length)
-    {
+    if (data_list_item != null && position < data_list_item.length) {
       CurrencyAsset ca = data_list_item[position];
 
-      return  Container(
+      return Container(
         // margin: EdgeInsets.fromLTRB(0, position==0?10:0, 0, 0),
         height: 65,
         width: double.infinity,
@@ -693,41 +714,40 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                   margin: EdgeInsets.fromLTRB(20, 0, 10, 0),
                   width: 30,
                   height: 30,
-                  child:
-                  Stack(
+                  child: Stack(
                     clipBehavior: Clip.none,
                     children: <Widget>[
                       Positioned(
                         left: 0,
                         top: 0,
-                        child:  ClipOval(
+                        child: ClipOval(
                           child: ca?.icon_url?.startsWith("http")
                               ? CachedNetworkImage(
-                            imageUrl: ca.icon_url,
-                            width: 30,
-                            height: 30,
-                            fit: BoxFit.contain,
-                            placeholder: (context, url) {
-                              return Container(
-                                color: ResColor.white_10,
-                              );
-                            },
-                            errorWidget: (context, url, error) {
-                              return Container(
-                                color: ResColor.white_10,
-                                child: Icon(
-                                  Icons.broken_image,
-                                  size: 24,
-                                  color: ResColor.black_80,
-                                ),
-                              );
-                            },
-                          )
+                                  imageUrl: ca.icon_url,
+                                  width: 30,
+                                  height: 30,
+                                  fit: BoxFit.contain,
+                                  placeholder: (context, url) {
+                                    return Container(
+                                      color: ResColor.white_10,
+                                    );
+                                  },
+                                  errorWidget: (context, url, error) {
+                                    return Container(
+                                      color: ResColor.white_10,
+                                      child: Icon(
+                                        Icons.broken_image,
+                                        size: 24,
+                                        color: ResColor.black_80,
+                                      ),
+                                    );
+                                  },
+                                )
                               : Image(
-                            image: AssetImage(ca.icon_url),
-                            width: 30,
-                            height: 30,
-                          ),
+                                  image: AssetImage(ca.icon_url),
+                                  width: 30,
+                                  height: 30,
+                                ),
                         ),
                       ),
                       Positioned(
@@ -735,25 +755,24 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                         bottom: -1.5,
                         child: ca.networkType != null
                             ? Container(
-                            width: 15,
-                            height: 15,
-                            padding: EdgeInsets.all(1),
-                            decoration: BoxDecoration(
-                              color: const Color(0xff202020),//Colors.white,
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(10)),
-                            ),
-                            child: Image(
-                              image: AssetImage(ca.networkType.iconUrl),
-                              width: 13,
-                              height: 13,
-                            ))
+                                width: 15,
+                                height: 15,
+                                padding: EdgeInsets.all(1),
+                                decoration: BoxDecoration(
+                                  color:
+                                      const Color(0xff202020), //Colors.white,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
+                                ),
+                                child: Image(
+                                  image: AssetImage(ca.networkType.iconUrl),
+                                  width: 13,
+                                  height: 13,
+                                ))
                             : Container(),
                       ),
                     ],
                   ),
-
-
                 ),
                 Expanded(
                   child: Text(
@@ -768,7 +787,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                 Text(
                   ca.balance.isNotEmpty
                       ? StringUtils.formatNumAmount(ca.getBalanceDouble(),
-                      point: 8, supply0: false)
+                          point: 8, supply0: false)
                       : "--",
                   style: TextStyle(
                     fontSize: 14,
@@ -793,21 +812,20 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                   left: 0,
                   right: 0,
                   child: Divider(
-                    height: 0.5,//1/ScreenUtil.pixelRatio,
-                    thickness:0.5,// 1/ScreenUtil.pixelRatio,
+                    height: 0.5, //1/ScreenUtil.pixelRatio,
+                    thickness: 0.5, // 1/ScreenUtil.pixelRatio,
                     indent: 20,
                     color: ResColor.white_20,
                   )),
           ],
         ),
       );
-    }else {
+    } else {
       return Padding(
           padding: new EdgeInsets.all(10.0),
           child: new Text("no data $position"));
     }
   }
-
 
   Widget getNoAccountView(BuildContext context) {
     return SingleChildScrollView(

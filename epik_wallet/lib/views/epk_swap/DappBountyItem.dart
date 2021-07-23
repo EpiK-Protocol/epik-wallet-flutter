@@ -124,7 +124,7 @@ class DappBountyItemState extends State<DappBountyItem> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "账号: ",
+                RSID.bdtv_4.text,//"账号: ",
                 style: TextStyle(
                   color: ResColor.white_60,
                   fontSize: 11,
@@ -150,7 +150,7 @@ class DappBountyItemState extends State<DappBountyItem> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "名称: ",
+                RSID.bdtv_5.text,//"名称: ",
                 style: TextStyle(
                   color: ResColor.white_60,
                   fontSize: 11,
@@ -228,7 +228,7 @@ class DappBountyItemState extends State<DappBountyItem> {
               color_bg: Colors.transparent,
               disabledColor: Colors.transparent,
               bg_borderradius: BorderRadius.circular(4),
-              text: "领取",
+              text: RSID.bdtv_10.text,//"领取",
               textstyle: TextStyle(
                 color: Colors.white,
                 fontSize: 14,
@@ -265,7 +265,7 @@ class DappBountyItemState extends State<DappBountyItem> {
         gradient_bg: ResColor.lg_1,
         color_bg: Colors.transparent,
         disabledColor: Colors.transparent,
-        text: "绑定",
+        text: RSID.bdtv_11.text,//"绑定",
         textstyle: TextStyle(
           color: Colors.white,
           fontSize: 14,
@@ -277,7 +277,7 @@ class DappBountyItemState extends State<DappBountyItem> {
         loading: loading,
         onclick: (lbtn) {
           BottomDialog.showTextInputDialog(
-              context, widget.dapp.name, "", "请输入Dapp的令牌", 999, (value) {
+              context, widget.dapp.name, "", RSID.bdtv_12.text,/*"请输入Dapp的令牌"*/ 999, (value) {
             if (StringUtils.isNotEmpty(value)) {
               widget.dapp.setDappToken(value);
               // setState(() {
@@ -294,7 +294,7 @@ class DappBountyItemState extends State<DappBountyItem> {
         // gradient_bg: ResColor.lg_1,
         color_bg:const Color(0xff424242),
         disabledColor: const Color(0xff424242),
-        text: "解绑",
+        text: RSID.bdtv_13.text,//"解绑",
         textstyle: TextStyle(
           color: Colors.white,
           fontSize: 14,
@@ -307,7 +307,7 @@ class DappBountyItemState extends State<DappBountyItem> {
         onclick: (lbtn) {
          MessageDialog.showMsgDialog(context,
          title: RSID.tip.text,
-           msg: "您确定要解绑${widget.dapp.name}账号的Token吗？",
+           msg: RSID.bdtv_14.replace(["${widget.dapp.name}"]),//"您确定要解绑${widget.dapp.name}账号的Token吗？",
            btnLeft: RSID.cancel.text,
            btnRight: RSID.confirm.text,
            onClickBtnLeft: (dialog) {

@@ -209,6 +209,12 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> {
       errorBackgroundColor = Colors.transparent;
       statelayout_margin =
           EdgeInsets.only(top: getAppBarHeight() + getTopBarHeight());
+      if(coinbaseInfo==null)
+      {
+        setErrorContent("coinbase not found");
+      }else{
+        setErrorContent(RSID.net_error.text);
+      }
       setErrorWidgetVisible(true);
     }
     isLoading = false;
@@ -519,7 +525,7 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> {
 
         MessageDialog.showMsgDialog(
           context,
-          title: "Coinbase提取",
+          title: RSID.minerview_30.text,//"Coinbase提取",
           msg: "${RSID.minerview_18.text}\n$cid",
           //交易已提交
           btnLeft: RSID.minerview_19.text,

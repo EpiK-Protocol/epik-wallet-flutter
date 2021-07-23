@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
+import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
@@ -176,12 +177,43 @@ class ApiWallet {
     return null;
   }
 
+  //ERC20EPK<->EPIK 兑换记录 失败时 可以用这个接口重提交
+  static Future<HttpJsonRes> retrySwapTx(int swapID,String token,)
+  {
+    String url = ServiceInfo.makeHostUrl("/wallet/retrySwapTx");
+    Map<String, dynamic> headers = {"token": token};
+    Map<String, dynamic> body = {"id": swapID};
+    return HttpUtil.instance.requestJson(false, url, null,
+        data:jsonEncode(body), headers: headers);
+  }
+
   /// ERC20EPK->EPIK, 提交erc20epk交易记录
-  static Future<HttpJsonRes> swap2EPIK(String token, String erc20_txhash) {
+  static Future<HttpJsonRes> swap2EPIK(WalletAccount wa,String token, String erc20_txhash) async{
     String url = ServiceInfo.makeHostUrl("/wallet/submitERC20Tx");
 
+    // tx_hash            string `json:"tx_hash"`
+    // EpikAddress    string `json:"epik_address"`
+    // Erc20Address   string `json:"erc20_address"`
+    // EpikSignature  string `json:"epik_signature"` // epik签名eth地址
+    // Erc20Signature string `json:"erc20_signature"`// eth签名epik地址
+
+
     Map<String, dynamic> params = new Map();
+
     params["tx_hash"] = erc20_txhash;
+
+    params["epik_address"] = wa.epik_EPK_address;
+    params["erc20_address"] = wa.hd_eth_address;
+
+    Digest digest_epik = sha256.convert(utf8.encode(wa.hd_eth_address));
+    Uint8List epik_signature_byte = await wa.epikWallet
+        .sign(wa.epik_EPK_address, Uint8List.fromList(digest_epik.bytes));
+    params["epik_signature"] = hex.encode(epik_signature_byte); // epik 签名 eth地址
+
+    Digest digest_eth = sha256.convert(utf8.encode(wa.epik_EPK_address));
+    Uint8List erc20_signature_byte = await wa.hdwallet
+        .signHash(wa.hd_eth_address, Uint8List.fromList(digest_eth.bytes));
+    params["erc20_signature"] = hex.encode(erc20_signature_byte); // eht 签名 epik地址
 
     Map<String, dynamic> headers = {"token": token};
 
@@ -190,11 +222,32 @@ class ApiWallet {
   }
 
   /// EPIK->ERC20EPK, 提交epik交易记录
-  static Future<HttpJsonRes> swap2ERC20EPK(String token, String epik_cid) {
+  static Future<HttpJsonRes> swap2ERC20EPK(WalletAccount wa,String token, String epik_cid) async {
     String url = ServiceInfo.makeHostUrl("/wallet/submitEPIKTx");
+
+    // Cid            string `json:"Cid"`
+    // EpikAddress    string `json:"epik_address"`
+    // Erc20Address   string `json:"erc20_address"`
+    // EpikSignature  string `json:"epik_signature"`
+    // Erc20Signature string `json:"erc20_signature"`
+
 
     Map<String, dynamic> params = new Map();
     params["cid"] = epik_cid;
+
+
+    params["epik_address"] = wa.epik_EPK_address;
+    params["erc20_address"] = wa.hd_eth_address;
+
+    Digest digest_epik = sha256.convert(utf8.encode(wa.hd_eth_address));
+    Uint8List epik_signature_byte = await wa.epikWallet
+        .sign(wa.epik_EPK_address, Uint8List.fromList(digest_epik.bytes));
+    params["epik_signature"] = hex.encode(epik_signature_byte); // epik 签名 eth地址
+
+    Digest digest_eth = sha256.convert(utf8.encode(wa.epik_EPK_address));
+    Uint8List erc20_signature_byte = await wa.hdwallet
+        .signHash(wa.hd_eth_address, Uint8List.fromList(digest_eth.bytes));
+    params["erc20_signature"] = hex.encode(erc20_signature_byte); // eht 签名 epik地址
 
     Map<String, dynamic> headers = {"token": token};
 
@@ -203,11 +256,14 @@ class ApiWallet {
   }
 
   /// EPIK <-> ERC20  双向兑换记录
-  static Future<HttpJsonRes> swapRecords(String token, String erc20_address) {
+  static Future<HttpJsonRes> swapRecords(String token, String erc20_address,String epik_address) {
     String url = ServiceInfo.makeHostUrl("/wallet/swapRecords");
+
+    // erc20_address=0x576C3F273bE7d218A6Eb040D421b51237945ce10&epik_address=
 
     Map<String, dynamic> params = new Map();
     params["erc20_address"] = erc20_address;
+    params["epik_address"] = epik_address;
 
     Map<String, dynamic> headers = {"token": token};
 
@@ -215,18 +271,18 @@ class ApiWallet {
   }
 
   /// EPIK <-> ERC20  查询单个兑换记录  erc20 或 epik 任何一个交易记录 就可以查询
-  static Future<HttpJsonRes> swapRecord(String token,
-      {String erc20_tx_hash, String epik_cid}) {
-    String url = ServiceInfo.makeHostUrl("/wallet/swapRecords");
-
-    Map<String, dynamic> params = new Map();
-    if (erc20_tx_hash != null) params["erc20_tx_hash"] = erc20_tx_hash;
-    if (epik_cid != null) params["epik_cid"] = epik_cid;
-
-    Map<String, dynamic> headers = {"token": token};
-
-    return HttpUtil.instance.requestJson(true, url, params, headers: headers);
-  }
+  // static Future<HttpJsonRes> swapRecord(String token,
+  //     {String erc20_tx_hash, String epik_cid}) {
+  //   String url = ServiceInfo.makeHostUrl("/wallet/swapRecords");
+  //
+  //   Map<String, dynamic> params = new Map();
+  //   if (erc20_tx_hash != null) params["erc20_tx_hash"] = erc20_tx_hash;
+  //   if (epik_cid != null) params["epik_cid"] = epik_cid;
+  //
+  //   Map<String, dynamic> headers = {"token": token};
+  //
+  //   return HttpUtil.instance.requestJson(true, url, params, headers: headers);
+  // }
 
   static Future<HttpJsonRes> sendRemoteAuth(RemoteAuth ra) async {
     String url = ra.c;//ra.callback;

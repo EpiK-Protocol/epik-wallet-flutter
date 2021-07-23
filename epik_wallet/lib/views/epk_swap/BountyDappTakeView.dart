@@ -166,7 +166,7 @@ class BountyDappTakeViewState extends BaseWidgetState<BountyDappTakeView> {
         ViewGT.showBountyDappTakeRecordView(context, widget.dapp);
       },
       child: Text(
-        "领取记录",
+        RSID.bdtrv_1.text,//"领取记录",
         style: TextStyle(
           fontSize: 14,
           color: color ?? appBarContentColor,
@@ -283,11 +283,11 @@ class BountyDappTakeViewState extends BaseWidgetState<BountyDappTakeView> {
                           contentPadding: EdgeInsets.fromLTRB(0, -15, 0, 12),
                           // hintText: ResString.get(context, RSID.bexv_5),
                           //"请输入兑换数量",
-                          hintText:
-                              "数量需要大于" + (widget?.dapp?.dappInfo?.fee ?? "0"),
+                          hintText:"${RSID.bdtv_1.text} ${widget?.dapp?.dappInfo?.fee ?? "0"}",
+                              // "数量需要大于" + (widget?.dapp?.dappInfo?.fee ?? "0"),
                           hintStyle:
                               TextStyle(color: Colors.white60, fontSize: 17),
-                          labelText: "领取数量",
+                          labelText: RSID.bdtv_2.text,//"领取数量",
                           labelStyle: TextStyle(fontSize: 17, color: Colors.white),
                         ),
                         cursorWidth: 2.0,
@@ -378,7 +378,7 @@ class BountyDappTakeViewState extends BaseWidgetState<BountyDappTakeView> {
         mainAxisSize: MainAxisSize.max,
         children: [
           Text(
-            "手续费: ",
+            RSID.bdtv_3.text,//"手续费: ",
             style: TextStyle(
               color: ResColor.white_60,
               fontSize: 11,
@@ -410,7 +410,7 @@ class BountyDappTakeViewState extends BaseWidgetState<BountyDappTakeView> {
           mainAxisSize: MainAxisSize.max,
           children: [
             Text(
-              "账号: ",
+              RSID.bdtv_4.text,//"账号: ",
               style: TextStyle(
                 color: ResColor.white_60,
                 fontSize: 11,
@@ -442,7 +442,7 @@ class BountyDappTakeViewState extends BaseWidgetState<BountyDappTakeView> {
           mainAxisSize: MainAxisSize.max,
           children: [
             Text(
-              "名称: ",
+              RSID.bdtv_5.text,//"名称: ",
               style: TextStyle(
                 color: ResColor.white_60,
                 fontSize: 11,
@@ -509,7 +509,7 @@ class BountyDappTakeViewState extends BaseWidgetState<BountyDappTakeView> {
         progress_size: 20,
         padding: EdgeInsets.all(0),
         bg_borderradius: BorderRadius.circular(4),
-        text: "确认领取",
+        text: RSID.bdtv_6.text,//"确认领取",
         textstyle: const TextStyle(
           color: ResColor.white,
           fontSize: 17,
@@ -525,7 +525,7 @@ class BountyDappTakeViewState extends BaseWidgetState<BountyDappTakeView> {
     );
     items.add(
       Text(
-        "确认领取后会提交领取申请，审核通过后会发放EPK到您当前的钱包",
+        RSID.bdtv_7.text,//"确认领取后会提交领取申请，审核通过后会发放EPK到您当前的钱包",
         style: TextStyle(
           color: ResColor.white_60,
           fontSize: 11,
@@ -547,7 +547,8 @@ class BountyDappTakeViewState extends BaseWidgetState<BountyDappTakeView> {
 
   onClickTake() async {
     if (amount <= (widget?.dapp?.dappInfo?.fee_d ?? 0)) {
-      showToast("数量需要大于" + (widget?.dapp?.dappInfo?.fee ?? "0"));
+      //"数量需要大于"
+      showToast(RSID.bdtv_1.text + (widget?.dapp?.dappInfo?.fee ?? "0"));
       return;
     }
 
@@ -568,8 +569,8 @@ class BountyDappTakeViewState extends BaseWidgetState<BountyDappTakeView> {
       setState(() {});
       MessageDialog.showMsgDialog(
         context,
-        title: "领取EPK",
-        msg: "已提交领取申请，审核通过后将发放到您当前钱包，请在领取记录中查看。",
+        title: RSID.bdtv_8.text,//"领取EPK",
+        msg: RSID.bdtv_9.text,//"已提交领取申请，审核通过后将发放到您当前钱包，请在领取记录中查看。",
         btnRight: RSID.isee.text,
         onClickBtnRight: (dialog) {
           dialog.dismiss();

@@ -5,6 +5,11 @@ extension RSID_ex on RSID {
   String get text {
     return ResString.get(appContext, this);
   }
+
+  String replace(List<String> replace)
+  {
+    return ResString.get(appContext, this,replace: replace);
+  }
 }
 
 enum RSID {
@@ -471,5 +476,107 @@ enum RSID {
   expertinfoview_12, //已投票
   expertinfoview_13, //已撤回
   expertinfoview_14, //已提取
+
+  // Erc20ToEpkRecordView  erc20转epk 兑换记录
+  eerv_1,//EPK兑换记录
+  eerv_2,//转出交易
+  eerv_3,//转入交易
+  eerv_4,//失败原因
+  eerv_5,//重试提交兑换
+  eerv_6,//已重新提交
+
+  //Erc20ToEpkView   erc20转epk页面
+  eev_1,//"兑换记录",//"Swap records",
+  eev_2,//发起兑换
+  eev_3,//确认交易
+  eev_4,//完成
+  eev_5,//兑换须知
+  eev_6,//此次兑换所需的EPK有EpiK基金会提供。兑换过程中，需要您发起一笔以太坊交易，所以请确保您当前账户内有足够的以太坊支付此笔交易的手续费。兑换后，您当前以太坊钱包中的所有ERC20-EPK将会销毁，并按照1:1的比例兑换得到EPK，这些EPK将自动转入您当前EpiK钱包。
+  eev_7,//风险提示
+  eev_8_1,//为避免您之前参与挖矿活动有意或者无意的泄露过当前钱包的助记词或私钥，强烈建议
+  eev_8_2,//创建新钱包
+  eev_8_3,//，将ERC20-EPK转入全新的钱包后，再进行兑换。
+  eev_9,//免责声明
+  eev_10,//如您通过其他渠道自行销毁了ERC20-EPK导致无法正常兑换EPK，EpiK基金会将不予赔偿
+  eev_11,//地址:
+  eev_12,//兑换数量
+  eev_13,//兑换成
+  eev_14,//最少兑换
+  eev_15,//最多兑换
+  eev_16,//手续费
+  eev_17,//已转出交易补领EPK
+  eev_18,//已转出交易补领ERC20-EPK
+  eev_19,//交易失败
+  eev_20,//TxHash已复制
+  eev_21,//发起新的兑换
+  eev_22,//等待交易确认
+  eev_23_1,//如长时间不上链可以
+  eev_23_2,//加速交易
+  eev_24,//刷新
+  eev_25,//cid已复制
+  eev_26,//兑换完成
+  eev_27_1,//请在
+  eev_27_2,//兑换记录
+  eev_27_3,//中查看到账情况
+  eev_28,//兑换数量限制
+  eev_29,//兑换已提交
+  eev_30,//请输入转出ERC20-EPK交易的TxHash
+  eev_31,//提交失败
+  eev_32,//TxHash查询失败
+  eev_33,//TxHash无效
+  eev_34,//请输入转出EPK交易的cid
+  eev_35,//cid查询失败
+  eev_36,//cid无效
+  eev_37,//预计 6 - 15 分钟完成
+  eev_38,//预计 7 - 8 小时完成
+
+  er2ep_state_created, //已创建
+  er2ep_state_blocking, //等待确认
+  er2ep_state_pending, //确认中
+  er2ep_state_recieved, //已到账
+  er2ep_state_paying, //支付中
+  er2ep_state_success, //成功
+  er2ep_state_failed, //失败
+
+  // dialog showEthAccelerateTx
+  eatd_1,//加速交易
+  eatd_2,//输入加速交易的Gas比例
+  eatd_3,//请输入加速Gas比例
+  eatd_4,//Gas比例需要>1
+  eatd_5,//密码错误
+  eatd_6,//加速交易已提交
+
+
+  //BountyDappListView
+  bdlv_1,//赏金猎人奖励
+  bdlv_2,//领取须知
+  bdlv_3_1,//赏金猎人奖励所需的EPK有EpiK知识基金提供。领取过程中，需要您提供
+  bdlv_3_2,//提供的领取令牌，领取金额有最小限额，只有余额大于最小限额才能领取。领取后您在知识大陆的EPK余额会减少，您领取的EPK将自动转入您当前的EpiK钱包。
+  bdlv_4,//风险提示
+  bdlv_5_1,//请确保您没有泄露当前钱包助记词和私钥，否则强烈建议
+  bdlv_5_2,//创建新钱包
+  bdlv_5_3,//，在新钱包中进行领取。
+
+  //BountyDappTakeRecordView
+  bdtrv_1,//领取记录
+  bdtrv_2,//EPK 发放交易
+
+  //BountyDappTakeView
+  bdtv_1,//数量需要大于
+  bdtv_2,//领取数量
+  bdtv_3,//手续费:
+  bdtv_4,//账号:
+  bdtv_5,//名称:
+  bdtv_6,//确认领取
+  bdtv_7,//确认领取后会提交领取申请，审核通过后会发放EPK到您当前的钱包
+  bdtv_8,//领取EPK
+  bdtv_9,//已提交领取申请，审核通过后将发放到您当前钱包，请在领取记录中查看。
+  bdtv_10,//领取
+  bdtv_11,//绑定
+  bdtv_12,//请输入Dapp的令牌
+  bdtv_13,//解绑
+  bdtv_14,//您确定要解绑%s账号的令牌吗？
+
+
 
 }

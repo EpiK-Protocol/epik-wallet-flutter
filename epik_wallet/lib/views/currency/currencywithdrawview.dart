@@ -7,6 +7,7 @@ import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
+import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
@@ -681,28 +682,60 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
   }
 
   doWithdraw_epik() async {
-    String result =
+    ResultObj result =
         await widget.walletaccount.epikWallet.send(to_address, amount);
     closeLoadDialog();
 
-    if (StringUtils.isEmpty(result)) {
-      showToast(ResString.get(context, RSID.cwv_11)); //"转账失败");
+    if (result?.isSuccess != true) {
+      // showToast(result?.errorMsg ?? ResString.get(context, RSID.cwv_11)); //"转账失败");
+      String err = "";
+      if (StringUtils.isNotEmpty(result.errorMsg)) {
+        err = "ERROR: ${result.errorMsg}";
+      } else {
+        err = ResString.get(context, RSID.cwv_11); //"转账失败");
+      }
+      MessageDialog.showMsgDialog(
+        context,
+        title: ResString.get(context, RSID.cwv_11),
+        msg: err,
+        btnLeft: ResString.get(context, RSID.confirm),
+        onClickBtnLeft: (dialog) {
+          dialog.dismiss();
+        },
+      );
       return;
     }
 
-    dlog("doWithdraw_epik result=$result");
+    dlog("doWithdraw_epik result=${result?.data}");
+    String cid = result?.data;
+
     MessageDialog.showMsgDialog(
       context,
       title: ResString.get(context, RSID.withdraw),
       // "转账",
-      msg: ResString.get(context, RSID.cwv_12),
-      //"操作成功!",
-      btnLeft: ResString.get(context, RSID.confirm),
-      //"确定",
+      // msg: ResString.get(context, RSID.cwv_12),
+      // //"操作成功!",
+      // btnLeft: ResString.get(context, RSID.confirm),
+      // //"确定",
+      // onDismiss: (dialog) {
+      //   finish();
+      // },
+      // onClickBtnLeft: (dialog) {
+      //   dialog.dismiss();
+      // },
+      msg: "${RSID.minerview_18.text}\n$cid",
+      //交易已提交
+      btnLeft: RSID.minerview_19.text,
+      //"查看交易",
+      btnRight: RSID.isee.text,
       onDismiss: (dialog) {
-        finish();
+        Future.delayed(Duration(milliseconds: 100)).then((value) => finish());
       },
       onClickBtnLeft: (dialog) {
+        // dialog.dismiss();
+        lookEpkCid(cid);
+      },
+      onClickBtnRight: (dialog) {
         dialog.dismiss();
       },
     );
@@ -719,7 +752,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
     }
     closeLoadDialog();
 
-    if (result?.code != 0) {
+    if (!result.isSuccess) {
       String err = "";
       if (StringUtils.isNotEmpty(result.errorMsg)) {
         err = "ERROR: ${result.errorMsg}";
@@ -739,21 +772,57 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
     }
 
     dlog("doWithdraw_hd result=${result?.data}");
+    String txhash=result?.data;
 
     MessageDialog.showMsgDialog(
       context,
       title: ResString.get(context, RSID.withdraw),
       // "转账",
-      msg: ResString.get(context, RSID.cwv_12),
-      // "操作成功!",
-      btnLeft: ResString.get(context, RSID.confirm),
-      //"确定",
+      // msg: ResString.get(context, RSID.cwv_12),
+      // // "操作成功!",
+      // btnLeft: ResString.get(context, RSID.confirm),
+      // //"确定",
+      // onDismiss: (dialog) {
+      //   finish();
+      // },
+      // onClickBtnLeft: (dialog) {
+      //   dialog.dismiss();
+      // },
+      msg: "${RSID.minerview_18.text}\n$txhash",
+      //交易已提交
+      btnLeft: RSID.minerview_19.text,
+      //"查看交易",
+      btnRight: RSID.isee.text,
       onDismiss: (dialog) {
-        finish();
+        Future.delayed(Duration(milliseconds: 100)).then((value) => finish());
       },
       onClickBtnLeft: (dialog) {
+        // dialog.dismiss();
+        lookEthTxhash(txhash);
+      },
+      onClickBtnRight: (dialog) {
         dialog.dismiss();
       },
+    );
+  }
+
+  ///查看eth交易
+  lookEthTxhash(String txhash) {
+    String url = ServiceInfo.ether_tx_web + txhash;
+    ViewGT.showGeneralWebView(
+      context,
+      RSID.usolv_3.text, //"详情",
+      url,
+    );
+  }
+
+  ///查看epik交易
+  lookEpkCid(String cid) {
+    String url = ServiceInfo.epik_msg_web + cid; // 需要epk浏览器地址
+    ViewGT.showGeneralWebView(
+      context,
+      RSID.usolv_3.text, //"详情",
+      url,
     );
   }
 }

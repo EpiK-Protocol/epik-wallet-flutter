@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import androidx.annotation.NonNull;
+import hd.Hd;
 import hd.UniswapInfo;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
@@ -494,7 +495,8 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
                             ret = "ok";
                             break;
                         }
-                        case "epik_wallet_gasEstimateGasLimit":{
+                        case "epik_wallet_gasEstimateGasLimit":
+                        {
                             // 查询epik手续费  actor ：transfer交易
                             ret = currentEpikWallet.gasEstimateGasLimit((String) call.argument("actor"));
                             break;
@@ -503,13 +505,21 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
                         case "epik_wallet_signAndSendMessage":
                         {
                             //String signAndSendMessage(String addr, String message)
-                            ret = currentEpikWallet.signAndSendMessage((String) call.argument("addr"),(String) call.argument("message"));
+                            ret = currentEpikWallet.signAndSendMessage((String) call.argument("addr"), (String) call.argument("message"));
                             break;
                         }
                         case "epik_wallet_signCID":
                         {
                             //byte[] signCID(String addr, String cidStr)
-                            ret = currentEpikWallet.signCID((String) call.argument("addr"),(String) call.argument("cidStr"));
+                            ret = currentEpikWallet.signCID((String) call.argument("addr"), (String) call.argument("cidStr"));
+                            break;
+                        }
+                        ///----- 20210712 ht 新增
+                        case "hd_setDebug":
+                        {
+                            //设置以太网络dev环境
+                            Hd.setDebug((Boolean) call.argument("debug"));
+                            ret = "";
                             break;
                         }
                         default:

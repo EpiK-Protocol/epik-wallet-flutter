@@ -430,4 +430,15 @@ class HdWallet {
     }
     return null;
   }
+
+
+  ///设置以外网络dev环境
+  static Future<void> setDebug(bool debug) async {
+    try {
+       await EpikPlugin.channel
+          .invokeMethod("hd_setDebug", <String, dynamic>{"debug": debug});
+    } catch (e) {
+      print(e);
+    }
+  }
 }

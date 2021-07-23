@@ -223,7 +223,8 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        "请勿转入非 ${widget.currencysymbol.symbol}${nettype_str} 资产到以上地址，否则转入资产将永久损失且无法找回。",
+        // "请勿转入非 ${widget.currencysymbol.symbol}${nettype_str} 资产到以上地址，否则转入资产将永久损失且无法找回。",
+        RSID.cdv_8.replace(["${widget.currencysymbol.symbol}${nettype_str}"]),
         textAlign: TextAlign.left,
         style: TextStyle(
           fontSize: 14,

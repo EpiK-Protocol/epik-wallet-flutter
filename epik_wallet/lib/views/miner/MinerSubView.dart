@@ -366,6 +366,7 @@ class MinerSubViewState extends BaseInnerWidgetState<MinerSubView>
   }
 
   Widget getTabbar() {
+
     List<MinerSubpageType> items = MinerSubpageType.values;
 
     if (tabcontroller == null)

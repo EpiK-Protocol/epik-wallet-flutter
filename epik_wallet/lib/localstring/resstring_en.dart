@@ -139,7 +139,7 @@ Map<RSID, String> map_en = {
   RSID.main_wv_4: "Import wallet",//"导入钱包",
   RSID.main_wv_5: "Test network 5.0",//"Main network",//"主网",
   RSID.main_wv_6: "Total assets",// "总资产",
-  RSID.main_wv_7: "ERC20-EPK swap for EPK",//ERC20-EPK 兑换 EPK
+  RSID.main_wv_7: "EPK cross chain swap",//"EPK跨链兑换",//ERC20-EPK 兑换 EPK  "ERC20-EPK swap for EPK"
   RSID.main_wv_8: "Get the bounty hunter reward",//"领取赏金猎人奖励",
   RSID.main_wv_9: "ERC20-EPK Uniswap",//ERC20-EPK Uniswap 交易
   RSID.main_wv_10: "Not yet open",//"暂未开通",
@@ -240,7 +240,7 @@ Map<RSID, String> map_en = {
 
   //----------------------------------------views.uniswap.*
   //UniswapView 外壳
-  RSID.usv_1: "Transaction record",//"交易记录",
+  RSID.usv_1: "Transaction records",//"交易记录",
   RSID.usv_2: "Swap",//"兑换",
   RSID.usv_3: "Pool",//"资金池",
   //UniswapPoolView 资金池
@@ -294,7 +294,7 @@ Map<RSID, String> map_en = {
   RSID.usprv_3: "Confirm to withdrawal",//"确定撤回",
   RSID.usprv_4: "Please choose the amount to withdrawal",//"请选择要撤回的数量",
   //UniswaporderlistView 交易记录
-  RSID.usolv_1: "Transaction record",//"交易记录",
+  RSID.usolv_1: "Transaction records",//"交易记录",
   RSID.usolv_1: "Submit time",//"提交时间：",
   RSID.usolv_1: "Details",//"详情",
 
@@ -341,8 +341,8 @@ Map<RSID, String> map_en = {
   RSID.bexv_6: "swap",//"兑换",
   RSID.bexv_7: "Minimum swap quantity: %s scores",//"最少兑换数量：%s 积分",
   RSID.bexv_8: "Estimatedfee: %s ERC20-EPK",//"预估手续费：%s ERC20-EPK",
-  RSID.bexv_9: "Bonus record",//"奖励记录",
-  RSID.bexv_10: "Swap record",//"兑换记录",
+  RSID.bexv_9: "Bonus records",//"奖励记录",
+  RSID.bexv_10: "Swap records",//"兑换记录",
   RSID.bexv_11: "Swap submitting",//"正在提交兑换...",
   RSID.bexv_12: "Scores swap",//"积分兑换",
   RSID.bexv_13: "Scores swap has been submitted,\nplease refresh later to check the wallet balance.",//"积分兑换已提交，\n请稍后刷新查看钱包余额。",
@@ -485,5 +485,103 @@ Map<RSID, String> map_en = {
   RSID.expertinfoview_13:"Revoked",//"已撤回",
   RSID.expertinfoview_14:"Withdrawed",//"已提取",
 
+  // Erc20ToEpkRecordView  erc20转epk 兑换记录
+  RSID.eerv_1:"EPK exchange records",//"EPK兑换记录",
+  RSID.eerv_2:"Roll-out transaction",//"转出交易",
+  RSID.eerv_3:"Roll-in transaction",//"转入交易",
+  RSID.eerv_4:"Failure Reason",//"失败原因",
+  RSID.eerv_5:"Retry swap",//"重试提交兑换",
+  RSID.eerv_6:"Submitted again",//"已重新提交",
 
+  //Erc20ToEpkView   erc20转epk页面
+  RSID.eev_1:"Swap records",//"兑换记录"
+  RSID.eev_2:"Start swap",//"发起兑换",
+  RSID.eev_3:"Waiting confirmation",//"确认交易",
+  RSID.eev_4:"Complete",//"完成",
+  RSID.eev_5:"Notes for swap",//"兑换须知",
+  RSID.eev_6:"The EPK required for this exchange is provided by the Epik foundation. During the exchange process, you need to initiate an Ethereum transaction, so please make sure that you have enough Ethereum in your current account to pay the transaction fee. After exchange, all ERC20-EPK in your current Ethereum wallet will be destroyed and converted into EPK in the ratio of 1:1. These EPK will be automatically transferred into your current Epik wallet.",//"此次兑换所需的EPK有EpiK基金会提供。兑换过程中，需要您发起一笔以太坊交易，所以请确保您当前账户内有足够的以太坊支付此笔交易的手续费。兑换后，您当前以太坊钱包中的所有ERC20-EPK将会销毁，并按照1:1的比例兑换得到EPK，这些EPK将自动转入您当前EpiK钱包。",
+  RSID.eev_7:"Risk statement",//"风险提示",
+  RSID.eev_8_1:"In order to prevent you from intentionally or unintentionally disclosing the mnemonic words or private key of the current wallet in previous mining activities, it is strongly recommended to ",//"为避免您之前参与挖矿活动有意或者无意的泄露过当前钱包的助记词或私钥，强烈建议",
+  RSID.eev_8_2:"create a new wallet",//"创建新钱包",
+  RSID.eev_8_3:", transfer ERC20-EPK into a new wallet, and then swap it.",//"，将ERC20-EPK转入全新的钱包后，再进行兑换。",
+  RSID.eev_9:"Disclaimers",//"免责声明",
+  RSID.eev_10:"If you destroy ERC20-EPK through other channels, resulting in the failure of normal exchange of EPK, Epik foundation will not compensate.",//"如您通过其他渠道自行销毁了ERC20-EPK导致无法正常兑换EPK，EpiK基金会将不予赔偿",
+  RSID.eev_11:"Address:",//"地址:",
+  RSID.eev_12:"Amount",//"兑换数量",
+  RSID.eev_13:"Swap for ",//"兑换成",
+  RSID.eev_14:"Minimum",//"最少兑换",
+  RSID.eev_15:"Maximum",//"最多兑换",
+  RSID.eev_16:"Fee",//"手续费",
+  RSID.eev_17:"Submit txhash to receive EPK",//"已转出交易补领EPK",
+  RSID.eev_18:"Submit cid to receive EPK",//"已转出交易补领ERC20-EPK",
+  RSID.eev_19:"Transaction failed",//"交易失败",
+  RSID.eev_20:"Copied TxHash",//"TxHash已复制",
+  RSID.eev_21:"Start new swap",//"发起新的兑换",
+  RSID.eev_22:"Waiting for transaction confirmation",//"等待交易确认",
+  RSID.eev_23_1:"If not confirmed for a long time, you can ",//"如长时间不上链可以",
+  RSID.eev_23_2:"accelerate transaction",//"加速交易",
+  RSID.eev_24:"Refresh",//"刷新",
+  RSID.eev_25:"Copied cid",//"cid已复制",
+  RSID.eev_26:"Swap completed",//"兑换完成",
+  RSID.eev_27_1:"Please check in the ", //Please check in the exchange record  //请在兑换记录中查看到账情况
+  RSID.eev_27_2:"swap records",
+  RSID.eev_27_3:"",
+  RSID.eev_28:"Swap quantity limit",//"兑换数量限制",
+  RSID.eev_29:"Swap submitted",//"兑换已提交",
+  RSID.eev_30:"Enter txhash of the transaction",//"请输入转出ERC20-EPK交易的TxHash",
+  RSID.eev_31:"Failed to submit",//"提交失败",
+  RSID.eev_32:"Txhash query failed",//"TxHash查询失败",
+  RSID.eev_33:"Invalid txhash",//"TxHash无效",
+  RSID.eev_34:"Enter cid of the transaction",//"请输入转出EPK交易的cid",
+  RSID.eev_35:"Cid query failed",//"cid查询失败",
+  RSID.eev_36:"Invalid cid",//"cid无效",
+  RSID.eev_37:"Expected to take 6-15 minutes to complete",//"预计 6 - 15 分钟完成",
+  RSID.eev_38:"Expected to take 7-8 hours to complete",//"预计 7 - 8 小时完成",
+
+  RSID.er2ep_state_created:"Created",//"已创建",
+  RSID.er2ep_state_blocking:"Blocking",//"打包中",
+  RSID.er2ep_state_pending:"Bending",//"确认中",
+  RSID.er2ep_state_recieved:"Recieved",//"已到账",
+  RSID.er2ep_state_paying:"Paying",//"支付中",
+  RSID.er2ep_state_success:"Success",//"成功",
+  RSID.er2ep_state_failed:"Failed",//"失败",
+
+  // dialog showEthAccelerateTx
+  RSID.eatd_1:"Accelerate transaction",//"加速交易",
+  RSID.eatd_2:"Enter the gas ratio for acceleration",//"输入加速交易的Gas比例",
+  RSID.eatd_3:"Please input acceleration gas ratio",//"请输入加速Gas比例",
+  RSID.eatd_4:"The gas ratio needs to be > 1",//"Gas比例需要>1",
+  RSID.eatd_5:"Incorrect password",//"密码错误",
+  RSID.eatd_6:"Accelerated transaction submitted",//"加速交易已提交",
+
+
+  //BountyDappListView
+  RSID.bdlv_1:"Bounty hunter reward",//"赏金猎人奖励",
+  RSID.bdlv_2:"Notice",//"领取须知",
+  RSID.bdlv_3_1:"EPK for bounty hunter reward is provided by Epik knowledge fund. In the process of collection, you need to provide ",//"赏金猎人奖励所需的EPK有EpiK知识基金提供。领取过程中，需要您提供",
+  RSID.bdlv_3_2:"'s collection token. There is a minimum amount of collection. Only when the balance is greater than the minimum amount can you collect it. After collection, your EPK balance in knowledge continent will be reduced, and your EPK will be automatically transferred into your current Epik wallet.",//"的领取令牌，领取金额有最小限额，只有余额大于最小限额才能领取。领取后您在知识大陆的EPK余额会减少，您领取的EPK将自动转入您当前的EpiK钱包。",
+  RSID.bdlv_4:"Risk statement",//"风险提示",
+  RSID.bdlv_5_1:"Please make sure that you do not disclose the mnemonics and private key of the current wallet, otherwise it is strongly recommended to ",//"请确保您没有泄露当前钱包助记词和私钥，否则强烈建议",
+  RSID.bdlv_5_2:"create a new wallet",//"创建新钱包",
+  RSID.bdlv_5_3:" and collect it in the new wallet.",//"，在新钱包中进行领取。",
+
+  //BountyDappTakeRecordView
+  RSID.bdtrv_1:"Records",//"领取记录",
+  RSID.bdtrv_2:"EPK transaction",//"EPK 发放交易",
+
+  //BountyDappTakeView
+  RSID.bdtv_1:"Amount must be greater than ",//"数量需要大于",
+  RSID.bdtv_2:"Amount",//"领取数量",
+  RSID.bdtv_3:"Fee: ",//"手续费: ",
+  RSID.bdtv_4:"Account: ",//"账号: ",
+  RSID.bdtv_5:"Name: ",//"名称: ",
+  RSID.bdtv_6:"Confirm collection",//"确认领取",
+  RSID.bdtv_7:"After confirmation, the application will be submitted and the EPK will be sent to your current wallet after approval.",//"确认领取后会提交领取申请，审核通过后会发放EPK到您当前的钱包",
+  RSID.bdtv_8:"Receive EPK",//"领取EPK",
+  RSID.bdtv_9:"The collection application has been submitted and will be distributed to your current wallet after being approved. Please check in the collection record.",//"已提交领取申请，审核通过后将发放到您当前钱包，请在领取记录中查看。",
+  RSID.bdtv_10:"Receive",//"领取",
+  RSID.bdtv_11:"Bind",//"绑定",
+  RSID.bdtv_12:"Please enter DAPP's token",//"请输入Dapp的令牌",
+  RSID.bdtv_13:"Unbind",//"解绑",
+  RSID.bdtv_14:"Are you sure you want to unbind the token of %s account?",//"您确定要解绑%s账号的令牌吗？",
 };

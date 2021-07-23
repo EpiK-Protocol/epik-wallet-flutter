@@ -104,12 +104,14 @@ class EpikWallet {
     return null;
   }
 
-  Future<String> send(String to, String amount) async {
+  Future<ResultObj<String>> send(String to, String amount) async {
     try {
-      return await EpikPlugin.channel.invokeMethod(
+      String ret = await EpikPlugin.channel.invokeMethod(
           "epik_wallet_send", <String, dynamic>{"to": to, "amount": amount});
+      return ResultObj<String>(data: ret);
     } catch (e) {
       print(e);
+      return ResultObj<String>.fromError(e);
     }
     return null;
   }
@@ -188,7 +190,7 @@ class EpikWallet {
     return null;
   }
 
-  /// 消息回执
+  /// 消息回执  pending success failed  error
   Future<ResultObj<String>> messageReceipt(String cidStr) async {
     try {
       String ret = await EpikPlugin.channel

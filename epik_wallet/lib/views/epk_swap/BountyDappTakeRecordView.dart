@@ -68,7 +68,7 @@ class BountyDappTakeRecordViewState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    setAppBarTitle("领取记录");
+    setAppBarTitle(RSID.bdtrv_1.text);//"领取记录");
   }
 
   @override
@@ -219,7 +219,7 @@ class BountyDappTakeRecordViewState
                       lookEpkCid(record.hash);
                     },
                     child: Text(
-                      "EPK 发放交易",
+                      RSID.bdtrv_2.text,//"EPK 发放交易",
                       style: TextStyle(
                         fontSize: 11,
                         color: ResColor.white_60,

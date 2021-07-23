@@ -481,7 +481,7 @@ class BottomDialog {
                 Align(
                   alignment: FractionalOffset.center,
                   child: Text(
-                    "加速交易",
+                    RSID.eatd_1.text,//"加速交易",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 17,
@@ -542,7 +542,7 @@ class BottomDialog {
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                hintText: "输入加速交易的Gas比例",
+                hintText: RSID.eatd_2.text,//"输入加速交易的Gas比例",
                 //"请输入钱包密码",
                 // hintStyle: TextStyle(color: Color(0xff999999), fontSize: 16),
                 hintStyle: TextStyle(color: ResColor.white_60, fontSize: 17),
@@ -679,15 +679,15 @@ class BottomDialog {
               double _gasrate = StringUtils.parseDouble(_text, 0);
 
               if (_gasrate == null) {
-                ToastUtils.showToastCenter("请输入加速Gas比例");
+                ToastUtils.showToastCenter(RSID.eatd_3.text);//"请输入加速Gas比例");
                 return;
               }
               if (_gasrate < 1) {
-                ToastUtils.showToastCenter("Gas比例需要>1");
+                ToastUtils.showToastCenter(RSID.eatd_4.text);//"Gas比例需要>1");
                 return;
               }
               if (password != walletaccount.password) {
-                ToastUtils.showToastCenter("密码错误");
+                ToastUtils.showToastCenter(RSID.eatd_5.text);//"密码错误");
                 return;
               }
 
@@ -726,7 +726,7 @@ class BottomDialog {
                   MessageDialog.showMsgDialog(
                     context,
                     title: RSID.tip.text,
-                    msg: "加速交易已提交",
+                    msg: RSID.eatd_6.text,//"加速交易已提交",
                     btnLeft: RSID.confirm.text,
                     onClickBtnLeft: (dialog) {
                       dialog.dismiss();
