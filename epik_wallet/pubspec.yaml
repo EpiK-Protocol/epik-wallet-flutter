@@ -1,0 +1,315 @@
+name: epikwallet
+description: EpiK Portal
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+version: 1.2.2+122
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # 国际化
+  flutter_localizations:
+    sdk: flutter
+
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.2
+  outline_material_icons: ^0.1.1
+
+  # 徽章 未读数提示
+  badges: ^1.1.1
+  # dio是一个强大的Dart Http请求库，支持Restful API、FormData、拦截器、请求取消、Cookie管理、文件上传/下载、超时、自定义适配器等
+  # https://github.com/flutterchina/dio/blob/master/README-ZH.md
+  dio: ^4.0.0 #^3.0.9
+  rxdart: ^0.27.0 #^0.23.1
+  rx_command: ^6.0.1 #^5.0.0
+  # toast弹出提示工具
+  fluttertoast: ^3.1.0
+  # 状态管理Provider
+  # provider: ^3.1.0
+  # 第三方路由
+  fluro: ^1.3.4
+  # 获取设备信息
+  device_info: ^0.4.2+4 #^0.2.0
+  # 数据存储  ios设备需要再xcode中安装cocoapods
+  shared_preferences: ^0.5.1
+  # 屏幕适配工具 根据设计图计算对应比例的尺寸dp
+  flutter_screenutil: ^0.5.3
+  # 获取app信息 应用名、包名、版本号
+  package_info: ^0.4.1
+  # 系统url跳转
+  url_launcher: ^6.0.0 #^5.5.0
+  # DART中实现的加解密函数库。支持SHA-1、SHA-256、MD5、HMAC
+  crypto: ^3.0.0 #^2.1.3
+
+  # webview插件
+  flutter_inappwebview: ^5.1.0+4 #^4.0.0+4
+  webview_flutter: ^2.0.0 #^0.3.19+9 #^2.0.2
+
+  # 翻页轮播 banner 或者大的页面  横竖都可以 还有动画
+  # https://github.com/best-flutter/flutter_swiper/blob/master/README-ZH.md
+  flutter_swiper: ^1.1.6
+
+  #缓存管理器
+  flutter_cache_manager: ^3.1.2 #^1.2.2
+
+  # 带缓存的图片加载器
+  cached_network_image:  ^3.0.0 #^2.2.0+1
+
+  # des加密解密库
+  #flutter_des: ^1.1.1
+
+  # html标签转widget显示,图文混排文本font 适用于内嵌到list中
+  flutter_widget_from_html: ^0.7.0 #^0.5.2+1 #^0.3.3+4
+  #chewie: ^0.12.2 #flutter_widget_from_html要用的依赖 单独改一下版本
+
+  # 指纹 faceid-----------------------
+  #local_auth: ^0.6.2+3
+  # android
+  # <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+  # FlutterActivity更改为FlutterFragmentActivity
+  # ios
+  # <key>NSFaceIDUsageDescription</key>
+  # <string>Why is my app authenticating using face id?</string>
+
+  # 相机------------------------------
+  #camera: ^0.5.8+2
+  # android 配置 android/app/build.gradle
+  # minSdkVersion 21
+  # ios 配置 ios/Runner/Info.plis
+  # <key>NSCameraUsageDescription</key>
+  # <string>Can I use the camera please?</string>
+  # <key>NSMicrophoneUsageDescription</key>
+  # <string>Can I use the mic please?</string>
+
+  #震动反馈----------------------------
+  flutter_vibrate: ^1.0.0
+  # android
+  # <uses-permission android:name="android.permission.VIBRATE"/>
+
+  # 保存图片到相册----------------------
+  image_gallery_saver: ^1.6.5 #1.5.0
+  # android 文件存储 permission_handler检测权限
+  # <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+  # <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+  # ios
+  # <key>NSPhotoLibraryAddUsageDescription</key>
+
+  # 权限申请----------------------------
+  permission_handler: ^8.1.6 #^5.0.1
+  # android
+  # gradle.properties
+  #   android.useAndroidX=true
+  #   android.enableJetifier=true
+  # android/app/build.gradle
+  #   compileSdkVersion 28
+
+  # 扫描二维码---------------------------
+#  qrcode: ^1.0.4
+  qrcode:
+    path: ../qrcode-1.0.4
+#  ios 配置 os/Runner/Info.plis
+#    <key>NSCameraUsageDescription</key>
+#    <string>Camera permission is required for qrcode scanning.</string>
+#    <key>io.flutter.embedded_views_preview</key>
+#    <true/>
+
+  #全局 dialog 弹窗 封装 ----------------
+  #https://pub.dev/packages/flutter_custom_dialog#-readme-tab-
+  flutter_custom_dialog: ^1.0.20
+
+  #日历 日程表---------------------------
+  #table_calendar: ^2.2.3
+
+  # 图片选择器 从相册选图 或 拍照----------
+  image_picker: ^0.8.4 #^0.6.7+2
+  #ios 配置 os/Runner/Info.plis
+  #  <key>NSPhotoLibraryUsageDescription</key>
+  #  <string>XXX需要获取相册权限</string>
+  #  <key>NSCameraUsageDescription</key>
+  #  <string>XXX需要获取相机权限</string>
+  #  <key>NSMicrophoneUsageDescription</key>
+  #  <string>XXX需要获取麦克风权限</string>
+
+  # 手势解锁
+  #gesture_recognition: ^1.0.1
+
+  # 高德地图获取定位 https://pub.dev/packages/amap_location
+  #amap_location: ^0.2.0
+
+  # 录音 https://github.com/rmbrone/flutter_audio_recorder/blob/master/README-zh_CN.md
+  # 建议使用方式: hasPermission => init > start -> (pause <-> resume) * n -> stop ）
+  #flutter_audio_recorder: ^0.5.5
+  # ios
+  # <key>NSMicrophoneUsageDescription</key>
+  # <string>Can We Use Your Microphone Please</string>
+  # android
+  # <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
+  # 音频播放器
+  #audioplayer: ^0.8.1
+
+  # 切图 移动、缩放
+  #head_image_cropper: ^2.0.8
+
+  # 友盟统计
+#  umeng_analytics_plugin: ^1.0.3
+  umeng_common_sdk: ^1.2.4
+
+  epikplugin:
+    path: ../flutter_plugin_epik
+  # 此插件android只支持arm64-v8a架构
+
+  # 比特币hd钱包
+  # bitcoin_flutter: ^2.0.1
+
+  # 图表 https://google.github.io/charts/flutter/gallery.html
+  # charts_flutter: ^0.9.0
+
+  # 扩展NestedScrollView 解决一些坑 https://github.com/fluttercandies/extended_nested_scroll_view/blob/master/README-ZH.md
+  extended_nested_scroll_view: ^3.0.0
+
+#  path_provider: 1.6.14
+  convert: ^3.0.1
+
+  #flutter_k_chart
+  flutter_k_chart:
+    path: ../flutter_k_chart
+
+  # 状态栏导航栏控制器(手机系统顶部、底部)
+  flutter_statusbarcolor: ^0.2.3
+
+  #各种进度指示器 https://pub.dev/packages/percent_indicator
+  percent_indicator: ^2.1.9
+
+  # AB组件淡入淡出尺寸切换 或单个组件切换显示隐藏
+  animated_size_and_fade: ^2.0.0
+
+  #浮点精确计算
+  decimal: ^0.3.0
+
+  # AES加密-----------------------
+  aes_crypt: ^0.1.1
+
+  # HD wallet  : Mnemonic  seed
+  bip39: ^1.0.6
+  # HD wallet  : private key   public key
+  dart_bip32_bip44: ^0.2.0
+
+  #web3
+  web3dart: ^2.3.3
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/img/ic_content_empty.png
+    - assets/img/ic_content_neterror.png
+    - assets/img/ic_wallet_menu.png
+    - assets/img/ic_launcher.png
+    - assets/img/ic_launcher_2.png
+    - assets/img/bg_account_header.png
+    - assets/img/bg_splash.png
+    - assets/img/bg_header.png
+    - assets/img/ic_wechat.png
+    - assets/img/ic_eth.png
+    - assets/img/ic_usdt.png
+    - assets/img/ic_epk.png
+    - assets/img/ic_scan.png
+    - assets/img/ic_qrcode_scan.png
+    - assets/img/ic_telgram.png
+    - assets/img/ic_telegram_2.png
+    - assets/img/ic_main_menu_wallet_s.png
+    - assets/img/ic_main_menu_bounty_n.png
+    - assets/img/ic_main_menu_bounty_s.png
+    - assets/img/ic_main_menu_expert_n.png
+    - assets/img/ic_main_menu_expert_s.png
+    - assets/img/ic_main_menu_swap_n.png
+    - assets/img/ic_main_menu_swap_s.png
+    - assets/img/ic_main_menu_wallet_n.png
+    - assets/img/ic_checkmark.png
+    - assets/img/ic_add_circle.png
+    - assets/img/ic_import_circle.png
+    - assets/img/ic_arrow_right_1.png
+    - assets/img/ic_epk_2.png
+    - assets/img/ic_eth_2.png
+    - assets/img/ic_usdt_2.png
+    - assets/img/ic_swap.png
+    - assets/img/ic_swap_2.png
+    - assets/img/256x256_App_Icon_Pink.png
+    - assets/img/ic_back.png
+    - assets/img/ic_arrow_withdraw.png
+    - assets/img/ic_arrow_deposit.png
+    - assets/img/ic_scan_2.png
+    - assets/img/ic_dapp_bounty_swap.png
+    - assets/img/ic_erc20_to_epk.png
+    - assets/img/ic_uniswap_change_currency.png
+    - assets/img/ic_delete_red.png
+    - assets/img/ic_epik_watermark.png
+    - assets/img/ic_setting.png
+    - assets/img/ic_scan_3.png
+    - assets/img/ic_airdrop.png
+    - assets/img/ic_uniswap.png
+    - assets/img/ic_dapp.png
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware.
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  fonts:
+    - family: MILanLight #略粗
+      fonts:
+        - asset: assets/fonts/MILan-Light.ttf     # 字体文件目录
+    - family: Miui-Light  #细一点
+      fonts:
+        - asset: assets/fonts/Miui-Light.ttf     # 字体文件目录
+    - family: DIN_Condensed_Bold  # 英文数字字体 粗体
+      fonts:
+        - asset: assets/fonts/DIN_Condensed_Bold.ttf

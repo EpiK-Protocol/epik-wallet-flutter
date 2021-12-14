@@ -1,0 +1,9 @@
+framework module "Epik" {
+	header "ref.h"
+    header "EPIK_Epik.objc.h"
+    header "EPIK_Hd.objc.h"
+    header "Universe.objc.h"
+    header "Epik.h"
+
+    export *
+}

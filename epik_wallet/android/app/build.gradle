@@ -1,0 +1,118 @@
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+//  flutter run 在arm-v8手机上运行arm-v7的包，在flutter脚本执行前 修改要编译的架构
+//  flutter run 默认编译的是当前连接的手机对应的cpu架构（目前大多是armv8）
+//  "android-arm"  :  "armeabi-v7a"
+//  "android-arm64":  "arm64-v8a"
+//  "android-x86"  :  "x86"
+//  "android-x64"  :  "x86_64"
+//this.project(":app").setProperty("target-platform","android-arm")
+//println("setProperty  target-platform = "+this.project(":app").getProperties().getAt("target-platform"))
+
+apply plugin: 'com.android.application'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+android {
+    compileSdkVersion 30
+
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        // 正式版需要删除.test
+        applicationId "com.epik.wallet"
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+
+        ndk {
+            //
+            abiFilters("arm64-v8a") //"armeabi", "armeabi-v7a","arm64-v8a", "mips", "x86", "x86_64"
+        }
+// 下面的方法 可以让flutter run时 编译上面ndk指定的架构
+//        flutter.so默认只生成64位
+//        在flutterSDK中找到flutter.gradle
+//        .../flutter/packages/flutter_tools/gradle/flutter.gradle
+//        修改为一下代码
+//        private List<String> getTargetPlatforms() {
+//            return DEFAULT_PLATFORMS
+//        }
+    }
+
+    //签名配置
+    signingConfigs {
+
+        // 读签名配置
+        def keystoreProperties = new Properties()
+        def keystorePropertiesFile = rootProject.file('app/keystore.properties')
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+        println("keystore.properties = "+keystoreProperties)
+
+        debug {
+            // debug时签名
+            storeFile file(keystoreProperties.getProperty('DEBUG_STOREFILE'))//签名文件
+            storePassword keystoreProperties.getProperty('DEBUG_STOREPASSWORD')//密码
+            keyAlias keystoreProperties.getProperty('DEBUG_KEYALIAS')//别名
+            keyPassword keystoreProperties.getProperty('DEBUG_KEYPASSWORD')//别名密码
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+        release {
+            // 发布时签名
+            storeFile file(keystoreProperties.getProperty('RELEASE_STOREFILE'))//签名文件
+            storePassword keystoreProperties.getProperty('RELEASE_STOREPASSWORD')//密码
+            keyAlias keystoreProperties.getProperty('RELEASE_KEYALIAS')//别名
+            keyPassword keystoreProperties.getProperty('RELEASE_KEYPASSWORD')//别名密码
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+
+    buildTypes {
+//        release {
+//            // TODO: Add your own signing config for the release build.
+//            // Signing with the debug keys for now, so `flutter run --release` works.
+//            signingConfig signingConfigs.debug
+//        }
+
+        debug {
+            //调试
+            signingConfig signingConfigs.debug//设置签名信息
+        }
+
+        release {
+//            minifyEnabled true // 是否混淆
+//            shrinkResources true // 是否去除无效的资源文件
+//            proguardFiles 'proguard.cfg' //混淆配置
+            signingConfig signingConfigs.release//设置签名信息
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
