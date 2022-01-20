@@ -1,10 +1,14 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math' as math;
+import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:animated_size_and_fade/animated_size_and_fade.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:convert/convert.dart';
+import 'package:crypto/crypto.dart';
 import 'package:epikplugin/epikplugin.dart';
+import 'package:epikwallet/abi/ERC20.g.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
@@ -19,9 +23,10 @@ import 'package:epikwallet/model/HomeMenuItem.dart';
 import 'package:epikwallet/model/auth/RemoteAuth.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/ClickUtil.dart';
-import 'package:epikwallet/utils/RecyclXOR.dart';
+import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
+import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
@@ -32,9 +37,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:web3dart/credentials.dart';
+import 'package:web3dart/web3dart.dart';
 
-
-class WalletView extends BaseInnerWidget {
+class  WalletView extends BaseInnerWidget {
   WalletView(Key key) : super(key: key) {}
 
   @override
@@ -48,7 +54,9 @@ class WalletView extends BaseInnerWidget {
   }
 }
 
-class _WalletViewState extends BaseInnerWidgetState<WalletView> {
+class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProviderStateMixin {
+  int tickertiem = 500;
+
   bool has_10100 = false;
 
   @override
@@ -60,6 +68,8 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
   String balance = "0";
 
   List<CurrencyAsset> data_list_item = [];
+  Map<CurrencySymbol, List<CurrencyAsset>> currency_group = {};
+  Map<CurrencySymbol, bool> currency_group_open = {};
 
   GlobalKey<ListPageState> key_scroll;
 
@@ -104,18 +114,25 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
   eventCallback_balance(obj) {
     if (AccountMgr().currentAccount != null) {
       data_list_item = AccountMgr().currentAccount.currencyList;
-      balance = StringUtils.formatNumAmount(
-          AccountMgr().currentAccount.total_usd,
-          point: 2);
+      makeCurrencyGroup();
+      balance = StringUtils.formatNumAmount(AccountMgr().currentAccount.total_usd, point: 2);
       setState(() {});
     }
+  }
+
+  makeCurrencyGroup() {
+    if (data_list_item?.length >= 6)
+      currency_group = {
+        CurrencySymbol.EPK: [data_list_item[0]],
+        CurrencySymbol.ETH: [data_list_item[1], data_list_item[2], data_list_item[3]],
+        CurrencySymbol.BNB: [data_list_item[4], data_list_item[5],data_list_item[6]],
+      };
   }
 
   @override
   void dispose() {
     eventMgr.remove(EventTag.LOCAL_ACCOUNT_LIST_CHANGE, eventCallback_account);
-    eventMgr.remove(
-        EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
+    eventMgr.remove(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
     eventMgr.remove(EventTag.UPDATE_SERVER_CONFIG, eventCallback_account);
     eventMgr.remove(EventTag.BALANCE_UPDATE, eventCallback_balance);
     super.dispose();
@@ -223,31 +240,13 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
         buildTopCard(),
         Expanded(
           child: ListPage(
-            data_list_item,
+            currency_group.keys.toList(), //data_list_item,
             headerList: headerlist,
             headerCreator: headerBuilder,
-//      itemWidgetCreator: itemWidgetBuild,
-            itemWidgetCreator: (context, position) {
-              bool isend = position >= data_list_item.length - 1;
-              if (position == 0) isend = true;
-              return Container(
-                margin:
-                    position == 0 ? EdgeInsets.fromLTRB(0, 10, 0, 10) : null,
-                child: Material(
-                  color: ResColor.b_2,
-                  child: InkWell(
-                    highlightColor: ResColor.white_10,
-                    splashColor: ResColor.white_10,
-                    onTap: () => onItemClick(position),
-                    child: itemWidgetBuild2(context, position, isend),
-                  ),
-                ),
-              );
-            },
+            itemWidgetCreator: listGroupBuilder,
+            //listItemBuilder,
             scrollCallback: scrollCallback,
             pullRefreshCallback: _pullRefreshCallback,
-//      needLoadMore: needLoadMore,
-//      onLoadMore: onLoadMore,
             key: key_scroll,
             needNoMoreTipe: false,
           ),
@@ -330,10 +329,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Text(
-                            "≈ " +
-                                StringUtils.formatNumAmount(
-                                    AccountMgr().currentAccount.total_btc,
-                                    point: 8),
+                            "≈ " + StringUtils.formatNumAmount(AccountMgr().currentAccount.total_btc, point: 8),
                             style: TextStyle(
                               color: ResColor.white_80,
                               fontSize: 14,
@@ -353,30 +349,6 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                           ),
                         ],
                       ),
-                      // Expanded(
-                      //   child: Container(
-                      //     width: double.infinity,
-                      //     alignment: Alignment.centerRight,
-                      //     padding: EdgeInsets.fromLTRB(15, 0, 21, 0),
-                      //     child: Row(
-                      //       mainAxisSize: MainAxisSize.min,
-                      //       children: <Widget>[
-                      //         Text(
-                      //           RSID.main_wv_11.text + "  ", //钱包设置
-                      //           style: TextStyle(
-                      //             fontSize: 14,
-                      //             color: Colors.white70,
-                      //           ),
-                      //         ),
-                      //         Icon(
-                      //           Icons.settings_outlined,
-                      //           size: 14,
-                      //           color: Colors.white70,
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
@@ -394,67 +366,6 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     switch (headerlist[position]) {
       case "grid":
         return buildMenuGrid();
-      // case "exchange_epk":
-      //   return headerItemBuild(
-      //     localImage: "assets/img/ic_swap.png",//"assets/img/ic_erc20_to_epk.png",
-      //     text: RSID.main_wv_7.text,
-      //     //"ERC20-EPK 兑换 EPK",
-      //     onclick: () {
-      //       // showToast(RSID.main_wv_10.text);
-      //       ViewGT.showErc20ToEpkView(context); //todo test
-      //     },
-      //     position: position,
-      //     // uninvalid: true,
-      //   );
-      // case "hunter_reward":
-      //   {
-      //     return headerItemBuild(
-      //       localImage: "assets/img/ic_dapp_bounty_swap.png",
-      //       text: RSID.main_wv_8.text,
-      //       //"领取赏金猎人奖励",
-      //       onclick: () {
-      //         // showToast(RSID.main_wv_10.text);
-      //         ViewGT.showTakeBountyView(context);
-      //       },
-      //       position: position,
-      //       // uninvalid: true,
-      //     );
-      //   }
-      //   break;
-      // case "uniswap":
-      //   {
-      //     return headerItemBuild(
-      //       localImage: "assets/img/256x256_App_Icon_Pink.png",
-      //       text: RSID.main_wv_9.text, //"ERC20-EPK Uniswap 交易",
-      //       onclick: () {
-      //         ViewGT.showTransactionView2(context);
-      //       },
-      //       position: position,
-      //     );
-      //   }
-      //   break;
-      // case "testminingprofit":
-      //   {
-      //     return headerItemBuild(
-      //       localImage: "assets/img/ic_epk_2.png",
-      //       text: RSID.main_mv_8.text,
-      //       onclick: () async {
-      //         String mining_id = AccountMgr()?.currentAccount?.mining_id;
-      //         if (StringUtils.isEmpty(mining_id)) {
-      //           showLoadDialog("");
-      //           await DL_TepkLoginToken.getEntity().refreshData(false);
-      //           closeLoadDialog();
-      //         }
-      //         mining_id = AccountMgr()?.currentAccount?.mining_id;
-      //         if (StringUtils.isEmpty(mining_id)) {
-      //           return;
-      //         }
-      //         ViewGT.showMiningProfitView(context, mining_id);
-      //       },
-      //       position: position,
-      //     );
-      //   }
-      //   break;
     }
 
     return new Padding(
@@ -463,90 +374,92 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     );
   }
 
-  // Widget headerItemBuild({
-  //   String localImage,
-  //   String text,
-  //   VoidCallback onclick,
-  //   int position,
-  //   bool uninvalid = false,
-  // }) {
-  //   bool isend = position >= headerlist.length - 1;
-  //   return Container(
-  //     margin: EdgeInsets.fromLTRB(0, position == 0 ? 10 : 0, 0, 0),
-  //     child: Material(
-  //       color: ResColor.b_2,
-  //       child: InkWell(
-  //         highlightColor: ResColor.white_10,
-  //         splashColor: ResColor.white_10,
-  //         onTap: onclick,
-  //         child: Container(
-  //           height: 65,
-  //           width: double.infinity,
-  //           // color: ResColor.b_2,
-  //           child: Stack(
-  //             children: [
-  //               Row(
-  //                 children: [
-  //                   Container(
-  //                     margin: EdgeInsets.fromLTRB(20, 0, 10, 0),
-  //                     child: ClipOval(
-  //                       child: Image(
-  //                         width: 30,
-  //                         height: 30,
-  //                         image: AssetImage(localImage),
-  //                         fit: BoxFit.cover,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   Expanded(
-  //                     child: Text(
-  //                       text,
-  //                       style: TextStyle(
-  //                         fontSize: 14,
-  //                         color: uninvalid ? ResColor.white_60 : ResColor.white,
-  //                         fontWeight: FontWeight.bold,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   Container(
-  //                     height: double.infinity,
-  //                     padding: EdgeInsets.fromLTRB(15, 0, 25, 0),
-  //                     child: Image.asset(
-  //                       "assets/img/ic_arrow_right_1.png",
-  //                       width: 7,
-  //                       height: 11,
-  //                       color: uninvalid ? ResColor.white_60 : null,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //               if (!isend)
-  //                 Positioned(
-  //                     bottom: 0,
-  //                     left: 0,
-  //                     right: 0,
-  //                     child: Divider(
-  //                       height: 1 / ScreenUtil.pixelRatio,
-  //                       thickness: 1 / ScreenUtil.pixelRatio,
-  //                       indent: 20,
-  //                       color: ResColor.white_20,
-  //                     )),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
+  Widget listGroupBuilder(BuildContext context, int position) {
+    CurrencySymbol key = currency_group.keys.toList()[position];
+    List<CurrencyAsset> datalist = currency_group[key];
+    bool open = currency_group_open[key] ?? true;
+
+    return Container(
+      width: double.infinity,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          InkWell(
+            child: Container(
+              width: double.infinity,
+              margin: EdgeInsets.fromLTRB(0, 10, getScreenWidth() * 0.33, 0),
+              padding: EdgeInsets.fromLTRB(20, 2, 20, 2),
+              decoration: BoxDecoration(
+                gradient: ResColor.lg_6,
+              ),
+              child: Text(
+                key.networkTypeName+(ServiceInfo.TEST_DEV_NET?" TestNet":""),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: ResColor.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            onTap: () {
+              if (ClickUtil.isFastDoubleClick()) return;
+              open = !open;
+              currency_group_open[key] = open;
+              setState(() {});
+            },
+          ),
+          AnimatedSizeAndFade(
+            vsync: this,
+            child: open
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: datalist.map((ca) {
+                      bool isend = ca == datalist.last;
+                      return Container(
+                        child: Material(
+                          color: ResColor.b_2,
+                          child: InkWell(
+                            highlightColor: ResColor.white_10,
+                            splashColor: ResColor.white_10,
+                            onTap: () => onItemClick(ca),
+                            child: itemWidgetBuild2(context, ca, isend),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  )
+                : Container(),
+            fadeDuration: Duration(milliseconds: tickertiem),
+            sizeDuration: Duration(milliseconds: tickertiem),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget listItemBuilder(BuildContext context, int position) {
+    bool isend = position >= data_list_item.length - 1;
+    CurrencyAsset ca = data_list_item[position];
+    return Container(
+      // margin: position == 0 ? EdgeInsets.fromLTRB(0, 10, 0, 10) : null,
+      child: Material(
+        color: ResColor.b_2,
+        child: InkWell(
+          highlightColor: ResColor.white_10,
+          splashColor: ResColor.white_10,
+          onTap: () => onItemClick(ca),
+          child: itemWidgetBuild2(context, ca, isend),
+        ),
+      ),
+    );
+  }
 
   Widget itemWidgetBuild2(
     BuildContext context,
-    int position,
+    CurrencyAsset ca,
     bool isend,
   ) {
-    if (data_list_item != null && position < data_list_item.length) {
-      CurrencyAsset ca = data_list_item[position];
-
+    if (ca != null) {
       return Container(
         // margin: EdgeInsets.fromLTRB(0, position==0?10:0, 0, 0),
         height: 65,
@@ -605,10 +518,8 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                                 height: 15,
                                 padding: EdgeInsets.all(1),
                                 decoration: BoxDecoration(
-                                  color:
-                                      const Color(0xff202020), //Colors.white,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
+                                  color: const Color(0xff202020), //Colors.white,
+                                  borderRadius: BorderRadius.all(Radius.circular(10)),
                                 ),
                                 child: Image(
                                   image: AssetImage(ca.networkType.iconUrl),
@@ -632,8 +543,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                 ),
                 Text(
                   ca.balance.isNotEmpty
-                      ? StringUtils.formatNumAmount(ca.getBalanceDouble(),
-                          point: 8, supply0: false)
+                      ? StringUtils.formatNumAmount(ca.getBalanceDouble(), point: 8, supply0: false)
                       : "--",
                   style: TextStyle(
                     fontSize: 14,
@@ -667,9 +577,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
         ),
       );
     } else {
-      return Padding(
-          padding: new EdgeInsets.all(10.0),
-          child: new Text("no data $position"));
+      return Padding(padding: new EdgeInsets.all(10.0), child: new Text("no data"));
     }
   }
 
@@ -692,8 +600,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(63),
-                    border:
-                        Border.all(color: const Color(0xffeba544), width: 1),
+                    border: Border.all(color: const Color(0xffeba544), width: 1),
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(63),
@@ -767,11 +674,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                   Container(width: 10),
                   Text(
                     RSID.main_wv_2.text, //"创建钱包",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        height: 1),
+                    style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700, height: 1),
                   ),
                 ],
               ),
@@ -824,11 +727,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                   Container(width: 10),
                   Text(
                     RSID.main_wv_4.text, //"导入钱包",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        height: 1),
+                    style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700, height: 1),
                   ),
                 ],
               ),
@@ -850,9 +749,8 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
   void refresh() {
     hasRefresh = true;
 
-    noWallet = AccountMgr().currentAccount == null ||
-        AccountMgr().account_list == null ||
-        AccountMgr().account_list.isEmpty;
+    noWallet =
+        AccountMgr().currentAccount == null || AccountMgr().account_list == null || AccountMgr().account_list.isEmpty;
 
     if (noWallet) {
       setState(() {});
@@ -867,19 +765,17 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     proressBackgroundColor = Colors.transparent;
     setLoadingWidgetVisible(true);
 
-    AccountMgr().currentAccount.uploadSuggestGas();
+    // AccountMgr().currentAccount.uploadSuggestGas();
     AccountMgr().currentAccount.uploadEpikGasTransfer();
 
     EpikWalletUtils.requestBalance(AccountMgr().currentAccount).then((value) {
       isLoading = false;
       data_list_item = AccountMgr().currentAccount.currencyList;
-      balance = StringUtils.formatNumAmount(
-          AccountMgr().currentAccount.total_usd,
-          point: 2);
+      makeCurrencyGroup();
+      balance = StringUtils.formatNumAmount(AccountMgr().currentAccount.total_usd, point: 2);
       closeStateLayout();
     });
   }
-
 
   @override
   Widget getLoadingWidget() {
@@ -895,10 +791,10 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     //   ),
     // );
     return Container(
-    width: double.infinity,
-    height: double.infinity,
-    padding: EdgeInsets.only(top: getTopBarHeight() + getAppBarHeight()+300),
-    child: super.getLoadingWidget(),
+      width: double.infinity,
+      height: double.infinity,
+      padding: EdgeInsets.only(top: getTopBarHeight() + getAppBarHeight() + 300),
+      child: super.getLoadingWidget(),
     );
   }
 
@@ -912,14 +808,13 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
 
   Future<void> _pullRefreshCallback() async {
     await EpikWalletUtils.requestBalance(AccountMgr().currentAccount);
-    AccountMgr().currentAccount.uploadSuggestGas();
+    // AccountMgr().currentAccount.uploadSuggestGas();
     AccountMgr().currentAccount.uploadEpikGasTransfer();
     setState(() {
       isLoading = false;
       data_list_item = AccountMgr().currentAccount.currencyList;
-      balance = StringUtils.formatNumAmount(
-          AccountMgr().currentAccount.total_usd,
-          point: 2);
+      makeCurrencyGroup();
+      balance = StringUtils.formatNumAmount(AccountMgr().currentAccount.total_usd, point: 2);
     });
   }
 
@@ -942,12 +837,10 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     return hasMore;
   }
 
-  onItemClick(int postision) {
-    if (data_list_item != null &&
-        postision >= 0 &&
-        postision < data_list_item.length &&
-        mounted) {
-      CurrencyAsset ca = data_list_item[postision];
+  onItemClick(CurrencyAsset ca) {
+    // if (data_list_item != null && postision >= 0 && postision < data_list_item.length && mounted)
+    if (mounted) {
+      // CurrencyAsset ca = data_list_item[postision];
       if (ca != null) {
         ViewGT.showCurrencyDetailView(context, ca);
       }
@@ -958,16 +851,17 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
     ViewGT.showAccountDetailView(context, AccountMgr().currentAccount);
   }
 
-  onClickWalletMenu(){
+  onClickWalletMenu() async {
     eventMgr.send(EventTag.MAIN_RIGHT_DRAWER, true);
   }
 
   double gridItemHightRatio = 0;
 
+  int gridItem_crossAxisCount = 4;
+
   Widget buildMenuGrid() {
     if (gridItemHightRatio == 0) {
-      gridItemHightRatio =
-          (getScreenWidth() - 12 * 2) / 3.0 / 94; //    每个item的宽 / 高 = 比例
+      gridItemHightRatio = 1.0* (getScreenWidth() - 12 * 2) / gridItem_crossAxisCount / 94; //    每个item的宽 / 高 = 比例
     }
 
     List<HomeMenuItem> datas = ServiceInfo.getHomeMenuList();
@@ -975,8 +869,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
       List<Widget> items = [];
 
       datas.forEach((hmi) {
-
-        Widget img=hmi?.hasNetImg == true
+        Widget img = hmi?.hasNetImg == true
             ? CachedNetworkImage(
           imageUrl: hmi.Icon,
           width: 50,
@@ -1004,33 +897,36 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
           height: 50,
         );
 
-        Widget column =Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ClipOval(
-                child: hmi?.Invalid == true?ShaderMask(
-                  shaderCallback: (bounds) {
-                    return const LinearGradient(colors: [
-                      ResColor.white_90,
-                      ResColor.black_90,
-                    ]).createShader(bounds);
-                  },
-                  child: img,
-                  blendMode: BlendMode.hue, //BlendMode.saturation, //灰度模式
-                ):img,
+
+        Widget column = Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ClipOval(
+              child: hmi?.Invalid == true
+                  ? ShaderMask(
+                      shaderCallback: (bounds) {
+                        return const LinearGradient(colors: [
+                          ResColor.white_90,
+                          ResColor.black_90,
+                        ]).createShader(bounds);
+                      },
+                      child: img,
+                      blendMode: BlendMode.hue, //BlendMode.saturation, //灰度模式
+                    )
+                  : img,
+            ),
+            Text(
+              hmi?.Name ?? "",
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 14,
+                color: ResColor.white_80,
               ),
-              Text(
-                hmi?.Name ?? "",
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: ResColor.white_80,
-                ),
-              ),
-            ],
-          );
+            ),
+          ],
+        );
         Widget item = InkWell(
           onTap: () {
             if (!ClickUtil.isFastDoubleClick()) {
@@ -1049,7 +945,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
 
       return Container(
         margin: EdgeInsets.only(top: 10),
-        padding: EdgeInsets.fromLTRB(12, 20, 12, 0),
+        padding: EdgeInsets.fromLTRB(12,20,12,0), //12,20,12,0
         color: const Color(0xff1b1b1b),
         width: double.infinity,
         child: GridView.count(
@@ -1064,7 +960,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
           //GridView内边距
           padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
           //一行的Widget数量
-          crossAxisCount: 3,
+          crossAxisCount: gridItem_crossAxisCount,
           //子Widget宽高比例
           childAspectRatio: gridItemHightRatio,
           children: items,
@@ -1077,33 +973,38 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
 
   onClickMenuItem(HomeMenuItem hmi) async {
     if (hmi?.Action?.startsWith("http") == true) {
-      ViewGT.showGeneralWebView(context, hmi.Name, hmi?.Action);
+      if(hmi?.web3nettype!=null)
+      {
+        ViewGT.showWeb3GeneralWebView(context, hmi?.Name, hmi?.Action, hmi?.web3nettype);
+      }else{
+        ViewGT.showGeneralWebView(context, hmi.Name, hmi?.Action);
+      }
     } else if (hmi?.action_l != null) {
       switch (hmi.action_l) {
         case HomeMenuItemAction.swap:
-          ViewGT.showErc20ToEpkView(context,hmi.Name);
+          ViewGT.showErc20ToEpkView(context, hmi.Name);
           break;
         case HomeMenuItemAction.dapp:
-          ViewGT.showTakeBountyView(context,hmi.Name);
+          ViewGT.showTakeBountyView(context, hmi.Name);
           break;
-        case HomeMenuItemAction.uniswap:
-          ViewGT.showTransactionView2(context);
-          break;
-        case HomeMenuItemAction.airdrop:
-          {
-            String mining_id = AccountMgr()?.currentAccount?.mining_id;
-            if (StringUtils.isEmpty(mining_id)) {
-              showLoadDialog("");
-              await DL_TepkLoginToken.getEntity().refreshData(false);
-              closeLoadDialog();
-            }
-            mining_id = AccountMgr()?.currentAccount?.mining_id;
-            if (StringUtils.isEmpty(mining_id)) {
-              return;
-            }
-            ViewGT.showMiningProfitView(context, mining_id,hmi.Name);
-          }
-          break;
+        // case HomeMenuItemAction.uniswap:
+        //   ViewGT.showTransactionView2(context);
+        //   break;
+        // case HomeMenuItemAction.airdrop:
+        //   {
+        //     String mining_id = AccountMgr()?.currentAccount?.mining_id;
+        //     if (StringUtils.isEmpty(mining_id)) {
+        //       showLoadDialog("");
+        //       await DL_TepkLoginToken.getEntity().refreshData(false);
+        //       closeLoadDialog();
+        //     }
+        //     mining_id = AccountMgr()?.currentAccount?.mining_id;
+        //     if (StringUtils.isEmpty(mining_id)) {
+        //       return;
+        //     }
+        //     ViewGT.showMiningProfitView(context, mining_id, hmi.Name);
+        //   }
+        //   break;
         case HomeMenuItemAction.scan:
           {
             //远程授权 扫码
@@ -1135,17 +1036,14 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                 // });
               } else if (ra.isDeal) {
                 // 交易签名  如扫码支付
-                BottomDialog.showRemoteAuthMessageDialog(
-                    context, AccountMgr().currentAccount, ra, (value) async {
+                BottomDialog.showRemoteAuthMessageDialog(context, AccountMgr().currentAccount, ra, (value) async {
                   showLoadDialog("");
 
                   String message = jsonEncode(ra.m);
                   ResultObj<String> robj = await AccountMgr()
                       .currentAccount
                       .epikWallet
-                      .signAndSendMessage(
-                          AccountMgr().currentAccount.epik_EPK_address,
-                          message);
+                      .signAndSendMessage(AccountMgr().currentAccount.epik_EPK_address, message);
 
                   closeLoadDialog();
 
@@ -1163,8 +1061,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
                       onClickBtnLeft: (dialog) {
                         dialog.dismiss();
                         String url = ServiceInfo.epik_msg_web + cid;
-                        ViewGT.showGeneralWebView(
-                            context, RSID.berlv_4.text, url);
+                        ViewGT.showGeneralWebView(context, RSID.berlv_4.text, url);
                       },
                       onClickBtnRight: (dialog) {
                         dialog.dismiss();
@@ -1180,6 +1077,9 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> {
           break;
         case HomeMenuItemAction.setting:
           onClickWalletName();
+          break;
+        case HomeMenuItemAction.more:
+          ViewGT.showHomeMenuMoreView(context, hmi.Name);
           break;
       }
     }

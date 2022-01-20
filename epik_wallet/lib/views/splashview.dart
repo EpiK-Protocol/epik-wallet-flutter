@@ -6,6 +6,8 @@ import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
+import 'package:epikwallet/logic/LocalAddressMgr.dart';
+import 'package:epikwallet/logic/LocalWebsiteMgr.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/Upgrade.dart';
@@ -210,6 +212,9 @@ class _SplashViewState extends BaseWidgetState<SplashView>
     } else {
       dlog("loadConfig2 d");
       await AccountMgr().load(); // 加载钱包账户
+
+      await localaddressmgr.load();
+      await localwebsitemgr.load();
 
       bool needRequired = await checkUpgrade();
       if(needRequired==true)

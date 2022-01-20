@@ -81,7 +81,9 @@ class _MyAppState extends State<MyApp> {
     await SpUtils().init(); // 初始化存储工具
     await DeviceUtils().initPlatInfo();
     // bool localconfig = await ServiceInfo.loadConfig(); //加载本地缓存的配置
-    HdWallet.setDebug(ServiceInfo.TEST_DEV_NET ? true : false);
+
+    // HdWallet.setDebug(ServiceInfo.TEST_DEV_NET ? true : false); //20220110注掉
+
     // await AccountMgr().load(); // 加载钱包账户
     // if(localconfig)
     // {

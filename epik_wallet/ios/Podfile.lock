@@ -33,7 +33,7 @@ PODS:
   - OrderedSet (5.0.0)
   - package_info (0.0.1):
     - Flutter
-  - path_provider (0.0.1):
+  - path_provider_ios (0.0.1):
     - Flutter
   - "permission_handler (5.1.0+2)":
     - Flutter
@@ -51,7 +51,7 @@ PODS:
     - Flutter
     - UMCommon
     - UMDevice
-  - url_launcher (0.0.1):
+  - url_launcher_ios (0.0.1):
     - Flutter
   - video_player (0.0.1):
     - Flutter
@@ -74,13 +74,13 @@ DEPENDENCIES:
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
-  - path_provider (from `.symlinks/plugins/path_provider/ios`)
+  - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
   - qrcode (from `.symlinks/plugins/qrcode/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - umeng_common_sdk (from `.symlinks/plugins/umeng_common_sdk/ios`)
-  - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
+  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - video_player (from `.symlinks/plugins/video_player/ios`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
   - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
@@ -119,8 +119,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/just_audio/ios"
   package_info:
     :path: ".symlinks/plugins/package_info/ios"
-  path_provider:
-    :path: ".symlinks/plugins/path_provider/ios"
+  path_provider_ios:
+    :path: ".symlinks/plugins/path_provider_ios/ios"
   permission_handler:
     :path: ".symlinks/plugins/permission_handler/ios"
   qrcode:
@@ -131,8 +131,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite/ios"
   umeng_common_sdk:
     :path: ".symlinks/plugins/umeng_common_sdk/ios"
-  url_launcher:
-    :path: ".symlinks/plugins/url_launcher/ios"
+  url_launcher_ios:
+    :path: ".symlinks/plugins/url_launcher_ios/ios"
   video_player:
     :path: ".symlinks/plugins/video_player/ios"
   wakelock:
@@ -148,7 +148,7 @@ SPEC CHECKSUMS:
   flutter_custom_dialog: c0d222a3c35af5b57581e54ef8784c94037cd2ec
   flutter_inappwebview: bfd58618f49dc62f2676de690fc6dcda1d6c3721
   flutter_statusbarcolor: 8afb1071ed8c58be929f1e32b36c629771fd2259
-  flutter_vibrate: c0ca4ac994ff97c3f147f69865458bbc0cc3508b
+  flutter_vibrate: 9f4c2ab57008965f78969472367c329dd77eb801
   fluttertoast: b644586ef3b16f67fae9a1f8754cef6b2d6b634b
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   image_gallery_saver: 259eab68fb271cfd57d599904f7acdc7832e7ef2
@@ -156,7 +156,7 @@ SPEC CHECKSUMS:
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
-  path_provider: d1e9807085df1f9cc9318206cd649dc0b76be3de
+  path_provider_ios: 7d7ce634493af4477d156294792024ec3485acd5
   permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
   qrcode: 703d52352679d9b4284555e9a09c2157062f1989
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
@@ -164,11 +164,11 @@ SPEC CHECKSUMS:
   UMCommon: ab4d875ddefe1b06c60b577e4a58bc4d433ee067
   UMDevice: c13bbb2e8ca6c67d1e23e03162553e3ec5a8b5b0
   umeng_common_sdk: a8abd7f86dfd013dbbeeae587ee143760c6582f2
-  url_launcher: b6e016d912f04be9f5bf6e8e82dc599b7ba59649
+  url_launcher_ios: 02f1989d4e14e998335b02b67a7590fa34f971af
   video_player: ecd305f42e9044793efd34846e1ce64c31ea6fcb
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
-  webview_flutter_wkwebview: 44aa025fbcf6730d808f1e0d86a5af5ac25fa8de
+  webview_flutter_wkwebview: 005fbd90c888a42c5690919a1527ecc6649e1162
 
-PODFILE CHECKSUM: 74b81bb84ecc4213a790ba114c4a51512d90fa91
+PODFILE CHECKSUM: be942533586581a7773d9e8f0bd3d7972ae8081c
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.11.2

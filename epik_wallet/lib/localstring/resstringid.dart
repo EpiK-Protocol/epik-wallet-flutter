@@ -701,5 +701,49 @@ enum RSID {
   rav_6,//授权成功
   rav_7,//授权失败
 
+  //web3
+  Web3Menu_REFRESH,//刷新
+  Web3Menu_CLEARCACHE,//清除缓存
+  Web3Menu_COLLECT,//收藏
+  Web3Menu_GAS,//预设Gas
+  Web3Menu_KEEP_PASSWORD,//保持密码
+  gasrate,//加倍 :
+  w3wv_auth_keep_password,//交易时不用再次输入密码，但每次交易还需要确认才可以进行。是否临时授权当前站点$host可以预设交易密码？
+  w3wv_canceled,//canceled
+  w3wv_authorized,//canceled
+  w3wv_added,
+  w3wv_deteled,
+  w3wv_network,
+
+  //地址列表
+  address_list,//地址列表
+  no_address_available,//暂无可用地址
+  alv_addnew,//添加新地址
+  alv_edit,//添加新地址
+  alv_batch,//批量
+  alv_delete,//删除
+  alv_delete_ask,//删除
+  alv_name,//名称
+  alv_input_name,//请输入名称
+  alv_address,//地址
+  alv_select_currency,//请选择币种 Please select a currency
+  alv_input_address,//请输入正确的钱包地址
+  alv_select_address,//选择地址
+  alv_withdraw_to_self,//不能给自己转账
+
+  //CurrencyBatchWithdrawView
+  cbwv_1,//"总金额","Transfer Amount",
+  cbwv_2,//"输入总金额可以平均给所有地址"
+
+  //HomeMenuMoreView
+  hmmv_1, // 添加
+  hmmv_2, // 批量
+  hmmv_3,// 添加新网站
+  hmmv_4,//编辑
+  hmmv_5,//网址
+  hmmv_6,//请输入已http://或https://开头的网址
+  hmmv_7,//删除
+
+
 
 }

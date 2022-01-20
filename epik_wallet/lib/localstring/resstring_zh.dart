@@ -224,7 +224,7 @@ Map<RSID, String> map_zh = {
   RSID.cwv_4: "转账金额",
   RSID.cwv_5: "全部",
   RSID.cwv_6: "输入金额",
-  RSID.cwv_7: "手续费: %s ETH",
+  RSID.cwv_7: "手续费: %s ",
   RSID.cwv_8: "请填入接收地址",
   RSID.cwv_9: "请输入金额",
   RSID.cwv_10: "转账金额不能是0",
@@ -697,5 +697,48 @@ Map<RSID, String> map_zh = {
   RSID.rav_5:"确认授权",
   RSID.rav_6:"授权成功",
   RSID.rav_7:"授权失败",
+
+  //web3
+  RSID.Web3Menu_REFRESH:"刷新",
+  RSID.Web3Menu_CLEARCACHE:"清除缓存",
+  RSID.Web3Menu_COLLECT:"收藏",
+  RSID.Web3Menu_GAS:"预设Gas",
+  RSID.Web3Menu_KEEP_PASSWORD:"免密交易",
+  RSID.gasrate:"加倍 : ",
+  RSID.w3wv_auth_keep_password:"交易时不用再次输入密码，但每次交易还需要确认才可以进行。是否临时授权当前站点%s可以预设交易密码？",
+  RSID.w3wv_canceled:"已取消",//canceled
+  RSID.w3wv_authorized:"已授权",
+  RSID.w3wv_added:"已添加收藏",
+  RSID.w3wv_deteled:"已取消收藏",
+  RSID.w3wv_network:"网络",
+
+  //地址列表
+  RSID.address_list:"地址列表",//地址列表
+  RSID.no_address_available:"暂无可用地址",
+  RSID.alv_addnew:"添加新地址",
+  RSID.alv_edit:"编辑",
+  RSID.alv_batch:"批量",
+  RSID.alv_delete:"删除",
+  RSID.alv_delete_ask:"是否要删除这个地址?",
+  RSID.alv_name:"名称",
+  RSID.alv_input_name:"请输入名称",
+  RSID.alv_address:"地址",
+  RSID.alv_select_currency:"请选择币种",// Please select a currency
+  RSID.alv_input_address:"请输入正确的钱包地址",//
+  RSID.alv_select_address:"选择地址",//
+  RSID.alv_withdraw_to_self:"不能给自己当前钱包地址转账",
+
+  //CurrencyBatchWithdrawView
+  RSID.cbwv_1:"总金额",//"Transfer Amount",
+  RSID.cbwv_2:"输入总金额会平均到所有地址",
+
+  //HomeMenuMoreView
+  RSID.hmmv_1:"添加",
+  RSID.hmmv_2:"批量",
+  RSID.hmmv_3:"添加新网站",
+  RSID.hmmv_4:"编辑",
+  RSID.hmmv_5:"网址",
+  RSID.hmmv_6:"请输入以http://或https://开头的网址",
+  RSID.hmmv_7:"删除",
 
 };

@@ -95,8 +95,9 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
     List<Widget> views = [];
 
     List<Widget> subviews = [];
-    Widget subgroup =  RepaintBoundary(key: key_card,
-      child:  Container(
+    Widget subgroup = RepaintBoundary(
+      key: key_card,
+      child: Container(
         margin: EdgeInsets.fromLTRB(30, 40, 30, 40),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
@@ -113,7 +114,7 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
     subviews.add(Container(
       padding: EdgeInsets.fromLTRB(0, 21, 0, 19),
       child: Text(
-        ResString.get(context, RSID.cdv_2), //"钱包地址",
+        "${RSID.cdv_2.text} ${widget.currencysymbol.networkTypeNorm}",//ResString.get(context, RSID.cdv_2), //"钱包地址",
         style: TextStyle(
           color: Colors.white,
           fontSize: 17,
@@ -121,36 +122,78 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
       ),
     ));
 
+    double iconsize=(getScreenWidth() - 100 - 140) * 0.2;
+    double iconsize_net=iconsize*0.4;
+
     //二维码
     subviews.add(Container(
       width: double.infinity,
       padding: EdgeInsets.fromLTRB(70, 0, 70, 0),
       child: AspectRatio(
         aspectRatio: 1,
-        child: CachedNetworkImage(
-          imageUrl: url_qrcode,
-          fit: BoxFit.cover,
-          errorWidget: (context, url, error) {
-            return Container(
-              width: double.infinity,
-              height: double.infinity,
-              color: Colors.grey[300],
-            );
-          },
-          placeholder: (context, url) {
-            return Stack(
-              alignment: FractionalOffset(0.5, 0.5),
-              children: <Widget>[
-                SizedBox(
-                  width: 15,
-                  height: 15,
-                  child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation(ResColor.black_10)),
-                )
-              ],
-            );
-          },
+        child: Stack(
+          children: [
+            Positioned(
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+              child: CachedNetworkImage(
+                imageUrl: url_qrcode,
+                fit: BoxFit.cover,
+                errorWidget: (context, url, error) {
+                  return Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: Colors.grey[300],
+                  );
+                },
+                placeholder: (context, url) {
+                  return Stack(
+                    alignment: FractionalOffset(0.5, 0.5),
+                    children: <Widget>[
+                      SizedBox(
+                        width: 15,
+                        height: 15,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, valueColor: AlwaysStoppedAnimation(ResColor.black_10)),
+                      )
+                    ],
+                  );
+                },
+              ),
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Container(
+                width: iconsize,
+                height: iconsize,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: Image.asset(
+                        widget.currencysymbol.iconUrl,
+                      ),
+                    ),
+                    Positioned(
+                      right:0,
+                      bottom: 0,
+                      width: iconsize_net,
+                      height: iconsize_net,
+                      child: Image.asset(
+                        widget.currencysymbol.networkType.iconUrl,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     ));
@@ -240,9 +283,7 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
       padding: EdgeInsets.all(0),
       child: Container(
         constraints: BoxConstraints(
-          minHeight: getScreenHeight() -
-              BaseFuntion.topbarheight -
-              BaseFuntion.appbarheight_def,
+          minHeight: getScreenHeight() - BaseFuntion.topbarheight - BaseFuntion.appbarheight_def,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,12 +306,7 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
             ),
           ),
-          Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              top: getAppBarHeight() + getTopBarHeight(),
-              child: sv),
+          Positioned(left: 0, right: 0, bottom: 0, top: getAppBarHeight() + getTopBarHeight(), child: sv),
         ],
       ),
     );
@@ -284,7 +320,6 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
     bool isWidgetImage = true;
 
     try {
-
       FileInfo fileinfo = await DefaultCacheManager().getFileFromMemory(url_qrcode);
       dlog(fileinfo.file.path);
       if (fileinfo == null || fileinfo.file == null) {
@@ -292,33 +327,27 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
         return;
       }
 
-
       Uint8List data = null;
       if (isWidgetImage) {
-
         //从widget上截图  正式打包才能用  debug无效
 
         // 1. 获取 RenderRepaintBoundary
-        RenderRepaintBoundary boundary =
-            key_card.currentContext.findRenderObject();
+        RenderRepaintBoundary boundary = key_card.currentContext.findRenderObject();
         // 2. 生成 Image
         ui.Image image = await boundary.toImage(pixelRatio: 3);
         // 3. 生成 Uint8List
-        ByteData byteData =
-            await image.toByteData(format: ui.ImageByteFormat.png);
+        ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
         data = byteData.buffer.asUint8List();
-
       } else {
         // 读 二维码 文件
         data = await fileinfo.file.readAsBytes();
       }
 
-       dlog("qrcode image Uint8List size=" + data.length.toString());
+      dlog("qrcode image Uint8List size=" + data.length.toString());
 
       saving = true;
 
-      Permission permission =
-          Platform.isIOS ? Permission.photos : Permission.storage;
+      Permission permission = Platform.isIOS ? Permission.photos : Permission.storage;
       PermissionStatus pstatus = await permission.request();
       if (!pstatus.isGranted) {
         openAppSettings();
@@ -357,7 +386,7 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
         showToast(ResString.get(context, RSID.cdv_7)); //"保存失败");
       saving = false;
       return;
-    } catch (e,s) {
+    } catch (e, s) {
       print("onClickSave error");
       print(e);
       print(s);

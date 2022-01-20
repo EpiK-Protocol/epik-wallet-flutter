@@ -166,7 +166,7 @@ class AccountMgr {
     bool ok = await EpikWalletUtils.initWalletAccount(account);
     if (ok) {
       if (this._currentAccount != null) {
-        this._currentAccount.hdwallet = null;
+        // this._currentAccount.hdwallet = null; //20220110注掉
         this._currentAccount.epikWallet = null;
         DL_TepkLoginToken.destroyIns();
       }

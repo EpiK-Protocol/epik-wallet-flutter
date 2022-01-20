@@ -1,6 +1,6 @@
 import 'package:epikwallet/utils/string_utils.dart';
 
-class TepkOrder {
+class EpkOrder {
 
 
 
@@ -33,7 +33,7 @@ class TepkOrder {
   int exitCode=null;
   double gas_Used = 0;
 
-  TepkOrder.fromJsonTepk(Map<String, dynamic> jsonobj) {
+  EpkOrder.fromJsonTepk(Map<String, dynamic> jsonobj) {
     // parseTestNet(jsonobj);
     parseMainNet(jsonobj);
   }

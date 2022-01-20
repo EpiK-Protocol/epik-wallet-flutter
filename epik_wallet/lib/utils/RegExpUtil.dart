@@ -16,6 +16,9 @@ class RegExpUtil {
   //字符串开头的0
   static RegExp re_start_zero = RegExp(r"^(0+)(?<=.+)");
 
+  //epik地址规范
+  static RegExp re_epik_address = RegExp(r"^f[a-zA-Z0-9]+$");
+
 
 
 }

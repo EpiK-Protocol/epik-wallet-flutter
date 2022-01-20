@@ -17,6 +17,7 @@ import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
+import 'package:epikwallet/views/address/AddressListView.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:epikwallet/widget/text/TextEllipsisMiddle.dart';
@@ -73,14 +74,12 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
 //      AccountMenu(Icons.security, "导出tEPK私钥", MenuType.PRIVATEKEY),
 //    ];
     menudata = [
-      AccountMenu(Icons.lock_outline, ResString.get(context, RSID.adv_1),
-          MenuType.FIXPASSWORD),
-      AccountMenu(Icons.security, ResString.get(context, RSID.eepkv_1),
-          MenuType.PRIVATEKEY_EPIK),
-      AccountMenu(Icons.security, ResString.get(context, RSID.eepkv_6),
-          MenuType.PRIVATEKEY_ETH),
+      AccountMenu(Icons.lock_outline, ResString.get(context, RSID.adv_1), MenuType.FIXPASSWORD),
+      AccountMenu(Icons.security, ResString.get(context, RSID.eepkv_1), MenuType.PRIVATEKEY_EPIK),
+      AccountMenu(Icons.security, ResString.get(context, RSID.eepkv_6), MenuType.PRIVATEKEY_ETH),
       // AccountMenu(Icons.qr_code_scanner_outlined,
       //     ResString.get(context, RSID.eepkv_7), MenuType.REMOTE_AUTH),
+      AccountMenu(Icons.location_pin, ResString.get(context, RSID.address_list), MenuType.ADDRESS),
     ];
   }
 
@@ -123,8 +122,7 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
               height: header_top + 128 + 20,
               decoration: BoxDecoration(
                 gradient: gradient_header,
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(20)),
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
               ),
               child: Stack(
                 children: <Widget>[
@@ -184,15 +182,17 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
                       Container(height: 10),
                       InkWell(
                         onTap: () {
-                          if(StringUtils.isNotEmpty(widget?.walletaccount?.mining_id))
-                          {
+                          if (StringUtils.isNotEmpty(widget?.walletaccount?.mining_id)) {
                             clickCopyID(widget.walletaccount);
                           }
                         },
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Container(width: 30,height: 35,),
+                            Container(
+                              width: 30,
+                              height: 35,
+                            ),
                             Text(
                               "ID: ",
                               // maxLines: 3,
@@ -231,7 +231,8 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Container(width: 30,
+                            Container(
+                              width: 30,
                               height: 35,
                             ),
                             Text(
@@ -273,7 +274,10 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Container(width: 30,height: 35,),
+                            Container(
+                              width: 30,
+                              height: 35,
+                            ),
                             Text(
                               "EpiK: ",
                               // maxLines: 3,
@@ -305,7 +309,6 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
                           ],
                         ),
                       ),
-
                     ],
                   ),
                 ],
@@ -355,8 +358,7 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
                                     ),
                                     Container(
                                       height: double.infinity,
-                                      padding:
-                                          EdgeInsets.fromLTRB(15, 0, 25, 0),
+                                      padding: EdgeInsets.fromLTRB(15, 0, 25, 0),
                                       child: Image.asset(
                                         "assets/img/ic_arrow_right_1.png",
                                         width: 7,
@@ -386,39 +388,6 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
                 ),
               ),
             ),
-            // Material(
-            //   color: Colors.transparent,
-            //   child: InkWell(
-            //     onTap: () {
-            //       clickDel();
-            //     },
-            //     child: Container(
-            //       height: 60,
-            //       child: Row(
-            //         children: <Widget>[
-            //           Container(
-            //             margin: EdgeInsets.only(left: 5),
-            //             width: 40,
-            //             height: double.infinity,
-            //             child: Icon(
-            //               OMIcons.delete,
-            //               size: 16,
-            //               color: color_icon,
-            //             ),
-            //           ),
-            //           Text(
-            //             ResString.get(context, RSID.adv_2), //"删除钱包",
-            //             style: TextStyle(
-            //               fontSize: 15,
-            //               color: Colors.black,
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // ),
-
             SafeArea(
               child: LoadingButton(
                 margin: EdgeInsets.fromLTRB(30, 40, 30, 0),
@@ -530,8 +499,7 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
             widget.walletaccount.password,
             (password) {
               //点击确定回调
-              ViewGT.showExportEpikPrivateKeyView(
-                  context, widget.walletaccount);
+              ViewGT.showExportEpikPrivateKeyView(context, widget.walletaccount);
             },
           );
         }
@@ -559,46 +527,43 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
               return;
             }
 
-            if(RemoteAuth.code_version < ra.v )
-            {
+            if (RemoteAuth.code_version < ra.v) {
               showToast(RSID.qsv_3.text);
               return;
             }
 
-
-            if(ra.isSign)
-            {
+            if (ra.isSign) {
               //单纯远程签名 回调授权
-              BottomDialog.showPassWordInputDialog(
-                  context, widget.walletaccount.password, (value) async {
+              BottomDialog.showPassWordInputDialog(context, widget.walletaccount.password, (value) async {
                 showLoadDialog("");
                 ApiWallet.sendRemoteAuth(ra).then((hjr) {
                   closeLoadDialog();
-                  if(hjr.code!=0)
-                  {
+                  if (hjr.code != 0) {
                     showToast(hjr.msg);
                   }
                 });
               });
-            }else if(ra.isDeal)
-            {
+            } else if (ra.isDeal) {
               // 交易签名  如扫码支付
-              BottomDialog.showRemoteAuthMessageDialog(context,  widget.walletaccount, ra, (value)async {
-
+              BottomDialog.showRemoteAuthMessageDialog(context, widget.walletaccount, ra, (value) async {
                 showLoadDialog("");
 
                 String message = jsonEncode(ra.m);
-                ResultObj<String> robj = await widget.walletaccount.epikWallet.signAndSendMessage(widget.walletaccount.epik_EPK_address, message);
+                ResultObj<String> robj = await widget.walletaccount.epikWallet
+                    .signAndSendMessage(widget.walletaccount.epik_EPK_address, message);
 
                 closeLoadDialog();
 
-                if(robj?.isSuccess == true){
+                if (robj?.isSuccess == true) {
                   String cid = robj.data;
                   MessageDialog.showMsgDialog(
                     context,
-                    title: RSID.dlg_bd_5.text,//"发送交易",
-                    msg: "${RSID.minerview_18.text}\n$cid",//交易已提交
-                    btnLeft: RSID.minerview_19.text,//"查看交易",
+                    title: RSID.dlg_bd_5.text,
+                    //"发送交易",
+                    msg: "${RSID.minerview_18.text}\n$cid",
+                    //交易已提交
+                    btnLeft: RSID.minerview_19.text,
+                    //"查看交易",
                     btnRight: RSID.isee.text,
                     onClickBtnLeft: (dialog) {
                       dialog.dismiss();
@@ -617,6 +582,12 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
           });
         }
         break;
+
+      case MenuType.ADDRESS:{
+        //地址列表
+        ViewGT.showView(context, AddressListView());
+      }
+      break;
     }
   }
 }
@@ -633,6 +604,9 @@ enum MenuType {
 
   ///远程授权
   REMOTE_AUTH,
+
+  //地址列表
+  ADDRESS,
 }
 
 class AccountMenu {

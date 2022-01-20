@@ -6,7 +6,7 @@ import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
-import 'package:epikwallet/logic/account_mgr.dart';
+import 'package:epikwallet/logic/LocalAddressMgr.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/currencytype.dart';
@@ -49,6 +49,8 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
   void initStateConfig() {
 //    setAppBarTitle("${widget.currencyAsset.cs.symbol}转账");
 
+    EpikWalletUtils.getHdTransferGas(widget.currencyAsset.cs);
+
     isTopBarShow = false; //状态栏是否显示
     isAppBarShow = false; //导航栏是否显示
     isTopFloatWidgetShow = true;
@@ -79,19 +81,20 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    setAppBarTitle(
-        widget.currencyAsset.cs.symbol + ResString.get(context, RSID.withdraw));
+    setAppBarTitle(widget.currencyAsset.cs.symbol + ResString.get(context, RSID.withdraw));
   }
 
   @override
   void onCreate() {
     super.onCreate();
     eventMgr.add(EventTag.SCAN_QRCODE_RESULT, eventcallback_qrcode);
+    eventMgr.add(EventTag.UPLOAD_SUGGESTGAS, eventcallback_gas);
   }
 
   @override
   void dispose() {
     eventMgr.remove(EventTag.SCAN_QRCODE_RESULT, eventcallback_qrcode);
+    eventMgr.remove(EventTag.UPLOAD_SUGGESTGAS, eventcallback_gas);
     super.dispose();
   }
 
@@ -103,6 +106,10 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
         _controllerToAddress = null;
       });
     }
+  }
+
+  eventcallback_gas(arg) {
+    setState(() {});
   }
 
   Color bgcolor = ResColor.main.withOpacity(0.1);
@@ -137,8 +144,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
       ),
     );
 
-    if (_controllerToAddress == null)
-      _controllerToAddress = new TextEditingController(text: to_address);
+    if (_controllerToAddress == null) _controllerToAddress = new TextEditingController(text: to_address);
     views.add(
       Container(
         width: double.infinity,
@@ -168,9 +174,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
                       //是否允许输入的字符长度超过限定的字符长度
                       obscureText: false,
                       //是否是密码
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExpUtil.re_noChs)
-                      ],
+                      inputFormatters: [FilteringTextInputFormatter.allow(RegExpUtil.re_noChs)],
                       // 这里限制长度 不会有数量提示
                       decoration: InputDecoration(
                         // 以下属性可用来去除TextField的边框
@@ -206,8 +210,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
 //                             TextStyle(color: ResColor.white_50, fontSize: 14),
                         labelText: RSID.cwv_2.text,
                         //"接收地址",
-                        labelStyle:
-                            TextStyle(color: ResColor.white, fontSize: 17),
+                        labelStyle: TextStyle(color: ResColor.white, fontSize: 17),
                       ),
                       cursorWidth: 2.0,
                       //光标宽度
@@ -259,6 +262,21 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
                 child: Image.asset("assets/img/ic_scan_2.png"),
               ),
             ),
+            InkWell(
+              onTap: () {
+                onClickAddress();
+              },
+              child: Container(
+                width: 26,
+                height: 62,
+                padding: EdgeInsets.all(1),
+                child: Icon(
+                  Icons.location_pin,
+                  size: 24,
+                  color: Color(0xffb1b2b3),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -270,8 +288,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
       margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
     ));
 
-    if (_controllerAmount == null)
-      _controllerAmount = new TextEditingController(text: amount);
+    if (_controllerAmount == null) _controllerAmount = new TextEditingController(text: amount);
 
     views.add(
       Container(
@@ -301,9 +318,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
                       //是否允许输入的字符长度超过限定的字符长度
                       obscureText: false,
                       //是否是密码
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExpUtil.re_float)
-                      ],
+                      inputFormatters: [FilteringTextInputFormatter.allow(RegExpUtil.re_float)],
                       // 这里限制长度 不会有数量提示
                       decoration: InputDecoration(
                         // 以下属性可用来去除TextField的边框
@@ -338,8 +353,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
 //                         hintStyle:
 //                             TextStyle(color: ResColor.white_50, fontSize: 14),
                         labelText: RSID.cwv_4.text,
-                        labelStyle:
-                            TextStyle(color: ResColor.white, fontSize: 17),
+                        labelStyle: TextStyle(color: ResColor.white, fontSize: 17),
                       ),
                       cursorWidth: 2.0,
                       //光标宽度
@@ -404,26 +418,22 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
                   //eth转账 gas就是eth 所以全部金额 要减掉gas
                   try {
                     double _a = StringUtils.parseDouble(amount, 0);
-                    double _gas = widget?.walletaccount?.eth_suggestGas_d??0;
+                    // double _gas = widget?.walletaccount?.eth_suggestGas_d ?? 0;
+                    double _gas = EpikWalletUtils.hdgasMap[widget.currencyAsset.cs]?.gas_d ?? 0;
                     _a -= _gas;
                     if (_a < 0) _a = 0;
-                    amount = StringUtils.formatNumAmount(_a,
-                            point: 18, supply0: false)
-                        .replaceAll(",", "");
+                    amount = StringUtils.formatNumAmount(_a, point: 18, supply0: false).replaceAll(",", "");
                     // print("$amount");
                   } catch (e) {
                     print(e);
                   }
-                }else if(widget.currencyAsset.cs == CurrencySymbol.EPK)
-                {
+                } else if (widget.currencyAsset.cs == CurrencySymbol.EPK) {
                   try {
                     double _a = StringUtils.parseDouble(amount, 0);
-                    double _gas = widget?.walletaccount?.epik_gas_transfer??0;
+                    double _gas = widget?.walletaccount?.epik_gas_transfer ?? 0;
                     _a -= _gas;
                     if (_a < 0) _a = 0;
-                    amount = StringUtils.formatNumAmount(_a,
-                        point: 18, supply0: false)
-                        .replaceAll(",", "");
+                    amount = StringUtils.formatNumAmount(_a, point: 18, supply0: false).replaceAll(",", "");
                     // print("$amount");
                   } catch (e) {
                     print(e);
@@ -452,9 +462,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
         child: Text(
           RSID.usev_4.text +
               " " +
-              (StringUtils.isNotEmpty(widget.currencyAsset.balance)
-                  ? widget.currencyAsset.balance
-                  : "--") +
+              (StringUtils.isNotEmpty(widget.currencyAsset.balance) ? widget.currencyAsset.balance : "--") +
               " " +
               widget.currencyAsset.symbol,
           textAlign: TextAlign.end,
@@ -466,13 +474,13 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
       ),
     );
 
-    if (widget.currencyAsset.networkType == CurrencySymbol.EPK){
+    if (widget.currencyAsset.networkType == CurrencySymbol.EPK) {
       views.add(
         Container(
           width: double.infinity,
           margin: EdgeInsets.fromLTRB(20, 5, 20, 0),
           child: Text(
-              RSID.cwv_13.text +widget.walletaccount.epik_gas_transfer_format+"EPK",
+            RSID.cwv_13.text + widget.walletaccount.epik_gas_transfer_format + "EPK",
             textAlign: TextAlign.end,
             style: TextStyle(
               color: ResColor.white_40,
@@ -481,14 +489,15 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
           ),
         ),
       );
-    }else if (widget.currencyAsset.networkType == CurrencySymbol.ETH) {
+    } else if (widget.currencyAsset.networkType == CurrencySymbol.ETH|| widget.currencyAsset.networkType == CurrencySymbol.BNB) {
+      String gas = EpikWalletUtils.hdgasMap[widget.currencyAsset.cs]?.gas ?? "--";
+      String symbol = widget.currencyAsset.networkType.symbol;
       views.add(
         Container(
           width: double.infinity,
           margin: EdgeInsets.fromLTRB(20, 5, 20, 0),
           child: Text(
-            ResString.get(context, RSID.cwv_7,
-                replace: [widget.walletaccount.eth_suggestGas]),
+            ResString.get(context, RSID.cwv_7, replace: [gas])+symbol,
             //"手续费 : ${widget.walletaccount.eth_suggestGas} eth",
             textAlign: TextAlign.end,
             style: TextStyle(
@@ -507,7 +516,8 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
         color_bg: Colors.transparent,
         disabledColor: Colors.transparent,
         height: 40,
-        text: RSID.confirm.text, //"确定",
+        text: RSID.confirm.text,
+        //"确定",
         textstyle: TextStyle(
           color: Colors.white,
           fontSize: 14,
@@ -562,9 +572,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
       padding: EdgeInsets.all(0),
       child: Container(
         constraints: BoxConstraints(
-          minHeight: getScreenHeight() -
-              BaseFuntion.topbarheight -
-              BaseFuntion.appbarheight_def,
+          minHeight: getScreenHeight() - BaseFuntion.topbarheight - BaseFuntion.appbarheight_def,
         ),
         child: Column(
           children: [subgroup],
@@ -585,12 +593,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
             ),
           ),
-          Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              top: getAppBarHeight() + getTopBarHeight(),
-              child: sv),
+          Positioned(left: 0, right: 0, bottom: 0, top: getAppBarHeight() + getTopBarHeight(), child: sv),
         ],
       ),
     );
@@ -598,6 +601,19 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
 
   onClickScan() {
     ViewGT.showQrcodeScanView(context);
+  }
+
+  //todo selete address
+  onClickAddress() {
+    String symbol = widget.currencyAsset.cs.codename;
+    List<LocalAddressObj> data = localaddressmgr?.datamap[symbol];
+    if (data == null || data.length <= 0) {
+      showToast(RSID.no_address_available.text);
+      return;
+    }
+    BottomDialog.showAddressSeleteDialog(context, data, (LocalAddressObj lao) {
+      eventMgr.send(EventTag.SCAN_QRCODE_RESULT, lao.address.trim());
+    });
   }
 
   bool checkParams() {
@@ -625,38 +641,35 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
       return false;
     }
 
-    if(widget.currencyAsset.networkType == CurrencySymbol.EPK)
-    {
+    if (widget.currencyAsset.networkType == CurrencySymbol.EPK) {
       // EPK
-      if(widget.currencyAsset.getBalanceDouble() < widget.walletaccount.epik_gas_transfer + amount_d)
-      {
-        showToast(RSID.cwv_14.text);//余额不足
+      if (widget.currencyAsset.getBalanceDouble() < widget.walletaccount.epik_gas_transfer + amount_d) {
+        showToast(RSID.cwv_14.text); //余额不足
         return false;
       }
-    }else if(widget.currencyAsset.networkType == CurrencySymbol.ETH){
+    } else if (widget.currencyAsset.networkType == CurrencySymbol.ETH) {
       //ETH
-      if(widget.currencyAsset.cs == CurrencySymbol.ETH)
-      {
-        if(widget.currencyAsset.getBalanceDouble() < widget.walletaccount.eth_suggestGas_d + amount_d)
-        {
-          showToast(RSID.cwv_14.text);//余额不足
+      if (widget.currencyAsset.cs == CurrencySymbol.ETH) {
+        double _gas = EpikWalletUtils.hdgasMap[widget.currencyAsset.cs]?.gas_d ?? 0;
+        if (widget.currencyAsset.getBalanceDouble() < _gas + amount_d) {
+          showToast(RSID.cwv_14.text); //余额不足
           return false;
         }
-      }else{
+      } else {
         // USDT EPK-ERC20等 eth上的token
-        if(widget.currencyAsset.getBalanceDouble() < amount_d)
-        {
-          showToast(RSID.cwv_14.text);//余额不足
+        if (widget.currencyAsset.getBalanceDouble() < amount_d) {
+          showToast(RSID.cwv_14.text); //余额不足
           return false;
         }
       }
     }
 
-
     return true;
   }
 
   onClickWithdraw() {
+    print("widget.currencyAsset.cs.isToken=${widget.currencyAsset.cs.isToken}");
+
     if (!checkParams()) return;
 
     BottomDialog.showPassWordInputDialog(
@@ -682,8 +695,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
   }
 
   doWithdraw_epik() async {
-    ResultObj result =
-        await widget.walletaccount.epikWallet.send(to_address, amount);
+    ResultObj result = await widget.walletaccount.epikWallet.send(to_address, amount);
     closeLoadDialog();
 
     if (result?.isSuccess != true) {
@@ -742,14 +754,9 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
   }
 
   doWithdraw_hd() async {
-    ResultObj<String> result = null;
-    if (widget.currencyAsset.cs == CurrencySymbol.ETH) {
-      result = await widget.walletaccount.hdwallet
-          .transfer(from_address, to_address, amount);
-    } else {
-      result = await widget.walletaccount.hdwallet.transferToken(from_address,
-          to_address, widget.currencyAsset.cs.symbolToNetWork, amount);
-    }
+    ResultObj<String> result =
+        await EpikWalletUtils.hdTransfer(widget.walletaccount, widget.currencyAsset.cs, to_address, amount);
+
     closeLoadDialog();
 
     if (!result.isSuccess) {
@@ -772,7 +779,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
     }
 
     dlog("doWithdraw_hd result=${result?.data}");
-    String txhash=result?.data;
+    String txhash = result?.data;
 
     MessageDialog.showMsgDialog(
       context,

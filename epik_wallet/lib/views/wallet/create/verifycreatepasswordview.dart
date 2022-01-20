@@ -1,6 +1,7 @@
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/model/CreateAccountModel.dart';
@@ -13,7 +14,6 @@ import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 class VerifyCreatePasswordView extends BaseWidget {
@@ -27,8 +27,7 @@ class VerifyCreatePasswordView extends BaseWidget {
   }
 }
 
-class _VerifyCreatePasswordViewState
-    extends BaseWidgetState<VerifyCreatePasswordView> {
+class _VerifyCreatePasswordViewState extends BaseWidgetState<VerifyCreatePasswordView> {
   String keyword = "";
   TextEditingController _controllerKeyword;
 
@@ -55,8 +54,7 @@ class _VerifyCreatePasswordViewState
       _controllerKeyword = new TextEditingController.fromValue(TextEditingValue(
         text: keyword,
         selection: new TextSelection.fromPosition(
-          TextPosition(
-              affinity: TextAffinity.downstream, offset: keyword.length),
+          TextPosition(affinity: TextAffinity.downstream, offset: keyword.length),
         ),
       ));
 
@@ -64,9 +62,7 @@ class _VerifyCreatePasswordViewState
       physics: AlwaysScrollableScrollPhysics(),
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          minHeight: getScreenHeight() -
-              BaseFuntion.topbarheight -
-              BaseFuntion.appbarheight_def,
+          minHeight: getScreenHeight() - BaseFuntion.topbarheight - BaseFuntion.appbarheight_def,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,7 +75,7 @@ class _VerifyCreatePasswordViewState
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 17,
-                  fontWeight:FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -88,7 +84,7 @@ class _VerifyCreatePasswordViewState
               child: Text(
                 ResString.get(context, RSID.vcpv_2), //"为了安全起见，请再次输入钱包密码。",
                 style: TextStyle(
-                  color: Colors.white,//Colors.redAccent,
+                  color: Colors.white, //Colors.redAccent,
                   fontSize: 14,
                 ),
               ),
@@ -129,11 +125,12 @@ class _VerifyCreatePasswordViewState
               color_bg: Colors.transparent,
               disabledColor: Colors.transparent,
               height: 40,
-              text: RSID.next_step.text,// "下一步",
+              text: RSID.next_step.text,
+              // "下一步",
               textstyle: TextStyle(
                 color: Colors.white,
                 fontSize: 14,
-                fontWeight:FontWeight.bold,
+                fontWeight: FontWeight.bold,
               ),
               bg_borderradius: BorderRadius.circular(4),
               onclick: (lbtn) {
@@ -142,8 +139,7 @@ class _VerifyCreatePasswordViewState
             ),
             InkWell(
               onTap: () {
-                ViewGT.showView(context, CreateWalletView(),
-                    model: ViewPushModel.PushReplacement);
+                ViewGT.showView(context, CreateWalletView(), model: ViewPushModel.PushReplacement);
               },
               child: Container(
                 margin: EdgeInsets.fromLTRB(0, 40, 0, 10),
@@ -164,108 +160,16 @@ class _VerifyCreatePasswordViewState
     );
   }
 
-//   Widget getInputWidget(
-//       String keyword,
-//       String hind,
-//       TextEditingController controller,
-//       ValueChanged<String> onChanged,
-//       VoidCallback onClean) {
-//     return Container(
-//       width: double.infinity,
-//       height: 44,
-//       margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-//       decoration: BoxDecoration(
-//         color: Color(0xff393E45),
-//         borderRadius: BorderRadius.circular(22),
-//       ),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.start,
-//         crossAxisAlignment: CrossAxisAlignment.center,
-//         children: <Widget>[
-//           Container(width: 5),
-//           Container(
-//             width: 44,
-//             height: 44,
-//             child: Icon(
-//               Icons.lock_outline,
-//               size: 20,
-//               color: Colors.white,
-//             ),
-//           ),
-//           Expanded(
-//             flex: 1,
-//             child: TextField(
-//               controller: controller,
-//               keyboardType: TextInputType.text,
-//               //获取焦点时,启用的键盘类型
-//               maxLines: 1,
-//               // 输入框最大的显示行数
-// //              maxLength: 20, //允许输入的字符长度/ 右下角有数量提示
-//               maxLengthEnforced: true,
-//               //是否允许输入的字符长度超过限定的字符长度
-//               obscureText: true,
-//               //是否是密码
-//               inputFormatters: [
-//                 LengthLimitingTextInputFormatter(20),
-//               ],
-//               //WhitelistingTextInputFormatter(RegExpUtil.re_azAZ09)
-//               // 这里限制长度 不会有数量提示
-//               decoration: InputDecoration(
-//                 // 以下属性可用来去除TextField的边框
-//                 border: InputBorder.none,
-//                 errorBorder: InputBorder.none,
-//                 focusedErrorBorder: InputBorder.none,
-//                 disabledBorder: InputBorder.none,
-//                 enabledBorder: InputBorder.none,
-//                 focusedBorder: InputBorder.none,
-//                 contentPadding: EdgeInsets.fromLTRB(0, -3, 0, 0),
-// //                      contentPadding: EdgeInsets.symmetric(vertical: 8.5),
-//                 hintText: hind,
-//                 hintStyle: TextStyle(color: ResColor.white_80, fontSize: 16),
-//               ),
-//               cursorWidth: 2.0,
-//               //光标宽度
-//               cursorRadius: Radius.circular(2),
-//               //光标圆角弧度
-//               cursorColor: Colors.white,
-//               //光标颜色
-//               style: TextStyle(fontSize: 16, color: Colors.white),
-//               onChanged: onChanged,
-//               onSubmitted: (value) {
-//                 // 当用户确定已经完成编辑时触发
-//               }, // 是否隐藏输入的内容
-//             ),
-//           ),
-//           (StringUtils.isEmpty(keyword))
-//               ? Container()
-//               : SizedBox(
-//                   width: 30,
-//                   height: 40,
-//                   child: IconButton(
-//                     onPressed: () {
-//                       onClean();
-//                     },
-//                     padding: EdgeInsets.all(0),
-//                     icon: Icon(Icons.clear),
-//                     color: Colors.white,
-//                     iconSize: 14,
-//                   ),
-//                 ),
-//           Container(width: 5),
-//         ],
-//       ),
-//     );
-//   }
 
   Widget getInputWidget(
-      String keyword,
-      String label,
-      String hind,
-      TextEditingController controller,
-      ValueChanged<String> onChanged,
-      VoidCallback onClean, {
-        bool isPassword = true,
-      }) {
+    String keyword,
+    String label,
+    String hind,
+    TextEditingController controller,
+    ValueChanged<String> onChanged,
+    VoidCallback onClean, {
+    bool isPassword = true,
+  }) {
     return Container(
       width: double.infinity,
       height: 77,
@@ -308,14 +212,14 @@ class _VerifyCreatePasswordViewState
                       focusedErrorBorder: InputBorder.none,
                       disabledBorder: InputBorder.none,
                       enabledBorder: const UnderlineInputBorder(
-                        borderRadius:BorderRadius.zero,
+                        borderRadius: BorderRadius.zero,
                         borderSide: BorderSide(
                           color: ResColor.white_20,
                           width: 1,
                         ),
                       ),
-                      focusedBorder:const UnderlineInputBorder(
-                        borderRadius:BorderRadius.zero,
+                      focusedBorder: const UnderlineInputBorder(
+                        borderRadius: BorderRadius.zero,
                         borderSide: BorderSide(
                           color: ResColor.white,
                           width: 1,
@@ -343,26 +247,26 @@ class _VerifyCreatePasswordViewState
                   ),
                 ),
               ],
-            ),),
+            ),
+          ),
           Positioned(
             bottom: 0,
             right: 0,
-            child:
-            (StringUtils.isEmpty(keyword))
+            child: (StringUtils.isEmpty(keyword))
                 ? Container()
                 : SizedBox(
-              width: 40,
-              height: 62,
-              child: IconButton(
-                onPressed: () {
-                  onClean();
-                },
-                padding: EdgeInsets.all(0),
-                icon: Icon(Icons.clear_rounded),
-                color: Colors.white,
-                iconSize: 14,
-              ),
-            ),
+                    width: 40,
+                    height: 62,
+                    child: IconButton(
+                      onPressed: () {
+                        onClean();
+                      },
+                      padding: EdgeInsets.all(0),
+                      icon: Icon(Icons.clear_rounded),
+                      color: Colors.white,
+                      iconSize: 14,
+                    ),
+                  ),
           ),
         ],
       ),
@@ -395,18 +299,6 @@ class _VerifyCreatePasswordViewState
     if (loadingDialogIsShow) return;
 
     showLoadDialog("", touchOutClose: false, backClose: false, onShow: () {
-      // 创建钱包
-//      WalletUtils.createFromMnemonic(
-//              widget._CreateAccountModel.mnemonic_string, Bip32Path.filecoin)
-//          .then((HDWallet hdwallet) async {
-//        LocalKeyStore lks = LocalKeyStore();
-//        lks.account = widget._CreateAccountModel.accountname;
-//        lks.password = widget._CreateAccountModel.password;
-//        lks.mHDWallet = hdwallet;
-//        // await AccountMgr().load();
-//        AccountMgr().addAccount(lks);
-//        closeLoadDialog();
-//      });
 
       WalletAccount walletaccount = WalletAccount();
       walletaccount.account = widget._CreateAccountModel.accountname;

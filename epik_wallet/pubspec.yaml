@@ -11,7 +11,7 @@ description: EpiK Portal
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.2.2+122
+version: 1.2.4+124
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -213,10 +213,19 @@ dependencies:
   #web3
   web3dart: ^2.3.3
 
+  #锁
+  synchronized: ^3.0.0
+
+  # 中文转拼音----------------------
+  lpinyin: ^1.1.0
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  # flutter packages pub run build_runner build  把lib下的.abi.json 生成代码
+  build_runner: ^2.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -243,6 +252,7 @@ flutter:
     - assets/img/ic_eth.png
     - assets/img/ic_usdt.png
     - assets/img/ic_epk.png
+    - assets/img/ic_bnb.png
     - assets/img/ic_scan.png
     - assets/img/ic_qrcode_scan.png
     - assets/img/ic_telgram.png
@@ -279,6 +289,9 @@ flutter:
     - assets/img/ic_airdrop.png
     - assets/img/ic_uniswap.png
     - assets/img/ic_dapp.png
+    - assets/img/ic_close.png
+    - assets/img/ic_more_1.png
+    - assets/js/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

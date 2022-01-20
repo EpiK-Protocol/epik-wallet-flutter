@@ -16,7 +16,6 @@ import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/screen/screen_util.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
-import 'package:epikwallet/views/MinerView.dart';
 import 'package:epikwallet/views/ExpertView.dart';
 import 'package:epikwallet/views/MinerView2.dart';
 import 'package:epikwallet/views/bountyview.dart';
@@ -62,18 +61,16 @@ class _MainViewState extends BaseWidgetState<MainView> {
   void initState() {
     isTopBarShow = false; //状态栏是否显示
     isAppBarShow = false; //导航栏是否显示
-    viewSystemUiOverlayStyle= DeviceUtils.system_bar_main;
+    viewSystemUiOverlayStyle = DeviceUtils.system_bar_main;
 
-    resizeToAvoidBottomPadding=true;
+    resizeToAvoidBottomPadding = true;
 
     navigationColor = ResColor.b_2;
     super.initState();
 
     Future.delayed(Duration(milliseconds: 200)).then((value) {
       // 恢复顶部状态栏和底部按钮栏
-      SystemChrome.setEnabledSystemUIOverlays(
-          [SystemUiOverlay.top, SystemUiOverlay.bottom]);
-
+      SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top, SystemUiOverlay.bottom]);
     });
 
     main_subviewTypes = [
@@ -89,7 +86,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
 
     keyList = <GlobalKey<BaseInnerWidgetState>>[];
 
-    subViews = <Widget>[];//<BaseInnerWidget>[];
+    subViews = <Widget>[]; //<BaseInnerWidget>[];
 
     main_subviewTypes.forEach((subtype) {
       final GlobalKey<BaseInnerWidgetState> key = GlobalKey();
@@ -128,39 +125,39 @@ class _MainViewState extends BaseWidgetState<MainView> {
       key: key_scaffold,
       resizeToAvoidBottomInset: resizeToAvoidBottomPadding,
       backgroundColor: Colors.transparent,
-      // body: IndexedStack(
-      //   index: currentIndex,
-      //   children: subViews,
+      // body: Column(
+      //   children: [
+      //     Expanded(
+      //       child: IndexedStack(
+      //         index: currentIndex,
+      //         children: subViews,
+      //       ),
+      //     ),
+      //     getDarkBottomNavigationBar(),
+      //   ],
       // ),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   backgroundColor: Colors.white,
-      //   items: getBottomNavigationBarItems(),
-      //   currentIndex: currentIndex,
-      //   selectedItemColor: ResColor.main,
-      //   //Color(0xff000000),
-      //   unselectedItemColor: ResColor.main_2,
-      //   onTap: _onItemTapped,
-      //   type: BottomNavigationBarType.fixed,
-      //   selectedFontSize: 11,
-      //   unselectedFontSize: 11,
-      //   iconSize: 21,
-      // ),
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
+          Positioned(
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 40,
             child: IndexedStack(
               index: currentIndex,
               children: subViews,
             ),
           ),
-          getDarkBottomNavigationBar(),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: getDarkBottomNavigationBar(),
+          ),
         ],
       ),
       endDrawer: Drawer(
-        child:
-        rightDrawerType==0?
-        WalletMenu():
-        MinerMenu(),
+        child: rightDrawerType == 0 ? WalletMenu() : MinerMenu(),
       ),
       endDrawerEnableOpenDragGesture: false,
     );
@@ -170,8 +167,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
       onWillPop: () async {
         if (closeRightDrawer()) return new Future.value(false);
 
-        if (lastPopTime == null ||
-            DateTime.now().difference(lastPopTime) > Duration(seconds: 1)) {
+        if (lastPopTime == null || DateTime.now().difference(lastPopTime) > Duration(seconds: 1)) {
           //两次点击间隔超过1秒则重新计时
           lastPopTime = DateTime.now();
 //          ToastUtils.showToast("再按一次退出");
@@ -241,6 +237,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
       decoration: BoxDecoration(
         color: ResColor.b_2,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        boxShadow: [ResColor.shadow_main_bar],
       ),
       child: SafeArea(
         bottom: true,
@@ -261,8 +258,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
   List<Widget> getDarkBottomNavigationBarItems() {
     // 导航按钮
 
-    Widget buildItem(
-        {MainSubViewType type, String img_n, String img_s, String label}) {
+    Widget buildItem({MainSubViewType type, String img_n, String img_s, String label}) {
       int index = main_subviewTypes.indexOf(type);
       bool seleted = currentIndex == index;
       return InkWell(
@@ -281,7 +277,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
                   margin: EdgeInsets.only(top: 2),
                   width: 44,
                   height: 44,
-                  decoration:  BoxDecoration(
+                  decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [
                         Color(0xff333333),
@@ -330,9 +326,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
           ],
         ),
       );
-    }
-
-    ;
+    };
 
     List<Widget> ret = [];
 
@@ -378,7 +372,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
       }
       ret.add(Expanded(
           child: buildItem(
-            type: subtype,
+        type: subtype,
         img_n: img_n,
         img_s: img_s,
         label: label,
@@ -408,7 +402,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
     dlog("onCreate");
     eventMgr.add(EventTag.CHANGE_MAINVIEW_INDEX, eventCallback);
     eventMgr.add(EventTag.MAIN_RIGHT_DRAWER, eventCallback_rightdrawer);
-    eventMgr.add(EventTag.MAIN_RIGHT_DRAWER_MINER,eventCallback_rightdrawer_miner);
+    eventMgr.add(EventTag.MAIN_RIGHT_DRAWER_MINER, eventCallback_rightdrawer_miner);
 
     checkUpgrade();
   }
@@ -426,7 +420,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
 
   eventCallback_rightdrawer(obj) {
     if (obj == true) {
-      rightDrawerType=0;
+      rightDrawerType = 0;
       setState(() {
         openRightDrawer();
       });
@@ -434,9 +428,10 @@ class _MainViewState extends BaseWidgetState<MainView> {
       closeRightDrawer();
     }
   }
+
   eventCallback_rightdrawer_miner(obj) {
     if (obj == true) {
-      rightDrawerType=1;
+      rightDrawerType = 1;
       setState(() {
         openRightDrawer();
       });
@@ -462,15 +457,12 @@ class _MainViewState extends BaseWidgetState<MainView> {
     //     index = 1;
     //   }
     // }
-    if (AccountMgr().currentAccount == null)
-    {
+    if (AccountMgr().currentAccount == null) {
       int page_wallet = main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW);
-      if(index!=page_wallet)
-      {
-        index=page_wallet;
+      if (index != page_wallet) {
+        index = page_wallet;
       }
     }
-
 
     closeInput();
 
@@ -493,7 +485,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
   void dispose() {
     eventMgr.remove(EventTag.CHANGE_MAINVIEW_INDEX, eventCallback);
     eventMgr.remove(EventTag.MAIN_RIGHT_DRAWER, eventCallback_rightdrawer);
-    eventMgr.remove(EventTag.MAIN_RIGHT_DRAWER_MINER,eventCallback_rightdrawer_miner);
+    eventMgr.remove(EventTag.MAIN_RIGHT_DRAWER_MINER, eventCallback_rightdrawer_miner);
 
     super.dispose();
   }
@@ -533,9 +525,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
       //"版本升级提示",
       msg: upgrade.description,
       msgAlign: TextAlign.center,
-      btnLeft: upgrade.needRequired
-          ? null
-          : ResString.get(context, RSID.upgrade_cancel),
+      btnLeft: upgrade.needRequired ? null : ResString.get(context, RSID.upgrade_cancel),
       // "取消",
       btnRight: ResString.get(context, RSID.upgrade_confirm),
       //"升级",

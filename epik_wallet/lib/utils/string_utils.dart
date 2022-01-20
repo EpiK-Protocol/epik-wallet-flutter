@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:decimal/decimal.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -20,8 +21,7 @@ class StringUtils {
   static String parseString(Object text, String _def) {
     if (text == null) return _def;
     if (text is String) return def(text, _def);
-    if (text is int || text is double || text is num || text is bool)
-      return text.toString();
+    if (text is int || text is double || text is num || text is bool) return text.toString();
     return _def;
   }
 
@@ -81,21 +81,11 @@ class StringUtils {
   static const RollupSize_Units = ["TB", "GB", "MB", "KB", "B"];
   static const RollupSize_Units1 = ["T", "G", "M", "K", ""];
   static const RollupSize_Units2 = ["Tb", "Gb", "Mb", "Kb", ""];
-  static const RollupSize_Units3 = [
-    "m",
-    "μ",
-    "n",
-    "p",
-    "f",
-    "a"
-  ]; //"a", "f", "p", "n", "μ", "m"
+  static const RollupSize_Units3 = ["m", "μ", "n", "p", "f", "a"]; //"a", "f", "p", "n", "μ", "m"
 
   /** 返回文件大小字符串 */
   static String getRollupSize(int size,
-      {int radix = 1024,
-      int extraUp = 0,
-      int fractionDigits = 2,
-      List<String> units = RollupSize_Units}) {
+      {int radix = 1024, int extraUp = 0, int fractionDigits = 2, List<String> units = RollupSize_Units}) {
     // print("getRollupSize size=$size radix=$radix");
 
     double num = 0;
@@ -129,10 +119,10 @@ class StringUtils {
     } else {
       numstr = num.toStringAsFixed(fractionDigits);
       // print("getRollupSize numstr=$numstr");
-        while (numstr.contains(".") && (numstr.endsWith("0") || numstr.endsWith("."))) {
-          numstr = numstr.substring(0, numstr.length - 1);
-          // print("getRollupSize del0  $numstr");
-        }
+      while (numstr.contains(".") && (numstr.endsWith("0") || numstr.endsWith("."))) {
+        numstr = numstr.substring(0, numstr.length - 1);
+        // print("getRollupSize del0  $numstr");
+      }
     }
 
     // print("getRollupSize maxIndex=$maxIndex index=$index units.size=${units.length}");
@@ -251,9 +241,7 @@ class StringUtils {
       }
     }
 
-    String ret =
-        "${StringUtils.formatNumAmount(amount / x, point: point, supply0: supply0)}" +
-            u;
+    String ret = "${StringUtils.formatNumAmount(amount / x, point: point, supply0: supply0)}" + u;
     // print("$amount  =>  $ret");
     return ret;
   }
@@ -289,5 +277,49 @@ class StringUtils {
   static double bigNumDownsizingDouble(String num, {int bit = 18}) {
     String text = bigNumDownsizing(num, bit: 18);
     return parseDouble(text, 0);
+  }
+
+  //数字 小数 升位
+  static Decimal numUpsizingDecimal(Object number, {int bit = 18}) {
+    try {
+      Decimal dnum = null;
+      if (number is num) {
+        dnum = Decimal.parse(number.toString());
+      } else if (number is BigInt) {
+        dnum = Decimal.parse(number.toString());
+      } else if (number is String) {
+        dnum = Decimal.parse(number.trim());
+      } else if (number is Decimal) {
+        dnum = number;
+      }
+      Decimal ret = dnum * Decimal.fromInt(10).pow(bit);
+      return ret;
+    } catch (e, s) {
+      print(s);
+    }
+  }
+
+  static String numUpsizingString(Object number, {int bit = 18, bool onlyInteger = true}) {
+    try {
+      Decimal d = numUpsizingDecimal(number, bit: 18);
+      String ret = d.toString();
+      if (onlyInteger) {
+        ret = ret.split('.')[0];
+      }
+      return ret;
+    } catch (e, s) {
+      print(s);
+    }
+  }
+
+  static BigInt numUpsizingBigint(Object number, {int bit = 18})
+  {
+    try {
+      String numstr= numUpsizingString(number,bit: 18,onlyInteger:true);
+      BigInt ret = BigInt.parse(numstr);
+      return ret;
+    } catch (e, s) {
+      print(s);
+    }
   }
 }

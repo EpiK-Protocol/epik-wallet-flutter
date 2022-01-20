@@ -223,10 +223,10 @@ Map<RSID, String> map_en = {
   RSID.cwv_1: "From",//"转出地址", Forwarding address
   RSID.cwv_2: "To",//"接收地址", Receiving address
   RSID.cwv_3: "Enter the address, long press and paste the address or tap to scan the QR code",//"输入地址、长按粘贴地址或点扫描二维码",
-  RSID.cwv_4: "Transfer amount",//"转账金额",
+  RSID.cwv_4: "Transfer Amount",//"转账金额",
   RSID.cwv_5: "All",//"全部",
   RSID.cwv_6: "Enter the amount",//"输入金额",
-  RSID.cwv_7: "Fee: %s ETH",//"手续费 : %s eth",
+  RSID.cwv_7: "Fee: %s ",//"手续费 : %s eth",
   RSID.cwv_8: "Please enter receiving address",//"请填入接收地址",
   RSID.cwv_9: "Please enter the amount",//"请输入金额",
   RSID.cwv_10: "Transfer amount can't be 0",//"转账金额不能是0",
@@ -704,4 +704,46 @@ Map<RSID, String> map_en = {
   RSID.rav_5:"Confirm authorization",//"确认授权",
   RSID.rav_6:"Authorization Succeeded",//"授权成功"，
   RSID.rav_7:"Authorization Failed",//"授权失败"
+
+  RSID.Web3Menu_REFRESH:"Refresh",
+  RSID.Web3Menu_CLEARCACHE:"Clear Cache",
+  RSID.Web3Menu_COLLECT:"Collect",
+  RSID.Web3Menu_GAS:"Preset Gas",
+  RSID.Web3Menu_KEEP_PASSWORD:"Keep Password",
+  RSID.gasrate:"Ratio : ",
+  RSID.w3wv_auth_keep_password:"There is no need to enter the password again during the transaction, but each transaction needs to be confirmed. Temporarily authorize the current site %s to preset transaction password?",//"交易时不用再次输入密码，但每次交易还需要确认才可以进行。是否临时授权当前站点%s可以预设交易密码？",
+  RSID.w3wv_canceled:"Canceled",
+  RSID.w3wv_authorized:"Authorized",
+  RSID.w3wv_added:"Collection Added",
+  RSID.w3wv_deteled:"Collection Cancelled",
+  RSID.w3wv_network:"Network",
+
+  //地址列表
+  RSID.address_list:"Address List",//地址列表
+  RSID.no_address_available:"No Address Available",//"暂无可用地址",
+  RSID.alv_addnew:"Add New Address",//"添加新地址",
+  RSID.alv_edit:"Edit",
+  RSID.alv_batch:"Batch",
+  RSID.alv_delete:"Delete",
+  RSID.alv_delete_ask:"Do you want to delete this address?",//"是否要删除这个地址?",
+  RSID.alv_name:"Name",//"名称",
+  RSID.alv_input_name:"Please enter name",
+  RSID.alv_address:"Address",//"地址",
+  RSID.alv_select_currency:"Please select a currency",//"请选择币种",// Please select a currency
+  RSID.alv_input_address:"Please enter the correct wallet address",//"请输入正确的钱包地址",//
+  RSID.alv_select_address:"Select Address",//
+  RSID.alv_withdraw_to_self:"Can't withdraw to your current wallet address",//"不能给自己当前钱包地址转账",
+
+  //CurrencyBatchWithdrawView
+  RSID.cbwv_1:"Total Amount",
+  RSID.cbwv_2:"Entered will be average distribution",//"输入总金额会平均到所有地址",
+
+  //HomeMenuMoreView
+  RSID.hmmv_1:"Add",
+  RSID.hmmv_2:"Batch",
+  RSID.hmmv_3:"Add New Website",
+  RSID.hmmv_4:"Edit",
+  RSID.hmmv_5:"Url",
+  RSID.hmmv_6:'Please enter a url start with "http://" or "https://"',
+  RSID.hmmv_7:"Delete",
 };

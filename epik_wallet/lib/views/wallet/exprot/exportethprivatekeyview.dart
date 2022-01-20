@@ -1,5 +1,9 @@
+import 'dart:async';
+
+import 'package:bip39/bip39.dart' as bip39;
+import 'package:dart_bip32_bip44/dart_bip32_bip44.dart';
+import 'package:epikplugin/Bip44Path.dart';
 import 'package:epikwallet/base/_base_widget.dart';
-import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
@@ -21,8 +25,7 @@ class ExportEthPrivateKeyView extends BaseWidget {
   }
 }
 
-class _ExportEthPrivateKeyViewState
-    extends BaseWidgetState<ExportEthPrivateKeyView> {
+class _ExportEthPrivateKeyViewState extends BaseWidgetState<ExportEthPrivateKeyView> {
   String PrivateKey = "";
 
   @override
@@ -37,12 +40,11 @@ class _ExportEthPrivateKeyViewState
     setAppBarTitle(ResString.get(context, RSID.eepkv_6));
   }
 
-
   @override
   Widget getAppBar() {
     return Container(
       width: double.infinity,
-      height: getTopBarHeight()+getAppBarHeight(),
+      height: getTopBarHeight() + getAppBarHeight(),
       padding: EdgeInsets.fromLTRB(0, getTopBarHeight(), 0, 0),
       decoration: BoxDecoration(
         gradient: ResColor.lg_1,
@@ -65,8 +67,7 @@ class _ExportEthPrivateKeyViewState
 
   @override
   void dispose() {
-    if (oldSystemUiOverlayStyle != null)
-      DeviceUtils.setSystemBarStyle(oldSystemUiOverlayStyle);
+    if (oldSystemUiOverlayStyle != null) DeviceUtils.setSystemBarStyle(oldSystemUiOverlayStyle);
     super.dispose();
   }
 
@@ -97,11 +98,12 @@ class _ExportEthPrivateKeyViewState
           color_bg: Colors.transparent,
           disabledColor: Colors.transparent,
           height: 40,
-          text:ResString.get(context, RSID.eepkv_3), //"复制私钥",
+          text: ResString.get(context, RSID.eepkv_3),
+          //"复制私钥",
           textstyle: TextStyle(
             color: Colors.white,
             fontSize: 14,
-            fontWeight:FontWeight.bold,
+            fontWeight: FontWeight.bold,
           ),
           bg_borderradius: BorderRadius.circular(4),
           onclick: (lbtn) {
@@ -141,10 +143,21 @@ class _ExportEthPrivateKeyViewState
 
   refresh() {
     setLoadingWidgetVisible(true);
-    widget.walletaccount.hdwallet
-        .export(widget.walletaccount.hd_eth_address)
-        .then((value) {
-      PrivateKey = value??"";
+
+    // widget.walletaccount.hdwallet
+    //     .export(widget.walletaccount.hd_eth_address)
+    //     .then((value) {
+    //   PrivateKey = value??"";
+    //   closeStateLayout();
+    //   Future.delayed(Duration(milliseconds: 500)).then((value) => showTips());
+    // });
+
+    Future.delayed(Duration(milliseconds: 500)).then((value) async {
+      String seed = bip39.mnemonicToSeedHex(widget.walletaccount.mnemonic);
+      Chain chain = Chain.seed(seed);
+      String path_eth = Bip44Path.getPath("ETH"); // "m/44'/60'/0'/0/0";
+      ExtendedPrivateKey key = chain.forPath(path_eth);
+      PrivateKey = key.privateKeyHex() ?? "";
       closeStateLayout();
       Future.delayed(Duration(milliseconds: 500)).then((value) => showTips());
     });

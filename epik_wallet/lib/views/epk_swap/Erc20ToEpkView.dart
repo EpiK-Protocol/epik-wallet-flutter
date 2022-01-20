@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:animated_size_and_fade/animated_size_and_fade.dart';
 import 'package:epikplugin/epikplugin.dart';
+import 'package:epikwallet/abi/ERC20.g.dart';
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
@@ -34,6 +36,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:web3dart/credentials.dart';
+import 'package:web3dart/web3dart.dart';
 
 enum Erc2EpkStep {
   swap,
@@ -176,8 +180,21 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
     if (StringUtils.isNotEmpty(txhash)) {
       //本地有销毁记录
       //查询销毁结果
-      ResultObj result =
-      await AccountMgr()?.currentAccount?.hdwallet?.receipt(txhash);
+      // ResultObj result = await AccountMgr()?.currentAccount?.hdwallet?.receipt(txhash);
+      ResultObj  result = null;
+      try{
+        TransactionReceipt tr = await EpikWalletUtils.ethClient.getTransactionReceipt(txhash);
+        result = ResultObj();
+        if(tr!=null)
+        {
+          result.code=0;
+          result.data=tr.status==true?"success":"";
+        }
+      }catch(e)
+      {
+        print(e);
+        result = ResultObj.fromError(e);
+      }
       dlog("erc20_receipt = ${result?.data}");
       hdwallet_result = result;
       if (hdwallet_result?.code == 0) {
@@ -1604,6 +1621,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
     BottomDialog.showEthAccelerateTx(
       context,
       AccountMgr().currentAccount,
+      CurrencySymbol.EPKerc20,
       txhash,
       callback: (newTxHash) async{
         if (StringUtils.isNotEmpty(newTxHash)) {
@@ -1658,11 +1676,28 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
         onShow: () async {
           String from_address = AccountMgr()?.currentAccount?.hd_eth_address;
           String to_address = config.erc20_address;
-          ResultObj<String> result = await AccountMgr()
-              .currentAccount
-              .hdwallet
-              .transferToken(from_address, to_address,
-              CurrencySymbol.EPKerc20.symbolToNetWork, amount_text);
+          // ResultObj<String> result = await AccountMgr()
+          //     .currentAccount
+          //     .hdwallet
+          //     .transferToken(from_address, to_address,
+          //     CurrencySymbol.EPKerc20.symbolToNetWork, amount_text);
+
+          ResultObj<String> result=ResultObj();
+          try{
+            ERC20 erc20 =AccountMgr().currentAccount.hdTokenMap[CurrencySymbol.EPKerc20];
+            BigInt decimals = await erc20.decimals();//获取token的精度
+            // BigInt value = BigInt.from((amount*pow(10, decimals.toInt())).toDouble());
+            BigInt value = StringUtils.numUpsizingBigint(amount_text,bit: decimals.toInt());
+            dlog("value = $value");
+            String tx = await erc20.transfer(EthereumAddress.fromHex(to_address), value, credentials:AccountMgr().currentAccount.credentials);
+
+            result.code=0;
+            result.data=tx;
+          }catch(e){
+            print(e);
+            result=ResultObj.fromError(e);
+          }
+
 
           if (result?.code != 0 || StringUtils.isEmpty(result?.data)) {
             closeLoadDialog();
@@ -1842,12 +1877,23 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
 
         // 检查txhash 能否进入下一步
         //查询销毁结果
-        ResultObj result =
-        await AccountMgr()?.currentAccount?.hdwallet?.receipt(txhash);
+        // ResultObj result = await AccountMgr()?.currentAccount?.hdwallet?.receipt(txhash);
+        ResultObj  result = null;
+        try{
+          TransactionReceipt tr = await EpikWalletUtils.ethClient.getTransactionReceipt(txhash);
+          result = ResultObj();
+          if(tr!=null)
+          {
+            result.code=0;
+            result.data=tr.status==true?"success":"";
+          }
+        }catch(e)
+        {
+          print(e);
+          result = ResultObj.fromError(e);
+        }
         dlog("erc20_receipt = ${result?.data}");
-
         // closeLoadDialog();
-
         hdwallet_result = result;
         if (hdwallet_result?.code == 0) {
           HttpJsonRes hjr = await ApiWallet.swap2EPIK(

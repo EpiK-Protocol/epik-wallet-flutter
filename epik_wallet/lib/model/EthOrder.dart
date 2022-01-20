@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 
@@ -30,6 +32,7 @@ class EthOrder {
   double value_d = 0;
   String hash = "";
   int timeStamp = 0;
+  double gasUsedCoin_d=0;
 
   EthOrder.fromJson(Map<String, dynamic> json) {
     try {
@@ -38,14 +41,19 @@ class EthOrder {
       tokenDecimal = json["tokenDecimal"] ?? "18";
       tokenDecimal_int = StringUtils.parseInt(tokenDecimal, 0);
       double x = 1;
-      for (int i = 0; i < tokenDecimal_int; i++) {
-        x *= 10;
-      }
+      x = pow(10,tokenDecimal_int).toDouble();
       value = json["value"] ?? "0";
       double v = StringUtils.parseDouble(value, 0);
       value_d = v / x;
       hash=json["hash"]??"";
       timeStamp = StringUtils.parseInt(json["timeStamp"], 0);
+
+      double gasUsed=StringUtils.parseDouble(json["gasUsed"], 0);
+      double gasPrice=StringUtils.parseDouble(json["gasPrice"], 0);
+      gasUsedCoin_d = gasUsed*gasPrice/x;
+      // print("gasUsedCoin = $gasUsedCoin_d");
+
+
       if(timeStamp!=0)
         timeStamp*=1000;
     } catch (e) {
@@ -80,5 +88,9 @@ class EthOrder {
       return RSID.withdraw;
     else
       return RSID.deposit;
+  }
+
+  bool get isGas{
+    return value_d==0 && gasUsedCoin_d>0;
   }
 }

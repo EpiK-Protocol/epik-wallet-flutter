@@ -7,6 +7,10 @@ class ErrorUtils {
     String ret = e?.toString() ?? "";
     try {
       ret = re_error.stringMatch(ret);
+      if(ret==null)
+      {
+        ret= e?.toString()??"";
+      }
     } catch (e, s) {
       print(e);
     }

@@ -6,13 +6,20 @@ import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
+import 'package:epikwallet/logic/LocalAddressMgr.dart';
+import 'package:epikwallet/logic/account_mgr.dart';
+import 'package:epikwallet/main.dart';
 import 'package:epikwallet/model/auth/RemoteAuth.dart';
+import 'package:epikwallet/model/currencytype.dart';
+import 'package:epikwallet/utils/ClickUtil.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
+import 'package:epikwallet/views/address/AddressListView.dart';
 import 'package:epikwallet/widget/LoadingButton.dart';
+import 'package:epikwallet/widget/custom_checkbox.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -79,7 +86,8 @@ class BottomDialog {
 
   ///密码输入弹窗
   static Future showPassWordInputDialog(
-      @required BuildContext context, String verifyText, @required ValueChanged<String> callback) {
+      @required BuildContext context, String verifyText, @required ValueChanged<String> callback,
+      {String secretVerifyText}) {
     String password = "";
     TextEditingController tec = TextEditingController(text: password);
 
@@ -220,6 +228,12 @@ class BottomDialog {
                 Navigator.pop(context);
                 callback(password);
               } else {
+                if (StringUtils.isNotEmpty(secretVerifyText) && password == (verifyText + secretVerifyText)) {
+                  Navigator.pop(context);
+                  callback(password);
+                  return;
+                }
+
                 if (verifyText != password) {
 //                    ToastUtils.showToast("密码不正确");
                   ToastUtils.showToast(ResString.get(context, RSID.dlg_bd_4));
@@ -237,6 +251,212 @@ class BottomDialog {
     return showBottomPop(
       context,
       widget,
+    );
+  }
+
+  ///密码输入弹窗
+  static Future showWeb3PassWordInputDialog(
+    @required BuildContext context, {
+    @required String verifyText,
+    @required String title,
+    String msg,
+    Color msgColor = ResColor.white_80, //Color(0xff333333
+    TextAlign msgAlign = TextAlign.left,
+    bool dragClose = false, // 是否可以向下拖拽关闭
+    bool outbackClose = false, // 是否可以外部返回关闭  触摸外部阴影、back按键
+    Widget header,
+    Widget footer,
+    bool autoinputverifyText = false,
+    VoidCallback cancelCallback,
+    @required ValueChanged<String> callback,
+  }) {
+    String password = "";
+    if (autoinputverifyText) password = verifyText;
+    TextEditingController tec = TextEditingController(text: password);
+
+    Widget widget = Container(
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+      width: double.infinity,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
+            height: 58,
+            width: double.infinity,
+            child: Stack(
+              children: <Widget>[
+                Align(
+                  alignment: FractionalOffset.center,
+                  child: Text(
+                    title ?? ResString.get(context, RSID.dlg_bd_1), //"钱包密码",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: FractionalOffset.centerRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      // 关闭
+                      Navigator.pop(context);
+                      if (cancelCallback != null) {
+                        Future.delayed(Duration(milliseconds: 10)).then((value) {
+                          try {
+                            cancelCallback();
+                          } catch (e) {
+                            print(e);
+                          }
+                        });
+                      }
+                    },
+                    child: Container(
+                      width: 58,
+                      height: 58,
+                      color: Colors.transparent,
+                      child: Icon(
+                        Icons.close,
+                        color: ResColor.white_60, //Color(0xff666666),
+                        size: 14,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (header != null) header,
+          // msg
+          if (msg?.isNotEmpty == true)
+            Container(
+              width: double.infinity,
+              alignment: Alignment.center,
+              padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+              child: Text(
+                msg,
+                textAlign: msgAlign,
+                style: TextStyle(
+                  color: msgColor,
+                  fontSize: 14.0,
+                ),
+              ),
+            ),
+          if (footer != null) footer,
+          Container(
+            width: double.infinity,
+            height: 44,
+            padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+            child: TextField(
+              autofocus: autoinputverifyText == true ? false : true,
+              //自动获取焦点， 自动弹出输入法
+              controller: tec,
+              textAlign: TextAlign.left,
+              keyboardType: TextInputType.text,
+              //获取焦点时,启用的键盘类型
+              maxLines: 1,
+              // 输入框最大的显示行数
+              maxLengthEnforced: true,
+              //是否允许输入的字符长度超过限定的字符长度
+              obscureText: true,
+              //是否是密码
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(20),
+              ],
+              // 这里限制长度 不会有数量提示
+              decoration: InputDecoration(
+                // 以下属性可用来去除TextField的边框
+                border: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                hintText: ResString.get(context, RSID.dlg_bd_2),
+                //"请输入钱包密码",
+                // hintStyle: TextStyle(color: Color(0xff999999), fontSize: 16),
+                hintStyle: TextStyle(color: ResColor.white_60, fontSize: 17),
+              ),
+              cursorWidth: 2.0,
+              //光标宽度
+              cursorRadius: Radius.circular(2),
+              //光标圆角弧度
+              cursorColor: Colors.white,
+              //光标颜色
+              style: TextStyle(fontSize: 17, color: Colors.white),
+              onChanged: (text) {
+                text = RegExpUtil.re_noChs.stringMatch(text) ?? "";
+
+                //输入密码时震动
+                if ((text?.length ?? 0) > (password?.length ?? 0)) {
+                  Vibrate.canVibrate.then((ok) {
+                    Vibrate.feedback(FeedbackType.medium);
+                  });
+                }
+
+                password = text;
+              },
+              onSubmitted: (value) {
+                // 当用户确定已经完成编辑时触发
+              }, // 是否隐藏输入的内容
+            ),
+          ),
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: ResColor.white_20,
+            //Colors.blue,
+            indent: 30,
+            endIndent: 30,
+          ),
+          LoadingButton(
+            margin: EdgeInsets.fromLTRB(30, 20, 30, 20),
+            width: double.infinity,
+            height: 40,
+            gradient_bg: ResColor.lg_1,
+            color_bg: Colors.transparent,
+            disabledColor: Colors.transparent,
+            bg_borderradius: BorderRadius.circular(4),
+            text: RSID.confirm.text,
+            //"确定",
+            textstyle: TextStyle(
+              color: Colors.white,
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+            ),
+            onclick: (lbtn) {
+              if (StringUtils.isEmpty(password)) {
+//                  ToastUtils.showToast("请输入密码");
+                ToastUtils.showToast(ResString.get(context, RSID.dlg_bd_3));
+                return;
+              }
+
+              if (verifyText != password) {
+//                    ToastUtils.showToast("密码不正确");
+                ToastUtils.showToast(ResString.get(context, RSID.dlg_bd_4));
+              } else {
+                Navigator.pop(context);
+                Future.delayed(Duration(milliseconds: 10)).then((value) {
+                  try {
+                    callback(password);
+                  } catch (e) {
+                    print(e);
+                  }
+                });
+              }
+            },
+          ),
+        ],
+      ),
+    );
+
+    return showBottomPop(
+      context,
+      widget,
+      dragClose: dragClose,
+      outbackClose: outbackClose,
     );
   }
 
@@ -339,27 +559,28 @@ class BottomDialog {
                       errorBorder: InputBorder.none,
                       focusedErrorBorder: InputBorder.none,
                       disabledBorder: InputBorder.none,
-                      enabledBorder:  multipleLine
+                      enabledBorder: multipleLine
                           ? OutlineInputBorder(
-                        gapPadding: 0,
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(
-                          color: dividerColor,
-                          width: 1,
-                        ),
-                      )
+                              gapPadding: 0,
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                color: dividerColor,
+                                width: 1,
+                              ),
+                            )
                           : InputBorder.none,
-                      focusedBorder:  multipleLine
+                      focusedBorder: multipleLine
                           ? OutlineInputBorder(
-                        gapPadding: 0,
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(
-                          color: dividerColor,
-                          width: 1,
-                        ),
-                      )
+                              gapPadding: 0,
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                color: dividerColor,
+                                width: 1,
+                              ),
+                            )
                           : InputBorder.none,
-                      contentPadding:multipleLine? EdgeInsets.fromLTRB(10, 10, 10, 0): EdgeInsets.fromLTRB(0, 0, 0, -10),
+                      contentPadding:
+                          multipleLine ? EdgeInsets.fromLTRB(10, 10, 10, 0) : EdgeInsets.fromLTRB(0, 0, 0, -10),
                       hintText: hint,
                       hintStyle: TextStyle(color: hintColor, fontSize: 17),
                     ),
@@ -477,7 +698,7 @@ class BottomDialog {
   }
 
   /// 交易加速 成功后在callback中返回新的交易hash
-  static Future showEthAccelerateTx(BuildContext context, WalletAccount walletaccount, String txHash,
+  static Future showEthAccelerateTx(BuildContext context, WalletAccount walletaccount, CurrencySymbol cs, String txHash,
       {String oldText = "", ValueChanged<String> callback}) {
     String _text = oldText ?? "";
     TextEditingController tec = new TextEditingController.fromValue(TextEditingValue(
@@ -726,7 +947,8 @@ class BottomDialog {
               // 提交加速请求
               lbtn.setLoading(true);
 
-              ResultObj<String> resultobj = await walletaccount.hdwallet.accelerateTx(txHash, _gasrate);
+              // ResultObj<String> resultobj = await walletaccount.hdwallet.accelerateTx(txHash, _gasrate);
+              ResultObj<String> resultobj = await EpikWalletUtils.hdAccelerateTx(cs, txHash, _gasrate);
 
               lbtn.setLoading(false);
 
@@ -999,8 +1221,12 @@ class BottomDialog {
   static Future showTextInputDialogMultiple({
     BuildContext context,
     String title,
+    bool autoChangeFocus = true,
+    Widget header,
+    Widget footer,
     List<TextInputConfigObj> objlist = const [],
     Function(List<String> datas) callback,
+    bool onOkClose = true,
   }) {
     Color dialogbg = ResColor.b_4; //Colors.white;
     Color titleColor = Colors.white; //Colors.black;
@@ -1010,6 +1236,26 @@ class BottomDialog {
     Color dividerColor = ResColor.white_20; //Colors.blue;
 
     List<TextEditingController> teclist = [];
+    List<FocusNode> focuslist = [];
+
+    Function btnclick = () {
+      List<String> result = [];
+
+      for (int i = 0; i < teclist.length; i++) {
+        TextEditingController tec = teclist[i];
+        String value = tec?.text?.trim() ?? "";
+        if (value?.isEmpty == true) {
+          ToastUtils.showToast(objlist[i]?.hint);
+          return;
+        }
+        result.add(value);
+      }
+
+      if (onOkClose) {
+        Navigator.pop(context);
+      }
+      callback(result);
+    };
 
     List<Widget> inputlist = [];
     if (objlist != null && objlist.length > 0) {
@@ -1017,6 +1263,9 @@ class BottomDialog {
         String _text = obj.oldText ?? "";
         TextEditingController tec = TextEditingController(text: _text);
         teclist.add(tec);
+
+        FocusNode focus = FocusNode();
+        focuslist.add(focus);
 
         Widget row = Row(
           children: [
@@ -1026,6 +1275,7 @@ class BottomDialog {
                 height: 55,
                 padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                 child: TextField(
+                  focusNode: focus,
                   autofocus: true,
                   //自动获取焦点， 自动弹出输入法
                   controller: tec,
@@ -1068,6 +1318,17 @@ class BottomDialog {
                   },
                   onSubmitted: (value) {
                     // 当用户确定已经完成编辑时触发
+
+                    if (autoChangeFocus != true) return;
+
+                    int index = focuslist.indexOf(focus);
+                    if (index == focuslist.length - 1) {
+                      //最后一个输入框
+                      btnclick();
+                    } else if ((index + 1) < focuslist.length) {
+                      //切换到下一个焦点
+                      FocusScope.of(appContext).requestFocus(focuslist[index + 1]);
+                    }
                   }, // 是否隐藏输入的内容
                 ),
               ),
@@ -1155,7 +1416,9 @@ class BottomDialog {
               ],
             ),
           ),
+          if (header != null) header,
           ...inputlist,
+          if (footer != null) footer,
           LoadingButton(
             margin: EdgeInsets.fromLTRB(30, 20, 30, 20),
             gradient_bg: ResColor.lg_1,
@@ -1171,20 +1434,21 @@ class BottomDialog {
             ),
             bg_borderradius: BorderRadius.circular(4),
             onclick: (lbtn) {
-              List<String> result = [];
-
-              for (int i = 0; i < teclist.length; i++) {
-                TextEditingController tec = teclist[i];
-                String value = tec?.text?.trim() ?? "";
-                if (StringUtils.isEmpty(value)) {
-                  ToastUtils.showToast(objlist[i]?.hint);
-                  return;
-                }
-                result.add(value);
-              }
-
-              Navigator.pop(context);
-              callback(result);
+              btnclick();
+              // List<String> result = [];
+              //
+              // for (int i = 0; i < teclist.length; i++) {
+              //   TextEditingController tec = teclist[i];
+              //   String value = tec?.text?.trim() ?? "";
+              //   if (StringUtils.isEmpty(value)) {
+              //     ToastUtils.showToast(objlist[i]?.hint);
+              //     return;
+              //   }
+              //   result.add(value);
+              // }
+              //
+              // Navigator.pop(context);
+              // callback(result);
             },
           ),
           // Container(
@@ -1223,6 +1487,276 @@ class BottomDialog {
 
     return showBottomPop(context, widget, radius_top: 15, bgColor: dialogbg);
   }
+
+  static showAddressSeleteDialog(
+      BuildContext context, List<LocalAddressObj> data, Function(LocalAddressObj seletedAddress) callback) {
+    Widget addressview = StatefulBuilder(
+      builder: (context, setState) {
+        return Container(
+          width: double.infinity,
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height / 2,
+          ),
+          child: Column(
+            children: [
+              Container(
+                height: 58,
+                width: double.infinity,
+                child: Stack(
+                  children: <Widget>[
+                    Align(
+                      alignment: FractionalOffset.center,
+                      child: Text(
+                        RSID.alv_select_address.text,//"选择地址",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: FractionalOffset.centerRight,
+                      child: GestureDetector(
+                        onTap: () {
+                          // 关闭
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          width: 58,
+                          height: 58,
+                          color: Colors.transparent,
+                          child: Icon(
+                            Icons.close,
+                            color: ResColor.white_60, //Color(0xff666666),
+                            size: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                  child: SingleChildScrollView(
+                child: Column(
+                  children: data.map((lao) {
+                    bool isCurrent = AccountMgr().currentAccount.hd_eth_address == lao.address ||
+                        AccountMgr().currentAccount.epik_EPK_address == lao.address;
+                    Widget item = Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      padding: EdgeInsets.fromLTRB(15, 10, 15, 0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                width: 30,
+                                height: 30,
+                                margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(50),
+                                  gradient: lao.gradientCover,
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Align(
+                                      alignment: FractionalOffset(0.5, 0.5),
+                                      child: Text(
+                                        lao.name,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.clip,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 12, color: Colors.white, shadows: [
+                                          Shadow(
+                                              color: ResColor.black_80, //Color(0x28000000),
+                                              offset: Offset(0, 0),
+                                              blurRadius: 6)
+                                        ]),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  lao.name,
+                                  style: TextStyle(fontSize: 16, color: isCurrent ? Colors.white54 : Colors.white),
+                                ),
+                              ),
+                              if (isCurrent)
+                                Container(
+                                  height: 20,
+                                  padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(color: ResColor.o_1, width: 1, style: BorderStyle.solid)),
+                                  child: Text(
+                                    "Self",
+                                    style: TextStyle(fontSize: 12, color: ResColor.o_1, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          Container(
+                            height: 5,
+                          ),
+                          Text(
+                            lao.address,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(fontSize: 14, color: isCurrent ? Colors.white54 : Colors.white),
+                          ),
+                          Container(
+                            height: 10,
+                          ),
+                          Divider(
+                            height: 1,
+                            thickness: 1,
+                            color: ResColor.white_60,
+                          ),
+                        ],
+                      ),
+                    );
+                    return InkWell(
+                      child: item,
+                      onTap: () {
+                        if (ClickUtil.isFastDoubleClick()) return;
+                        if (isCurrent) return;
+                        if (callback != null) {
+                          Navigator.pop(context);
+                          callback(lao);
+                        }
+                      },
+                    );
+                  }).toList(),
+                ),
+              )),
+            ],
+          ),
+        );
+      },
+    );
+    BottomDialog.showBottomPop(context, addressview, dragClose: false);
+  }
+
+  // static showAddAddressDialog(BuildContext context, Function(LocalAddressObj lao) callback,
+  //     {String inputaddress, CurrencySymbol cs}) {
+  //   List<CurrencySymbol> cslist = CurrencySymbol.values;
+  //   CurrencySymbol seletedCs = cs;
+  //   Widget footer = StatefulBuilder(
+  //     builder: (context, setState) {
+  //       return Container(
+  //         width: double.infinity,
+  //         padding: EdgeInsets.fromLTRB(30, 10, 30, 0),
+  //         child: Wrap(
+  //           alignment: WrapAlignment.start,
+  //           crossAxisAlignment: WrapCrossAlignment.start,
+  //           spacing: 20,
+  //           runSpacing: 10,
+  //           children: cslist.map((cs) {
+  //             String net = cs.netNamePatch??"";
+  //             if(StringUtils.isNotEmpty(net))
+  //             {
+  //               net = "($net)";
+  //             }
+  //             Widget row = Row(
+  //               mainAxisSize: MainAxisSize.min,
+  //               children: [
+  //                 CustomCheckBox(
+  //                   value: seletedCs == cs,
+  //                   color_check: ResColor.o_1,
+  //                   color_border: ResColor.o_1,
+  //                   borderRadius: 100,
+  //                   onChanged: (value) {
+  //                     if (seletedCs == cs)
+  //                       seletedCs = null;
+  //                     else
+  //                       seletedCs = cs;
+  //                     setState(() {});
+  //                   },
+  //                 ),
+  //                 Container(width: 5),
+  //                 Text(
+  //                   cs.symbol+net,
+  //                   style: TextStyle(fontSize: 14, color: ResColor.white),
+  //                 ),
+  //               ],
+  //             );
+  //             return InkWell(
+  //               child: row,
+  //               onTap: () {
+  //                 if (seletedCs == cs)
+  //                   seletedCs = null;
+  //                 else
+  //                   seletedCs = cs;
+  //                 setState(() {});
+  //               },
+  //             );
+  //           }).toList(),
+  //         ),
+  //       );
+  //     },
+  //   );
+  //
+  //   // todo add new address
+  //   BottomDialog.showTextInputDialogMultiple(
+  //     context: context,
+  //     title: RSID.alv_addnew.text,//"添加新地址",
+  //     objlist: [
+  //       TextInputConfigObj()
+  //         ..hint = RSID.alv_name.text//"名称"
+  //         ..maxLength = 50,
+  //       TextInputConfigObj()
+  //         ..hint = RSID.alv_address.text//"地址"
+  //         ..maxLength = 200
+  //         ..oldText = inputaddress
+  //         ..inputFormatters = [
+  //           FilteringTextInputFormatter.allow(RegExpUtil.re_azAZ09),
+  //         ],
+  //     ],
+  //     footer: footer,
+  //     onOkClose: false,
+  //     callback: (datas) {
+  //       if (seletedCs == null) {
+  //         ToastUtils.showToast(RSID.alv_select_currency.text);//"请选择币种");
+  //         return;
+  //       }
+  //
+  //       String name = datas[0].trim();
+  //       String address = datas[1].trim();
+  //       Dlog.p("showAddAddressDialog", "add new address");
+  //       Dlog.p("showAddAddressDialog", name);
+  //       Dlog.p("showAddAddressDialog", address);
+  //       Dlog.p("showAddAddressDialog", seletedCs.symbol);
+  //
+  //       bool checkaddress = false;
+  //       if (seletedCs.networkType == CurrencySymbol.ETH) {
+  //         checkaddress = AddressListViewState.checkEthAddress(address);
+  //       } else if (seletedCs.networkType == CurrencySymbol.EPK) {
+  //         checkaddress = AddressListViewState.checkEpikAddress(address);
+  //       }
+  //       if (checkaddress != true) {
+  //         ToastUtils.showToast(RSID.alv_input_address.text);//"请输入正确的钱包地址");
+  //         return;
+  //       }
+  //
+  //       Navigator.pop(context);
+  //
+  //       LocalAddressObj lao = LocalAddressObj()
+  //         ..name = name
+  //         ..address = address
+  //         ..symbol = seletedCs.symbol;
+  //
+  //       localaddressmgr.add(lao);
+  //       localaddressmgr.save();
+  //       callback(lao);
+  //     },
+  //   );
+  // }
 }
 
 class TextInputConfigObj {

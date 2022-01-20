@@ -5,6 +5,8 @@ class ServerConfig {
   /// "wss://ropsten.infura.io/ws/v3/1bbd25bd3af94ca2b294f93c346f69cd",
   String ETHAPI;
 
+  String BSCAPI;
+
   /// "ws://18.181.234.52:1234/rpc/v0",
   String EPKAPI;
 
@@ -23,6 +25,7 @@ class ServerConfig {
       WalletAPI = json["WalletAPI"];
       ETHAPI = json["ETHAPI"];
       EPKAPI = json["EPKAPI"];
+      BSCAPI = json["BSCAPI"]; // todo 服务需要添加
       EPKToken = json["EPKToken"];
       SignWeixin = json["SignWeixin"];
       SignTele = json["SignTele"];

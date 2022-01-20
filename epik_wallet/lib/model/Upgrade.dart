@@ -5,7 +5,7 @@ import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:package_info/package_info.dart';
 
-String code_version = "1.2.1"; //ios签发固定在1.2.5
+String code_version = "1.2.3"; //ios签发固定在1.2.5
 
 class Upgrade {
   /// 当前最新版本
@@ -72,11 +72,7 @@ class Upgrade {
 
   static int version2Num(String version) {
     try {
-//      String numstr = version.replaceAll(".", "");
-//      int num = int.parse(numstr);
-
       // 1.0.0  ==  1 00 00
-
       int num = 0;
       List<String> array = version.split(".");
       if (array != null && array.length > 0) {
@@ -92,7 +88,6 @@ class Upgrade {
         }
         num = StringUtils.parseInt(numString, 0);
       }
-
       return num;
     } catch (e) {
       print("version2Num error");

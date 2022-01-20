@@ -1,15 +1,16 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:epikwallet/base/_base_widget.dart';
-import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
+import 'package:epikwallet/logic/LocalAddressMgr.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
+import 'package:epikwallet/model/EpkOrder.dart';
 import 'package:epikwallet/model/EthOrder.dart';
-import 'package:epikwallet/model/TepkOrder.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/data/date_util.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
@@ -17,6 +18,7 @@ import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
+import 'package:epikwallet/views/address/EditAddressView.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/list_view.dart';
 import 'package:epikwallet/widget/text/TextEllipsisMiddle.dart';
@@ -41,6 +43,8 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   @override
   void initState() {
     super.initState();
+
+    EpikWalletUtils.getHdTransferGas(widget.currencyAsset.cs);
   }
 
   ListPageDefState _ListPageDefState = ListPageDefState(null);
@@ -52,8 +56,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
 
   String balance = "　";
 
-  ColorTween header_colortween =
-      ColorTween(begin: Colors.white, end: Colors.black);
+  ColorTween header_colortween = ColorTween(begin: Colors.white, end: Colors.black);
 
   LinearGradient gradient_ff = LinearGradient(
     colors: [Color(0xff2B2F35), Color(0xff1D2023)],
@@ -81,16 +84,107 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     isTopBarShow = false; //状态栏是否显示
     isAppBarShow = false; //导航栏是否显示
     isTopFloatWidgetShow = true;
-    setAppBarTitle(widget.currencyAsset.symbol);
+    setAppBarTitle(widget.currencyAsset.symbol + " (${widget.currencyAsset.cs.networkTypeName})");
     setBackIconHinde(isHinde: false);
 
     await Future.delayed(Duration(milliseconds: 200));
     if (StringUtils.isNotEmpty(widget?.currencyAsset?.balance)) {
-      balance = StringUtils.formatNumAmount(widget.currencyAsset.balance,
-          point: 8, supply0: false);
+      balance = StringUtils.formatNumAmount(widget.currencyAsset.balance, point: 8, supply0: false);
     } else {
       balance = "--";
     }
+  }
+
+  @override
+  Widget getAppBarRight({Color color}) {
+    CurrencyAsset ca = widget?.currencyAsset;
+    return Container(
+      margin: EdgeInsets.fromLTRB(20, 0, 10, 0),
+      width: 30,
+      height: 30,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: <Widget>[
+          Positioned(
+            left: 0,
+            top: 0,
+            child: Container(
+              width: 30,
+              height: 30,
+              // padding: EdgeInsets.all(1),
+              decoration: BoxDecoration(
+                // color: const Color(0xff202020), //Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+                boxShadow: [
+                  BoxShadow(
+                    color: ResColor.black_20, //Color(0x28000000),
+                    offset: Offset(0, 0),
+                    blurRadius: 2,
+                    spreadRadius: 1,
+                  )
+                ],
+              ),
+              child: ClipOval(
+                child: ca?.icon_url?.startsWith("http")
+                    ? CachedNetworkImage(
+                        imageUrl: ca.icon_url,
+                        width: 30,
+                        height: 30,
+                        fit: BoxFit.contain,
+                        placeholder: (context, url) {
+                          return Container(
+                            color: ResColor.white_10,
+                          );
+                        },
+                        errorWidget: (context, url, error) {
+                          return Container(
+                            color: ResColor.white_10,
+                            child: Icon(
+                              Icons.broken_image,
+                              size: 24,
+                              color: ResColor.black_80,
+                            ),
+                          );
+                        },
+                      )
+                    : Image(
+                        image: AssetImage(ca.icon_url),
+                        width: 30,
+                        height: 30,
+                      ),
+              ),
+            ),
+          ),
+          Positioned(
+            right: -1.5,
+            bottom: -1.5,
+            child: ca.networkType != null
+                ? Container(
+                    width: 15,
+                    height: 15,
+                    // padding: EdgeInsets.all(1),
+                    decoration: BoxDecoration(
+                      // color: const Color(0xff202020), //Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: ResColor.black_30, //Color(0x28000000),
+                          offset: Offset(0, 0),
+                          blurRadius: 1,
+                          spreadRadius: 0.5,
+                        )
+                      ],
+                    ),
+                    child: Image(
+                      image: AssetImage(ca.networkType.iconUrl),
+                      width: 13,
+                      height: 13,
+                    ))
+                : Container(),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -110,8 +204,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   @override
   void dispose() {
     eventMgr.remove(EventTag.LOCAL_ACCOUNT_LIST_CHANGE, eventCallback_account);
-    eventMgr.remove(
-        EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
+    eventMgr.remove(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
     super.dispose();
   }
 
@@ -128,8 +221,8 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
 
   onTapAppBar() {
     if (key_scroll != null && !isLoading) {
-      key_scroll.currentState.scrollController.animateTo(0,
-          duration: Duration(milliseconds: 200), curve: Curves.easeIn);
+      key_scroll.currentState.scrollController
+          .animateTo(0, duration: Duration(milliseconds: 200), curve: Curves.easeIn);
     }
   }
 
@@ -229,6 +322,63 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
       itemWidgetCreator: (context, position) {
         return InkWell(
           onTap: () => onItemClick(position),
+          onLongPress: () {
+            if (data_list_item != null && position >= 0 && position < data_list_item.length && mounted) {
+              var item = data_list_item[position];
+
+              if (item != null) {
+                if (item is EthOrder) {
+                  EthOrder _EthOrder = item;
+                  String address = item.isWithdraw ? item.to : item.from;
+                  LocalAddressObj lao = localaddressmgr.findObjByAddress(address);
+                  if (lao == null) {
+                    // todo
+                    // BottomDialog.showAddAddressDialog(context, (lao) {},
+                    //     inputaddress: address, cs: widget.currencyAsset.cs);
+                    ViewGT.showView(
+                      context,
+                      EditAddressView(
+                        lao: LocalAddressObj()
+                          ..address = address
+                          ..symbol = widget.currencyAsset.cs,
+                      ),
+                    ).then((value) {
+                      if (value != null && value is LocalAddressObj) {
+                        print(value.address);
+                        localaddressmgr.add(value);
+                        localaddressmgr.save();
+                        setState(() {});
+                      }
+                    });
+                  }
+                } else if (item is EpkOrder) {
+                  EpkOrder _TepkOrder = item;
+                  String address = item.isWithdraw ? item.to : item.from;
+                  LocalAddressObj lao = localaddressmgr.findObjByAddress(address);
+                  if (lao == null) {
+                    // todo
+                    // BottomDialog.showAddAddressDialog(context, (lao) {},
+                    //     inputaddress: address, cs: widget.currencyAsset.cs);
+                    ViewGT.showView(
+                      context,
+                      EditAddressView(
+                        lao: LocalAddressObj()
+                          ..address = address
+                          ..symbol = widget.currencyAsset.cs,
+                      ),
+                    ).then((value) {
+                      if (value != null && value is LocalAddressObj) {
+                        print(value.address);
+                        localaddressmgr.add(value);
+                        localaddressmgr.save();
+                        setState(() {});
+                      }
+                    });
+                  }
+                }
+              }
+            }
+          },
           child: itemWidgetBuild(context, position),
         );
       },
@@ -273,12 +423,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
       height: double.infinity,
       child: Stack(
         children: [
-          Positioned(
-              left: 0,
-              bottom: 0,
-              right: 0,
-              top: getTopBarHeight() + getAppBarHeight() + 128,
-              child: view),
+          Positioned(left: 0, bottom: 0, right: 0, top: getTopBarHeight() + getAppBarHeight() + 128, child: view),
           headerBuilder(context, 0),
         ],
       ),
@@ -336,8 +481,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
               padding: EdgeInsets.fromLTRB(30, header_top, 30, 0),
               decoration: BoxDecoration(
                 gradient: ResColor.lg_1,
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(20)),
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -373,8 +517,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                 children: [
                   InkWell(
                     onTap: () {
-                      ViewGT.showCurrencyDepositView(context,
-                          AccountMgr().currentAccount, widget.currencyAsset.cs);
+                      ViewGT.showCurrencyDepositView(context, AccountMgr().currentAccount, widget.currencyAsset.cs);
                     },
                     child: Tooltip(
                       message: RSID.deposit.text,
@@ -404,8 +547,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                   InkWell(
                     onTap: () {
 //                       ResString.get(context, RSID.withdraw),//"转账",
-                      ViewGT.showCurrencyWithdrawView(context,
-                          AccountMgr().currentAccount, widget.currencyAsset);
+                      ViewGT.showCurrencyWithdrawView(context, AccountMgr().currentAccount, widget.currencyAsset);
                     },
                     child: Tooltip(
                       message: RSID.withdraw.text,
@@ -658,40 +800,34 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   Widget itemWidgetBuild(BuildContext context, int position) {
     if (data_list_item != null && position < data_list_item.length) {
       var item = data_list_item[position];
-      if (item is TepkOrder) {
+      if (item is EpkOrder) {
         return itemWidgetBuild_epk(item);
       } else {
         return itemWidgetBuild_eth((item as EthOrder));
       }
     } else {
-      return Padding(
-          padding: new EdgeInsets.all(10.0),
-          child: new Text("no data $position"));
+      return Padding(padding: new EdgeInsets.all(10.0), child: new Text("no data $position"));
     }
   }
 
-  Widget itemWidgetBuild_epk(TepkOrder item) {
-
+  Widget itemWidgetBuild_epk(EpkOrder item) {
     String title = "";
     String codestring = item.getCodeTextFilter();
-    Color title_color=Colors.white60;
-    if(StringUtils.isEmpty(codestring))
-    {
-      if(StringUtils.isNotEmpty(item.actorName))
-      {
+    Color title_color = Colors.white60;
+    if (StringUtils.isEmpty(codestring)) {
+      if (StringUtils.isNotEmpty(item.actorName)) {
         // title= item.actorName;
-        title= item.MethodName;
-      }else
-        {
-          //  item.isWithdraw ? "转账" : "收款",
-          title=ResString.get(context,
-              item.isWithdraw ? RSID.withdraw : RSID.deposit);
-          title_color=  item.isWithdraw ? ResColor.r_1 : ResColor.g_1;
-
-        }
-    }else{
-      title=codestring;
+        title = item.MethodName;
+      } else {
+        //  item.isWithdraw ? "转账" : "收款",
+        title = ResString.get(context, item.isWithdraw ? RSID.withdraw : RSID.deposit);
+        title_color = item.isWithdraw ? ResColor.r_1 : ResColor.g_1;
+      }
+    } else {
+      title = codestring;
     }
+
+    LocalAddressObj lao = localaddressmgr.findObjByAddress(item.isWithdraw ? item.to : item.from);
 
     return Container(
       width: double.infinity,
@@ -705,30 +841,27 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
           Row(
             children: [
               Text(
-                DateUtil.formatDateMs(item.time_ts * 1000,
-                    format: DataFormats.y_mo_d_h_m),
+                DateUtil.formatDateMs(item.time_ts * 1000, format: DataFormats.y_mo_d_h_m),
                 style: TextStyle(fontSize: 14, color: Colors.white60),
               ),
               Container(
                 width: 20,
               ),
               Expanded(
-                  child:Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color:title_color,
-                      fontWeight: FontWeight.bold,
-                    ),
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: title_color,
+                    fontWeight: FontWeight.bold,
                   ),
+                ),
               ),
-
               Container(
                 width: 20,
               ),
               Text(
-                item.numDirection +
-                    StringUtils.formatNumAmount(item.value_d, point: 8),
+                item.numDirection + StringUtils.formatNumAmount(item.value_d, point: 8),
                 textAlign: TextAlign.end,
                 style: TextStyle(
                   fontSize: 14,
@@ -756,6 +889,38 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                   ),
                 ),
               ),
+              if (lao != null)
+                Container(
+                  width: 16,
+                  height: 16,
+                  margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(50),
+                    gradient: lao.gradientCover,
+                  ),
+                  child: Stack(
+                    children: [
+                      Align(
+                        alignment: FractionalOffset(0.5, 0.5),
+                        child: Text(
+                          lao.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.clip,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 10, color: Colors.white, shadows: [
+                            BoxShadow(
+                              color: ResColor.black, //Color(0x28000000),
+                              offset: Offset(0, 0),
+                              blurRadius: 2,
+                              spreadRadius: 2,
+                            )
+                          ]),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               Expanded(
                 child: TextEm(
                   item.isWithdraw ? item.to : item.from,
@@ -790,6 +955,9 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   }
 
   Widget itemWidgetBuild_eth(EthOrder item) {
+    LocalAddressObj lao = localaddressmgr.findObjByAddress(item.isWithdraw ? item.to : item.from);
+    // dlog(item.isWithdraw ? item.to : item.from);
+
     return Container(
       width: double.infinity,
       // height: 80,
@@ -802,15 +970,14 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
           Row(
             children: [
               Text(
-                DateUtil.formatDateMs(item.timeStamp,
-                    format: DataFormats.y_mo_d_h_m),
+                DateUtil.formatDateMs(item.timeStamp, format: DataFormats.y_mo_d_h_m),
                 style: TextStyle(fontSize: 14, color: Colors.white60),
               ),
               Container(
                 width: 20,
               ),
               Text(
-                ResString.get(context, item.actionStrId),
+                item.isGas ? "Gas" : ResString.get(context, item.actionStrId),
                 //item.isWithdraw ? "转账" : "收款",
                 style: TextStyle(
                   fontSize: 14,
@@ -823,8 +990,9 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
               ),
               Expanded(
                 child: Text(
-                  item.numDirection +
-                      StringUtils.formatNumAmount(item.value_d, point: 8),
+                  item.isGas
+                      ? ("-" + StringUtils.formatNumAmount(item.gasUsedCoin_d, point: 8))
+                      : (item.numDirection + StringUtils.formatNumAmount(item.value_d, point: 8)),
                   textAlign: TextAlign.end,
                   style: TextStyle(
                     fontSize: 14,
@@ -853,6 +1021,38 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                   ),
                 ),
               ),
+              if (lao != null)
+                Container(
+                  width: 16,
+                  height: 16,
+                  margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(50),
+                    gradient: lao.gradientCover,
+                  ),
+                  child: Stack(
+                    children: [
+                      Align(
+                        alignment: FractionalOffset(0.5, 0.5),
+                        child: Text(
+                          lao.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.clip,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 10, color: Colors.white, shadows: [
+                            BoxShadow(
+                              color: ResColor.black, //Color(0x28000000),
+                              offset: Offset(0, 0),
+                              blurRadius:2,
+                              spreadRadius: 2,
+                            )
+                          ]),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               Expanded(
                 child: TextEm(
                   item.isWithdraw ? item.to : item.from,
@@ -909,8 +1109,8 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
       _ListPageDefState.type = ListPageDefStateType.LOADING;
     });
 
-    AccountMgr().currentAccount.uploadSuggestGas();// suggest gas
-    AccountMgr().currentAccount.uploadEpikGasTransfer();// epk gas
+    // AccountMgr().currentAccount.uploadSuggestGas(); // suggest gas
+    AccountMgr().currentAccount.uploadEpikGasTransfer(); // epk gas
 
     //交易列表
     EpikWalletUtils.getOrderList(
@@ -925,12 +1125,10 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
 
     //刷新所有币种的余额
     EpikWalletUtils.requestBalance(AccountMgr().currentAccount).then((value) {
-      if(isDestory)
-        return;
+      if (isDestory) return;
       setState(() {
         if (StringUtils.isNotEmpty(widget?.currencyAsset?.balance)) {
-          balance = StringUtils.formatNumAmount(widget.currencyAsset.balance,
-              point: 8, supply0: false);
+          balance = StringUtils.formatNumAmount(widget.currencyAsset.balance, point: 8, supply0: false);
         }
         // else {
         //   balance = "--";
@@ -966,7 +1164,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
           page += 1;
         } else {
           Object lastitem = data?.last;
-          if (lastitem != null && lastitem is TepkOrder) {
+          if (lastitem != null && lastitem is EpkOrder) {
             // lastTime = lastitem.time; //
             lastEpkEndHeight = retmap["epkHeight"] ?? 0;
           }
@@ -974,8 +1172,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
       } else {
         hasMore = false;
       }
-      _ListPageDefState.type =
-          data_list_item.length > 0 ? null : ListPageDefStateType.EMPTY;
+      _ListPageDefState.type = data_list_item.length > 0 ? null : ListPageDefStateType.EMPTY;
     } else {
       showToast(ResString.get(context, RSID.request_failed)); //"请求失败);
       if (isFirstPage) {
@@ -1000,16 +1197,14 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
       return;
     }
 
-    AccountMgr().currentAccount.uploadSuggestGas();
+    // AccountMgr().currentAccount.uploadSuggestGas();
     AccountMgr().currentAccount.uploadEpikGasTransfer();
 
     EpikWalletUtils.requestBalance(AccountMgr().currentAccount).then((value) {
-      if(isDestory)
-        return;
+      if (isDestory) return;
       setState(() {
         if (StringUtils.isNotEmpty(widget?.currencyAsset?.balance)) {
-          balance = StringUtils.formatNumAmount(widget.currencyAsset.balance,
-              point: 8, supply0: false);
+          balance = StringUtils.formatNumAmount(widget.currencyAsset.balance, point: 8, supply0: false);
         }
         // else {
         //   balance = "--";
@@ -1053,7 +1248,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
       widget.currencyAsset.cs,
       page,
       pageSize,
-      epkHeight: lastEpkEndHeight-1,
+      epkHeight: lastEpkEndHeight - 1,
     ); //lastTime: lastTime
 
     dataCallback(retmap);
@@ -1063,26 +1258,26 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
 
   onItemClick(int postision) {
     try {
-      if (data_list_item != null &&
-          postision >= 0 &&
-          postision < data_list_item.length &&
-          mounted) {
+      if (data_list_item != null && postision >= 0 && postision < data_list_item.length && mounted) {
         var item = data_list_item[postision];
         if (item != null) {
           if (item is EthOrder) {
             EthOrder _EthOrder = item;
             String hash = _EthOrder.hash;
             DeviceUtils.copyText(hash);
-            String url = ServiceInfo.ether_tx_web + hash;
-            ViewGT.showGeneralWebView(
-                context, ResString.get(context, RSID.berlv_4), url);
-          } else if (item is TepkOrder) {
-            TepkOrder _TepkOrder = item;
+            String url = "";
+            if (widget.currencyAsset.cs.networkType == CurrencySymbol.ETH) {
+              url = ServiceInfo.ether_tx_web + hash;
+            } else if (widget.currencyAsset.cs.networkType == CurrencySymbol.BNB) {
+              url = ServiceInfo.bsc_tx_web + hash;
+            }
+            ViewGT.showGeneralWebView(context, ResString.get(context, RSID.berlv_4), url);
+          } else if (item is EpkOrder) {
+            EpkOrder _TepkOrder = item;
             String cid = _TepkOrder.cid;
             DeviceUtils.copyText(cid);
             String url = ServiceInfo.epik_msg_web + cid;
-            ViewGT.showGeneralWebView(
-                context, ResString.get(context, RSID.berlv_4), url);
+            ViewGT.showGeneralWebView(context, ResString.get(context, RSID.berlv_4), url);
           }
         }
       }
@@ -1092,15 +1287,15 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   }
 
   /// hd钱包加速交易
-  // onClickAccelerateTx(String txhash) {
-  //   BottomDialog.showEthAccelerateTx(
-  //     context,
-  //     AccountMgr().currentAccount,
-  //     txhash,
-  //     callback: (newTxHash) {
-  //       // if (StringUtils.isNotEmpty(newTxHash)) {}
-  //     },
-  //   );
-  // }
+// onClickAccelerateTx(String txhash) {
+//   BottomDialog.showEthAccelerateTx(
+//     context,
+//     AccountMgr().currentAccount,
+//     txhash,
+//     callback: (newTxHash) {
+//       // if (StringUtils.isNotEmpty(newTxHash)) {}
+//     },
+//   );
+// }
 
 }

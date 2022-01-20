@@ -8,6 +8,7 @@ import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/string_utils.dart';
+import 'package:web3dart/credentials.dart';
 
 class ApiMainNet {
   //  #EPIK登录
@@ -34,8 +35,11 @@ class ApiMainNet {
     Uint8List epik_signature_byte = await account.epikWallet.sign(epik_address, Uint8List.fromList(digest.bytes));
     String epik_signature = hex.encode(epik_signature_byte);
     //erc20_signature
-    Uint8List erc20_signature_byte = await account.hdwallet.signHash(erc20_address, Uint8List.fromList(digest.bytes));
-//          .signText(erc20_address, weixin);
+    // Uint8List erc20_signature_byte = await account.hdwallet.signHash(erc20_address, Uint8List.fromList(digest.bytes));
+    Uint8List erc20_signature_byte = await EpikWalletUtils.hdWalletSignHash(account.credentials, Uint8List.fromList(digest.bytes));
+    // print("erc20_signature_byte0 =${hex.encode(erc20_signature_byte)}");
+    // print("erc20_signature_byte1 =${hex.encode(erc20_signature_byte1)}");
+
     String erc20_signature = hex.encode(erc20_signature_byte);
 
     // String url = ServiceInfo.HOST + "/mainnet/login";
