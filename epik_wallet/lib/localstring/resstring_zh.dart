@@ -741,4 +741,14 @@ Map<RSID, String> map_zh = {
   RSID.hmmv_6:"请输入以http://或https://开头的网址",
   RSID.hmmv_7:"删除",
 
+  //AndroidWebPermission
+  RSID.awp_permission_request:"权限申请",
+  RSID.awp_ask:"网站请求以下权限，是否授权？",//The website requests the following permissions. Do you want  grant
+  RSID.awp_deny:"拒绝",
+  RSID.awp_grant:"授权",
+  RSID.awp_audio:"录音",
+  RSID.awp_midisysex:"连接MIDI设备通信",
+  RSID.awp_media:"访问媒体库",
+  RSID.awp_video:"录像",
+
 };

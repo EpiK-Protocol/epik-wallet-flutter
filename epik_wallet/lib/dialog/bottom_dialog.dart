@@ -24,6 +24,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:jazzicon/jazzicon.dart';
 
 class BottomDialog {
   static Future showBottomPop(
@@ -1558,12 +1559,14 @@ class BottomDialog {
                                 height: 30,
                                 margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: Colors.black,
                                   borderRadius: BorderRadius.circular(50),
-                                  gradient: lao.gradientCover,
+                                  gradient: lao.useJazzicon ? null:lao.gradientCover,
                                 ),
                                 child: Stack(
                                   children: [
+                                    if(lao.useJazzicon)
+                                      Jazzicon.getIconWidget(lao.jazziconData),
                                     Align(
                                       alignment: FractionalOffset(0.5, 0.5),
                                       child: Text(

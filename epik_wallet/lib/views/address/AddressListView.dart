@@ -23,6 +23,7 @@ import 'package:epikwallet/widget/rect_getter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:jazzicon/jazzicon.dart';
 import 'package:web3dart/web3dart.dart';
 
 class AddressListView extends BaseWidget {
@@ -281,12 +282,15 @@ class AddressListViewState extends BaseWidgetState<AddressListView> with TickerP
                     height: 30,
                     margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.black,
                       borderRadius: BorderRadius.circular(50),
-                      gradient: lao.gradientCover,
+                      gradient: lao.useJazzicon ? null:lao.gradientCover,
                     ),
                     child: Stack(
-                      children: [],
+                      children: [
+                        if(lao.useJazzicon)
+                          Jazzicon.getIconWidget(lao.jazziconData),
+                      ],
                     ),
                   ),
                   Expanded(

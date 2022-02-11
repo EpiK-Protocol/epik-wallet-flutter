@@ -745,5 +745,14 @@ enum RSID {
   hmmv_7,//删除
 
 
+  //AndroidWebPermission
+  awp_permission_request,
+  awp_ask,//The website requests the following permissions. Do you want  grant
+  awp_deny,
+  awp_grant,
+  awp_audio,
+  awp_midisysex,
+  awp_media,
+  awp_video,
 
 }

@@ -746,4 +746,16 @@ Map<RSID, String> map_en = {
   RSID.hmmv_5:"Url",
   RSID.hmmv_6:'Please enter a url start with "http://" or "https://"',
   RSID.hmmv_7:"Delete",
+
+  //AndroidWebPermission
+  RSID.awp_permission_request:"Permission Request",
+  RSID.awp_ask:"The website requests the following permissions. Do you want grant?",//"网站请求以下权限，是否授权？",
+  RSID.awp_deny:"Deny",
+  RSID.awp_grant:"Grant",
+  RSID.awp_audio:"Audio capture",
+  RSID.awp_midisysex:"MIDI sysex",
+  RSID.awp_media:"Media resources",
+  RSID.awp_video:"Video capture",
+
+
 };

@@ -9,6 +9,8 @@ import 'package:epikwallet/utils/JsonUtils.dart';
 import 'package:epikwallet/utils/sp_utils/sp_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:jazzicon/jazzicon.dart';
+import 'package:jazzicon/jazziconshape.dart';
 import 'package:lpinyin/lpinyin.dart';
 
 var localaddressmgr = new LocalAddressMgr();
@@ -99,8 +101,7 @@ class LocalAddressMgr {
     _datamap_kv[lao.address.toLowerCase()] = lao;
   }
 
-  sort(List<LocalAddressObj> data)
-  {
+  sort(List<LocalAddressObj> data) {
     data?.sort((left, right) => left.sortName?.compareTo(right.sortName));
   }
 
@@ -115,17 +116,14 @@ class LocalAddressMgr {
   Future deleteAll(List<LocalAddressObj> data) {
     List<LocalAddressObj> list = _datamap[data[0].symbol.codename];
     if (list != null && list.length > 0) {
-      list.removeWhere((element){
-        for(LocalAddressObj lao in data)
-        {
-         if(element?.address == lao?.address)
-           return true;
+      list.removeWhere((element) {
+        for (LocalAddressObj lao in data) {
+          if (element?.address == lao?.address) return true;
         }
         return false;
       });
     }
-    for(LocalAddressObj lao in data)
-    {
+    for (LocalAddressObj lao in data) {
       _datamap_kv.remove(lao.address.toLowerCase());
     }
   }
@@ -293,5 +291,18 @@ class LocalAddressObj {
       }
     }
     return _sortName ?? name;
+  }
+
+  JazziconData _jd;
+
+  JazziconData get jazziconData {
+    if (_jd == null && useJazzicon) {
+      _jd = Jazzicon.getJazziconData(30, address: address);
+    }
+    return _jd;
+  }
+
+  bool get useJazzicon {
+    return symbol?.networkType == CurrencySymbol.ETH || symbol?.networkType == CurrencySymbol.BNB;
   }
 }

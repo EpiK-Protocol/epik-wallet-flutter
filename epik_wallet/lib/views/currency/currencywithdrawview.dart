@@ -81,7 +81,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    setAppBarTitle(widget.currencyAsset.cs.symbol + ResString.get(context, RSID.withdraw));
+    setAppBarTitle(widget.currencyAsset.cs.symbol + " " + ResString.get(context, RSID.withdraw));
   }
 
   @override
@@ -489,7 +489,8 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
           ),
         ),
       );
-    } else if (widget.currencyAsset.networkType == CurrencySymbol.ETH|| widget.currencyAsset.networkType == CurrencySymbol.BNB) {
+    } else if (widget.currencyAsset.networkType == CurrencySymbol.ETH ||
+        widget.currencyAsset.networkType == CurrencySymbol.BNB) {
       String gas = EpikWalletUtils.hdgasMap[widget.currencyAsset.cs]?.gas ?? "--";
       String symbol = widget.currencyAsset.networkType.symbol;
       views.add(
@@ -497,7 +498,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
           width: double.infinity,
           margin: EdgeInsets.fromLTRB(20, 5, 20, 0),
           child: Text(
-            ResString.get(context, RSID.cwv_7, replace: [gas])+symbol,
+            ResString.get(context, RSID.cwv_7, replace: [gas]) + symbol,
             //"手续费 : ${widget.walletaccount.eth_suggestGas} eth",
             textAlign: TextAlign.end,
             style: TextStyle(

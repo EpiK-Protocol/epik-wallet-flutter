@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:animated_size_and_fade/animated_size_and_fade.dart';
@@ -73,8 +72,7 @@ class Erc20ToEpkView extends BaseWidget {
   }
 }
 
-class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
-    with TickerProviderStateMixin {
+class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerProviderStateMixin {
   final int tickertiem = 500;
 
   Erc2EpkStep current_step = Erc2EpkStep.swap;
@@ -101,35 +99,24 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    setAppBarTitle(widget.title??RSID.main_wv_7.text); //"ERC20-EPK兑换EPK");
+    setAppBarTitle(widget.title ?? RSID.main_wv_7.text); //"ERC20-EPK兑换EPK");
   }
 
   static String getLocalTxHash_Erc20epk() {
-    return SpUtils.getString(
-        "eev-txhash-${AccountMgr()?.currentAccount?.epik_EPK_address
-            ?.hashCode ?? ""}",
+    return SpUtils.getString("eev-txhash-${AccountMgr()?.currentAccount?.epik_EPK_address?.hashCode ?? ""}",
         defValue: "");
   }
 
   static setLocalTxHash_Erc20epk(String txHash) {
-    SpUtils.putString(
-        "eev-txhash-${AccountMgr()?.currentAccount?.epik_EPK_address
-            ?.hashCode ?? ""}",
-        txHash ?? "");
+    SpUtils.putString("eev-txhash-${AccountMgr()?.currentAccount?.epik_EPK_address?.hashCode ?? ""}", txHash ?? "");
   }
 
   static String getLocalTxHash_epk() {
-    return SpUtils.getString(
-        "eev-cid-${AccountMgr()?.currentAccount?.epik_EPK_address?.hashCode ??
-            ""}",
-        defValue: "");
+    return SpUtils.getString("eev-cid-${AccountMgr()?.currentAccount?.epik_EPK_address?.hashCode ?? ""}", defValue: "");
   }
 
   static setLocalTxHash_epk(String cid) {
-    SpUtils.putString(
-        "eev-cid-${AccountMgr()?.currentAccount?.epik_EPK_address?.hashCode ??
-            ""}",
-        cid ?? "");
+    SpUtils.putString("eev-cid-${AccountMgr()?.currentAccount?.epik_EPK_address?.hashCode ?? ""}", cid ?? "");
   }
 
   bool isFristRefresh = true;
@@ -181,17 +168,15 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
       //本地有销毁记录
       //查询销毁结果
       // ResultObj result = await AccountMgr()?.currentAccount?.hdwallet?.receipt(txhash);
-      ResultObj  result = null;
-      try{
+      ResultObj result = null;
+      try {
         TransactionReceipt tr = await EpikWalletUtils.ethClient.getTransactionReceipt(txhash);
         result = ResultObj();
-        if(tr!=null)
-        {
-          result.code=0;
-          result.data=tr.status==true?"success":"";
+        if (tr != null) {
+          result.code = 0;
+          result.data = tr.status == true ? "success" : "";
         }
-      }catch(e)
-      {
+      } catch (e) {
         print(e);
         result = ResultObj.fromError(e);
       }
@@ -212,8 +197,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
     } else if (StringUtils.isNotEmpty(cid)) {
       //本地有销毁记录
       //查询销毁结果
-      ResultObj result =
-      await AccountMgr()?.currentAccount?.epikWallet?.messageReceipt(cid);
+      ResultObj result = await AccountMgr()?.currentAccount?.epikWallet?.messageReceipt(cid);
       dlog("epik_receipt = ${result?.data}");
       epikwallet_result = result;
       if (epikwallet_result?.code == 0) {
@@ -264,7 +248,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
       Padding(
         padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
         child: Text(
-          RSID.eev_5.text,//"兑换须知",
+          RSID.eev_5.text, //"兑换须知",
           style: TextStyle(
             color: Colors.white,
             fontSize: 17,
@@ -311,23 +295,22 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
             children: [
               TextSpan(
                 // text: "为避免您之前参与挖矿活动有意或者无意的泄露过当前钱包的助记词或私钥，强烈建议",
-                text:RSID.eev_8_1.text,
+                text: RSID.eev_8_1.text,
               ),
               TextSpan(
                 // text: "创建新钱包",
-                text:RSID.eev_8_2.text,
+                text: RSID.eev_8_2.text,
                 style: TextStyle(
                   color: Colors.white,
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () async {
-                    ViewGT.showView(context, CreateWalletView(),
-                        model: ViewPushModel.PushReplacement);
+                    ViewGT.showView(context, CreateWalletView(), model: ViewPushModel.PushReplacement);
                   },
               ),
               TextSpan(
                 // text: "，将ERC20-EPK转入全新的钱包后，再进行兑换。",
-                text:RSID.eev_8_3.text,
+                text: RSID.eev_8_3.text,
               ),
             ],
           ),
@@ -336,7 +319,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
       Padding(
         padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
         child: Text(
-          RSID.eev_9.text,//"免责声明",
+          RSID.eev_9.text, //"免责声明",
           style: TextStyle(
             color: Colors.white,
             fontSize: 17,
@@ -398,18 +381,17 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
           child: current_step == Erc2EpkStep.swap
               ? Image.asset("assets/img/ic_swap_2.png", width: 35, height: 35)
               : ClipOval(
-            child: ShaderMask(
-              shaderCallback: (bounds) {
-                return const LinearGradient(colors: [
-                  ResColor.white_90,
-                  ResColor.black_90,
-                ]).createShader(bounds);
-              },
-              child: Image.asset("assets/img/ic_swap_2.png",
-                  width: 35, height: 35),
-              blendMode: BlendMode.hue, //BlendMode.saturation, //灰度模式
-            ),
-          ),
+                  child: ShaderMask(
+                    shaderCallback: (bounds) {
+                      return const LinearGradient(colors: [
+                        ResColor.white_90,
+                        ResColor.black_90,
+                      ]).createShader(bounds);
+                    },
+                    child: Image.asset("assets/img/ic_swap_2.png", width: 35, height: 35),
+                    blendMode: BlendMode.hue, //BlendMode.saturation, //灰度模式
+                  ),
+                ),
         ),
       ),
       Container(
@@ -438,9 +420,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
       padding: EdgeInsets.all(0),
       child: Container(
         constraints: BoxConstraints(
-          minHeight: getScreenHeight() -
-              BaseFuntion.topbarheight -
-              BaseFuntion.appbarheight_def,
+          minHeight: getScreenHeight() - BaseFuntion.topbarheight - BaseFuntion.appbarheight_def,
         ),
         child: Column(children: [
           Container(
@@ -495,9 +475,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
     String balance = "0.0";
     String address = AccountMgr()?.currentAccount?.hd_eth_address ?? "";
 
-    CurrencyAsset ca = AccountMgr()
-        ?.currentAccount
-        ?.getCurrencyAssetByCs(CurrencySymbol.EPKerc20);
+    CurrencyAsset ca = AccountMgr()?.currentAccount?.getCurrencyAssetByCs(CurrencySymbol.EPKerc20);
     if (ca != null) balance = ca.balance;
 
     // balance = "999598150.037303903730390373039"; //todo test
@@ -539,10 +517,8 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
                           height: 15,
                           padding: EdgeInsets.all(1),
                           decoration: BoxDecoration(
-                            color:
-                            const Color(0xff202020), //Colors.white,
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(10)),
+                            color: const Color(0xff202020), //Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
                           child: Image(
                             image: AssetImage(ca.networkType.iconUrl),
@@ -564,8 +540,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
                 child: Text(
                   // balance,
                   StringUtils.isNotEmpty(balance)
-                      ? StringUtils.formatNumAmount(balance,
-                      point: 8, supply0: false)
+                      ? StringUtils.formatNumAmount(balance, point: 8, supply0: false)
                       : "--",
                   textAlign: TextAlign.right,
                   style: TextStyle(
@@ -583,7 +558,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
               Padding(
                 padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
                 child: Text(
-                  RSID.eev_11.text,//"地址:",
+                  RSID.eev_11.text, //"地址:",
                   style: TextStyle(
                     color: ResColor.white_60,
                     fontSize: 11,
@@ -613,8 +588,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
     String balance = "0.0";
     String address = AccountMgr()?.currentAccount?.epik_EPK_address ?? "";
 
-    CurrencyAsset ca =
-    AccountMgr()?.currentAccount?.getCurrencyAssetByCs(CurrencySymbol.EPK);
+    CurrencyAsset ca = AccountMgr()?.currentAccount?.getCurrencyAssetByCs(CurrencySymbol.EPK);
     if (ca != null) balance = ca.balance;
 
     // balance = "999598150.2350130746327";//todo test
@@ -656,10 +630,8 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
                           height: 15,
                           padding: EdgeInsets.all(1),
                           decoration: BoxDecoration(
-                            color:
-                            const Color(0xff202020), //Colors.white,
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(10)),
+                            color: const Color(0xff202020), //Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
                           child: Image(
                             image: AssetImage(ca.networkType.iconUrl),
@@ -681,8 +653,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
                 child: Text(
                   // balance,
                   StringUtils.isNotEmpty(balance)
-                      ? StringUtils.formatNumAmount(balance,
-                      point: 8, supply0: false)
+                      ? StringUtils.formatNumAmount(balance, point: 8, supply0: false)
                       : "--",
                   textAlign: TextAlign.right,
                   style: TextStyle(
@@ -700,7 +671,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
               Padding(
                 padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
                 child: Text(
-                  RSID.eev_11.text,//"地址:",
+                  RSID.eev_11.text, //"地址:",
                   style: TextStyle(
                     color: ResColor.white_60,
                     fontSize: 11,
@@ -726,8 +697,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
     );
   }
 
-  Widget getSubType(String text1,
-      {String text2, Key key, double text2PadingTop = 0, double paddingbottom=20}) {
+  Widget getSubType(String text1, {String text2, Key key, double text2PadingTop = 0, double paddingbottom = 20}) {
     return Container(
       key: key,
       margin: EdgeInsets.fromLTRB(0, 0, 0, paddingbottom),
@@ -759,16 +729,16 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
             child: text2 == null
                 ? Container()
                 : Padding(
-              padding: EdgeInsets.only(top: text2PadingTop),
-              child: DiffScaleText(
-                text: text2 ?? "",
-                textStyle: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+                    padding: EdgeInsets.only(top: text2PadingTop),
+                    child: DiffScaleText(
+                      text: text2 ?? "",
+                      textStyle: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
           ),
         ],
       ),
@@ -831,60 +801,57 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
       items.add(
         Expanded(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    Expanded(child: isFirst ? Container() : getLine()),
-                    Container(
-                      width: 30,
-                      height: 30,
-                      decoration: isCurrent
-                          ? BoxDecoration(
-                        color: ResColor.o_1,
-                        borderRadius: BorderRadius.circular(30),
-                      )
-                          : BoxDecoration(
-                        color: ResColor.b_3,
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.fromBorderSide(BorderSide(
-                          width: 1,
-                          color:
-                          i <= currentIndex ? ResColor.o_1 : Colors.white,
-                        )),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "${i + 1}",
-                          style: TextStyle(
-                            color: i < currentIndex ? ResColor.o_1 : Colors
-                                .white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(child: isLast ? Container() : getLine()),
-                  ],
-                ),
+                Expanded(child: isFirst ? Container() : getLine()),
                 Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                  child: Text(
-                    "${step.name}",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: isCurrent ? ResColor.o_1 : Colors.white,
-                      fontWeight: isCurrent ? FontWeight.bold : FontWeight
-                          .normal,
+                  width: 30,
+                  height: 30,
+                  decoration: isCurrent
+                      ? BoxDecoration(
+                          color: ResColor.o_1,
+                          borderRadius: BorderRadius.circular(30),
+                        )
+                      : BoxDecoration(
+                          color: ResColor.b_3,
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.fromBorderSide(BorderSide(
+                            width: 1,
+                            color: i <= currentIndex ? ResColor.o_1 : Colors.white,
+                          )),
+                        ),
+                  child: Center(
+                    child: Text(
+                      "${i + 1}",
+                      style: TextStyle(
+                        color: i < currentIndex ? ResColor.o_1 : Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
+                Expanded(child: isLast ? Container() : getLine()),
               ],
-            )),
+            ),
+            Container(
+              width: double.infinity,
+              margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+              child: Text(
+                "${step.name}",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isCurrent ? ResColor.o_1 : Colors.white,
+                  fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
+          ],
+        )),
       );
     }
 
@@ -916,8 +883,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
       _tec_amount = new TextEditingController.fromValue(TextEditingValue(
         text: amount_text,
         selection: new TextSelection.fromPosition(
-          TextPosition(
-              affinity: TextAffinity.downstream, offset: amount_text.length),
+          TextPosition(affinity: TextAffinity.downstream, offset: amount_text.length),
         ),
       ));
 
@@ -933,49 +899,44 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
                   children: [
                     Expanded(
                         child: Container(
-                          height: 55,
-                          child: TextField(
-                            controller: _tec_amount,
-                            keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
-                            maxLines: 1,
-                            obscureText: false,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExpUtil.re_float)
-                            ],
-                            // 这里限制长度 不会有数量提示
-                            decoration: InputDecoration(
-                              // 以下属性可用来去除TextField的边框
-                              border: InputBorder.none,
-                              errorBorder: InputBorder.none,
-                              focusedErrorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              contentPadding: EdgeInsets.fromLTRB(0, -10, 0, 0),
-                              // hintText: ResString.get(context, RSID.bexv_5),
-                              //"请输入兑换数量",
-                              hintStyle:
-                              TextStyle(color: ResColor.white_60, fontSize: 17),
-                              labelText: RSID.eev_12.text,//"兑换数量",
-                              labelStyle:
-                              TextStyle(color: ResColor.white, fontSize: 17),
-                            ),
-                            cursorWidth: 2.0,
-                            //光标宽度
-                            cursorRadius: Radius.circular(2),
-                            //光标圆角弧度
-                            cursorColor: Colors.white,
-                            //光标颜色
-                            style: TextStyle(fontSize: 17, color: Colors.white),
-                            onChanged: (value) {
-                              amount_text = _tec_amount.text.trim();
-                              amount = StringUtils.parseDouble(amount_text, 0);
-                              dlog("amount_text=$amount_text----amount=$amount");
-                            },
-                          ),
-                        )),
+                      height: 55,
+                      child: TextField(
+                        controller: _tec_amount,
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
+                        maxLines: 1,
+                        obscureText: false,
+                        inputFormatters: [FilteringTextInputFormatter.allow(RegExpUtil.re_float)],
+                        // 这里限制长度 不会有数量提示
+                        decoration: InputDecoration(
+                          // 以下属性可用来去除TextField的边框
+                          border: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          focusedErrorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.fromLTRB(0, -10, 0, 0),
+                          // hintText: ResString.get(context, RSID.bexv_5),
+                          //"请输入兑换数量",
+                          hintStyle: TextStyle(color: ResColor.white_60, fontSize: 17),
+                          labelText: RSID.eev_12.text,
+                          //"兑换数量",
+                          labelStyle: TextStyle(color: ResColor.white, fontSize: 17),
+                        ),
+                        cursorWidth: 2.0,
+                        //光标宽度
+                        cursorRadius: Radius.circular(2),
+                        //光标圆角弧度
+                        cursorColor: Colors.white,
+                        //光标颜色
+                        style: TextStyle(fontSize: 17, color: Colors.white),
+                        onChanged: (value) {
+                          amount_text = _tec_amount.text.trim();
+                          amount = StringUtils.parseDouble(amount_text, 0);
+                          dlog("amount_text=$amount_text----amount=$amount");
+                        },
+                      ),
+                    )),
                     // max
                     LoadingButton(
                       height: 20,
@@ -998,9 +959,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
 
                         CurrencyAsset ca = AccountMgr()
                             ?.currentAccount
-                            ?.getCurrencyAssetByCs(is2Epik
-                            ? CurrencySymbol.EPKerc20
-                            : CurrencySymbol.EPK);
+                            ?.getCurrencyAssetByCs(is2Epik ? CurrencySymbol.EPKerc20 : CurrencySymbol.EPK);
                         if (ca != null) balance = ca.balance;
 
                         // _tec_erc20.text=balance;
@@ -1029,10 +988,12 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
     Widget items = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        getSubType(RSID.eev_13.text,//"兑换为",
-            text2: is2Epik ? "EPK" : "ERC20-EPK", text2PadingTop: 4,paddingbottom: 2),
+        getSubType(RSID.eev_13.text, //"兑换为",
+            text2: is2Epik ? "EPK" : "ERC20-EPK",
+            text2PadingTop: 4,
+            paddingbottom: 2),
         Container(
-          margin: EdgeInsets.only(left: 10,right: 10,bottom: 20),
+          margin: EdgeInsets.only(left: 10, right: 10, bottom: 20),
           width: double.infinity,
           child: Text(
             is2Epik ? RSID.eev_37.text : RSID.eev_38.text,
@@ -1058,9 +1019,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
             children: [
               Text(
                 //最少兑换
-                "${RSID.eev_14.text} ${StringUtils.formatNumAmount(
-                    (is2Epik ? config?.min_erc20_swap : config
-                        ?.min_epik_swap) ?? "0", point: 8, supply0: false)}",
+                "${RSID.eev_14.text} ${StringUtils.formatNumAmount((is2Epik ? config?.min_erc20_swap : config?.min_epik_swap) ?? "0", point: 8, supply0: false)}",
                 style: const TextStyle(
                   fontSize: 14,
                   color: ResColor.white_60,
@@ -1068,9 +1027,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
               ),
               Text(
                 //最多兑换
-                "${RSID.eev_15.text} ${StringUtils.formatNumAmount(
-                    (is2Epik ? config?.max_erc20_swap : config
-                        ?.max_epik_swap) ?? "0", point: 8, supply0: false)}",
+                "${RSID.eev_15.text} ${StringUtils.formatNumAmount((is2Epik ? config?.max_erc20_swap : config?.max_epik_swap) ?? "0", point: 8, supply0: false)}",
                 style: const TextStyle(
                   fontSize: 14,
                   color: ResColor.white_60,
@@ -1078,8 +1035,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
               ),
               Text(
                 //手续费
-                "${RSID.eev_16.text} ${(is2Epik ? config?.erc20_fee : config?.epik_fee) ??
-                    "0"} ${is2Epik ? "ERC20-EPK" : "EPK"}",
+                "${RSID.eev_16.text} ${(is2Epik ? config?.erc20_fee : config?.epik_fee) ?? "0"} ${is2Epik ? "ERC20-EPK" : "EPK"}",
                 style: const TextStyle(
                   fontSize: 14,
                   color: ResColor.white_60,
@@ -1122,43 +1078,43 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
           sizeDuration: Duration(milliseconds: tickertiem),
           child: is2Epik
               ? InkWell(
-            key: ValueKey("rp_er2ep"),
-            child: Container(
-              width: double.infinity,
-              height: 20,
-              child: Text(
-                RSID.eev_17.text,//"已转出交易补领EPK",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            onTap: () {
-              //  导入之前销毁记录的tx  进入下一步
-              onClickReplacementErc20ToEpk();
-            },
-          )
+                  key: ValueKey("rp_er2ep"),
+                  child: Container(
+                    width: double.infinity,
+                    height: 20,
+                    child: Text(
+                      RSID.eev_17.text, //"已转出交易补领EPK",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    //  导入之前销毁记录的tx  进入下一步
+                    onClickReplacementErc20ToEpk();
+                  },
+                )
               : InkWell(
-            key: ValueKey("rp_ep2er"),
-            child: Container(
-              width: double.infinity,
-              height: 20,
-              child: Text(
-                RSID.eev_18.text,//"已转出交易补领ERC20-EPK",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white,
+                  key: ValueKey("rp_ep2er"),
+                  child: Container(
+                    width: double.infinity,
+                    height: 20,
+                    child: Text(
+                      RSID.eev_18.text, //"已转出交易补领ERC20-EPK",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    //  导入之前销毁记录的tx  进入下一步
+                    onClickReplacementEpkToERC20();
+                  },
                 ),
-              ),
-            ),
-            onTap: () {
-              //  导入之前销毁记录的tx  进入下一步
-              onClickReplacementEpkToERC20();
-            },
-          ),
         ),
       ],
     );
@@ -1177,14 +1133,14 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
 
     List<Widget> items = [];
     switch (hdwallet_result.data) {
-    // case "success":
-    //   {}
-    //   break;
+      // case "success":
+      //   {}
+      //   break;
       case "error":
       case "failed":
         {
           //failed交易失败
-          items.add(getSubType(RSID.eev_19.text));//"交易失败"));
+          items.add(getSubType(RSID.eev_19.text)); //"交易失败"));
           items.add(Row(
             children: [
               Expanded(
@@ -1193,7 +1149,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
                   highlightColor: Colors.transparent,
                   onTap: () {
                     DeviceUtils.copyText(txhash);
-                    showToast(RSID.eev_20.text);//"TxHash已复制");
+                    showToast(RSID.eev_20.text); //"TxHash已复制");
                   },
                   child: TextEm(
                     "$txhash",
@@ -1209,7 +1165,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
               ),
               InkWell(
                 child: Text(
-                 RSID.minerview_19.text,// "查看交易",
+                  RSID.minerview_19.text, // "查看交易",
                   style: TextStyle(
                     fontSize: 11,
                     color: ResColor.o_1,
@@ -1233,7 +1189,8 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
             progress_size: 20,
             padding: EdgeInsets.all(0),
             bg_borderradius: BorderRadius.circular(4),
-            text: RSID.eev_21.text,//"发起新的兑换",
+            text: RSID.eev_21.text,
+            //"发起新的兑换",
             textstyle: const TextStyle(
               color: ResColor.white,
               fontSize: 17,
@@ -1254,7 +1211,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
       case "pending":
         {
           //pending交易等待中
-          items.add(getSubType(RSID.eev_22.text));//"等待交易确认"));
+          items.add(getSubType(RSID.eev_22.text)); //"等待交易确认"));
           items.add(Row(
             children: [
               Expanded(
@@ -1263,7 +1220,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
                   highlightColor: Colors.transparent,
                   onTap: () {
                     DeviceUtils.copyText(txhash);
-                    showToast(RSID.eev_20.text);//"TxHash已复制");
+                    showToast(RSID.eev_20.text); //"TxHash已复制");
                   },
                   child: TextEm(
                     "$txhash",
@@ -1279,7 +1236,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
               ),
               InkWell(
                 child: Text(
-                  RSID.minerview_19.text,//"查看交易",
+                  RSID.minerview_19.text, //"查看交易",
                   style: TextStyle(
                     fontSize: 11,
                     color: ResColor.o_1,
@@ -1302,14 +1259,14 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
               ),
               children: [
                 TextSpan(
-                  text: RSID.eev_23_1.text,//"如长时间不上链可以",
+                  text: RSID.eev_23_1.text, //"如长时间不上链可以",
                   style: TextStyle(
                     fontSize: 11,
                     color: ResColor.white,
                   ),
                 ),
                 TextSpan(
-                  text: RSID.eev_23_2.text,//"加速交易",
+                  text: RSID.eev_23_2.text, //"加速交易",
                   style: TextStyle(
                     fontSize: 11,
                     color: ResColor.o_1,
@@ -1332,7 +1289,8 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
             progress_size: 20,
             padding: EdgeInsets.all(0),
             bg_borderradius: BorderRadius.circular(4),
-            text: RSID.eev_24.text,//"刷新",
+            text: RSID.eev_24.text,
+            //"刷新",
             textstyle: const TextStyle(
               color: ResColor.white,
               fontSize: 17,
@@ -1364,14 +1322,14 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
 
     List<Widget> items = [];
     switch (epikwallet_result.data) {
-    // case "success":
-    //   {}
-    //   break;
+      // case "success":
+      //   {}
+      //   break;
       case "error":
       case "failed":
         {
           //failed交易失败
-          items.add(getSubType(RSID.eev_19.text));//"交易失败"));
+          items.add(getSubType(RSID.eev_19.text)); //"交易失败"));
           items.add(Row(
             children: [
               Expanded(
@@ -1380,7 +1338,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
                   highlightColor: Colors.transparent,
                   onTap: () {
                     DeviceUtils.copyText(cid);
-                    showToast(RSID.eev_25.text);//"cid已复制");
+                    showToast(RSID.eev_25.text); //"cid已复制");
                   },
                   child: TextEm(
                     "$cid",
@@ -1396,7 +1354,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
               ),
               InkWell(
                 child: Text(
-                  RSID.minerview_19.text,//"查看交易",
+                  RSID.minerview_19.text, //"查看交易",
                   style: TextStyle(
                     fontSize: 11,
                     color: ResColor.o_1,
@@ -1420,7 +1378,8 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
             progress_size: 20,
             padding: EdgeInsets.all(0),
             bg_borderradius: BorderRadius.circular(4),
-            text: RSID.eev_21.text,//"发起新的兑换",
+            text: RSID.eev_21.text,
+            //"发起新的兑换",
             textstyle: const TextStyle(
               color: ResColor.white,
               fontSize: 17,
@@ -1441,7 +1400,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
       case "pending":
         {
           //pending交易等待中
-          items.add(getSubType(RSID.eev_22.text));//"等待交易确认"));
+          items.add(getSubType(RSID.eev_22.text)); //"等待交易确认"));
           items.add(Row(
             children: [
               Expanded(
@@ -1450,7 +1409,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
                   highlightColor: Colors.transparent,
                   onTap: () {
                     DeviceUtils.copyText(cid);
-                    showToast(RSID.eev_25.text);//"cid已复制");
+                    showToast(RSID.eev_25.text); //"cid已复制");
                   },
                   child: TextEm(
                     "$cid",
@@ -1466,7 +1425,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
               ),
               InkWell(
                 child: Text(
-                  RSID.minerview_19.text,//"查看交易",
+                  RSID.minerview_19.text, //"查看交易",
                   style: TextStyle(
                     fontSize: 11,
                     color: ResColor.o_1,
@@ -1489,7 +1448,8 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
             progress_size: 20,
             padding: EdgeInsets.all(0),
             bg_borderradius: BorderRadius.circular(4),
-            text: RSID.eev_24.text,//"刷新",
+            text: RSID.eev_24.text,
+            //"刷新",
             textstyle: const TextStyle(
               color: ResColor.white,
               fontSize: 17,
@@ -1519,13 +1479,13 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
   Widget getStep_complete() {
     List<Widget> items = [];
     //成功
-    items.add(getSubType(RSID.eev_26.text));//"兑换完成"));
+    items.add(getSubType(RSID.eev_26.text)); //"兑换完成"));
 
     //"请在兑换记录中查看到账情况",
     items.add(Row(
       children: [
         Expanded(
-          child:  RichText(
+          child: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
               style: TextStyle(
@@ -1534,22 +1494,22 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
               ),
               children: [
                 TextSpan(
-                  text:RSID.eev_27_1.text,// "请在",
+                  text: RSID.eev_27_1.text, // "请在",
                 ),
                 TextSpan(
-                  text: RSID.eev_27_2.text,//"兑换记录",
+                  text: RSID.eev_27_2.text, //"兑换记录",
                   style: TextStyle(
                     fontSize: 11,
                     color: ResColor.white,
                     decoration: TextDecoration.underline, //下滑线
                   ),
                   recognizer: TapGestureRecognizer()
-                    ..onTap = (){
+                    ..onTap = () {
                       ViewGT.showErc20ToEpkRecordView(context);
                     },
                 ),
                 TextSpan(
-                  text: RSID.eev_27_3.text,//"中查看到账情况",
+                  text: RSID.eev_27_3.text, //"中查看到账情况",
                 ),
               ],
             ),
@@ -1568,7 +1528,8 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
       progress_size: 20,
       padding: EdgeInsets.all(0),
       bg_borderradius: BorderRadius.circular(4),
-      text: RSID.eev_21.text,//"发起新的兑换",
+      text: RSID.eev_21.text,
+      //"发起新的兑换",
       textstyle: const TextStyle(
         color: ResColor.white,
         fontSize: 17,
@@ -1623,7 +1584,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
       AccountMgr().currentAccount,
       CurrencySymbol.EPKerc20,
       txhash,
-      callback: (newTxHash) async{
+      callback: (newTxHash) async {
         if (StringUtils.isNotEmpty(newTxHash)) {
           await Future.delayed(Duration(milliseconds: 200));
           showLoadDialog("");
@@ -1634,18 +1595,16 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
 
           //加速后新的txhash上报给服务
           HttpJsonRes hjr = await ApiWallet.swap2EPIK(
-              AccountMgr().currentAccount,
-              DL_TepkLoginToken.getEntity().getToken(),
-              newTxHash);
+              AccountMgr().currentAccount, DL_TepkLoginToken.getEntity().getToken(), newTxHash);
 
           if (hjr?.code == 0) {
             closeLoadDialog();
             await Future.delayed(Duration(milliseconds: 100));
             refresh();
             return;
-          }else{
+          } else {
             closeLoadDialog();
-            showToast(StringUtils.isNotEmpty(hjr?.msg) ? hjr?.msg : RSID.eev_31.text);//"提交失败");
+            showToast(StringUtils.isNotEmpty(hjr?.msg) ? hjr?.msg : RSID.eev_31.text); //"提交失败");
             return;
           }
         }
@@ -1658,16 +1617,12 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
     dlog("amount=$amount");
     if (amount < config.min_erc20_swap || amount > config.max_erc20_swap) {
       showToast(
-      // 兑换数量限制
-          "${RSID.eev_28.text} ${StringUtils.formatNumAmount(
-              config.min_erc20_swap, point: 8, supply0: false)} - ${StringUtils
-              .formatNumAmount(
-              config.max_erc20_swap, point: 8, supply0: false)}");
+          // 兑换数量限制
+          "${RSID.eev_28.text} ${StringUtils.formatNumAmount(config.min_erc20_swap, point: 8, supply0: false)} - ${StringUtils.formatNumAmount(config.max_erc20_swap, point: 8, supply0: false)}");
       return;
     }
 
-    BottomDialog.showPassWordInputDialog(
-        context, AccountMgr()?.currentAccount?.password, (password) {
+    BottomDialog.showPassWordInputDialog(context, AccountMgr()?.currentAccount?.password, (password) {
       //点击确定回调
       showLoadDialog(
         "",
@@ -1682,22 +1637,22 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
           //     .transferToken(from_address, to_address,
           //     CurrencySymbol.EPKerc20.symbolToNetWork, amount_text);
 
-          ResultObj<String> result=ResultObj();
-          try{
-            ERC20 erc20 =AccountMgr().currentAccount.hdTokenMap[CurrencySymbol.EPKerc20];
-            BigInt decimals = await erc20.decimals();//获取token的精度
+          ResultObj<String> result = ResultObj();
+          try {
+            ERC20 erc20 = AccountMgr().currentAccount.hdTokenMap[CurrencySymbol.EPKerc20];
+            BigInt decimals = await erc20.decimals(); //获取token的精度
             // BigInt value = BigInt.from((amount*pow(10, decimals.toInt())).toDouble());
-            BigInt value = StringUtils.numUpsizingBigint(amount_text,bit: decimals.toInt());
+            BigInt value = StringUtils.numUpsizingBigint(amount_text, bit: decimals.toInt());
             dlog("value = $value");
-            String tx = await erc20.transfer(EthereumAddress.fromHex(to_address), value, credentials:AccountMgr().currentAccount.credentials);
+            String tx = await erc20.transfer(EthereumAddress.fromHex(to_address), value,
+                credentials: AccountMgr().currentAccount.credentials);
 
-            result.code=0;
-            result.data=tx;
-          }catch(e){
+            result.code = 0;
+            result.data = tx;
+          } catch (e) {
             print(e);
-            result=ResultObj.fromError(e);
+            result = ResultObj.fromError(e);
           }
-
 
           if (result?.code != 0 || StringUtils.isEmpty(result?.data)) {
             closeLoadDialog();
@@ -1732,15 +1687,12 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
           _tec_amount = null;
 
           //刷新钱包余额
-          EpikWalletUtils.requestBalance(AccountMgr().currentAccount)
-              .then((value) {
+          EpikWalletUtils.requestBalance(AccountMgr().currentAccount).then((value) {
             setState(() {});
           });
 
-          HttpJsonRes hjr = await ApiWallet.swap2EPIK(
-              AccountMgr().currentAccount,
-              DL_TepkLoginToken.getEntity().getToken(),
-              tx);
+          HttpJsonRes hjr =
+              await ApiWallet.swap2EPIK(AccountMgr().currentAccount, DL_TepkLoginToken.getEntity().getToken(), tx);
 
           closeLoadDialog();
 
@@ -1748,7 +1700,8 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
             MessageDialog.showMsgDialog(
               context,
               title: RSID.tip.text,
-              msg:RSID.eev_29.text,// "兑换已提交",
+              msg: RSID.eev_29.text,
+              // "兑换已提交",
               btnLeft: RSID.confirm.text,
               onClickBtnLeft: (dialog) {
                 dialog.dismiss();
@@ -1773,16 +1726,12 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
   onClickEpkToErc20() {
     if (amount < config.min_epik_swap || amount > config.max_epik_swap) {
       showToast(
-        //兑换数量限制
-          "${RSID.eev_28.text} ${StringUtils.formatNumAmount(
-              config.min_epik_swap, point: 8, supply0: false)} - ${StringUtils
-              .formatNumAmount(
-              config.max_epik_swap, point: 8, supply0: false)}");
+          //兑换数量限制
+          "${RSID.eev_28.text} ${StringUtils.formatNumAmount(config.min_epik_swap, point: 8, supply0: false)} - ${StringUtils.formatNumAmount(config.max_epik_swap, point: 8, supply0: false)}");
       return;
     }
 
-    BottomDialog.showPassWordInputDialog(
-        context, AccountMgr()?.currentAccount?.password, (password) {
+    BottomDialog.showPassWordInputDialog(context, AccountMgr()?.currentAccount?.password, (password) {
       //点击确定回调
       showLoadDialog(
         "",
@@ -1792,10 +1741,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
           // String from_address = AccountMgr()?.currentAccount?.epik_EPK_address;
           String to_address = config.epik_address;
 
-          ResultObj result = await AccountMgr()
-              .currentAccount
-              .epikWallet
-              .send(to_address, amount_text);
+          ResultObj result = await AccountMgr().currentAccount.epikWallet.send(to_address, amount_text);
 
           if (result?.code != 0 || StringUtils.isEmpty(result?.data)) {
             closeLoadDialog();
@@ -1830,15 +1776,12 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
           _tec_amount = null;
 
           //刷新钱包余额
-          EpikWalletUtils.requestBalance(AccountMgr().currentAccount)
-              .then((value) {
+          EpikWalletUtils.requestBalance(AccountMgr().currentAccount).then((value) {
             setState(() {});
           });
 
-          HttpJsonRes hjr = await ApiWallet.swap2ERC20EPK(
-              AccountMgr().currentAccount,
-              DL_TepkLoginToken.getEntity().getToken(),
-              cid);
+          HttpJsonRes hjr =
+              await ApiWallet.swap2ERC20EPK(AccountMgr().currentAccount, DL_TepkLoginToken.getEntity().getToken(), cid);
 
           closeLoadDialog();
 
@@ -1846,7 +1789,8 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
             MessageDialog.showMsgDialog(
               context,
               title: RSID.tip.text,
-              msg: RSID.eev_29.text,//"兑换已提交",
+              msg: RSID.eev_29.text,
+              //"兑换已提交",
               btnLeft: RSID.confirm.text,
               onClickBtnLeft: (dialog) {
                 dialog.dismiss();
@@ -1870,25 +1814,27 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
   ///已转erc20 补领 epk
   onClickReplacementErc20ToEpk() {
     BottomDialog.showTextInputDialog(
-      //请输入转出ERC20-EPK交易的TxHash
-        context, RSID.eev_30.text, "", "", 999, (txhash) async {
+        //请输入转出ERC20-EPK交易的TxHash
+        context,
+        RSID.eev_30.text,
+        "",
+        "",
+        999, (txhash) async {
       if (StringUtils.isNotEmpty(txhash) && txhash.startsWith("0x")) {
         showLoadDialog("", touchOutClose: false, backClose: false);
 
         // 检查txhash 能否进入下一步
         //查询销毁结果
         // ResultObj result = await AccountMgr()?.currentAccount?.hdwallet?.receipt(txhash);
-        ResultObj  result = null;
-        try{
+        ResultObj result = null;
+        try {
           TransactionReceipt tr = await EpikWalletUtils.ethClient.getTransactionReceipt(txhash);
           result = ResultObj();
-          if(tr!=null)
-          {
-            result.code=0;
-            result.data=tr.status==true?"success":"";
+          if (tr != null) {
+            result.code = 0;
+            result.data = tr.status == true ? "success" : "";
           }
-        }catch(e)
-        {
+        } catch (e) {
           print(e);
           result = ResultObj.fromError(e);
         }
@@ -1896,10 +1842,8 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
         // closeLoadDialog();
         hdwallet_result = result;
         if (hdwallet_result?.code == 0) {
-          HttpJsonRes hjr = await ApiWallet.swap2EPIK(
-              AccountMgr().currentAccount,
-              DL_TepkLoginToken.getEntity().getToken(),
-              txhash);
+          HttpJsonRes hjr =
+              await ApiWallet.swap2EPIK(AccountMgr().currentAccount, DL_TepkLoginToken.getEntity().getToken(), txhash);
 
           if (hjr?.code == 0) {
             closeLoadDialog();
@@ -1915,18 +1859,18 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
           }
 
           closeLoadDialog();
-          showToast(StringUtils.isNotEmpty(hjr?.msg) ? hjr?.msg : RSID.eev_31.text);//"提交失败");
+          showToast(StringUtils.isNotEmpty(hjr?.msg) ? hjr?.msg : RSID.eev_31.text); //"提交失败");
           return;
         } else {
           closeLoadDialog();
           showToast(StringUtils.isNotEmpty(hdwallet_result?.errorMsg)
               ? hdwallet_result?.errorMsg
-              : RSID.eev_32.text);//"TxHash查询失败");
+              : RSID.eev_32.text); //"TxHash查询失败");
           return;
         }
       }
       closeLoadDialog();
-      showToast(RSID.eev_33.text);//"TxHash无效");
+      showToast(RSID.eev_33.text); //"TxHash无效");
     }).then((value) {
       closeInput();
     });
@@ -1935,52 +1879,48 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView>
   ///已转epk  补领 erc20
   onClickReplacementEpkToERC20() {
     //"请输入转出EPK交易的cid"
-    BottomDialog.showTextInputDialog(context, RSID.eev_34.text, "", "", 999,
-            (cidStr) async {
-          if (StringUtils.isNotEmpty(cidStr) /*&& txhash.startsWith("0x")*/) {
-            showLoadDialog("", touchOutClose: false, backClose: false);
+    BottomDialog.showTextInputDialog(context, RSID.eev_34.text, "", "", 999, (cidStr) async {
+      if (StringUtils.isNotEmpty(cidStr) /*&& txhash.startsWith("0x")*/) {
+        showLoadDialog("", touchOutClose: false, backClose: false);
 
-            // 检查txhash 能否进入下一步
-            //查询销毁结果
-            ResultObj result =
-            await AccountMgr().currentAccount.epikWallet.messageReceipt(cidStr);
-            dlog("epik_receipt = ${result?.data}");
+        // 检查txhash 能否进入下一步
+        //查询销毁结果
+        ResultObj result = await AccountMgr().currentAccount.epikWallet.messageReceipt(cidStr);
+        dlog("epik_receipt = ${result?.data}");
 
-            epikwallet_result = result;
-            if (epikwallet_result?.code == 0) {
-              HttpJsonRes hjr = await ApiWallet.swap2ERC20EPK(
-                  AccountMgr().currentAccount,
-                  DL_TepkLoginToken.getEntity().getToken(),
-                  cidStr);
+        epikwallet_result = result;
+        if (epikwallet_result?.code == 0) {
+          HttpJsonRes hjr = await ApiWallet.swap2ERC20EPK(
+              AccountMgr().currentAccount, DL_TepkLoginToken.getEntity().getToken(), cidStr);
 
-              if (hjr?.code == 0) {
-                closeLoadDialog();
+          if (hjr?.code == 0) {
+            closeLoadDialog();
 
-                //交易记录查询成功 提交了补领兑换申请
-                setLocalTxHash_Erc20epk(cidStr);
-                if (epikwallet_result.data == "success") {
-                  current_step = Erc2EpkStep.complete;
-                } else {
-                  current_step = Erc2EpkStep.confirm_swap;
-                }
-                setState(() {});
-                return;
-              }
-
-              closeLoadDialog();
-              showToast(StringUtils.isNotEmpty(hjr?.msg) ? hjr?.msg :RSID.eev_31.text);// "提交失败");
-              return;
+            //交易记录查询成功 提交了补领兑换申请
+            setLocalTxHash_Erc20epk(cidStr);
+            if (epikwallet_result.data == "success") {
+              current_step = Erc2EpkStep.complete;
             } else {
-              closeLoadDialog();
-              showToast(StringUtils.isNotEmpty(epikwallet_result?.errorMsg)
-                  ? epikwallet_result?.errorMsg
-                  : RSID.eev_35.text);//"cid查询失败");
-              return;
+              current_step = Erc2EpkStep.confirm_swap;
             }
+            setState(() {});
+            return;
           }
+
           closeLoadDialog();
-          showToast(RSID.eev_36.text);//"cid无效");
-        }).then((value) {
+          showToast(StringUtils.isNotEmpty(hjr?.msg) ? hjr?.msg : RSID.eev_31.text); // "提交失败");
+          return;
+        } else {
+          closeLoadDialog();
+          showToast(StringUtils.isNotEmpty(epikwallet_result?.errorMsg)
+              ? epikwallet_result?.errorMsg
+              : RSID.eev_35.text); //"cid查询失败");
+          return;
+        }
+      }
+      closeLoadDialog();
+      showToast(RSID.eev_36.text); //"cid无效");
+    }).then((value) {
       closeInput();
     });
   }

@@ -94,19 +94,15 @@ class LocalWebsiteMgr {
     }
   }
 
-  LocalWebsiteObj findByUrl(String url)
-  {
+  LocalWebsiteObj findByUrl(String url) {
     LocalWebsiteObj ret = null;
     if (_data != null) {
-      Uri u0=Uri.tryParse(url?.toLowerCase());
-      if(u0.path=="/" || u0.path=="/#" || u0.path=="/#/")
-        u0=u0.replace(path: "");
+      Uri u0 = Uri.tryParse(url?.toLowerCase());
+      if (u0.path == "/" || u0.path == "/#" || u0.path == "/#/") u0 = u0.replace(path: "");
       for (LocalWebsiteObj lwo in _data) {
-        Uri u1= Uri.tryParse(lwo.url?.toLowerCase());
-        if(u1.path=="/" || u1.path=="/#" || u1.path=="/#/")
-          u1=u1.replace(path: "");
-        if(u0==u1)
-        {
+        Uri u1 = Uri.tryParse(lwo.url?.toLowerCase());
+        if (u1.path == "/" || u1.path == "/#" || u1.path == "/#/") u1 = u1.replace(path: "");
+        if (u0 == u1) {
           ret = lwo;
           break;
         }
@@ -118,15 +114,12 @@ class LocalWebsiteMgr {
   bool hasUrl(String url) {
     bool ret = false;
     if (_data != null) {
-      Uri u0=Uri.tryParse(url?.toLowerCase());
-      if(u0.path=="/" || u0.path=="/#" || u0.path=="/#/")
-        u0=u0.replace(path: "");
+      Uri u0 = Uri.tryParse(url?.toLowerCase());
+      if (u0.path == "/" || u0.path == "/#" || u0.path == "/#/") u0 = u0.replace(path: "");
       for (LocalWebsiteObj lwo in _data) {
-        Uri u1= Uri.tryParse(lwo.url?.toLowerCase());
-        if(u1.path=="/" || u1.path=="/#" || u1.path=="/#/")
-          u1=u1.replace(path: "");
-        if(u0==u1)
-        {
+        Uri u1 = Uri.tryParse(lwo.url?.toLowerCase());
+        if (u1.path == "/" || u1.path == "/#" || u1.path == "/#/") u1 = u1.replace(path: "");
+        if (u0 == u1) {
           ret = true;
           break;
         }
@@ -168,8 +161,7 @@ class LocalWebsiteObj {
   String _favicon = null;
 
   String getFaviconUrl() {
-    // if(_favicon==null)
-    {
+    if (_favicon == null) {
       Uri uri = Uri.tryParse(url);
       if (uri != null) {
         _favicon = "${uri.scheme}://${uri.host}/favicon.ico";
@@ -181,7 +173,9 @@ class LocalWebsiteObj {
   }
 
   String getIco() {
-    if (StringUtils.isNotEmpty(ico)) return ico;
+    if (StringUtils.isNotEmpty(ico)) {
+      if (!ico.contains("data:image/")) return ico;
+    }
     return getFaviconUrl();
   }
 }

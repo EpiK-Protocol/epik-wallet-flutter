@@ -92,12 +92,10 @@ class ServiceInfo {
   }
 
   static String get hd_ETH_RpcUrl {
-    // todo bsc rpc url in serverconfig
     return TEST_DEV_NET ? _hd_ETH_RpcUrl_test : _hd_ETH_RpcUrl;
   }
 
   static String get hd_BSC_RpcUrl {
-    // todo bsc rpc url in serverconfig
     return TEST_DEV_NET ? _hd_BSC_RpcUrl_test : _hd_BSC_RpcUrl;
   }
 

@@ -11,7 +11,7 @@ description: EpiK Portal
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.2.4+124
+version: 1.2.5+125
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -219,6 +219,13 @@ dependencies:
   # 中文转拼音----------------------
   lpinyin: ^1.1.0
 
+  # metamask 头像
+  jazzicon:
+    path: ../jazzicon
+
+  # 指纹 faceid-----------------------
+  local_auth: ^1.1.10
+
 
 dev_dependencies:
   flutter_test:
@@ -226,6 +233,8 @@ dev_dependencies:
 
   # flutter packages pub run build_runner build  把lib下的.abi.json 生成代码
   build_runner: ^2.0.0
+
+  nock: ^1.1.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

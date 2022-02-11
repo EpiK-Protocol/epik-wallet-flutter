@@ -28,8 +28,7 @@ class SplashView extends BaseWidget {
   }
 }
 
-class _SplashViewState extends BaseWidgetState<SplashView>
-    with TickerProviderStateMixin {
+class _SplashViewState extends BaseWidgetState<SplashView> with TickerProviderStateMixin {
   Timer timer;
 
   AnimationController controller;
@@ -78,8 +77,7 @@ class _SplashViewState extends BaseWidgetState<SplashView>
   @override
   Widget buildWidget(BuildContext context) {
     if (controller == null) {
-      controller = new AnimationController(
-          duration: const Duration(milliseconds: 500), vsync: this);
+      controller = new AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
       controller.forward();
     }
 
@@ -139,9 +137,7 @@ class _SplashViewState extends BaseWidgetState<SplashView>
             SizedBox(
               width: 15,
               height: 15,
-              child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation(ResColor.black_10)),
+              child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(ResColor.black_10)),
             )
           ],
         );
@@ -150,8 +146,7 @@ class _SplashViewState extends BaseWidgetState<SplashView>
   }
 
   clickToLogin() {
-    if (ServiceInfo.serverConfig == null || ServiceInfo.homeMenuMap == null)
-      return;
+    if (ServiceInfo.serverConfig == null || ServiceInfo.homeMenuMap == null) return;
 
     if (timer != null && timer.isActive) {
       timer.cancel();
@@ -182,7 +177,8 @@ class _SplashViewState extends BaseWidgetState<SplashView>
   //   }
   // }
 
-  int time_3=0;
+  int time_3 = 0;
+
   loadConfig2() async {
     dlog("loadConfig2 a");
     await ServiceInfo.requestConfig();
@@ -192,24 +188,25 @@ class _SplashViewState extends BaseWidgetState<SplashView>
       dlog("loadConfig2 b");
       closeLoadDialog();
       await Future.delayed(Duration(milliseconds: 200));
-      MessageDialog.showMsgDialog(context,
-      title: RSID.request_failed_checknetwork.text,
+      MessageDialog.showMsgDialog(
+        context,
+        title: RSID.request_failed_checknetwork.text,
         titleAlign: TextAlign.center,
         backClose: false,
         touchOutClose: false,
         btnLeft: RSID.retry.text,
         onClickBtnLeft: (dialog) {
-        //点击重试
+          //点击重试
           dlog("loadConfig2 c");
           dialog.dismiss();
-          if (loadingDialogIsShow != true)
-            showLoadDialog("");
+          if (loadingDialogIsShow != true) showLoadDialog("");
           Future.delayed(Duration(milliseconds: 100)).then((value) {
             loadConfig2();
           });
         },
       );
-    } else {
+    } else
+    {
       dlog("loadConfig2 d");
       await AccountMgr().load(); // 加载钱包账户
 
@@ -217,8 +214,7 @@ class _SplashViewState extends BaseWidgetState<SplashView>
       await localwebsitemgr.load();
 
       bool needRequired = await checkUpgrade();
-      if(needRequired==true)
-      {
+      if (needRequired == true) {
         //强制升级 不能进入
         return;
       }
@@ -229,7 +225,7 @@ class _SplashViewState extends BaseWidgetState<SplashView>
       closeLoadDialog();
       if (t <= 2000) {
         await Future.delayed(Duration(milliseconds: 2000 - t));
-      }else{
+      } else {
         await Future.delayed(Duration(milliseconds: 200));
       }
       startNextView();
@@ -244,8 +240,7 @@ class _SplashViewState extends BaseWidgetState<SplashView>
         Upgrade upgrade = ServiceInfo.upgrade;
         await upgrade.checkVersion();
         //判断强制升级
-        if (upgrade.needRequired)
-        {
+        if (upgrade.needRequired) {
           showUpgradeDialog(upgrade);
           return true;
         }
@@ -265,9 +260,7 @@ class _SplashViewState extends BaseWidgetState<SplashView>
       //"版本升级提示",
       msg: upgrade.description,
       msgAlign: TextAlign.center,
-      btnLeft: upgrade.needRequired
-          ? null
-          : ResString.get(context, RSID.upgrade_cancel),
+      btnLeft: upgrade.needRequired ? null : ResString.get(context, RSID.upgrade_cancel),
       // "取消",
       btnRight: ResString.get(context, RSID.upgrade_confirm),
       //"升级",

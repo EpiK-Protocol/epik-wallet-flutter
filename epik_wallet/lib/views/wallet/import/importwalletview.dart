@@ -586,6 +586,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView> with Tick
       // Uint8List seed = await HD.seedFromMnemonic(importString);
       // if (seed == null || seed.length == 0)
 
+      importString  = importString.replaceAll(RegExp(r"\s+"), " ");
       bool mnemonicok = bip39.validateMnemonic(importString);
 
       if(mnemonicok!=true)

@@ -4,29 +4,25 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:animated_size_and_fade/animated_size_and_fade.dart';
+import 'package:bip39/bip39.dart' as bip39;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:convert/convert.dart';
-import 'package:crypto/crypto.dart';
+import 'package:dart_bip32_bip44/dart_bip32_bip44.dart';
 import 'package:epikplugin/epikplugin.dart';
-import 'package:epikwallet/abi/ERC20.g.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
-import 'package:epikwallet/logic/api/api_wallet.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
-import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/HomeMenuItem.dart';
 import 'package:epikwallet/model/auth/RemoteAuth.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/ClickUtil.dart';
-import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
-import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
@@ -38,9 +34,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:web3dart/credentials.dart';
-import 'package:web3dart/web3dart.dart';
 
-class  WalletView extends BaseInnerWidget {
+class WalletView extends BaseInnerWidget {
   WalletView(Key key) : super(key: key) {}
 
   @override
@@ -125,7 +120,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
       currency_group = {
         CurrencySymbol.EPK: [data_list_item[0]],
         CurrencySymbol.ETH: [data_list_item[1], data_list_item[2], data_list_item[3]],
-        CurrencySymbol.BNB: [data_list_item[4], data_list_item[5],data_list_item[6]],
+        CurrencySymbol.BNB: [data_list_item[4], data_list_item[5], data_list_item[6]],
       };
   }
 
@@ -393,7 +388,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
                 gradient: ResColor.lg_6,
               ),
               child: Text(
-                key.networkTypeName+(ServiceInfo.TEST_DEV_NET?" TestNet":""),
+                key.networkTypeName + (ServiceInfo.TEST_DEV_NET ? " TestNet" : ""),
                 style: TextStyle(
                   fontSize: 14,
                   color: ResColor.white,
@@ -853,6 +848,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
 
   onClickWalletMenu() async {
     eventMgr.send(EventTag.MAIN_RIGHT_DRAWER, true);
+    
   }
 
   double gridItemHightRatio = 0;
@@ -861,7 +857,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
 
   Widget buildMenuGrid() {
     if (gridItemHightRatio == 0) {
-      gridItemHightRatio = 1.0* (getScreenWidth() - 12 * 2) / gridItem_crossAxisCount / 94; //    每个item的宽 / 高 = 比例
+      gridItemHightRatio = 1.0 * (getScreenWidth() - 12 * 2) / gridItem_crossAxisCount / 94; //    每个item的宽 / 高 = 比例
     }
 
     List<HomeMenuItem> datas = ServiceInfo.getHomeMenuList();
@@ -871,32 +867,31 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
       datas.forEach((hmi) {
         Widget img = hmi?.hasNetImg == true
             ? CachedNetworkImage(
-          imageUrl: hmi.Icon,
-          width: 50,
-          height: 50,
-          // fit: BoxFit.contain,
-          placeholder: (context, url) {
-            return Container(
-              color: ResColor.white_10,
-            );
-          },
-          errorWidget: (context, url, error) {
-            return Container(
-              color: ResColor.white_10,
-              child: Icon(
-                Icons.broken_image,
-                size: 24,
-                color: ResColor.black_80,
-              ),
-            );
-          },
-        )
+                imageUrl: hmi.Icon,
+                width: 50,
+                height: 50,
+                // fit: BoxFit.contain,
+                placeholder: (context, url) {
+                  return Container(
+                    color: ResColor.white_10,
+                  );
+                },
+                errorWidget: (context, url, error) {
+                  return Container(
+                    color: ResColor.white_10,
+                    child: Icon(
+                      Icons.broken_image,
+                      size: 24,
+                      color: ResColor.black_80,
+                    ),
+                  );
+                },
+              )
             : Image(
-          image: AssetImage(hmi?.action_l?.getLocalIcon() ?? ""),
-          width: 50,
-          height: 50,
-        );
-
+                image: AssetImage(hmi?.action_l?.getLocalIcon() ?? ""),
+                width: 50,
+                height: 50,
+              );
 
         Widget column = Column(
           mainAxisSize: MainAxisSize.min,
@@ -945,7 +940,8 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
 
       return Container(
         margin: EdgeInsets.only(top: 10),
-        padding: EdgeInsets.fromLTRB(12,20,12,0), //12,20,12,0
+        padding: EdgeInsets.fromLTRB(12, 20, 12, 0),
+        //12,20,12,0
         color: const Color(0xff1b1b1b),
         width: double.infinity,
         child: GridView.count(
@@ -973,10 +969,9 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
 
   onClickMenuItem(HomeMenuItem hmi) async {
     if (hmi?.Action?.startsWith("http") == true) {
-      if(hmi?.web3nettype!=null)
-      {
+      if (hmi?.web3nettype != null) {
         ViewGT.showWeb3GeneralWebView(context, hmi?.Name, hmi?.Action, hmi?.web3nettype);
-      }else{
+      } else {
         ViewGT.showGeneralWebView(context, hmi.Name, hmi?.Action);
       }
     } else if (hmi?.action_l != null) {

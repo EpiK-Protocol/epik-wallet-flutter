@@ -301,7 +301,7 @@ class StringUtils {
 
   static String numUpsizingString(Object number, {int bit = 18, bool onlyInteger = true}) {
     try {
-      Decimal d = numUpsizingDecimal(number, bit: 18);
+      Decimal d = numUpsizingDecimal(number, bit: bit);
       String ret = d.toString();
       if (onlyInteger) {
         ret = ret.split('.')[0];
@@ -315,7 +315,7 @@ class StringUtils {
   static BigInt numUpsizingBigint(Object number, {int bit = 18})
   {
     try {
-      String numstr= numUpsizingString(number,bit: 18,onlyInteger:true);
+      String numstr= numUpsizingString(number,bit: bit,onlyInteger:true);
       BigInt ret = BigInt.parse(numstr);
       return ret;
     } catch (e, s) {

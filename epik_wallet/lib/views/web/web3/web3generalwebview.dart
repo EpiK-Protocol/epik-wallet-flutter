@@ -114,6 +114,8 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
     weburl = widget.url;
     dlog(weburl);
     weburl_uri = Uri.tryParse(weburl);
+
+    resizeToAvoidBottomPadding = true;
   }
 
   ///导航栏appBar中间部分 ，不满足可以自行重写
@@ -161,54 +163,54 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
           InkWell(
             child: widget.web3nettype != null
                 ? Container(
-              height: 20,
-              padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: ResColor.o_1,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset(
-                    widget.web3nettype.networkType.iconUrl,
-                    width: 20,
                     height: 20,
-                  ),
-                  Container(width: 5),
-                  Text(
-                    widget.web3nettype.networkType.networkTypeName,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: color ?? appBarContentColor,
+                    padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      color: ResColor.o_1,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          widget.web3nettype.networkType.iconUrl,
+                          width: 20,
+                          height: 20,
+                        ),
+                        Container(width: 5),
+                        Text(
+                          widget.web3nettype.networkType.networkTypeName,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: color ?? appBarContentColor,
 //        fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-            )
+                  )
                 : Container(
-              height: 20,
-              padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: ResColor.o_1,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    RSID.w3wv_network.text,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: color ?? appBarContentColor,
+                    height: 20,
+                    padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      color: ResColor.o_1,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          RSID.w3wv_network.text,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: color ?? appBarContentColor,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
             onTap: () {
               //选择网络
               onClickNetwork();
@@ -480,7 +482,7 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
               List<Widget> views = [];
 
               // if (keep_password_website_secret == true)
-                  {
+              {
                 List<String> list_maxgas = ["1.5", "2.0", "2.5", "3.0"];
                 Widget item_mg = Container(
                   padding: EdgeInsets.fromLTRB(20, 10, 20, 30),
@@ -497,31 +499,31 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
                       bool isSeleted = preset_maxgasrate == e;
                       return Expanded(
                           child: LoadingButton(
-                            height: 20,
-                            text: e + "x",
-                            textstyle: TextStyle(
-                              fontSize: 11,
-                              color: isSeleted ? ResColor.black : ResColor.o_1,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                            bg_borderradius: BorderRadius.circular(4),
-                            color_bg: isSeleted ? ResColor.o_1 : Colors.transparent,
-                            disabledColor: Colors.transparent,
-                            side: BorderSide(
-                              color: ResColor.o_1,
-                              width: 1,
-                            ),
-                            onclick: (lbtn) {
-                              if (isSeleted) {
-                                preset_maxgasrate = null;
-                              } else {
-                                preset_maxgasrate = e;
-                              }
-                              // Navigator.of(context).pop();
-                              setState(() {});
-                            },
-                          ));
+                        height: 20,
+                        text: e + "x",
+                        textstyle: TextStyle(
+                          fontSize: 11,
+                          color: isSeleted ? ResColor.black : ResColor.o_1,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                        bg_borderradius: BorderRadius.circular(4),
+                        color_bg: isSeleted ? ResColor.o_1 : Colors.transparent,
+                        disabledColor: Colors.transparent,
+                        side: BorderSide(
+                          color: ResColor.o_1,
+                          width: 1,
+                        ),
+                        onclick: (lbtn) {
+                          if (isSeleted) {
+                            preset_maxgasrate = null;
+                          } else {
+                            preset_maxgasrate = e;
+                          }
+                          // Navigator.of(context).pop();
+                          setState(() {});
+                        },
+                      ));
                     }).toList(),
                   ]),
                 );
@@ -558,31 +560,31 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
                       bool isSeleted = preset_gasrate == e;
                       return Expanded(
                           child: LoadingButton(
-                            height: 20,
-                            text: e + "x",
-                            textstyle: TextStyle(
-                              fontSize: 11,
-                              color: isSeleted ? ResColor.black : ResColor.o_1,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                            bg_borderradius: BorderRadius.circular(4),
-                            color_bg: isSeleted ? ResColor.o_1 : Colors.transparent,
-                            disabledColor: Colors.transparent,
-                            side: BorderSide(
-                              color: ResColor.o_1,
-                              width: 1,
-                            ),
-                            onclick: (lbtn) {
-                              if (isSeleted) {
-                                preset_gasrate = null;
-                              } else {
-                                preset_gasrate = e;
-                              }
-                              // Navigator.of(context).pop();
-                              setState(() {});
-                            },
-                          ));
+                        height: 20,
+                        text: e + "x",
+                        textstyle: TextStyle(
+                          fontSize: 11,
+                          color: isSeleted ? ResColor.black : ResColor.o_1,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                        bg_borderradius: BorderRadius.circular(4),
+                        color_bg: isSeleted ? ResColor.o_1 : Colors.transparent,
+                        disabledColor: Colors.transparent,
+                        side: BorderSide(
+                          color: ResColor.o_1,
+                          width: 1,
+                        ),
+                        onclick: (lbtn) {
+                          if (isSeleted) {
+                            preset_gasrate = null;
+                          } else {
+                            preset_gasrate = e;
+                          }
+                          // Navigator.of(context).pop();
+                          setState(() {});
+                        },
+                      ));
                     }).toList(),
                   ]),
                 );
@@ -834,8 +836,8 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
       shouldOverrideUrlLoading: onShouldOverrideUrlLoading,
       onConsoleMessage: DeviceUtils.isDebug
           ? (controller, consoleMessage) {
-        dlog("consoleMessage : ${consoleMessage.message}");
-      }
+              dlog("consoleMessage : ${consoleMessage.message}");
+            }
           : null,
       onProgressChanged: (controller, progress) {
         dlog("onProgressChanged progress=$progress");
@@ -883,6 +885,60 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
           }
         });
       },
+      androidOnPermissionRequest: (controller, origin, resources) async {
+        dlog("androidOnPermissionRequest origin=$origin resources=$resources");
+        List<String> awplist = [];
+        resources.forEach((element) {
+          String str = AndroidWebPermission.getName(element);
+          awplist.add(str);
+        });
+        String awps = awplist.join("\n");
+
+        PermissionRequestResponseAction prra=null;
+
+        YYDialog yydialog=MessageDialog.showMsgDialog(
+          context,
+          title: RSID.awp_permission_request.text,
+          msg: "$origin\n${RSID.awp_ask.text}\n$awps",
+          msgAlign: TextAlign.center,
+          btnLeft: RSID.awp_deny.text,
+          btnRight: RSID.awp_grant.text,
+          backClose: false,
+          touchOutClose: false,
+          onClickBtnLeft: (dialog) {
+            dialog.dismiss();
+            prra = PermissionRequestResponseAction.DENY;
+          },
+          onClickBtnRight: (dialog) {
+            dialog.dismiss();
+            prra =PermissionRequestResponseAction.GRANT;
+          },
+        );
+
+        int i = 60*5;
+        while(prra==null)
+        {
+          print(i);
+          await Future.delayed(Duration(milliseconds: 200));
+          i--;
+          if(i<=0){
+            if(yydialog?.isShowing)
+            {
+              yydialog?.dismiss();
+            }
+            break;
+          }
+        }
+
+        PermissionRequestResponse ret = PermissionRequestResponse(resources: resources, action: prra??PermissionRequestResponseAction.DENY);
+        return ret;
+      },
+      androidOnGeolocationPermissionsHidePrompt: (controller) {
+        dlog("androidOnGeolocationPermissionsHidePrompt");
+      },
+      androidOnGeolocationPermissionsShowPrompt: (controller, origin) {
+        dlog("androidOnGeolocationPermissionsShowPrompt $origin");
+      },
     );
   }
 
@@ -927,8 +983,8 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
     return true;
   }
 
-  Future<NavigationActionPolicy> onShouldOverrideUrlLoading(InAppWebViewController controller,
-      NavigationAction navigationAction) async {
+  Future<NavigationActionPolicy> onShouldOverrideUrlLoading(
+      InAppWebViewController controller, NavigationAction navigationAction) async {
     Dlog.p("webview", "onShouldOverrideUrlLoading  request= ${navigationAction?.toString()}");
     if (navigationAction?.request?.url != null) {
       String url = navigationAction.request.url.toString();
@@ -958,14 +1014,25 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
   }
 
   Future injectJs_init(InAppWebViewController wvc) async {
-    String _chainId = '"0x${chainId.toRadixString(16)}"'; //hex字符串的chainid
+    // String _chainId = '"0x${chainId.toRadixString(16)}"'; //hex字符串的chainid
+    //
+    // String url = current_url?.toString() ?? weburl_uri?.toString();
+    // if (url?.contains("uniswap") == true) //uniswap只支持整数chainid
+    //   _chainId = "$chainId";
 
-    String url = current_url?.toString() ??  weburl_uri?.toString();
-    if (url?.contains("uniswap") == true) //uniswap只支持整数chainid
-      _chainId = "$chainId";
+    String _chainId = "$chainId";
+
+    String url = current_url?.toString() ?? weburl_uri?.toString();
+    if (url?.contains("human.game") == true) //uniswap只支持整数chainid
+      _chainId = '"0x${chainId.toRadixString(16)}"'; //hex字符串的chainid
 
     String js = '''
         (function() {
+        
+            //TypeError: string.replaceAll is not a function.
+            String.prototype.replaceAll = function(s1, s2) {
+              return this.replace(new RegExp(s1, "gm"), s2);
+            }
           
             console.log("injectJs_init start----");
         
@@ -1054,7 +1121,14 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
         case DAppMethod.SIGNPERSONALMESSAGE:
           {
             Uint8List data = extractMessage(json);
-            handleSignMessage(id, data, addPrefix: true);
+            if (data != null) {
+              handleSignMessage(id, data, addPrefix: true);
+            } else {
+              String strdata = extractMessageString(json);
+              if (strdata != null) {
+                handleSignMessage(id, null, addPrefix: true, strData: strdata);
+              }
+            }
           }
           break;
         case DAppMethod.SIGNTYPEDMESSAGE:
@@ -1097,8 +1171,20 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
       if (data != null && data.length > 0 && data.startsWith("0x")) data = data.substring(2);
       List<int> bytes = hex.decode(data);
       return Uint8List.fromList(bytes);
-    } catch (e) {
+    } catch (e, s) {
       print(e);
+      print(s);
+    }
+  }
+
+  String extractMessageString(Map<String, dynamic> json) {
+    try {
+      Map<String, dynamic> j_param = json["object"];
+      String data = j_param["data"];
+      return data;
+    } catch (e, s) {
+      print(e);
+      print(s);
     }
   }
 
@@ -1113,16 +1199,22 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
   }
 
   //dialog
-  handleSignMessage(int id, Uint8List data, {bool addPrefix = true, String raw}) {
+  handleSignMessage(int id, Uint8List data, {bool addPrefix = true, String raw, String strData}) {
     bool istyped = StringUtils.isNotEmpty(raw);
+    bool isStrData = StringUtils.isNotEmpty(strData);
     String msg = null;
     if (istyped) {
       msg = raw;
     } else {
-      if (addPrefix)
-        msg = utf8.decode(data);
-      else
-        msg = "0x" + hex.encode(data);
+      if (data != null) {
+        if (addPrefix)
+          msg = utf8.decode(data);
+        else
+          msg = "0x" + hex.encode(data);
+      } else if (isStrData) {
+        msg = strData;
+        data = utf8.encode(strData);
+      }
     }
     BottomDialog.showWeb3PassWordInputDialog(
       appContext,
@@ -1133,19 +1225,24 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
         webSendError("Cancel", id);
       },
       callback: (value) async {
-        String sign = await signEthereumMessage(data, addPrefix);
+        int chainid = null;
+        // if(addPrefix!=true)
+        // {
+        //   chainid = chainId;
+        // }
+        String sign = await signEthereumMessage(data, addPrefix, chainid);
         webSendResult(sign, id);
       },
     );
   }
 
-  Future<String> signEthereumMessage(Uint8List message, bool addPrefix) async {
+  Future<String> signEthereumMessage(Uint8List message, bool addPrefix, int chainid) async {
     try {
       Uint8List signdata = null;
       if (addPrefix) {
-        signdata = await hdPrivateKey?.signPersonalMessage(message, chainId: chainId);
+        signdata = await hdPrivateKey?.signPersonalMessage(message, chainId: chainid);
       } else {
-        signdata = await hdPrivateKey?.sign(message, chainId: chainId);
+        signdata = await hdPrivateKey?.sign(message, chainId: chainid);
       }
       String signatureData = "0x" + hex.encode(signdata);
       return signatureData;
@@ -1207,7 +1304,7 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
       Transaction transaction = Transaction(
         maxGas: gas != null ? BigInt.parse(EpikWalletUtils.strip0x(gas), radix: 16).toInt() : null,
         gasPrice:
-        gasPrice != null ? EtherAmount.inWei(BigInt.parse(EpikWalletUtils.strip0x(gasPrice), radix: 16)) : null,
+            gasPrice != null ? EtherAmount.inWei(BigInt.parse(EpikWalletUtils.strip0x(gasPrice), radix: 16)) : null,
         from: from != null ? EthereumAddress.fromHex(from) : null,
         to: from != null ? EthereumAddress.fromHex(to) : null,
         data: data != null ? EpikWalletUtils.hexStringToBytes(data) : null,
@@ -1247,7 +1344,7 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
         send(transaction, gasrate, maxgasrate);
       } else {
         Web3SendTransactionView transactionWidget =
-        Web3SendTransactionView(transaction, widget.web3nettype.networkType, gasrate, maxgasrate);
+            Web3SendTransactionView(transaction, widget.web3nettype.networkType, gasrate, maxgasrate);
 
         //dialog
         BottomDialog.showWeb3PassWordInputDialog(
@@ -1363,5 +1460,53 @@ extension Web3MenuEx on Web3Menu {
       default:
         return "";
     }
+  }
+}
+
+class AndroidWebPermission {
+  //录音
+  static const String RESOURCE_AUDIO_CAPTURE = "android.webkit.resource.AUDIO_CAPTURE";
+
+  //MIDI SYSEX
+  static const String RESOURCE_MIDI_SYSEX = "android.webkit.resource.MIDI_SYSEX";
+
+  //媒体资源
+  static const String RESOURCE_PROTECTED_MEDIA_ID = "android.webkit.resource.PROTECTED_MEDIA_ID";
+
+  //摄像头
+  static const String RESOURCE_VIDEO_CAPTURE = "android.webkit.resource.VIDEO_CAPTURE";
+
+  static final List<String> values = [
+    RESOURCE_AUDIO_CAPTURE,
+    RESOURCE_MIDI_SYSEX,
+    RESOURCE_PROTECTED_MEDIA_ID,
+    RESOURCE_VIDEO_CAPTURE,
+  ];
+
+  static String getName(String permission) {
+    String ret = "";
+    switch (permission) {
+      case RESOURCE_AUDIO_CAPTURE:
+        {
+          ret = RSID.awp_ask.text; //"录音";
+        }
+        break;
+      case RESOURCE_MIDI_SYSEX:
+        {
+          ret = RSID.awp_midisysex.text; //"连接MIDI设备通信";
+        }
+        break;
+      case RESOURCE_PROTECTED_MEDIA_ID:
+        {
+          ret = RSID.awp_media.text; //"访问媒体";
+        }
+        break;
+      case RESOURCE_VIDEO_CAPTURE:
+        {
+          ret = RSID.awp_video.text; //"录像";
+        }
+        break;
+    }
+    return ret;
   }
 }

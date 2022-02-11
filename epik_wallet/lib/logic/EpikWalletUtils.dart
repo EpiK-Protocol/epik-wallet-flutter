@@ -76,6 +76,9 @@ class EpikWalletUtils {
       //助记词转种子
       waccount.mnemonic = waccount.mnemonic.replaceAll(RegExp(r"\s+"), " ");
       String seed = bip39.mnemonicToSeedHex(waccount.mnemonic);
+      // Uint8List seedbytes= await HD.seedFromMnemonic(waccount.mnemonic); //助记词 转种子
+      // String seed = hex.encode(seedbytes);
+
       //种子转私钥
       Chain chain = Chain.seed(seed);
       String path_eth = Bip44Path.getPath("ETH"); // "m/44'/60'/0'/0/0";
@@ -136,7 +139,10 @@ class EpikWalletUtils {
 
     //ETH net
     // Future eth = waccount.hdwallet.balance(waccount.hd_eth_address);
-    Future eth = ethClient.getBalance(waccount.ethereumAddress).then((balance) {
+    
+    Future eth = ethClient.getBalance(waccount.ethereumAddress).then((balance)
+    // Future eth = ethClient.getBalance(EthereumAddress.fromHex("0xea7521a859e2c2b3dcac8764f46d37e4f7a1e962")).then((balance)
+    {
       Dlog.p("EWU", "eth balance=${balance}");
       return balance.getValueInUnit(EtherUnit.ether).toString();
     });
@@ -300,6 +306,7 @@ class EpikWalletUtils {
       } else if (cs.networkType == CurrencySymbol.ETH) {
         page += 1; //0是全部数据  1是开始分页
         String address = waccount.hd_eth_address;
+        // String address = "0xea7521a859e2c2b3dcac8764f46d37e4f7a1e962";
         // String json = await waccount.hdwallet.transactions(address, cs.symbolToNetWork, page, pagesize, false);
         // print("getOrderList ETH $json");
         // Map jsonmap = jsonDecode(json);
@@ -517,6 +524,7 @@ class EpikWalletUtils {
     if (cs == CurrencySymbol.EPK) return null;
 
     ERC20 erc20 = AccountMgr().currentAccount.hdTokenMap[cs];
+
     Web3Client web3client;
     if (cs.networkType == CurrencySymbol.ETH) {
       web3client = EpikWalletUtils.ethClient;
@@ -531,7 +539,7 @@ class EpikWalletUtils {
     BigInt bi_value;
 
     EtherAmount gp = await web3client.getGasPrice();
-    print("GasPrice=$gp");
+    // print("GasPrice=$gp");
 
     BigInt maxgas;
 
@@ -548,13 +556,16 @@ class EpikWalletUtils {
           value: EtherAmount.inWei(bi_value),
         );
       } else {
-        decimals = await erc20.decimals(); //获取token的精度
+        decimals = await erc20?.decimals();//获取token的精度
         bi_value = StringUtils.numUpsizingBigint(value, bit: decimals.toInt());
 
-        final function = erc20.self.abi.functions[10];
+        // a9059cbb
+        final function = erc20?.self?.abi?.functions[10]; //ERC20
         final params = [to, bi_value];
         Transaction transaction =
-            Transaction.callContract(contract: erc20.self, function: function, parameters: params);
+            Transaction.callContract(contract: erc20?.self, function: function, parameters: params);
+
+        Dlog.p("getHdTransferGas"," transaction.data=0x${hex.encode(transaction.data)}");
 
         maxgas = await web3client.estimateGas(
           sender: AccountMgr().currentAccount.ethereumAddress,
