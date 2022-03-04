@@ -317,7 +317,7 @@ class AddOtherOwnerPledgeViewState extends BaseWidgetState<AddOtherOwnerPledgeVi
 
     closeInput();
 
-    BottomDialog.showPassWordInputDialog(
+    BottomDialog.simpleAuth(
         context, AccountMgr().currentAccount.password, (value) async {
       LoadingDialog.showLoadDialog(context, "",
           touchOutClose: false, backClose: false);

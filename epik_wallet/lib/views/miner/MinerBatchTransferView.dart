@@ -214,7 +214,8 @@ class MinerBatchTransferViewState extends BaseWidgetState<MinerBatchTransferView
                   ),
                   onclick: (lbtn) {
                     // 输入密码 然后执行任务
-                    BottomDialog.showPassWordInputDialog(context, AccountMgr().currentAccount.password, (value) async {
+                    BottomDialog.simpleAuth(
+                        context, AccountMgr().currentAccount.password, (value) async {
                       Future.delayed(Duration(milliseconds: 200)).then((value) {
                         startTask();
                       });

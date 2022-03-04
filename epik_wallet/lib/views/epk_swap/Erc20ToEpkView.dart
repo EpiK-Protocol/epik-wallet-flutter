@@ -1622,7 +1622,8 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
       return;
     }
 
-    BottomDialog.showPassWordInputDialog(context, AccountMgr()?.currentAccount?.password, (password) {
+    BottomDialog.simpleAuth(
+        context, AccountMgr()?.currentAccount?.password, (password) {
       //点击确定回调
       showLoadDialog(
         "",
@@ -1731,7 +1732,8 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
       return;
     }
 
-    BottomDialog.showPassWordInputDialog(context, AccountMgr()?.currentAccount?.password, (password) {
+    BottomDialog.simpleAuth(
+        context, AccountMgr()?.currentAccount?.password, (password) {
       //点击确定回调
       showLoadDialog(
         "",

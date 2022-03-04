@@ -1606,7 +1606,8 @@ class MinerListViewState extends BaseWidgetState<MinerListView> {
 
     closeInput();
 
-    BottomDialog.showPassWordInputDialog(context, AccountMgr().currentAccount.password, (value) async {
+    BottomDialog.simpleAuth(
+        context, AccountMgr().currentAccount.password, (value) async {
       LoadingDialog.showLoadDialog(context, "", touchOutClose: false, backClose: false);
 
       ResultObj<String> robj = await AccountMgr().currentAccount.epikWallet.minerPledgeAdd(miner.ID, amount.trim());
@@ -1654,7 +1655,8 @@ class MinerListViewState extends BaseWidgetState<MinerListView> {
 
     closeInput();
 
-    BottomDialog.showPassWordInputDialog(context, AccountMgr().currentAccount.password, (value) async {
+    BottomDialog.simpleAuth(
+        context, AccountMgr().currentAccount.password, (value) async {
       LoadingDialog.showLoadDialog(context, "", touchOutClose: false, backClose: false);
 
       ResultObj<String> robj =
@@ -1702,7 +1704,8 @@ class MinerListViewState extends BaseWidgetState<MinerListView> {
 
     closeInput();
 
-    BottomDialog.showPassWordInputDialog(context, AccountMgr().currentAccount.password, (value) async {
+    BottomDialog.simpleAuth(
+        context, AccountMgr().currentAccount.password, (value) async {
       LoadingDialog.showLoadDialog(context, "", touchOutClose: false, backClose: false);
 
       ResultObj<String> robj =
@@ -1750,7 +1753,8 @@ class MinerListViewState extends BaseWidgetState<MinerListView> {
 
     closeInput();
 
-    BottomDialog.showPassWordInputDialog(context, AccountMgr().currentAccount.password, (value) async {
+    BottomDialog.simpleAuth(
+        context, AccountMgr().currentAccount.password, (value) async {
       LoadingDialog.showLoadDialog(context, "", touchOutClose: false, backClose: false);
       ResultObj<String> robj =
           await AccountMgr().currentAccount.epikWallet.minerPledgeTransfer(miner.ID, toMinerID, amount);
@@ -1789,7 +1793,8 @@ class MinerListViewState extends BaseWidgetState<MinerListView> {
 
   //批量质押
   onClickBatchAdd() {
-    BottomDialog.showPassWordInputDialog(context, AccountMgr().currentAccount.password, (value) async {
+    BottomDialog.simpleAuth(
+        context, AccountMgr().currentAccount.password, (value) async {
       showLoadDialog("", touchOutClose: false, backClose: false);
 
       List<String> minerids = [];
@@ -1825,7 +1830,8 @@ class MinerListViewState extends BaseWidgetState<MinerListView> {
 
   //批量申请赎回
   onClickBatchApplyWithdraw() {
-    BottomDialog.showPassWordInputDialog(context, AccountMgr().currentAccount.password, (value) async {
+    BottomDialog.simpleAuth(
+        context, AccountMgr().currentAccount.password, (value) async {
       showLoadDialog("", touchOutClose: false, backClose: false);
 
       List<String> minerids = [];
@@ -1861,7 +1867,8 @@ class MinerListViewState extends BaseWidgetState<MinerListView> {
 
   //批量赎回提现
   onClickBatchWithdraw() {
-    BottomDialog.showPassWordInputDialog(context, AccountMgr().currentAccount.password, (value) async {
+    BottomDialog.simpleAuth(
+        context, AccountMgr().currentAccount.password, (value) async {
       showLoadDialog("", touchOutClose: false, backClose: false);
 
       List<String> minerids = [];

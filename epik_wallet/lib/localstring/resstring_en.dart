@@ -709,7 +709,7 @@ Map<RSID, String> map_en = {
   RSID.Web3Menu_CLEARCACHE:"Clear Cache",
   RSID.Web3Menu_COLLECT:"Collect",
   RSID.Web3Menu_GAS:"Preset Gas",
-  RSID.Web3Menu_KEEP_PASSWORD:"Keep Password",
+  RSID.Web3Menu_KEEP_PASSWORD:"Exempt Password",
   RSID.gasrate:"Ratio : ",
   RSID.w3wv_auth_keep_password:"There is no need to enter the password again during the transaction, but each transaction needs to be confirmed. Temporarily authorize the current site %s to preset transaction password?",//"交易时不用再次输入密码，但每次交易还需要确认才可以进行。是否临时授权当前站点%s可以预设交易密码？",
   RSID.w3wv_canceled:"Canceled",
@@ -757,5 +757,27 @@ Map<RSID, String> map_en = {
   RSID.awp_media:"Media resources",
   RSID.awp_video:"Video capture",
 
+
+
+  //Biometrics
+  RSID.biometrics:"Biometric Authentication",
+  RSID.biometrics_faceid:"FaceID",
+  RSID.biometrics_fingerprint:"Fingerprint",
+
+  RSID.biometrics_localizedReason:"Scan your fingerprint (or face or whatever) to authenticate",//"请扫描指纹或面部",
+
+  RSID.biometrics_signInTitle: "Authentication Required",//"身份验证",
+  RSID.biometrics_biometricHint:"",//
+  RSID.biometrics_biometricNotRecognized:"Not recognized, try again.",//"验证失败, 再试一次。",//,
+  RSID.biometrics_biometricSuccess:"Success",//"验证成功", //"
+  RSID.biometrics_cancelButton:"Cancel",//"取消", //
+  RSID.biometrics_biometricRequiredTitle: "Biometric required",//"验证要求", //,
+  RSID.biometrics_goToSettingsButton:"Go to settings",// "去设置",//,
+  RSID.biometrics_goToSettingsDescription:"Biometric authentication is not set up on your device. Go to \'Settings > Security\' to add biometric authentication.",//"您的设备没有开启此功能, 请到\"设置 > 安全\"中设置。",
+
+  RSID.biometrics_ioslockOut:'Biometric authentication is disabled. Please lock and unlock your screen to enable it.',//"生物认证被禁用。请锁定再解锁您的屏幕启用它。", //
+  RSID.biometrics_iosgoToSettingsButton: "Go to settings",//"去设置", //
+  RSID.biometrics_iosgoToSettingsDescription:'Biometric authentication is not set up on your device. Please either enable Touch ID or Face ID on your phone.',// "您的设备上没有设置生物认证。请在您的手机上启用Touch ID或Face ID。", //
+  RSID.biometrics_ioscancelButton: "OK",//"好的", //
 
 };

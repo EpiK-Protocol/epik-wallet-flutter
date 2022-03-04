@@ -879,7 +879,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
     //
     // },autoBtnString: RSID.main_bv_4.text,autoBtnContent: voterinfo?.WithdrawableRewards??"0");
 
-    BottomDialog.showPassWordInputDialog(
+    BottomDialog.simpleAuth(
       context,
       AccountMgr().currentAccount.password,
       (password) {

@@ -267,7 +267,7 @@ class MinerPledgeWithdrawViewState extends State<MinerPledgeWithdrawView> {
 
     closeInput();
 
-    BottomDialog.showPassWordInputDialog(
+    BottomDialog.simpleAuth(
         context, AccountMgr().currentAccount.password, (value) async {
       LoadingDialog.showLoadDialog(context, "",
           touchOutClose: false, backClose: false);
@@ -319,7 +319,7 @@ class MinerPledgeWithdrawViewState extends State<MinerPledgeWithdrawView> {
 
     closeInput();
 
-    BottomDialog.showPassWordInputDialog(
+    BottomDialog.simpleAuth(
         context, AccountMgr().currentAccount.password, (value) async {
       LoadingDialog.showLoadDialog(context, "",
           touchOutClose: false, backClose: false);
@@ -372,7 +372,7 @@ class MinerPledgeWithdrawViewState extends State<MinerPledgeWithdrawView> {
 
     closeInput();
 
-    BottomDialog.showPassWordInputDialog(
+    BottomDialog.simpleAuth(
         context, AccountMgr().currentAccount.password, (value) async {
       LoadingDialog.showLoadDialog(context, "",
           touchOutClose: false, backClose: false);

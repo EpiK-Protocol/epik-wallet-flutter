@@ -778,7 +778,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
 
     closeInput();
 
-    BottomDialog.showPassWordInputDialog(
+    BottomDialog.simpleAuth(
       context,
       AccountMgr().currentAccount.password,
       (password) {
@@ -833,7 +833,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
 
     closeInput();
 
-    BottomDialog.showPassWordInputDialog(
+    BottomDialog.simpleAuth(
       context,
       AccountMgr().currentAccount.password,
       (password) {

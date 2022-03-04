@@ -510,7 +510,7 @@ class MinnerViewState extends BaseInnerWidgetState<MinerView> {
   }
 
   onClickWithdrawCoinbase() {
-    BottomDialog.showPassWordInputDialog(
+    BottomDialog.simpleAuth(
         context, AccountMgr().currentAccount.password, (value) async {
       showLoadDialog("", touchOutClose: false, backClose: false);
 

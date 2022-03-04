@@ -5,9 +5,11 @@ import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/buildConfig.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
+import 'package:epikwallet/logic/LocalAuthUtils.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/Upgrade.dart';
 import 'package:epikwallet/utils/CupertinoLocalizationsDelegate.dart';
+import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/sp_utils/sp_utils.dart';
@@ -80,6 +82,14 @@ class _MyAppState extends State<MyApp> {
   Future<void> initOther() async {
     await SpUtils().init(); // 初始化存储工具
     await DeviceUtils().initPlatInfo();
+    LocalAuthUtils.checkBiometrics().then((value) {
+      Dlog.p("checkBiometrics","$value");
+      if(value){
+        LocalAuthUtils.getAvailableBiometrics().then((bs){
+          Dlog.p("getAvailableBiometrics","$bs");
+        });
+      }
+    });
     // bool localconfig = await ServiceInfo.loadConfig(); //加载本地缓存的配置
 
     // HdWallet.setDebug(ServiceInfo.TEST_DEV_NET ? true : false); //20220110注掉

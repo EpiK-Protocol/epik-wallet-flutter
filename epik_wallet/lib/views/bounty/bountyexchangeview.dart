@@ -544,7 +544,7 @@ class BountyExchangeViewState extends BaseWidgetState<BountyExchangeView>
       return;
     }
 
-    BottomDialog.showPassWordInputDialog(
+    BottomDialog.simpleAuth(
       context,
       AccountMgr().currentAccount.password,
       (password) {

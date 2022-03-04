@@ -245,7 +245,7 @@ class RemoteAuthViewState extends BaseWidgetState<RemoteAuthView> {
   }
 
   onClickAuth() {
-    BottomDialog.showPassWordInputDialog(
+    BottomDialog.simpleAuth(
         context, AccountMgr().currentAccount.password, (value) async {
       setState(() {
         btn_auth_loading = true;

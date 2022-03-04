@@ -317,7 +317,7 @@ class AddOtherMinerPledgeViewState extends BaseWidgetState<AddOtherMinerPledgeVi
     closeInput();
 
 
-    BottomDialog.showPassWordInputDialog(
+    BottomDialog.simpleAuth(
         context, AccountMgr().currentAccount.password, (value) async {
       LoadingDialog.showLoadDialog(context, "",
           touchOutClose: false, backClose: false);

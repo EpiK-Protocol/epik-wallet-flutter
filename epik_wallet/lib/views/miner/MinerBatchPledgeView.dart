@@ -303,7 +303,7 @@ class MinerBatchPledgeViewState extends BaseWidgetState<MinerBatchPledgeView> {
   }
 
   onClickOK() {
-    BottomDialog.showPassWordInputDialog(
+    BottomDialog.simpleAuth(
         context, AccountMgr().currentAccount.password, (value) async {
       showLoadDialog("", touchOutClose: false, backClose: false);
 

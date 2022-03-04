@@ -955,7 +955,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
 
   /// 提取coinbase收益
   onClickWithdrawCoinbase() {
-    BottomDialog.showPassWordInputDialog(
+    BottomDialog.simpleAuth(
         context, AccountMgr().currentAccount.password, (value) async {
       showLoadDialog("", touchOutClose: false, backClose: false);
 
@@ -1003,7 +1003,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
 
     closeInput();
 
-    BottomDialog.showPassWordInputDialog(
+    BottomDialog.simpleAuth(
         context, AccountMgr().currentAccount.password, (value) async {
       LoadingDialog.showLoadDialog(context, "",
           touchOutClose: false, backClose: false);

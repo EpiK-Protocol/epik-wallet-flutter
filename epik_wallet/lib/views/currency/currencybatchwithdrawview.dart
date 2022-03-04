@@ -579,7 +579,7 @@ class CurrencyBatchWithdrawViewState extends BaseWidgetState<CurrencyBatchWithdr
     //todo
     if (!checkParams()) return;
 
-    BottomDialog.showPassWordInputDialog(
+    BottomDialog.simpleAuth(
       context,
       widget.walletaccount.password,
       (password) {

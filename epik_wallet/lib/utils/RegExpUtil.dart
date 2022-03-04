@@ -18,7 +18,6 @@ class RegExpUtil {
 
   //epik地址规范
   static RegExp re_epik_address = RegExp(r"^f[a-zA-Z0-9]+$");
-
-
+  
 
 }

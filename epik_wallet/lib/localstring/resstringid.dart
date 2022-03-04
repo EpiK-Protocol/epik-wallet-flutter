@@ -755,4 +755,26 @@ enum RSID {
   awp_media,
   awp_video,
 
+  //Biometrics
+  biometrics,
+  biometrics_faceid,
+  biometrics_fingerprint,
+
+  biometrics_localizedReason,
+
+  biometrics_signInTitle,//"身份验证", //Authentication Required
+  biometrics_biometricHint,//"请扫描指纹或面部",//Scan your fingerprint (or face or whatever) to authenticate
+  biometrics_biometricNotRecognized,//"验证失败, 再试一次。",//"Not recognized, try again.",
+  biometrics_biometricSuccess,//"验证成功", //"Success"
+  biometrics_cancelButton,//"取消", //"Cancel"
+  biometrics_biometricRequiredTitle,// "验证要求", //"Biometric required",
+  biometrics_goToSettingsButton,// "去设置",//"Go to settings",
+  biometrics_goToSettingsDescription,//"您的设备没有开启此功能, 请到\"设置 > 安全\"中设置。",//Biometric authentication is not set up on your device. Go to \'Settings > Security\' to add biometric authentication.
+
+  biometrics_ioslockOut,// "生物认证被禁用。请锁定再解锁您的屏幕启用它。", //'Biometric authentication is disabled. Please lock and unlock your screen to enable it.',
+  biometrics_iosgoToSettingsButton,// "去设置", //"Go to settings",
+  biometrics_iosgoToSettingsDescription,// "您的设备上没有设置生物认证。请在您的手机上启用Touch ID或Face ID。", //'Biometric authentication is not set up on your device. Please either enable Touch ID or Face ID on your phone.',
+  biometrics_ioscancelButton,// "好的", // "OK"
+
+
 }

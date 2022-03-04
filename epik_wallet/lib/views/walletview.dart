@@ -14,6 +14,7 @@ import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
+import 'package:epikwallet/logic/LocalAuthUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
@@ -848,7 +849,6 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
 
   onClickWalletMenu() async {
     eventMgr.send(EventTag.MAIN_RIGHT_DRAWER, true);
-    
   }
 
   double gridItemHightRatio = 0;
@@ -861,6 +861,12 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
     }
 
     List<HomeMenuItem> datas = ServiceInfo.getHomeMenuList();
+    // if(datas!=null && datas.length>=7)
+    // {
+    //   datas = datas.sublist(0,7);
+    // }
+
+
     if (datas != null && datas.length > 0) {
       List<Widget> items = [];
 

@@ -673,7 +673,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
 
     if (!checkParams()) return;
 
-    BottomDialog.showPassWordInputDialog(
+    BottomDialog.simpleAuth(
       context,
       widget.walletaccount.password,
       (password) {

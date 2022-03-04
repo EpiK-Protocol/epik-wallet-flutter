@@ -751,4 +751,25 @@ Map<RSID, String> map_zh = {
   RSID.awp_media:"访问媒体库",
   RSID.awp_video:"录像",
 
+  //Biometrics
+  RSID.biometrics:"生物特征认证",
+  RSID.biometrics_faceid:"面部识别",
+  RSID.biometrics_fingerprint:"指纹识别",
+
+  RSID.biometrics_localizedReason:"请扫描指纹或面部",//Scan your fingerprint (or face or whatever) to authenticate
+
+  RSID.biometrics_signInTitle:"身份验证", //Authentication Required
+  RSID.biometrics_biometricHint:"",//
+  RSID.biometrics_biometricNotRecognized:"验证失败, 再试一次。",//"Not recognized, try again.",
+  RSID.biometrics_biometricSuccess:"验证成功", //"Success"
+  RSID.biometrics_cancelButton:"取消", //"Cancel"
+  RSID.biometrics_biometricRequiredTitle: "验证要求", //"Biometric required",
+  RSID.biometrics_goToSettingsButton: "去设置",//"Go to settings",
+  RSID.biometrics_goToSettingsDescription:"您的设备没有开启此功能, 请到\"设置 > 安全\"中设置。",//Biometric authentication is not set up on your device. Go to \'Settings > Security\' to add biometric authentication.
+
+  RSID.biometrics_ioslockOut:"生物认证被禁用。请锁定再解锁您的屏幕启用它。", //'Biometric authentication is disabled. Please lock and unlock your screen to enable it.',
+  RSID.biometrics_iosgoToSettingsButton: "去设置", //"Go to settings",
+  RSID.biometrics_iosgoToSettingsDescription: "您的设备上没有设置生物认证。请在您的手机上启用Touch ID或Face ID。", //'Biometric authentication is not set up on your device. Please either enable Touch ID or Face ID on your phone.',
+  RSID.biometrics_ioscancelButton: "好的", // "OK"
+
 };

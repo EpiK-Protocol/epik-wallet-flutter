@@ -5,7 +5,7 @@ import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:package_info/package_info.dart';
 
-String code_version = "1.2.3"; //ios签发固定在1.2.5
+String code_version = "1.2.6";
 
 class Upgrade {
   /// 当前最新版本

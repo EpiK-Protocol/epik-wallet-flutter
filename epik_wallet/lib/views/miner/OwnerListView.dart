@@ -465,7 +465,7 @@ class OwnerListViewState extends BaseWidgetState<OwnerListView> {
 
     closeInput();
 
-    BottomDialog.showPassWordInputDialog(
+    BottomDialog.simpleAuth(
         context, AccountMgr().currentAccount.password, (value) async {
       LoadingDialog.showLoadDialog(context, "",
           touchOutClose: false, backClose: false);
@@ -522,7 +522,7 @@ class OwnerListViewState extends BaseWidgetState<OwnerListView> {
 
       closeInput();
 
-      BottomDialog.showPassWordInputDialog(
+      BottomDialog.simpleAuth(
           context, AccountMgr().currentAccount.password, (value) async {
         LoadingDialog.showLoadDialog(context, "",
             touchOutClose: false, backClose: false);

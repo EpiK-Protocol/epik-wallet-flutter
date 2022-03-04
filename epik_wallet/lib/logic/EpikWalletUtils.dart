@@ -618,6 +618,8 @@ class WalletAccount {
   // 本地密码
   String password = "";
 
+  bool biometrics=false;
+
   // hd钱包助记词
   String mnemonic = "";
 
@@ -793,6 +795,7 @@ class WalletAccount {
       Dlog.p("WalletAccount", "WalletAccount.fromJson json=$json");
       account = json['account'];
       password = json['password'];
+      biometrics = json['biometrics'] ?? false;
       mnemonic = json['mnemonic'] ?? "";
       hd_eth_address = json['hd_eth_address'];
       epik_EPK_address = json['epik_tEPK_address'];
@@ -805,6 +808,7 @@ class WalletAccount {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['account'] = this.account;
     data['password'] = this.password;
+    data['biometrics'] = this.biometrics??false;
     data['mnemonic'] = this.mnemonic;
     data['hd_eth_address'] = this.hd_eth_address;
     data['epik_tEPK_address'] = this.epik_EPK_address;

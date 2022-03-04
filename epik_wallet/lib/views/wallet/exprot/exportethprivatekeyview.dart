@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:bip39/bip39.dart' as bip39;
+import 'package:convert/convert.dart';
 import 'package:dart_bip32_bip44/dart_bip32_bip44.dart';
 import 'package:epikplugin/Bip44Path.dart';
 import 'package:epikwallet/base/_base_widget.dart';
@@ -14,6 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:web3dart/credentials.dart';
 
 class ExportEthPrivateKeyView extends BaseWidget {
   WalletAccount walletaccount;
@@ -153,11 +156,18 @@ class _ExportEthPrivateKeyViewState extends BaseWidgetState<ExportEthPrivateKeyV
     // });
 
     Future.delayed(Duration(milliseconds: 500)).then((value) async {
-      String seed = bip39.mnemonicToSeedHex(widget.walletaccount.mnemonic);
-      Chain chain = Chain.seed(seed);
-      String path_eth = Bip44Path.getPath("ETH"); // "m/44'/60'/0'/0/0";
-      ExtendedPrivateKey key = chain.forPath(path_eth);
-      PrivateKey = key.privateKeyHex() ?? "";
+      // String seed = bip39.mnemonicToSeedHex(widget.walletaccount.mnemonic);
+      // Chain chain = Chain.seed(seed);
+      // String path_eth = Bip44Path.getPath("ETH"); // "m/44'/60'/0'/0/0";
+      // ExtendedPrivateKey key = chain.forPath(path_eth);
+      // PrivateKey = key.privateKeyHex() ?? "";
+
+      EthPrivateKey pk = widget.walletaccount.credentials;
+      Uint8List pkbytes = pk.privateKey;
+      if(pkbytes.length==33 && pkbytes[0]==0)
+        pkbytes=pkbytes.sublist(1);
+      PrivateKey = hex.encode(pkbytes);
+
       closeStateLayout();
       Future.delayed(Duration(milliseconds: 500)).then((value) => showTips());
     });

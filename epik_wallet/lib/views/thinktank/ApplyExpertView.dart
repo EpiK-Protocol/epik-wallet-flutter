@@ -243,7 +243,7 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
             //   return;
             // }
 
-            BottomDialog.showPassWordInputDialog(
+            BottomDialog.simpleAuth(
               context,
               AccountMgr().currentAccount.password,
               (password) {

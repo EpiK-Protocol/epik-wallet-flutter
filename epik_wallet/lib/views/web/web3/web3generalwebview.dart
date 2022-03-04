@@ -627,6 +627,7 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
         {
           if (isKeepPassword) {
             keep_password_website = null;
+            keep_password_website_secret=false;
             showToast("${Web3Menu.KEEP_PASSWORD.getName()} ${RSID.w3wv_canceled.text}");
           } else {
             String host = current_url?.host;
@@ -642,7 +643,9 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
               btnRight: RSID.confirm.text,
               onClickBtnRight: (dialog) {
                 dialog.dismiss();
-                BottomDialog.showPassWordInputDialog(context, AccountMgr().currentAccount.password, (value) {
+                // BottomDialog.showPassWordInputDialog(
+                BottomDialog.simpleAuth(
+                    context, AccountMgr().currentAccount.password, (value) {
                   if (value == (AccountMgr().currentAccount.password + keep_password_website_secretkey)) {
                     //开启隐藏功能
                     keep_password_website_secret = true;
