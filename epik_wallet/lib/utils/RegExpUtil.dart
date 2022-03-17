@@ -18,6 +18,10 @@ class RegExpUtil {
 
   //epik地址规范
   static RegExp re_epik_address = RegExp(r"^f[a-zA-Z0-9]+$");
+
+
+  //十六进制内容不包含0x
+  static RegExp re_hex_no_0x = RegExp("[0-9a-fA-F]+");
   
 
 }

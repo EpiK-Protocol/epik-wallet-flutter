@@ -235,7 +235,7 @@ class DeviceUtils {
   static SystemUiOverlayStyle system_bar_current;
 
   static setSystemBarStyle(SystemUiOverlayStyle style) {
-    print("setSystemBarStyle ${style.systemNavigationBarColor}");
+    // print("setSystemBarStyle ${style.systemNavigationBarColor}");
     system_bar_current = style;
     SystemChrome.setSystemUIOverlayStyle(style);
   }
@@ -255,8 +255,8 @@ class DeviceUtils {
   ///设置android 底部系统导航栏背景色
   static changeNavigationColor(Color color, {bool animate = false}) async {
     try {
-      print("changeNavigationColor");
-      print(color);
+      // print("changeNavigationColor");
+      // print(color);
       await FlutterStatusbarcolor.setNavigationBarColor(color,
           animate: animate);
     } on PlatformException catch (e) {

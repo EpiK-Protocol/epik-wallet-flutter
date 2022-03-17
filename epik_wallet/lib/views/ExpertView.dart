@@ -139,11 +139,21 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
   VoterInfo voterinfo;
 
   bool isFirst = true;
+  bool needwalletfull=false;
 
   refresh() async {
     if (isFirst) {
       isFirst = false;
     }
+
+    if (AccountMgr().currentAccount.hasEpikWallet != true) {
+      needwalletfull = true;
+      closeStateLayout();
+      isLoading = false;
+      return;
+    }
+
+    needwalletfull=false;
 
     setLoadingWidgetVisible(true);
     isLoading = true;
@@ -215,6 +225,27 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
 
   @override
   Widget buildWidget(BuildContext context) {
+
+    if(needwalletfull)
+    {
+      Widget widget = Container(
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              RSID.iwv_29.text, //"需要Epik钱包",
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 20,
+              ),
+            ),
+          ],
+        ),
+      );
+      return widget;
+    }
+
     Widget widget = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:epikplugin/epikplugin.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
@@ -38,8 +37,13 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView> with Tick
   String accountName = "";
   TextEditingController _controllerAccount;
 
-  String importString = "";
-  TextEditingController _controllerImport;
+  String import_mnemonic = "";
+  TextEditingController _controllerImportMnemonic;
+
+  String import_pk_epik = "";
+  String import_pk_eth = "";
+  TextEditingController _controllerImportPkEpik;
+  TextEditingController _controllerImportPkEth;
 
   @override
   void initState() {
@@ -69,7 +73,8 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView> with Tick
   Widget buildWidget(BuildContext context) {
     if (tabItems == null)
       tabItems = [
-        ResString.get(context, RSID.iwv_3) /*, "私钥"*/
+        RSID.iwv_3.text,
+        RSID.iwv_21.text,
       ];
 
     if (_tabController == null) {
@@ -106,7 +111,9 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView> with Tick
         ),
       ));
 
-    if (_controllerImport == null) _controllerImport = new TextEditingController(text: importString);
+    if (_controllerImportMnemonic == null) _controllerImportMnemonic = new TextEditingController(text: import_mnemonic);
+    if (_controllerImportPkEpik == null) _controllerImportPkEpik = new TextEditingController(text: import_pk_epik);
+    if (_controllerImportPkEth == null) _controllerImportPkEth = new TextEditingController(text: import_pk_eth);
 
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
@@ -140,110 +147,114 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView> with Tick
                 ),
               ),
             ),
-            // Container(
-            //   height: 30,
-            //   margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-            //   child: TabBar(
-            //     onTap: (int index) {
-            //       dlog('Selected......$index');
-            //     },
-            //     //设置未选中时的字体颜色，tabs里面的字体样式优先级最高
-            //     unselectedLabelColor: Color(0xff999999),
-            //     //设置选中时的字体颜色，tabs里面的字体样式优先级最高
-            //     labelColor: Color(0xff393E45),
-            //     //选中下划线的颜色
-            //     indicatorColor: Color(0xff393E45),
-            //     //选中下划线的长度，label时跟文字内容长度一样，tab时跟一个Tab的长度一样
-            //     indicatorSize: TabBarIndicatorSize.label,
-            //     //选中下划线的高度，值越大高度越高，默认为2。0
-            //     indicatorWeight: 2.0,
-            //     controller: _tabController,
-            //     labelPadding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-            //     tabs: tabItems.map((text) {
-            //       return Text(text);
-            //     }).toList(),
-            //     isScrollable: true,
-            //   ),
-            // ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(30, 0, 30, 5),
-              child: Text(
-                ResString.get(context, RSID.iwv_3), // "导入EpiK Portal钱包",
-                style: TextStyle(
-                  color: ResColor.white,
-                  fontSize: 12,
-                ),
-              ),
-            ),
             Container(
               width: double.infinity,
-              height: 90,
-              margin: EdgeInsets.fromLTRB(30, 0, 30, 0),
-              child: TextField(
-                controller: _controllerImport,
-                keyboardType: TextInputType.text,
-                //获取焦点时,启用的键盘类型
-                maxLines: 999,
-                // 输入框最大的显示行数
-//              maxLength: 20, //允许输入的字符长度/ 右下角有数量提示
-                maxLengthEnforced: true,
-                //是否允许输入的字符长度超过限定的字符长度
-                obscureText: false,
-                //是否是密码
-                inputFormatters: [WhitelistingTextInputFormatter(RegExpUtil.re_noChs)],
-
-                // 这里限制长度 不会有数量提示
-                decoration: InputDecoration(
-                  // 以下属性可用来去除TextField的边框
-                  border: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  focusedErrorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                  enabledBorder: const UnderlineInputBorder(
-                    borderRadius: BorderRadius.zero,
-                    borderSide: BorderSide(
-                      color: ResColor.white_20,
-                      width: 1,
-                    ),
-                  ),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderRadius: BorderRadius.zero,
-                    borderSide: BorderSide(
-                      color: ResColor.white,
-                      width: 1,
-                    ),
-                  ),
-                  contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  hintText:
-                      _selectedIndex == 0 ? ResString.get(context, RSID.iwv_4) : ResString.get(context, RSID.iwv_5),
-                  //"请输入助记词(12个英文单词)按空格隔开" : "请输入私钥",
-                  hintStyle: TextStyle(color: ResColor.white_50, fontSize: 17),
-                ),
-                cursorWidth: 2.0,
-                //光标宽度
-                cursorRadius: Radius.circular(2),
-                //光标圆角弧度
-                cursorColor: Colors.white,
-                //光标颜色
-                style: TextStyle(fontSize: 17, color: Colors.white),
-                onChanged: (value) {
-                  importString = value.trim();
+              height: 42,
+              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+              margin: EdgeInsets.only(bottom: 0),
+              child: TabBar(
+                onTap: (int index) {
+                  dlog('Selected......$index');
                 },
-                onSubmitted: (value) {
-                  importString = value.trim();
-                }, // 是否隐藏输入的内容
+                tabs: tabItems.map((text) {
+                  return Text(text);
+                }).toList(),
+                controller: _tabController,
+                isScrollable: true,
+                labelPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                labelColor: Colors.white,
+                labelStyle: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  height: 1,
+                ),
+                unselectedLabelColor: ResColor.white_60,
+                unselectedLabelStyle: TextStyle(
+                  fontSize: 14,
+                  color: ResColor.white_60,
+                  fontWeight: FontWeight.bold,
+                  height: 1,
+                ),
+                indicator: BoxDecoration(
+                  borderRadius: BorderRadius.circular(2),
+                  gradient: ResColor.lg_1,
+                ),
+                indicatorPadding: EdgeInsets.fromLTRB(8, 32, 8, 6),
+                indicatorSize: TabBarIndicatorSize.label,
+                indicatorWeight: 4,
               ),
             ),
             // Padding(
-            //   padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
+            //   padding: EdgeInsets.fromLTRB(30, 0, 30, 5),
             //   child: Text(
-            //     ResString.get(context, RSID.iwv_6), //"钱包名称",
+            //     ResString.get(context, RSID.iwv_3), // "导入EpiK Portal钱包",
             //     style: TextStyle(
-            //       color: Colors.black,
-            //       fontSize: 15,
+            //       color: ResColor.white,
+            //       fontSize: 12,
             //     ),
             //   ),
             // ),
+//             Container(
+//               width: double.infinity,
+//               height: 90,
+//               margin: EdgeInsets.fromLTRB(30, 0, 30, 0),
+//               child: TextField(
+//                 controller: _controllerImport,
+//                 keyboardType: TextInputType.text,
+//                 //获取焦点时,启用的键盘类型
+//                 maxLines: 999,
+//                 // 输入框最大的显示行数
+// //              maxLength: 20, //允许输入的字符长度/ 右下角有数量提示
+//                 maxLengthEnforced: true,
+//                 //是否允许输入的字符长度超过限定的字符长度
+//                 obscureText: false,
+//                 //是否是密码
+//                 inputFormatters: [WhitelistingTextInputFormatter(RegExpUtil.re_noChs)],
+//
+//                 // 这里限制长度 不会有数量提示
+//                 decoration: InputDecoration(
+//                   // 以下属性可用来去除TextField的边框
+//                   border: InputBorder.none,
+//                   errorBorder: InputBorder.none,
+//                   focusedErrorBorder: InputBorder.none,
+//                   disabledBorder: InputBorder.none,
+//                   enabledBorder: const UnderlineInputBorder(
+//                     borderRadius: BorderRadius.zero,
+//                     borderSide: BorderSide(
+//                       color: ResColor.white_20,
+//                       width: 1,
+//                     ),
+//                   ),
+//                   focusedBorder: const UnderlineInputBorder(
+//                     borderRadius: BorderRadius.zero,
+//                     borderSide: BorderSide(
+//                       color: ResColor.white,
+//                       width: 1,
+//                     ),
+//                   ),
+//                   contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+//                   hintText:
+//                       _selectedIndex == 0 ? ResString.get(context, RSID.iwv_4) : ResString.get(context, RSID.iwv_5),
+//                   //"请输入助记词(12个英文单词)按空格隔开" : "请输入私钥",
+//                   hintStyle: TextStyle(color: ResColor.white_50, fontSize: 17),
+//                 ),
+//                 cursorWidth: 2.0,
+//                 //光标宽度
+//                 cursorRadius: Radius.circular(2),
+//                 //光标圆角弧度
+//                 cursorColor: Colors.white,
+//                 //光标颜色
+//                 style: TextStyle(fontSize: 17, color: Colors.white),
+//                 onChanged: (value) {
+//                   importString = value.trim();
+//                 },
+//                 onSubmitted: (value) {
+//                   importString = value.trim();
+//                 }, // 是否隐藏输入的内容
+//               ),
+//             ),
+            ...getMainInput(),
             getInputWidget(
               accountName,
               RSID.iwv_6.text,
@@ -265,16 +276,6 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView> with Tick
               },
               isPassword: false,
             ),
-            // Padding(
-            //   padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
-            //   child: Text(
-            //     ResString.get(context, RSID.iwv_8), // "钱包密码",
-            //     style: TextStyle(
-            //       color: Colors.black,
-            //       fontSize: 15,
-            //     ),
-            //   ),
-            // ),
             getInputWidget(
               keyword_1,
               RSID.iwv_8.text,
@@ -295,17 +296,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView> with Tick
                 });
               },
             ),
-            // Container(
-            //   padding: EdgeInsets.fromLTRB(15, 5, 15, 10),
-            //   alignment: Alignment.centerRight,
-            //   child: Text(
-            //     ResString.get(context, RSID.iwv_10), //"*建议大小写字母、符号、数字组合 8位以上",
-            //     style: TextStyle(
-            //       color: ResColor.black_50,
-            //       fontSize: 10,
-            //     ),
-            //   ),
-            // ),
+
             getInputWidget(
               keyword_2,
               RSID.iwv_11.text, //
@@ -325,45 +316,13 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView> with Tick
                 });
               },
             ),
-            // Container(
-            //   margin: EdgeInsets.fromLTRB(15, 50, 15, 0),
-            //   height: 44,
-            //   child: Row(
-            //     children: <Widget>[
-            //       Expanded(
-            //         child: Container(
-            //           height: 44,
-            //           child: FlatButton(
-            //             highlightColor: Colors.white24,
-            //             splashColor: Colors.white24,
-            //             onPressed: () {
-            //               clickNext();
-            //             },
-            //             child: Text(
-            //               ResString.get(context, RSID.iwv_12), // "开始导入",
-            //               style: TextStyle(
-            //                 color: Colors.white,
-            //                 fontSize: 15,
-            //               ),
-            //             ),
-            //             color: Color(0xff1A1C1F),
-            //             shape: RoundedRectangleBorder(
-            //               borderRadius: BorderRadius.all(Radius.circular(22)),
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
             LoadingButton(
               margin: EdgeInsets.fromLTRB(30, 40, 30, 0),
               gradient_bg: ResColor.lg_1,
               color_bg: Colors.transparent,
               disabledColor: Colors.transparent,
               height: 40,
-              text: ResString.get(context, RSID.iwv_12),
-              // "开始导入",
+              text: RSID.iwv_12.text,
               textstyle: TextStyle(
                 color: Colors.white,
                 fontSize: 14,
@@ -371,7 +330,11 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView> with Tick
               ),
               bg_borderradius: BorderRadius.circular(4),
               onclick: (lbtn) {
-                clickNext();
+                if (_selectedIndex == 0) {
+                  clickNextMnemonic();
+                } else {
+                  clickNextPrivatekey();
+                }
               },
             ),
             InkWell(
@@ -397,6 +360,87 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView> with Tick
     );
   }
 
+  List<Widget> getMainInput() {
+    List<Widget> ret = [];
+    if (_selectedIndex == 0) {
+      ret.add(getInputWidget(
+        import_mnemonic,
+        null,
+        RSID.iwv_4.text, //"请输入助记词",
+        _controllerImportMnemonic,
+        (text) {
+          dlog(text); // 当输入内容变更时,如何处理
+          setState(() {
+            dlog(text);
+            import_mnemonic = text.trim();
+          });
+        },
+        () {
+          setState(() {
+            import_mnemonic = "";
+            _controllerImportMnemonic = null;
+          });
+        },
+        isPassword: false,
+        maxLines: 999,
+        minLines: 3,
+        maxlength: 999,
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExpUtil.re_noChs)],
+      ));
+    } else {
+      ret.add(getInputWidget(
+        import_pk_epik,
+        RSID.iwv_24.text, //"EpiK私钥",
+        RSID.iwv_22.text,
+        _controllerImportPkEpik,
+        (text) {
+          dlog(text); // 当输入内容变更时,如何处理
+          setState(() {
+            dlog(text);
+            import_pk_epik = text.trim();
+          });
+        },
+        () {
+          setState(() {
+            import_pk_epik = "";
+            _controllerImportPkEpik = null;
+          });
+        },
+        isPassword: false,
+        maxLines: 999,
+        minLines: 3,
+        maxlength: 999,
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExpUtil.re_hex_no_0x)],
+      ));
+
+      ret.add(getInputWidget(
+        import_pk_eth,
+        RSID.iwv_25.text, //"以太坊私钥",
+        RSID.iwv_23.text,
+        _controllerImportPkEth,
+        (text) {
+          dlog(text); // 当输入内容变更时,如何处理
+          setState(() {
+            dlog(text);
+            import_pk_eth = text.trim();
+          });
+        },
+        () {
+          setState(() {
+            import_pk_eth = "";
+            _controllerImportPkEth = null;
+          });
+        },
+        isPassword: false,
+        maxLines: 999,
+        minLines: 3,
+        maxlength: 999,
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExpUtil.re_hex_no_0x)],
+      ));
+    }
+    return ret;
+  }
+
   Widget getInputWidget(
     String keyword,
     String label,
@@ -405,107 +449,115 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView> with Tick
     ValueChanged<String> onChanged,
     VoidCallback onClean, {
     bool isPassword = true,
+    int maxLines = 1,
+    int minLines = 1,
+    int maxlength = 20,
+    List<TextInputFormatter> inputFormatters,
   }) {
-    return Container(
-      width: double.infinity,
-      height: 77,
-      margin: EdgeInsets.fromLTRB(30, 0, 30, 0),
-      child: Stack(
-        children: [
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Expanded(
-                  flex: 1,
-                  child: TextField(
-                    controller: controller,
-                    keyboardType: TextInputType.text,
-                    //获取焦点时,启用的键盘类型
-                    maxLines: 1,
-                    // 输入框最大的显示行数
+    Widget textview = TextField(
+      controller: controller,
+      keyboardType: maxLines == 1 ? TextInputType.text : TextInputType.multiline,
+      //获取焦点时,启用的键盘类型
+      maxLines: maxLines,
+      minLines: minLines,
+      // 输入框最大的显示行数
 //              maxLength: 20, //允许输入的字符长度/ 右下角有数量提示
-                    maxLengthEnforced: true,
-                    //是否允许输入的字符长度超过限定的字符长度
-                    obscureText: isPassword,
-                    //是否是密码
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(20),
-                    ],
-                    //WhitelistingTextInputFormatter(RegExpUtil.re_azAZ09)
-                    // 这里限制长度 不会有数量提示
-                    decoration: InputDecoration(
-                      // 以下属性可用来去除TextField的边框
-                      // border: InputBorder.none,
-                      // errorBorder: InputBorder.none,
-                      // focusedErrorBorder: InputBorder.none,
-                      border: InputBorder.none,
-                      errorBorder: InputBorder.none,
-                      focusedErrorBorder: InputBorder.none,
-                      disabledBorder: InputBorder.none,
-                      enabledBorder: const UnderlineInputBorder(
-                        borderRadius: BorderRadius.zero,
-                        borderSide: BorderSide(
-                          color: ResColor.white_20,
-                          width: 1,
-                        ),
-                      ),
-                      focusedBorder: const UnderlineInputBorder(
-                        borderRadius: BorderRadius.zero,
-                        borderSide: BorderSide(
-                          color: ResColor.white,
-                          width: 1,
-                        ),
-                      ),
-                      contentPadding: EdgeInsets.fromLTRB(0, 10, 40, 20),
+      maxLengthEnforced: true,
+      //是否允许输入的字符长度超过限定的字符长度
+      obscureText: isPassword,
+      //是否是密码
+      inputFormatters: [LengthLimitingTextInputFormatter(maxlength), if (inputFormatters != null) ...inputFormatters],
+      //WhitelistingTextInputFormatter(RegExpUtil.re_azAZ09)
+      // 这里限制长度 不会有数量提示
+      decoration: InputDecoration(
+        // 以下属性可用来去除TextField的边框
+        // border: InputBorder.none,
+        // errorBorder: InputBorder.none,
+        // focusedErrorBorder: InputBorder.none,
+        border: InputBorder.none,
+        errorBorder: InputBorder.none,
+        focusedErrorBorder: InputBorder.none,
+        disabledBorder: InputBorder.none,
+        enabledBorder: const UnderlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(
+            color: ResColor.white_20,
+            width: 1,
+          ),
+        ),
+        focusedBorder: const UnderlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(
+            color: ResColor.white,
+            width: 1,
+          ),
+        ),
+        // contentPadding: EdgeInsets.fromLTRB(0, 10, 40, 20),
+        contentPadding: maxLines > 1 ? EdgeInsets.fromLTRB(0, 10, 0, 10) : EdgeInsets.fromLTRB(0, 10, 40, 20),
 
 //                      contentPadding: EdgeInsets.symmetric(vertical: 8.5),
-                      hintText: hind,
-                      hintStyle: TextStyle(color: ResColor.white_50, fontSize: 14),
-                      labelText: label,
-                      labelStyle: TextStyle(color: ResColor.white, fontSize: 17),
-                    ),
-                    cursorWidth: 2.0,
-                    //光标宽度
-                    cursorRadius: Radius.circular(2),
-                    //光标圆角弧度
-                    cursorColor: Colors.white,
-                    //光标颜色
-                    style: TextStyle(fontSize: 17, color: Colors.white),
-                    onChanged: onChanged,
-                    onSubmitted: (value) {
-                      // 当用户确定已经完成编辑时触发
-                    }, // 是否隐藏输入的内容
+        hintText: hind,
+        hintStyle: TextStyle(color: ResColor.white_50, fontSize: 14),
+        labelText: label,
+        labelStyle: TextStyle(color: ResColor.white, fontSize: 17),
+      ),
+      cursorWidth: 2.0,
+      //光标宽度
+      cursorRadius: Radius.circular(2),
+      //光标圆角弧度
+      cursorColor: Colors.white,
+      //光标颜色
+      style: TextStyle(fontSize: 17, color: Colors.white),
+      onChanged: onChanged,
+      onSubmitted: (value) {
+        // 当用户确定已经完成编辑时触发
+      }, // 是否隐藏输入的内容
+    );
+
+    return Container(
+      width: double.infinity,
+      height: maxLines > 1 ? null : 77,
+      margin: EdgeInsets.fromLTRB(30, 0, 30, 0),
+      child: maxLines == 1
+          ? Stack(
+              children: [
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 1,
+                        child: textview,
+                      ),
+                    ],
                   ),
                 ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: (StringUtils.isEmpty(keyword))
+                      ? Container()
+                      : SizedBox(
+                          width: 40,
+                          height: 62,
+                          child: IconButton(
+                            onPressed: () {
+                              onClean();
+                            },
+                            padding: EdgeInsets.all(0),
+                            icon: Icon(Icons.clear_rounded),
+                            color: Colors.white,
+                            iconSize: 14,
+                          ),
+                        ),
+                ),
               ],
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: (StringUtils.isEmpty(keyword))
-                ? Container()
-                : SizedBox(
-                    width: 40,
-                    height: 62,
-                    child: IconButton(
-                      onPressed: () {
-                        onClean();
-                      },
-                      padding: EdgeInsets.all(0),
-                      icon: Icon(Icons.clear_rounded),
-                      color: Colors.white,
-                      iconSize: 14,
-                    ),
-                  ),
-          ),
-        ],
-      ),
+            )
+          : textview,
     );
   }
 
@@ -543,8 +595,8 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView> with Tick
     return true;
   }
 
-  bool checkImportString() {
-    if (StringUtils.isEmpty(importString)) {
+  bool checkImportMnemonic() {
+    if (StringUtils.isEmpty(import_mnemonic)) {
 //      showToast(_selectedIndex == 0 ? "请输入助记词" : "请输入私钥");
       showToast(_selectedIndex == 0 ? ResString.get(context, RSID.iwv_17) : ResString.get(context, RSID.iwv_5));
       return false;
@@ -552,7 +604,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView> with Tick
 
     if (_selectedIndex == 0) {
       // 助记词
-      List<String> words = importString.split(RegExp(r'\s+'));
+      List<String> words = import_mnemonic.split(RegExp(r'\s+'));
       // print(words);
       // print(words.length);
       if (words == null || words.length != 12) {
@@ -561,7 +613,7 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView> with Tick
         return false;
       }
     } else {
-      if (importString.length != 64) {
+      if (import_mnemonic.length != 64) {
 //        showToast("私钥格式不正确");
         showToast(ResString.get(context, RSID.iwv_18));
         return false;
@@ -570,8 +622,8 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView> with Tick
     return true;
   }
 
-  clickNext() {
-    if (!checkImportString()) {
+  clickNextMnemonic() {
+    if (!checkImportMnemonic()) {
       return;
     }
 
@@ -581,18 +633,11 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView> with Tick
 
     closeInput();
 
-    showLoadDialog("", touchOutClose: false, backClose: false, onShow: () async{
+    showLoadDialog("", touchOutClose: false, backClose: false, onShow: () async {
+      import_mnemonic = import_mnemonic.replaceAll(RegExp(r"\s+"), " ");
+      bool mnemonicok = bip39.validateMnemonic(import_mnemonic);
 
-      // Uint8List seed = await HD.seedFromMnemonic(importString);
-      // if (seed == null || seed.length == 0)
-
-      importString  = importString.replaceAll(RegExp(r"\s+"), " ");
-      bool mnemonicok = bip39.validateMnemonic(importString);
-
-      if(mnemonicok!=true)
-      {
-        // 验证助记词失败
-//          showToast("导入失败，助记词不能正确解析");
+      if (mnemonicok != true) {
         showToast(ResString.get(context, RSID.iwv_19));
         closeLoadDialog();
         return;
@@ -601,19 +646,93 @@ class _ImportWalletViewState extends BaseWidgetState<ImportWalletView> with Tick
       WalletAccount waccount = WalletAccount();
       waccount.account = accountName;
       waccount.password = keyword_1;
-      waccount.mnemonic = importString;
+      waccount.mnemonic = import_mnemonic;
       AccountMgr().addAccount(waccount);
       AccountMgr().setCurrentAccount(waccount).then((ok) {
         if (ok) {
           closeLoadDialog();
           Future.delayed(Duration(milliseconds: 300)).then((value) => finish());
         } else {
+          AccountMgr().delAccount(waccount);
           closeLoadDialog();
 //            showToast("导入失败钱包失败");
           showToast(ResString.get(context, RSID.iwv_20));
         }
       });
+    });
+  }
 
+  bool checkPrivatekey() {
+    bool hasepik = StringUtils.isNotEmpty(import_pk_epik);
+    bool haseth = StringUtils.isNotEmpty(import_pk_eth);
+    if (hasepik!=true && haseth!=true) {
+      showToast(RSID.iwv_26.text); //至少需要输入一种私钥
+      return false;
+    }
+
+    bool ret_epik = null;
+    bool ret_eth = null;
+    if (hasepik) {
+      // epik私钥
+      Uint8List epik_u8l = EpikWalletUtils.hexStringToBytes(import_pk_epik);
+      if (epik_u8l == null || epik_u8l.length == 0) {
+        showToast(RSID.iwv_27.text);//"EpiK私钥不正确");
+        ret_epik =false;
+        return ret_epik;
+      } else {
+        ret_epik=true;
+      }
+    } else if (haseth) {
+      //eth私钥
+      Uint8List eth_u8l = EpikWalletUtils.hexStringToBytes(import_pk_eth);
+      if (eth_u8l == null || eth_u8l.length == 0) {
+        showToast(RSID.iwv_28.text);//"Eth私钥不正确");
+        ret_eth =false;
+        return ret_eth;
+      } else {
+        ret_eth=true;
+      }
+    }
+    return true;
+  }
+
+  clickNextPrivatekey() {
+    if (!checkPrivatekey()) {
+      return;
+    }
+
+    if (!checkPassword()) {
+      return;
+    }
+
+    closeInput();
+
+    showLoadDialog("", touchOutClose: false, backClose: false, onShow: () async {
+
+      bool hasepik = StringUtils.isNotEmpty(import_pk_epik);
+      bool haseth = StringUtils.isNotEmpty(import_pk_eth);
+
+      WalletAccount waccount = WalletAccount();
+      waccount.account = accountName;
+      waccount.password = keyword_1;
+      // waccount.mnemonic = import_mnemonic;
+      if(hasepik)
+        waccount.pk_epk = import_pk_epik;
+      if(haseth)
+        waccount.pk_eth = import_pk_eth;
+
+      AccountMgr().addAccount(waccount);
+      AccountMgr().setCurrentAccount(waccount).then((ok) {
+        if (ok) {
+          closeLoadDialog();
+          Future.delayed(Duration(milliseconds: 300)).then((value) => finish());
+        } else {
+          AccountMgr().delAccount(waccount);
+          closeLoadDialog();
+//            showToast("导入失败钱包失败");
+          showToast(ResString.get(context, RSID.iwv_20));
+        }
+      });
     });
   }
 

@@ -150,8 +150,8 @@ class AccountMgr {
       _currentAccount = null;
       save();
       eventMgr.send(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, account);
-    } else if (_currentAccount != nextAccount) {
-      // 下一个账号 与当前账号不同
+    } else if (account == _currentAccount && _currentAccount != nextAccount) {
+      // 删除的账号是当前账号   并且  下一个账号 与当前账号不同
 //      print("下一个账号 与当前账号不同");
       await setCurrentAccount(nextAccount);
     } else {

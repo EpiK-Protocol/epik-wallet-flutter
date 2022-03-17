@@ -6,11 +6,15 @@ import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/dialog/PopMenuDialog.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/LocalWebsiteMgr.dart';
+import 'package:epikwallet/logic/account_mgr.dart';
+import 'package:epikwallet/logic/api/serviceinfo.dart';
+import 'package:epikwallet/model/HomeMenuItem.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/ClickUtil.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/views/homemenu/EditWebsiteView.dart';
 import 'package:epikwallet/views/viewgoto.dart';
+import 'package:epikwallet/widget/list_view.dart';
 import 'package:epikwallet/widget/rect_getter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,10 +32,23 @@ class HomeMenuMoreView extends BaseWidget {
 }
 
 class HomeMenuMoreViewState extends BaseWidgetState<HomeMenuMoreView> {
+  List<HomeMenuItem> menumore = [];
+
   @override
   void initStateConfig() {
     super.initStateConfig();
     setTopBarVisible(false);
+    List<HomeMenuItem> datas = ServiceInfo.getHomeMenuList();
+    if (datas != null && datas.length >= 7) {
+      menumore = datas.sublist(7);
+    }
+    // for(HomeMenuItem hmi in datas)
+    // {
+    //   if(hmi?.Action?.toLowerCase()?.startsWith("http")==true)
+    //   {
+    //     menumore.add(hmi);
+    //   }
+    // }
   }
 
   @override
@@ -89,7 +106,9 @@ class HomeMenuMoreViewState extends BaseWidgetState<HomeMenuMoreView> {
 
   @override
   Widget buildWidget(BuildContext context) {
-    Widget view = getListView(localwebsitemgr?.data ?? []);
+    List<LocalWebsiteObj> data = localwebsitemgr?.data ?? [];
+
+    Widget view = getListView(data, menumore);
 
     return WillPopScope(
       onWillPop: () async {
@@ -105,13 +124,12 @@ class HomeMenuMoreViewState extends BaseWidgetState<HomeMenuMoreView> {
     );
   }
 
-  Widget getListView(List<LocalWebsiteObj> data) {
-    return ListView.builder(
-      padding: EdgeInsets.zero,
-      itemCount: data.length,
-      itemBuilder: (context, index) {
+  Widget getListView(List<LocalWebsiteObj> data, List<HomeMenuItem> menumore) {
+    return ListPage(
+      data,
+      itemWidgetCreator: (context, index) {
         LocalWebsiteObj lwo = data[index];
-
+        bool isLocalWalletSupport = AccountMgr().currentAccount.isSupportCurrency(lwo?.symbol) ?? true;
         Widget item = Container(
           width: double.infinity,
           margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -162,10 +180,13 @@ class HomeMenuMoreViewState extends BaseWidgetState<HomeMenuMoreView> {
                       margin: EdgeInsets.fromLTRB(5, 0, 0, 0),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: ResColor.o_1, width: 1, style: BorderStyle.solid)),
+                          border: Border.all(
+                              color: isLocalWalletSupport ? ResColor.o_1 : ResColor.white_40,
+                              width: 1,
+                              style: BorderStyle.solid)),
                       child: Text(
                         lwo.symbol.networkTypeName,
-                        style: TextStyle(fontSize: 12, color: ResColor.o_1),
+                        style: TextStyle(fontSize: 12, color: isLocalWalletSupport ? ResColor.o_1 : ResColor.white_40),
                       ),
                     ),
                 ],
@@ -191,7 +212,6 @@ class HomeMenuMoreViewState extends BaseWidgetState<HomeMenuMoreView> {
             ],
           ),
         );
-
         Widget batchview = Container();
         // if (inBatch) {
         //   batchview = CustomCheckBox(
@@ -207,7 +227,6 @@ class HomeMenuMoreViewState extends BaseWidgetState<HomeMenuMoreView> {
         //     },
         //   );
         // }
-
         return InkWell(
           child: Row(
             // crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,7 +246,274 @@ class HomeMenuMoreViewState extends BaseWidgetState<HomeMenuMoreView> {
           },
         );
       },
+      headerList: menumore,
+      headerCreator: (context, index) {
+        bool last = index >= menumore.length - 1;
+        HomeMenuItem mmi = menumore[index];
+        bool isLocalWalletSupport = mmi?.action_l?.isLocalWalletSupport(AccountMgr().currentAccount) ??
+            AccountMgr().currentAccount.isSupportCurrency(mmi?.web3nettype) ??
+            true;
+        Widget img = CachedNetworkImage(
+          imageUrl: mmi.Icon,
+          width: 36,
+          height: 36,
+          fit: BoxFit.contain,
+          placeholder: (context, url) {
+            return Container(
+              color: ResColor.white_0,
+              child: Icon(
+                Icons.language,
+                size: 36,
+                color: ResColor.white_40,
+              ),
+            );
+          },
+          errorWidget: (context, url, error) {
+            return Container(
+              color: ResColor.white_0,
+              child: Icon(
+                Icons.language, //broken_image
+                size: 36,
+                color: ResColor.white_40,
+              ),
+            );
+          },
+        );
+        Widget item = Container(
+          width: double.infinity,
+          margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+          padding: EdgeInsets.fromLTRB(15, 10, 15, 0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  ClipOval(
+                    child: (mmi?.Invalid == true || isLocalWalletSupport != true)
+                        ? ShaderMask(
+                            shaderCallback: (bounds) {
+                              return const LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  ResColor.b_1, //ResColor.white_90,
+                                  ResColor.b_1, //ResColor.black_90,
+                                ],
+                              ).createShader(bounds);
+                            },
+                            child: img,
+                            blendMode: BlendMode.hue, //BlendMode.saturation, //灰度模式
+                          )
+                        : img,
+                  ),
+                  Container(width: 5),
+                  Expanded(
+                    child: Text(
+                      mmi.Name,
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                  if (mmi.Web3net != null)
+                    Container(
+                      height: 20,
+                      padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                      margin: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(
+                              color: isLocalWalletSupport ? ResColor.o_1 : ResColor.white_40,
+                              width: 1,
+                              style: BorderStyle.solid)),
+                      child: Text(
+                        mmi.Web3net,
+                        style: TextStyle(fontSize: 12, color: isLocalWalletSupport ? ResColor.o_1 : ResColor.white_40),
+                      ),
+                    ),
+                ],
+              ),
+              // Container(
+              //   height: 5,
+              // ),
+              // Text(
+              //   mmi.Action,
+              //   maxLines: 1,
+              //   overflow: TextOverflow.ellipsis,
+              //   textAlign: TextAlign.start,
+              //   style: TextStyle(fontSize: 14, color: Colors.white60),
+              // ),
+              Container(
+                height: 10,
+              ),
+              Divider(
+                height: 1,
+                thickness: 1,
+                color: ResColor.white_60,
+              ),
+              // if(last)
+              //   Container(
+              //     height: 10,
+              //   ),
+            ],
+          ),
+        );
+        Widget batchview = Container();
+        // if (inBatch) {
+        //   batchview = CustomCheckBox(
+        //     value: isSeletedLwo(lwo),
+        //     color_check: ResColor.o_1,
+        //     color_border: ResColor.o_1,
+        //     borderRadius: 100,
+        //     width: 20,
+        //     height: 20,
+        //     margin: EdgeInsets.fromLTRB(15, 10, 0, 10),
+        //     onChanged: (value) {
+        //       onSeletedAddressItem(lao, value);
+        //     },
+        //   );
+        // }
+        return InkWell(
+          child: Row(
+            // crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AnimatedSizeAndFade(
+                child: batchview,
+              ),
+              Expanded(child: item),
+            ],
+          ),
+          onTap: () {
+            if (ClickUtil.isFastDoubleClick()) return;
+            if (isLocalWalletSupport != true) return;
+            onClickWebsiteMenuItem(mmi);
+          },
+          // onLongPress: () {
+          // },
+        );
+      },
     );
+    // return ListView.builder(
+    //   padding: EdgeInsets.zero,
+    //   itemCount: data.length,
+    //   itemBuilder: (context, index) {
+    //     LocalWebsiteObj lwo = data[index];
+    //
+    //     Widget item = Container(
+    //       width: double.infinity,
+    //       margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+    //       padding: EdgeInsets.fromLTRB(15, 10, 15, 0),
+    //       child: Column(
+    //         mainAxisSize: MainAxisSize.min,
+    //         crossAxisAlignment: CrossAxisAlignment.start,
+    //         children: [
+    //           Row(
+    //             children: [
+    //               CachedNetworkImage(
+    //                 imageUrl: lwo.getIco(),
+    //                 width: 20,
+    //                 height: 20,
+    //                 fit: BoxFit.contain,
+    //                 placeholder: (context, url) {
+    //                   return Container(
+    //                     color: ResColor.white_0,
+    //                     child: Icon(
+    //                       Icons.language,
+    //                       size: 20,
+    //                       color: ResColor.white_40,
+    //                     ),
+    //                   );
+    //                 },
+    //                 errorWidget: (context, url, error) {
+    //                   return Container(
+    //                     color: ResColor.white_0,
+    //                     child: Icon(
+    //                       Icons.language, //broken_image
+    //                       size: 20,
+    //                       color: ResColor.white_40,
+    //                     ),
+    //                   );
+    //                 },
+    //               ),
+    //               Container(width: 5),
+    //               Expanded(
+    //                 child: Text(
+    //                   lwo.name,
+    //                   style: TextStyle(fontSize: 16, color: Colors.white),
+    //                 ),
+    //               ),
+    //               if (lwo.symbol != null)
+    //                 Container(
+    //                   height: 20,
+    //                   padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+    //                   margin: EdgeInsets.fromLTRB(5, 0, 0, 0),
+    //                   decoration: BoxDecoration(
+    //                       borderRadius: BorderRadius.circular(4),
+    //                       border: Border.all(color: ResColor.o_1, width: 1, style: BorderStyle.solid)),
+    //                   child: Text(
+    //                     lwo.symbol.networkTypeName,
+    //                     style: TextStyle(fontSize: 12, color: ResColor.o_1),
+    //                   ),
+    //                 ),
+    //             ],
+    //           ),
+    //           Container(
+    //             height: 5,
+    //           ),
+    //           Text(
+    //             lwo.url,
+    //             maxLines: 1,
+    //             overflow: TextOverflow.ellipsis,
+    //             textAlign: TextAlign.start,
+    //             style: TextStyle(fontSize: 14, color: Colors.white60),
+    //           ),
+    //           Container(
+    //             height: 10,
+    //           ),
+    //           Divider(
+    //             height: 1,
+    //             thickness: 1,
+    //             color: ResColor.white_60,
+    //           ),
+    //         ],
+    //       ),
+    //     );
+    //
+    //     Widget batchview = Container();
+    //     // if (inBatch) {
+    //     //   batchview = CustomCheckBox(
+    //     //     value: isSeletedLwo(lwo),
+    //     //     color_check: ResColor.o_1,
+    //     //     color_border: ResColor.o_1,
+    //     //     borderRadius: 100,
+    //     //     width: 20,
+    //     //     height: 20,
+    //     //     margin: EdgeInsets.fromLTRB(15, 10, 0, 10),
+    //     //     onChanged: (value) {
+    //     //       onSeletedAddressItem(lao, value);
+    //     //     },
+    //     //   );
+    //     // }
+    //
+    //     return InkWell(
+    //       child: Row(
+    //         // crossAxisAlignment: CrossAxisAlignment.start,
+    //         children: [
+    //           AnimatedSizeAndFade(
+    //             child: batchview,
+    //           ),
+    //           Expanded(child: item),
+    //         ],
+    //       ),
+    //       onTap: () {
+    //         if (ClickUtil.isFastDoubleClick()) return;
+    //         onClickWebsiteItem(lwo);
+    //       },
+    //       onLongPress: () {
+    //         onLongClickWebsiteItem(lwo);
+    //       },
+    //     );
+    //   },
+    // );
   }
 
   void onClickMenu() {
@@ -304,6 +590,12 @@ class HomeMenuMoreViewState extends BaseWidgetState<HomeMenuMoreView> {
     // }
 
     ViewGT.showWeb3GeneralWebView(context, lwo.name, lwo.url, lwo.symbol, lwo: lwo);
+  }
+
+  onClickWebsiteMenuItem(HomeMenuItem mmi) {
+    dlog("onClickWebsiteMenuItem ${mmi.Action}");
+
+    ViewGT.showWeb3GeneralWebView(context, mmi.Name, mmi.Action, mmi.web3nettype);
   }
 
   onLongClickWebsiteItem(LocalWebsiteObj lwo) {

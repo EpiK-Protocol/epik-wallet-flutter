@@ -137,6 +137,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
   bool isLoading = false;
 
   bool needwallet = false;
+  bool needwalletfull = false;
 
   refresh({bool frompull}) async {
     if (isFirst) {
@@ -150,7 +151,15 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
       return;
     }
 
+    if (AccountMgr().currentAccount.hasEpikWallet != true) {
+      needwalletfull = true;
+      closeStateLayout();
+      isLoading = false;
+      return;
+    }
+
     needwallet = false;
+    needwalletfull=false;
 
     int time_start = DateUtil.getNowDateMs();
 
@@ -301,6 +310,24 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
                 borderRadius: BorderRadius.all(Radius.circular(22)),
               ),
             )
+          ],
+        ),
+      );
+    }
+    else if(needwalletfull)
+    {
+      widget = Container(
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              RSID.iwv_29.text, //"需要Epik钱包",
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 20,
+              ),
+            ),
           ],
         ),
       );

@@ -49,7 +49,7 @@ Map<RSID, String> map_en = {
   //ImportWalletView 导入钱包.  Import wallet
   RSID.iwv_1: "Import EpiK Portal Wallet",//"导入EpiK Portal钱包",
   RSID.iwv_2: "EpiK Portal does not store user passwords and cannot provide a service to retrieve or reset them.",//"请备份好您的密码！EpiK Portal不存储用户密码，无法提供找回或重置的服务。",
-  RSID.iwv_3: "Mnemonic word",//"助记词",
+  RSID.iwv_3: "Mnemonic Words",//"助记词",
   RSID.iwv_4: "Please enter mnemonic words (12 English words) separated by spaces.",//"请输入助记词(12个英文单词)按空格隔开",
   RSID.iwv_5: "Please enter your private key",//"请输入私钥",
   RSID.iwv_6: "Wallet name",//"钱包名称",
@@ -67,6 +67,15 @@ Map<RSID, String> map_en = {
   RSID.iwv_18: "Incorrect private key format",//"私钥格式不正确",
   RSID.iwv_19: "Import failed, the mnemonic not parsed correctly",//"导入失败，助记词不能正确解析",
   RSID.iwv_20: "Wallet import failed",//"导入失败钱包失败",
+  RSID.iwv_21:"Private Key",//"私钥",
+  RSID.iwv_22:"Please enter EpiK private key (hex)",//"请输入EpiK私钥",
+  RSID.iwv_23:"Please enter Ethereum private key (hex)",//"请输入Ethereum私钥",
+  RSID.iwv_24:"EpiK Private Key",//"EpiK私钥",
+  RSID.iwv_25:"Ethereum Private Key",//"Ethereum私钥",
+  RSID.iwv_26:"At least one private key must be entered",//"至少需要输入一种私钥",
+  RSID.iwv_27:"EpiK private key error",
+  RSID.iwv_28:"Ethereum private key error",
+  RSID.iwv_29:"Need EpiK wallet",
 
   //ExportEpikPrivateKeyView 导出私钥  Export private key
   RSID.eepkv_1: "Export EPK private key",//"导出tEPK私钥",
@@ -174,6 +183,7 @@ Map<RSID, String> map_en = {
   RSID.main_bv_12: "Incentive interval:",//"奖励区间:",
   RSID.main_bv_13: "You need to bind a social account to participate in the activity",
   RSID.main_bv_14: "To bind",
+  RSID.main_bv_15: "Full wallet required.",//需要完整的钱包
 
   //----------------------------------------views.mining.*
   //MiningProfitView 预挖收益 Pre-mining profit
@@ -682,6 +692,8 @@ Map<RSID, String> map_en = {
   RSID.mlv_33:"Please enter %s target NodeId, separated by \",\" or spaces.",//"请输入%s个目标NodeID，使用\",\"或空格分隔.",
   RSID.mlv_34:"The number of NodeId entered is inconsistent with the selected",//"输入的NodeID数量与选中的不一致",
   RSID.mlv_35:"Batch Transfer Pledge",//"批量转移质押",
+  RSID.mlv_36:"Pledged By Me",//我质押的
+  RSID.mlv_37:"Pledged By Others",//别人质押的
 
   ///AddOtherOwnerPledgeView
   RSID.aoopv_1:"Add Other Owner",//"新增Owner",
@@ -717,6 +729,7 @@ Map<RSID, String> map_en = {
   RSID.w3wv_added:"Collection Added",
   RSID.w3wv_deteled:"Collection Cancelled",
   RSID.w3wv_network:"Network",
+  RSID.w3wv_switch_chain:"Allow this site to switch network?",
 
   //地址列表
   RSID.address_list:"Address List",//地址列表

@@ -192,14 +192,14 @@ class ServiceInfo {
         // zh.add(test);
         // en.add(test);
 
-        zh.add( HomeMenuItem.fromJson({
-          "Name":"更多",
-          "Action":"more",
-        }));
-        en.add( HomeMenuItem.fromJson({
-          "Name":"More",
-          "Action":"more",
-        }));
+        // zh.add( HomeMenuItem.fromJson({
+        //   "Name":"更多",
+        //   "Action":"more",
+        // }));
+        // en.add( HomeMenuItem.fromJson({
+        //   "Name":"More",
+        //   "Action":"more",
+        // }));
 
       } catch (e) {
         print(e);

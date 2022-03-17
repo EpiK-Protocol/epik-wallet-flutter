@@ -372,6 +372,10 @@ class AddressListViewState extends BaseWidgetState<AddressListView> with TickerP
   }
 
   Widget getBatchBar() {
+
+    CurrencySymbol cs = pageIndex;
+    bool localsupport = AccountMgr().currentAccount.isSupportCurrency(cs);
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -425,7 +429,7 @@ class AddressListViewState extends BaseWidgetState<AddressListView> with TickerP
                   margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                   padding: EdgeInsets.only(bottom: 1),
                   height: 40,
-                  gradient_bg: ResColor.lg_2,
+                  gradient_bg: localsupport ? ResColor.lg_2 : ResColor.lg_7,
                   color_bg: Colors.transparent,
                   disabledColor: Colors.transparent,
                   bg_borderradius: BorderRadius.circular(4),
@@ -437,7 +441,7 @@ class AddressListViewState extends BaseWidgetState<AddressListView> with TickerP
                     fontWeight: FontWeight.bold,
                   ),
                   onclick: (lbtn) {
-                    if (hasSelected) {
+                    if (hasSelected && localsupport) {
                       // 批量转账
                       onClickBatchWithdraw();
                     }
@@ -492,7 +496,7 @@ class AddressListViewState extends BaseWidgetState<AddressListView> with TickerP
           lao: lao,
         )).then((value) {
       if (value != null && value is LocalAddressObj) {
-        print(value.address);
+        // print(value.address);
         localaddressmgr.delete(lao);
         localaddressmgr.add(value);
         localaddressmgr.save();
@@ -536,7 +540,7 @@ class AddressListViewState extends BaseWidgetState<AddressListView> with TickerP
       seletedData?.remove(lao);
     }
 
-    print("${seletedData?.length ?? 0}");
+    // print("${seletedData?.length ?? 0}");
   }
 
   bool isSeletedLao(LocalAddressObj lao) {
@@ -637,7 +641,7 @@ class AddressListViewState extends BaseWidgetState<AddressListView> with TickerP
         {
           ViewGT.showView(context, EditAddressView()).then((value) {
             if (value != null && value is LocalAddressObj) {
-              print(value.address);
+              // print(value.address);
               localaddressmgr.add(value);
               localaddressmgr.save();
               setState(() {});

@@ -285,7 +285,7 @@ class LocalAddressObj {
     if (_sortName == null) {
       try {
         _sortName = PinyinHelper.getShortPinyin(name);
-        print(_sortName);
+        // print(_sortName);
       } catch (e) {
         print(e);
       }

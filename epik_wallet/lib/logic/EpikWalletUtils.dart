@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
@@ -73,20 +74,56 @@ class EpikWalletUtils {
 
       //-----------------新构造方法
 
-      //助记词转种子
-      waccount.mnemonic = waccount.mnemonic.replaceAll(RegExp(r"\s+"), " ");
-      String seed = bip39.mnemonicToSeedHex(waccount.mnemonic);
-      // Uint8List seedbytes= await HD.seedFromMnemonic(waccount.mnemonic); //助记词 转种子
-      // String seed = hex.encode(seedbytes);
+      if (waccount.isMnemonicModel) {
+        //助记词转种子
+        waccount.mnemonic = waccount.mnemonic.replaceAll(RegExp(r"\s+"), " ");
+        String seed = bip39.mnemonicToSeedHex(waccount.mnemonic);
+        // Uint8List seedbytes= await HD.seedFromMnemonic(waccount.mnemonic); //助记词 转种子
+        // String seed = hex.encode(seedbytes);
 
-      //种子转私钥
-      Chain chain = Chain.seed(seed);
-      String path_eth = Bip44Path.getPath("ETH"); // "m/44'/60'/0'/0/0";
-      ExtendedPrivateKey key = chain.forPath(path_eth);
-      String pk = key.privateKeyHex();
-      //私钥创建钱包授权
-      waccount.credentials = EthPrivateKey.fromHex(pk);
-      waccount.ethereumAddress = await waccount.credentials.extractAddress();
+        //种子转私钥
+        Chain chain = Chain.seed(seed);
+        String path_eth = Bip44Path.getPath("ETH"); // "m/44'/60'/0'/0/0";
+        ExtendedPrivateKey key = chain.forPath(path_eth);
+        String pk = key.privateKeyHex();
+        //私钥创建钱包授权
+        waccount.credentials = EthPrivateKey.fromHex(pk);
+        waccount.ethereumAddress = await waccount.credentials.extractAddress();
+        waccount.hd_eth_address = waccount.ethereumAddress.toString();
+
+        // epik 钱包,   EPK = epikWallet.balance
+        EpikWallet epikWallet = await Epik.newWalletFromSeed(hex.decode(seed), t: "bls");
+        waccount.epikWallet = epikWallet;
+        waccount.epik_EPK_address = waccount?.epikWallet?.address;
+      } else {
+        if (StringUtils.isNotEmpty(waccount.pk_epk)) {
+          // epik 钱包,   EPK = epikWallet.balance
+          EpikWallet epikWallet = await Epik.newWalletFromPrivateKey(waccount.pk_epk);
+          if(epikWallet!=null)
+          {
+            waccount.epikWallet = epikWallet;
+            waccount.epik_EPK_address = waccount?.epikWallet?.address;
+          }else{
+            print("epikWallet from pk error");
+            return false;
+          }
+        }
+
+        if (StringUtils.isNotEmpty(waccount.pk_eth)) {
+          //私钥创建钱包授权
+          try {
+            waccount.credentials = EthPrivateKey.fromHex(waccount.pk_eth);
+            waccount.ethereumAddress = await waccount.credentials.extractAddress();
+            waccount.hd_eth_address = waccount.ethereumAddress.toString();
+          } catch (e, s) {
+            print(e);
+            print(s);
+            print("ethkWallet from pk error");
+            return false;
+          }
+        }
+      }
+
       //添加代币
       waccount.hdTokenMap[CurrencySymbol.EPKbsc] =
           ERC20(address: EthereumAddress.fromHex(ServiceInfo.TOKEN_ADDRESS_BSC_EPK), client: bscClient);
@@ -97,29 +134,20 @@ class EpikWalletUtils {
       waccount.hdTokenMap[CurrencySymbol.USDTbsc] =
           ERC20(address: EthereumAddress.fromHex(ServiceInfo.TOKEN_ADDRESS_BSC_USDT), client: bscClient);
 
-      // print("sdk  seed =" + hex.encode(hdwallet.seed));
-      // print("web3 seed =" + seed);
-
-      // epik 钱包,   EPK = epikWallet.balance
-      // EpikWallet epikWallet = await Epik.newWalletFromSeed(hdwallet.seed, t: "bls");
-      EpikWallet epikWallet = await Epik.newWalletFromSeed(hex.decode(seed), t: "bls");
-      waccount.epikWallet = epikWallet;
-
-      // if(StringUtils.isEmpty(waccount.epik_EPK_address))
-      waccount.epik_EPK_address = waccount?.epikWallet?.address;
-      // if(StringUtils.isEmpty(waccount.hd_eth_address))
-      waccount.hd_eth_address = waccount.ethereumAddress.toString();
-
       await setWalletConfig(waccount);
 
       return true;
-    } catch (e) {
+    } catch (e,s) {
       print(e);
+      print(s);
     }
     return false;
   }
 
   static Future setWalletConfig(WalletAccount waccount) async {
+    if(waccount.hasEpikWallet!=true)
+      return;
+
     Dlog.p(TAG,
         "setWalletConfig ${waccount.account} hd_RpcUrl=${ServiceInfo.hd_RpcUrl} epik_RpcUrl=${ServiceInfo.epik_RpcUrl} epik_RpcUrl_token${ServiceInfo.epik_RpcUrl_token}");
     // hd 设置RPC地址 todo del
@@ -135,66 +163,70 @@ class EpikWalletUtils {
     Future prices = ApiWallet.getPriceList();
 
     //EPIK net
-    Future epk = waccount.epikWallet.balance(waccount.epik_EPK_address);
+    Future epk = waccount.hasEpikWallet ? waccount.epikWallet.balance(waccount.epik_EPK_address) : Future.value(null);
 
     //ETH net
     // Future eth = waccount.hdwallet.balance(waccount.hd_eth_address);
-    
-    Future eth = ethClient.getBalance(waccount.ethereumAddress).then((balance)
-    // Future eth = ethClient.getBalance(EthereumAddress.fromHex("0xea7521a859e2c2b3dcac8764f46d37e4f7a1e962")).then((balance)
-    {
-      Dlog.p("EWU", "eth balance=${balance}");
-      return balance.getValueInUnit(EtherUnit.ether).toString();
-    });
+    Future eth = waccount.hasHdWallet
+        ? ethClient.getBalance(waccount.ethereumAddress).then((balance) {
+            Dlog.p("EWU", "eth balance=${balance}");
+            return balance.getValueInUnit(EtherUnit.ether).toString();
+          })
+        : Future.value(null);
 
     // Future usdt = waccount.hdwallet.tokenBalance(waccount.hd_eth_address, "USDT");
-    Future usdt = waccount.hdTokenMap[CurrencySymbol.USDT].balanceOf(waccount.ethereumAddress).then((bint) async {
-      Dlog.p("EWU", "usdt bint=${bint}");
-      // EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
-      // return balance.getValueInUnit(EtherUnit.mwei).toString(); //usdt Decimals = 6
-
-      EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
-      BigInt decimals = await waccount.hdTokenMap[CurrencySymbol.USDT].decimals(); //获取token的精度
-      EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
-      return balance.getValueInUnit(eu).toString();
-    });
+    Future usdt = waccount.hasHdWallet
+        ? waccount.hdTokenMap[CurrencySymbol.USDT].balanceOf(waccount.ethereumAddress).then((bint) async {
+            Dlog.p("EWU", "usdt bint=${bint}");
+            EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
+            BigInt decimals = await waccount.hdTokenMap[CurrencySymbol.USDT].decimals(); //获取token的精度
+            EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
+            return balance.getValueInUnit(eu).toString();
+          })
+        : Future.value(null);
 
     // Future epk_erc20 = waccount.hdwallet.tokenBalance(waccount.hd_eth_address, "EPK");
-    Future epk_erc20 =
-        waccount.hdTokenMap[CurrencySymbol.EPKerc20].balanceOf(waccount.ethereumAddress).then((bint) async {
-      Dlog.p("EWU", "epk_erc20 bint=${bint}");
-      // EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
-      // return balance.getValueInUnit(EtherUnit.ether).toString();
+    Future epk_erc20 = waccount.hasHdWallet
+        ? waccount.hdTokenMap[CurrencySymbol.EPKerc20].balanceOf(waccount.ethereumAddress).then((bint) async {
+            Dlog.p("EWU", "epk_erc20 bint=${bint}");
+            // EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
+            // return balance.getValueInUnit(EtherUnit.ether).toString();
 
-      EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
-      BigInt decimals = await waccount.hdTokenMap[CurrencySymbol.EPKerc20].decimals(); //获取token的精度
-      EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
-      return balance.getValueInUnit(eu).toString();
-    });
+            EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
+            BigInt decimals = await waccount.hdTokenMap[CurrencySymbol.EPKerc20].decimals(); //获取token的精度
+            EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
+            return balance.getValueInUnit(eu).toString();
+          })
+        : Future.value(null);
 
     //BSC net
-    Future bsc_bnb = bscClient.getBalance(waccount.ethereumAddress).then((balance) {
-      return balance.getValueInUnit(EtherUnit.ether).toString();
-    });
+    Future bsc_bnb = waccount.hasHdWallet
+        ? bscClient.getBalance(waccount.ethereumAddress).then((balance) {
+            return balance.getValueInUnit(EtherUnit.ether).toString();
+          })
+        : Future.value(null);
 
-    Future bsc_epk = waccount.hdTokenMap[CurrencySymbol.EPKbsc].balanceOf(waccount.ethereumAddress).then((bint) async {
-      // EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
-      // return balance.getValueInUnit(EtherUnit.ether).toString();
+    Future bsc_epk = waccount.hasHdWallet
+        ? waccount.hdTokenMap[CurrencySymbol.EPKbsc].balanceOf(waccount.ethereumAddress).then((bint) async {
+            // EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
+            // return balance.getValueInUnit(EtherUnit.ether).toString();
 
-      EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
-      BigInt decimals = await waccount.hdTokenMap[CurrencySymbol.EPKbsc].decimals(); //获取token的精度
-      EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
-      return balance.getValueInUnit(eu).toString();
-    });
+            EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
+            BigInt decimals = await waccount.hdTokenMap[CurrencySymbol.EPKbsc].decimals(); //获取token的精度
+            EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
+            return balance.getValueInUnit(eu).toString();
+          })
+        : Future.value(null);
 
-    Future bsc_usdt =
-        waccount.hdTokenMap[CurrencySymbol.USDTbsc].balanceOf(waccount.ethereumAddress).then((bint) async {
-      Dlog.p("EWU", "bscusdt bint=${bint}");
-      EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
-      BigInt decimals = await waccount.hdTokenMap[CurrencySymbol.USDTbsc].decimals(); //获取token的精度
-      EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
-      return balance.getValueInUnit(eu).toString();
-    });
+    Future bsc_usdt = waccount.hasHdWallet
+        ? waccount.hdTokenMap[CurrencySymbol.USDTbsc].balanceOf(waccount.ethereumAddress).then((bint) async {
+            Dlog.p("EWU", "bscusdt bint=${bint}");
+            EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
+            BigInt decimals = await waccount.hdTokenMap[CurrencySymbol.USDTbsc].decimals(); //获取token的精度
+            EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
+            return balance.getValueInUnit(eu).toString();
+          })
+        : Future.value(null);
 
     List values = await Future.wait([eth, usdt, epk_erc20, epk, bsc_bnb, bsc_epk, bsc_usdt, prices]);
     Map<CurrencySymbol, String> map = {
@@ -556,7 +588,7 @@ class EpikWalletUtils {
           value: EtherAmount.inWei(bi_value),
         );
       } else {
-        decimals = await erc20?.decimals();//获取token的精度
+        decimals = await erc20?.decimals(); //获取token的精度
         bi_value = StringUtils.numUpsizingBigint(value, bit: decimals.toInt());
 
         // a9059cbb
@@ -565,7 +597,7 @@ class EpikWalletUtils {
         Transaction transaction =
             Transaction.callContract(contract: erc20?.self, function: function, parameters: params);
 
-        Dlog.p("getHdTransferGas"," transaction.data=0x${hex.encode(transaction.data)}");
+        Dlog.p("getHdTransferGas", " transaction.data=0x${hex.encode(transaction.data)}");
 
         maxgas = await web3client.estimateGas(
           sender: AccountMgr().currentAccount.ethereumAddress,
@@ -618,10 +650,14 @@ class WalletAccount {
   // 本地密码
   String password = "";
 
-  bool biometrics=false;
+  bool biometrics = false;
 
   // hd钱包助记词
   String mnemonic = "";
+
+  //从私钥导入
+  String pk_eth = null;
+  String pk_epk = null;
 
   // hd钱包 eth 地址
   String hd_eth_address = "";
@@ -797,6 +833,8 @@ class WalletAccount {
       password = json['password'];
       biometrics = json['biometrics'] ?? false;
       mnemonic = json['mnemonic'] ?? "";
+      pk_eth = json['pk_eth'];
+      pk_epk = json['pk_epk'];
       hd_eth_address = json['hd_eth_address'];
       epik_EPK_address = json['epik_tEPK_address'];
     } catch (e) {
@@ -808,11 +846,36 @@ class WalletAccount {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['account'] = this.account;
     data['password'] = this.password;
-    data['biometrics'] = this.biometrics??false;
+    data['biometrics'] = this.biometrics ?? false;
     data['mnemonic'] = this.mnemonic;
+    data['pk_eth'] = this.pk_eth;
+    data['pk_epk'] = this.pk_epk;
     data['hd_eth_address'] = this.hd_eth_address;
     data['epik_tEPK_address'] = this.epik_EPK_address;
     return data;
+  }
+
+  bool get isMnemonicModel {
+    return mnemonic != null && mnemonic.length > 0;
+  }
+
+  bool get hasHdWallet {
+    return credentials != null;
+  }
+
+  bool get hasEpikWallet {
+    return epikWallet != null;
+  }
+
+  bool isSupportCurrency(CurrencySymbol cs)
+  {
+    if(cs.networkType==CurrencySymbol.EPK)
+    {
+     return hasEpikWallet;
+    }else if(cs.networkType==CurrencySymbol.ETH || cs.networkType==CurrencySymbol.BNB){
+      return hasHdWallet;
+    }
+    return null;
   }
 
   String toJsonString() {

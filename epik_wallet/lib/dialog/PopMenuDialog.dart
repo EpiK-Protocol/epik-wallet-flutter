@@ -39,8 +39,8 @@ class PopMenuDialog {
     if (view_right > screen_w) {
       view_right = screen_w - 5;
     }
-    print("view_left = $view_left");
-    print("view_right = $view_right");
+    // print("view_left = $view_left");
+    // print("view_right = $view_right");
 
     YYDialog dialog = YYDialog().build(context)
       // ..width = 87.5 // dialog宽度

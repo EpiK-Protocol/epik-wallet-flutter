@@ -70,7 +70,7 @@ class MinerBatchPledgeViewState extends BaseWidgetState<MinerBatchPledgeView> {
     Map<String, bool> _selectedMap = {};
     widget.mineridList_all.forEach((element) {
       MinerGroupType groupType = widget.groupTypeMap[element];
-      print("$element  ${groupType.isPledged}");
+      // print("$element  ${groupType.isPledged}");
       if (groupType?.isPledged != true) {
         _selectedMap[element] = true;
       }

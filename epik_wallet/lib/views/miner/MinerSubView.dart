@@ -116,7 +116,7 @@ class MinerSubViewState extends BaseInnerWidgetState<MinerSubView>
         .epikWallet
         .minerInfo(minerid); //请求minerinfo
     if (robj?.isSuccess) {
-      print("minerinfo" + robj.data);
+      // print("minerinfo" + robj.data);
       mi = MinerInfo.fromJson(jsonDecode(robj.data));
       mi?.minerid = minerid;
     } else {

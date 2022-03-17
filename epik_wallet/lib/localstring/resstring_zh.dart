@@ -65,7 +65,17 @@ Map<RSID, String> map_zh = {
   RSID.iwv_17: "请输入助记词",
   RSID.iwv_18: "私钥格式不正确",
   RSID.iwv_19: "导入失败，助记词不能正确解析",
-  RSID.iwv_20: "导入失败钱包失败",
+  RSID.iwv_20: "导入钱包失败",
+  RSID.iwv_21:"私钥",
+  RSID.iwv_22:"请输入EpiK私钥(十六进制)",
+  RSID.iwv_23:"请输入Ethereum私钥(十六进制)",
+  RSID.iwv_24:"EpiK私钥",
+  RSID.iwv_25:"Ethereum私钥",
+  RSID.iwv_26:"至少需要输入一种私钥",
+  RSID.iwv_27:"EpiK私钥错误",
+  RSID.iwv_28:"Ethereum私钥错误",
+  RSID.iwv_29:"需要EpiK钱包",
+
 
   //ExportEpikPrivateKeyView 导出私钥
   RSID.eepkv_1: "导出EPK私钥",
@@ -173,6 +183,7 @@ Map<RSID, String> map_zh = {
   RSID.main_bv_12: "奖励区间:",
   RSID.main_bv_13: "参加活动需要绑定社交账号",
   RSID.main_bv_14: "去绑定",
+  RSID.main_bv_15: "需要完整的钱包",//Full wallet required
 
   //----------------------------------------views.mining.*
   //MiningProfitView 预挖收益
@@ -676,6 +687,8 @@ Map<RSID, String> map_zh = {
   RSID.mlv_33:"请输入%s个目标NodeID，使用\",\"或空格分隔。",
   RSID.mlv_34:"输入的NodeID数量与选中的不一致",
   RSID.mlv_35:"批量转移质押",
+  RSID.mlv_36:"我质押的",//"Pledged By Me",//
+  RSID.mlv_37:"别人质押的",//"Pledged By Others",//
 
   ///AddOtherOwnerPledgeView
   RSID.aoopv_1:"新增Owner",
@@ -711,6 +724,7 @@ Map<RSID, String> map_zh = {
   RSID.w3wv_added:"已添加收藏",
   RSID.w3wv_deteled:"已取消收藏",
   RSID.w3wv_network:"网络",
+  RSID.w3wv_switch_chain:"允许此站点切换网络？",
 
   //地址列表
   RSID.address_list:"地址列表",//地址列表

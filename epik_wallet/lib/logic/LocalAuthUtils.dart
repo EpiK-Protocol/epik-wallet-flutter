@@ -51,7 +51,7 @@ class LocalAuthUtils {
     bool authenticated = false;
     try {
       List<BiometricType> availableBiometrics = await getAvailableBiometrics();
-      print("availableBiometrics = $availableBiometrics");
+      // print("availableBiometrics = $availableBiometrics");
 
       // if (Platform.isIOS) {
       //   if (availableBiometrics.contains(BiometricType.face)) {
@@ -80,7 +80,7 @@ class LocalAuthUtils {
         iOSAuthStrings: getIOSAuthMessages(),
       );
 
-      print("isAuthenticated = " + authenticated.toString());
+      // print("isAuthenticated = " + authenticated.toString());
     } on PlatformException catch (e,s) {
       print("authenticate error PlatformException");
       // PlatformException(LockedOut, The operation was canceled because the API is locked out due to too many attempts. This occurs after 5 failed attempts, and lasts for 30 seconds., null, null)

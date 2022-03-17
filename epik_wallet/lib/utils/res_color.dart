@@ -57,6 +57,13 @@ class ResColor {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
+
+  static const LinearGradient lg_7 = LinearGradient(
+    colors: [Color(0xff555555), Color(0xff444444)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
   static const LinearGradient lg_3 = LinearGradient(
     colors: [Color(0xffE6AC5B), Color(0xffCC5252)],
     begin: Alignment.topLeft,
@@ -80,6 +87,7 @@ class ResColor {
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
   );
+
 
   static const BoxShadow shadow_main_bar =  BoxShadow(
     color: black_30,//Color(0x28000000),

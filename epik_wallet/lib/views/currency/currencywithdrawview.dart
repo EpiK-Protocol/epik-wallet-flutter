@@ -669,7 +669,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
   }
 
   onClickWithdraw() {
-    print("widget.currencyAsset.cs.isToken=${widget.currencyAsset.cs.isToken}");
+    // print("widget.currencyAsset.cs.isToken=${widget.currencyAsset.cs.isToken}");
 
     if (!checkParams()) return;
 

@@ -86,6 +86,19 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
     return 1;
   }
 
+  CurrencySymbol getCsByChainid(int chainid){
+    if(chainid == EpikWalletUtils?.eth_chainid?.toInt() ?? 1)
+      return CurrencySymbol.ETH;
+    else if(chainid == EpikWalletUtils?.bsc_chainid?.toInt() ?? 1)
+      return CurrencySymbol.BNB;
+  }
+
+
+  //本地支持的所有链
+  List<int> get chainIds {
+    return [EpikWalletUtils?.eth_chainid?.toInt() ?? 1, EpikWalletUtils?.bsc_chainid?.toInt() ?? 1];
+  }
+
   String get rpcUrl {
     if (widget.web3nettype?.networkType == CurrencySymbol.ETH) {
       return ServiceInfo.hd_ETH_RpcUrl;
@@ -256,7 +269,7 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
           case Web3Menu.COLLECT:
             {
               String url = current_url?.toString();
-              print(url);
+              // print(url);
               bool collected = localwebsitemgr.hasUrl(url);
               if (collected) {
                 right = Icon(
@@ -413,16 +426,18 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
         widget.web3nettype = seleted;
         setState(() {});
 
-        isInjectedSource = false;
-        lock_jssource.synchronized(() async {
-          if (isInjectedSource != true) {
-            isInjectedSource = true;
-            await injectJS_source(_webViewController);
-            dlog("injectJS_source !!!!!!!!!!");
-            await injectJs_init(_webViewController);
-            dlog("injectJs_init !!!!!!!!!!");
-          }
-        });
+        // isInjectedSource = false;
+        // lock_jssource.synchronized(() async {
+        //   if (isInjectedSource != true) {
+        //     isInjectedSource = true;
+        //     await injectJS_source(_webViewController);
+        //     dlog("injectJS_source !!!!!!!!!!");
+        //     await injectJs_init(_webViewController);
+        //     dlog("injectJs_init !!!!!!!!!!");
+        //   }
+        // });
+
+        handleSwitchEthereumChain(chainId,null);
       },
     );
   }
@@ -627,7 +642,7 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
         {
           if (isKeepPassword) {
             keep_password_website = null;
-            keep_password_website_secret=false;
+            keep_password_website_secret = false;
             showToast("${Web3Menu.KEEP_PASSWORD.getName()} ${RSID.w3wv_canceled.text}");
           } else {
             String host = current_url?.host;
@@ -644,8 +659,7 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
               onClickBtnRight: (dialog) {
                 dialog.dismiss();
                 // BottomDialog.showPassWordInputDialog(
-                BottomDialog.simpleAuth(
-                    context, AccountMgr().currentAccount.password, (value) {
+                BottomDialog.simpleAuth(context, AccountMgr().currentAccount.password, (value) {
                   if (value == (AccountMgr().currentAccount.password + keep_password_website_secretkey)) {
                     //开启隐藏功能
                     keep_password_website_secret = true;
@@ -897,9 +911,9 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
         });
         String awps = awplist.join("\n");
 
-        PermissionRequestResponseAction prra=null;
+        PermissionRequestResponseAction prra = null;
 
-        YYDialog yydialog=MessageDialog.showMsgDialog(
+        YYDialog yydialog = MessageDialog.showMsgDialog(
           context,
           title: RSID.awp_permission_request.text,
           msg: "$origin\n${RSID.awp_ask.text}\n$awps",
@@ -914,26 +928,25 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
           },
           onClickBtnRight: (dialog) {
             dialog.dismiss();
-            prra =PermissionRequestResponseAction.GRANT;
+            prra = PermissionRequestResponseAction.GRANT;
           },
         );
 
-        int i = 60*5;
-        while(prra==null)
-        {
-          print(i);
+        int i = 60 * 5;
+        while (prra == null) {
+          // print(i);
           await Future.delayed(Duration(milliseconds: 200));
           i--;
-          if(i<=0){
-            if(yydialog?.isShowing)
-            {
+          if (i <= 0) {
+            if (yydialog?.isShowing) {
               yydialog?.dismiss();
             }
             break;
           }
         }
 
-        PermissionRequestResponse ret = PermissionRequestResponse(resources: resources, action: prra??PermissionRequestResponseAction.DENY);
+        PermissionRequestResponse ret =
+            PermissionRequestResponse(resources: resources, action: prra ?? PermissionRequestResponseAction.DENY);
         return ret;
       },
       androidOnGeolocationPermissionsHidePrompt: (controller) {
@@ -1008,7 +1021,8 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
   Lock lock_jssource = Lock();
 
   Future injectJS_source(InAppWebViewController wvc) async {
-    String source_wallet = await rootBundle.loadString("assets/js/trust.js");
+    String jscodepath = "assets/js/trust-min_1.0.8.js"; //"assets/js/trust.js";
+    String source_wallet = await rootBundle.loadString(jscodepath);
     String js = '''
     $source_wallet
     console.log("injectJS_source trustwallet=",trustwallet);
@@ -1146,9 +1160,109 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
             handleSendTransaction(json, id, methodName);
           }
           break;
+        case DAppMethod.ADDETHEREUMCHAIN:
+        case DAppMethod.SWITCHETHEREUMCHAIN:
+          {
+            //切换网络 {"id":1646646127004,"name":"switchEthereumChain","object":{"chainId":"0x38"}}
+            int _chainId_i = null;
+            Object _chainId = null;
+            Map<String, dynamic> jObject = json["object"];
+            if (jObject != null) {
+              _chainId = jObject["chainId"];
+              if (_chainId != null) {
+                if (_chainId is String) {
+                  if (_chainId.startsWith("0x")) {
+                    _chainId_i = int.tryParse(_chainId.substring(2), radix: 16);
+                  }
+                }
+                if (_chainId_i == null) {
+                  _chainId_i = StringUtils.parseInt(_chainId, null);
+                }
+              }
+            }
+
+            if (_chainId_i == null || chainIds.contains(_chainId_i) == false) {
+              MessageDialog.showMsgDialog(
+                context,
+                title: "Error",
+                msg: "$_chainId is an unknown chain",
+                btnRight: RSID.isee.text,
+                onClickBtnRight: (dialog) {
+                  dialog.dismiss();
+                },
+              );
+              webSendError("$_chainId is an unknown chain", id);
+            }
+
+            dlog("SWITCHETHEREUMCHAIN  chainId_i=$_chainId_i");
+            if (_chainId_i == chainId) {
+              //不用切换
+            } else {
+              //需要切换
+              // handleSwitchEthereumChain(_chainId_i,id);
+
+
+              if(chainswitchshowing==true)
+                return;
+
+              chainswitchshowing =true;
+
+              CurrencySymbol cs = getCsByChainid(_chainId_i);
+              Widget view = StatefulBuilder(
+                builder: (context, setState) {
+                  return Container(
+                    width: double.infinity,
+                    height: 40,
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          cs.networkType.iconUrl,
+                          width: 24,
+                          height: 24,
+                        ),
+                        Container(width: 10),
+                        Text(
+                          cs.networkType.networkTypeName,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: ResColor.o_1,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );},
+              );
+
+              YYDialog yydialog = MessageDialog.showMsgDialog(
+                context,
+                title: RSID.w3wv_network.text,
+                msg:"${RSID.w3wv_switch_chain.text}\n${current_url?.host}",//允许此站点切换网络？
+                msgAlign: TextAlign.center,
+                extend: view,
+                btnLeft: RSID.cancel.text,
+                onClickBtnLeft: (dialog) {
+                  dialog.dismiss();
+                  webSendError("Cancel", id);
+                },
+                btnRight: RSID.confirm.text,
+                onClickBtnRight: (dialog) {
+                  dialog.dismiss();
+                  handleSwitchEthereumChain(_chainId_i,id);
+                },
+                onDismiss: (dialog) {
+                  chainswitchshowing=false;
+                },
+              );
+            }
+          }
+          break;
         case DAppMethod.ECRECOVER:
         case DAppMethod.WATCHASSET:
-        case DAppMethod.ADDETHEREUMCHAIN:
         case DAppMethod.UNKNOWN:
         default:
           {
@@ -1166,6 +1280,8 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
       }
     }
   }
+
+  bool chainswitchshowing=false;
 
   Uint8List extractMessage(Map<String, dynamic> json) {
     try {
@@ -1385,8 +1501,51 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
     }
   }
 
+  //切换网络
+  handleSwitchEthereumChain(int chinaid,int methodId) {
+    // self.current = provider
+    // self.webview.tw.set(address: provider.address, chainId: provider.chainId, rpcUrl: provider.rpcUrl)
+    // self.webview.tw.emitChange(chainId: chainId)
+    // self.webview.tw.sendNull(id: id)
+    CurrencySymbol cs = getCsByChainid(chinaid);
+    if(cs!=null)
+    {
+      widget.web3nettype =cs;
+      setState(() {
+      });
+      provider_set(this.hdAddress, this.chainId, this.rpcUrl);
+      provider_emitChange(this.chainId);
+      if(methodId!=null)
+        webSendNull(methodId);
+    }
+  }
+
+  provider_set(String address, int chainid, String rpcurl) {
+
+    String js = """
+        var config = {
+            address: "$address",
+            chainId: $chainid,
+            rpcUrl: "$rpcurl",
+        };
+        ethereum.setConfig(config);
+        """;
+    _webViewController?.evaluateJavascript(source: js);
+  }
+
+  provider_emitChange(int chainid) {
+  String _chainid = '"0x${chainid.toRadixString(16)}"'; //hex字符串的chainid
+  String js = 'ethereum.emitChainChanged($_chainid);';
+  _webViewController?.evaluateJavascript(source: js);
+  }
+
   webSendError(String message, int methodId) {
     String js = "window.ethereum.sendError($methodId, \"$message\")";
+    _webViewController?.evaluateJavascript(source: js);
+  }
+
+  webSendNull(int methodId) {
+    String js = "window.ethereum.sendResponse($methodId, null)";
     _webViewController?.evaluateJavascript(source: js);
   }
 
@@ -1408,6 +1567,7 @@ enum DAppMethod {
   SIGNPERSONALMESSAGE,
   SIGNTYPEDMESSAGE,
   SIGNTRANSACTION,
+  SWITCHETHEREUMCHAIN,
   ECRECOVER,
   WATCHASSET,
   ADDETHEREUMCHAIN,
@@ -1425,6 +1585,8 @@ extension DAppMethodEx on DAppMethod {
         return DAppMethod.SIGNMESSAGE;
       case "signTypedMessage":
         return DAppMethod.SIGNTYPEDMESSAGE;
+      case "switchEthereumChain":
+        return DAppMethod.SWITCHETHEREUMCHAIN;
       case "ecRecover":
         return DAppMethod.ECRECOVER;
       case "requestAccounts":

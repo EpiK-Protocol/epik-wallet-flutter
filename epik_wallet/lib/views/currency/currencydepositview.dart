@@ -372,12 +372,12 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
           file.writeAsBytesSync(data);
           result = file.path;
           await ImageGallerySaver.saveFile(result);
-          print(file.path);
+          // print(file.path);
         }
       } else {
         // 保存
         result = await ImageGallerySaver.saveImage(data); //这个是核心的保存图片的插件
-        print(result); //保存图片的路径
+        // print(result); //保存图片的路径
       }
 
       if (StringUtils.isNotEmpty(result))

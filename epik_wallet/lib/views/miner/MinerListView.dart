@@ -267,6 +267,26 @@ class MinerListViewState extends BaseWidgetState<MinerListView> {
           ret = temp;
         }
         break;
+      case MinerFilterType.PLEDGED_BY_ME:{
+        List<CbMinerObj> temp = [];
+        data.forEach((obj) {
+          double mpd = obj?.getMyPledgeD(coinbase: widget?.coinbase?.ID ?? "");
+          if (obj != null && mpd>0) {
+            temp.add(obj);
+          }
+        });
+        ret = temp;
+      }break;
+      case MinerFilterType.PLEDGED_BY_OTHERS:{
+        List<CbMinerObj> temp = [];
+        data.forEach((obj) {
+          double mpd = obj?.getMyPledgeD(coinbase: widget?.coinbase?.ID ?? "");
+          if (obj != null && (obj.MiningPledge_d-mpd)>0) {
+            temp.add(obj);
+          }
+        });
+        ret = temp;
+      }break;
       case MinerFilterType.ACTIVATING:
         {
           List<CbMinerObj> temp = [];
@@ -1939,6 +1959,8 @@ enum MinerFilterType {
   COINBASE_OTHER, //
   PLEDGED, //已质押,
   PLEDGED_NOT, //未质押
+  PLEDGED_BY_ME,//我质押的
+  PLEDGED_BY_OTHERS,//别人质押的
   ACTIVATING, //激活中,
   POWER_0, //0算力,
   POWER_LOW, // 低算力（非满算力）
@@ -1958,6 +1980,10 @@ extension MinerFilterTypeEx on MinerFilterType {
         return RSID.mlv_14.text; //已质押的;
       case MinerFilterType.PLEDGED_NOT:
         return RSID.mlv_17.text; //未质押的
+      case MinerFilterType.PLEDGED_BY_ME://我质押的
+        return RSID.mlv_36.text;
+      case MinerFilterType.PLEDGED_BY_OTHERS://别人质押的
+        return RSID.mlv_37.text;
       case MinerFilterType.ACTIVATING:
         return RSID.mlv_15.text; //激活中;
       case MinerFilterType.POWER_0:

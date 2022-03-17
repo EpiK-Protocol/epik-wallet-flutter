@@ -77,6 +77,15 @@ enum RSID {
   iwv_18,
   iwv_19,
   iwv_20,
+  iwv_21,
+  iwv_22,
+  iwv_23,
+  iwv_24,
+  iwv_25,
+  iwv_26,
+  iwv_27,
+  iwv_28,
+  iwv_29,
   //ExportEpikPrivateKeyView 导出私钥
   eepkv_1,
   eepkv_2,
@@ -172,6 +181,7 @@ enum RSID {
   main_bv_12,
   main_bv_13,
   main_bv_14,
+  main_bv_15,
 
   //----------------------------------------views.mining.*
   //MiningProfitView 预挖收益
@@ -678,6 +688,8 @@ enum RSID {
   mlv_33,
   mlv_34,//目标NodeID数量与选中的不一致
   mlv_35,//批量转移质押
+  mlv_36,//我质押的
+  mlv_37,//别人质押的
 
 
   ///AddOtherOwnerPledgeView
@@ -714,6 +726,7 @@ enum RSID {
   w3wv_added,
   w3wv_deteled,
   w3wv_network,
+  w3wv_switch_chain,
 
   //地址列表
   address_list,//地址列表

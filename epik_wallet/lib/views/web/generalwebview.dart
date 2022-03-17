@@ -173,7 +173,7 @@ class _GeneralWebViewState extends BaseWidgetState<GeneralWebView> {
       javascriptMode: wf.JavascriptMode.unrestricted,
       // 请求拦截器
       navigationDelegate: (wf.NavigationRequest request) {
-        print("cccmax NavigationRequest request ${request}");
+        // print("NavigationRequest request ${request}");
         //不需要拦截的操作
         dlog("WebView -> navigate -> ${request?.url}");
         if (request?.url != null) {

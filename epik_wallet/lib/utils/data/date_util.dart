@@ -114,14 +114,14 @@ class DateUtil {
 
   /// get DateMilliseconds By DateStr.
   static int getDateMsByTimeStr(String dateStr) {
-    print(dateStr);
+    // print(dateStr);
     // 分隔符替换
     dateStr = dateStr.replaceAll("/", "-");
     // 各位时间补0
     dateStr = dateStr.replaceAllMapped(RegExp(r"(\D)(\d)(?!\d)"), (Match m) {
       return m[1] + "0" + m[2];
     });
-    print("replaceAll = " + dateStr);
+    // print("replaceAll = " + dateStr);
     DateTime dateTime = DateTime.tryParse(dateStr);
     return dateTime == null ? null : dateTime.millisecondsSinceEpoch;
   }
@@ -657,8 +657,8 @@ class DateUtil {
       {DateTime dateTime, int zoneOffsetHours = 8}) {
     if (dateTime == null) dateTime = DateTime.now();
     DateTime dt = dateTime.toUtc().add(Duration(hours: zoneOffsetHours));
-    print(
-        "dateTimeFixTimeZone=${dt.toIso8601String()}  utc=${dt.isUtc}  timeZoneOffset=${dt.timeZoneOffset}");
+    // print(
+    //     "dateTimeFixTimeZone=${dt.toIso8601String()}  utc=${dt.isUtc}  timeZoneOffset=${dt.timeZoneOffset}");
     return dt;
   }
 

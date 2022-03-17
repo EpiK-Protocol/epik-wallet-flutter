@@ -44,6 +44,7 @@ class BountyView extends BaseInnerWidget {
 enum BountyPageState {
   needwallet,
   needmining,
+  needfullwallet,
   bounty,
 }
 
@@ -107,6 +108,14 @@ class BountyViewState extends BaseInnerWidgetState<BountyView>
       isLoading = false;
       return;
     }
+
+    if(AccountMgr().currentAccount.hasEpikWallet!=true || AccountMgr().currentAccount.hasHdWallet!=true){
+      _BountyPageState = BountyPageState.needfullwallet;
+      closeStateLayout();
+      isLoading = false;
+      return;
+    }
+
 
     isLoading = true;
 
@@ -612,7 +621,7 @@ class BountyViewState extends BaseInnerWidgetState<BountyView>
             Text(
               ResString.get(context, RSID.main_bv_7), //"需要有钱包才能进行",
               style: TextStyle(
-                color: Colors.black54,
+                color: Colors.white70,
                 fontSize: 20,
               ),
             ),
@@ -639,6 +648,23 @@ class BountyViewState extends BaseInnerWidgetState<BountyView>
                 borderRadius: BorderRadius.all(Radius.circular(22)),
               ),
             )
+          ],
+        ),
+      );
+    }else if(_BountyPageState ==  BountyPageState.needfullwallet)
+    {
+      widget = Container(
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              ResString.get(context, RSID.main_bv_15), //"需要完整的钱包",
+              style: TextStyle(
+                color: Colors.white60,
+                fontSize: 18,
+              ),
+            ),
           ],
         ),
       );

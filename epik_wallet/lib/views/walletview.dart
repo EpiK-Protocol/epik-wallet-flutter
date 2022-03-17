@@ -1,20 +1,16 @@
 import 'dart:convert';
 import 'dart:math' as math;
-import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:animated_size_and_fade/animated_size_and_fade.dart';
-import 'package:bip39/bip39.dart' as bip39;
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:convert/convert.dart';
-import 'package:dart_bip32_bip44/dart_bip32_bip44.dart';
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
+import 'package:epikwallet/localstring/LocaleConfig.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
-import 'package:epikwallet/logic/LocalAuthUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
@@ -34,7 +30,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:web3dart/credentials.dart';
 
 class WalletView extends BaseInnerWidget {
   WalletView(Key key) : super(key: key) {}
@@ -63,7 +58,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
 
   String balance = "0";
 
-  List<CurrencyAsset> data_list_item = [];
+  // List<CurrencyAsset> data_list_item = [];
   Map<CurrencySymbol, List<CurrencyAsset>> currency_group = {};
   Map<CurrencySymbol, bool> currency_group_open = {};
 
@@ -109,7 +104,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
 
   eventCallback_balance(obj) {
     if (AccountMgr().currentAccount != null) {
-      data_list_item = AccountMgr().currentAccount.currencyList;
+      // data_list_item = AccountMgr().currentAccount.currencyList;
       makeCurrencyGroup();
       balance = StringUtils.formatNumAmount(AccountMgr().currentAccount.total_usd, point: 2);
       setState(() {});
@@ -117,12 +112,30 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
   }
 
   makeCurrencyGroup() {
-    if (data_list_item?.length >= 6)
-      currency_group = {
-        CurrencySymbol.EPK: [data_list_item[0]],
-        CurrencySymbol.ETH: [data_list_item[1], data_list_item[2], data_list_item[3]],
-        CurrencySymbol.BNB: [data_list_item[4], data_list_item[5], data_list_item[6]],
-      };
+    // if (data_list_item?.length >= 6)
+    //   currency_group = {
+    //     CurrencySymbol.EPK: [data_list_item[0]],
+    //     CurrencySymbol.ETH: [data_list_item[1], data_list_item[2], data_list_item[3]],
+    //     CurrencySymbol.BNB: [data_list_item[4], data_list_item[5], data_list_item[6]],
+    //   };
+
+    currency_group = {};
+    WalletAccount wa = AccountMgr().currentAccount;
+    if (wa.hasEpikWallet) {
+      currency_group[CurrencySymbol.EPK] = [wa.getCurrencyAssetByCs(CurrencySymbol.EPK)];
+    }
+    if (wa.hasHdWallet) {
+      currency_group[CurrencySymbol.ETH] = [
+        wa.getCurrencyAssetByCs(CurrencySymbol.EPKerc20),
+        wa.getCurrencyAssetByCs(CurrencySymbol.ETH),
+        wa.getCurrencyAssetByCs(CurrencySymbol.USDT),
+      ];
+      currency_group[CurrencySymbol.BNB] = [
+        wa.getCurrencyAssetByCs(CurrencySymbol.EPKbsc),
+        wa.getCurrencyAssetByCs(CurrencySymbol.BNB),
+        wa.getCurrencyAssetByCs(CurrencySymbol.USDTbsc),
+      ];
+    }
   }
 
   @override
@@ -236,11 +249,10 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
         buildTopCard(),
         Expanded(
           child: ListPage(
-            currency_group.keys.toList(), //data_list_item,
+            currency_group.keys.toList(),
             headerList: headerlist,
             headerCreator: headerBuilder,
             itemWidgetCreator: listGroupBuilder,
-            //listItemBuilder,
             scrollCallback: scrollCallback,
             pullRefreshCallback: _pullRefreshCallback,
             key: key_scroll,
@@ -433,23 +445,6 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
     );
   }
 
-  Widget listItemBuilder(BuildContext context, int position) {
-    bool isend = position >= data_list_item.length - 1;
-    CurrencyAsset ca = data_list_item[position];
-    return Container(
-      // margin: position == 0 ? EdgeInsets.fromLTRB(0, 10, 0, 10) : null,
-      child: Material(
-        color: ResColor.b_2,
-        child: InkWell(
-          highlightColor: ResColor.white_10,
-          splashColor: ResColor.white_10,
-          onTap: () => onItemClick(ca),
-          child: itemWidgetBuild2(context, ca, isend),
-        ),
-      ),
-    );
-  }
-
   Widget itemWidgetBuild2(
     BuildContext context,
     CurrencyAsset ca,
@@ -573,7 +568,8 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
         ),
       );
     } else {
-      return Padding(padding: new EdgeInsets.all(10.0), child: new Text("no data"));
+      // return Padding(padding: new EdgeInsets.all(10.0), child: new Text("no data"));
+      return Container();
     }
   }
 
@@ -766,7 +762,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
 
     EpikWalletUtils.requestBalance(AccountMgr().currentAccount).then((value) {
       isLoading = false;
-      data_list_item = AccountMgr().currentAccount.currencyList;
+      // data_list_item = AccountMgr().currentAccount.currencyList;
       makeCurrencyGroup();
       balance = StringUtils.formatNumAmount(AccountMgr().currentAccount.total_usd, point: 2);
       closeStateLayout();
@@ -808,7 +804,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
     AccountMgr().currentAccount.uploadEpikGasTransfer();
     setState(() {
       isLoading = false;
-      data_list_item = AccountMgr().currentAccount.currencyList;
+      // data_list_item = AccountMgr().currentAccount.currencyList;
       makeCurrencyGroup();
       balance = StringUtils.formatNumAmount(AccountMgr().currentAccount.total_usd, point: 2);
     });
@@ -834,9 +830,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
   }
 
   onItemClick(CurrencyAsset ca) {
-    // if (data_list_item != null && postision >= 0 && postision < data_list_item.length && mounted)
     if (mounted) {
-      // CurrencyAsset ca = data_list_item[postision];
       if (ca != null) {
         ViewGT.showCurrencyDetailView(context, ca);
       }
@@ -861,16 +855,29 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
     }
 
     List<HomeMenuItem> datas = ServiceInfo.getHomeMenuList();
-    // if(datas!=null && datas.length>=7)
-    // {
-    //   datas = datas.sublist(0,7);
-    // }
-
+    if (datas != null && datas.length >= 7) {
+      datas = datas.sublist(0, 7);
+    }
+    if (LocaleConfig.currentIsZh()) {
+      datas.add(HomeMenuItem.fromJson({
+        "Name": "更多",
+        "Action": "more",
+      }));
+    } else {
+      datas.add(HomeMenuItem.fromJson({
+        "Name": "More",
+        "Action": "more",
+      }));
+    }
 
     if (datas != null && datas.length > 0) {
       List<Widget> items = [];
 
       datas.forEach((hmi) {
+        bool isLocalWalletSupport = hmi?.action_l?.isLocalWalletSupport(AccountMgr().currentAccount) ??
+            AccountMgr().currentAccount.isSupportCurrency(hmi?.web3nettype) ??
+            true;
+
         Widget img = hmi?.hasNetImg == true
             ? CachedNetworkImage(
                 imageUrl: hmi.Icon,
@@ -905,13 +912,17 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ClipOval(
-              child: hmi?.Invalid == true
+              child: (hmi?.Invalid == true || isLocalWalletSupport != true)
                   ? ShaderMask(
                       shaderCallback: (bounds) {
-                        return const LinearGradient(colors: [
-                          ResColor.white_90,
-                          ResColor.black_90,
-                        ]).createShader(bounds);
+                        return const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xff1b1b1b),//ResColor.white_90,
+                            Color(0xff1b1b1b),//ResColor.black_90,
+                          ],
+                        ).createShader(bounds);
                       },
                       child: img,
                       blendMode: BlendMode.hue, //BlendMode.saturation, //灰度模式
@@ -930,7 +941,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
         );
         Widget item = InkWell(
           onTap: () {
-            if (!ClickUtil.isFastDoubleClick()) {
+            if (!ClickUtil.isFastDoubleClick() && isLocalWalletSupport) {
               if (hmi?.Invalid == true) {
                 showToast(RSID.main_wv_10.text);
               } else {

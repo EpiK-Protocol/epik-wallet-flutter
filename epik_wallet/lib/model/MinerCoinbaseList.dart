@@ -45,9 +45,9 @@ class MinerCoinbaseList {
     if (ret == false && haspledged) {
       ret = pledged.contains(minerid);
     }
-    print("containsMinerid $minerid  $ret");
-    print("containsMinerid  $coinbased");
-    print("containsMinerid  $pledged");
+    // print("containsMinerid $minerid  $ret");
+    // print("containsMinerid  $coinbased");
+    // print("containsMinerid  $pledged");
     return ret;
   }
 }

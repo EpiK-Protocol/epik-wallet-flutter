@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
+import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_mainnet.dart';
 import 'package:epikwallet/logic/loader/DataLoader.dart';
 import 'package:epikwallet/utils/Dlog.dart';
@@ -46,9 +49,17 @@ class DL_TepkLoginToken extends DataLoader<String> {
     // ApiTestNet.login(account).then((httpjsonres) {
     //   callback(httpjsonres, false);
     // });
-    ApiMainNet.login(account).then((httpjsonres) {
-      callback(httpjsonres, false);
-    });
+    if(account.hasEpikWallet && account.hasHdWallet)
+    {
+      ApiMainNet.login(account).then((httpjsonres) {
+        callback(httpjsonres, false);
+      });
+    }else{
+      Future.delayed(Duration(milliseconds: 10)).then((value) {
+        callback(null, false);
+      });
+    }
+
   }
 
   @override

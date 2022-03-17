@@ -278,7 +278,7 @@ class _SplashViewState extends BaseWidgetState<SplashView> with TickerProviderSt
           canLaunch(upgrade.upgrade_url).then((value) {
             if (value) {
               launch(upgrade.upgrade_url).then((value) {
-                print("upgrade launch = $value  url = ${upgrade.upgrade_url}");
+                // print("upgrade launch = $value  url = ${upgrade.upgrade_url}");
               });
             }
           });
@@ -286,7 +286,7 @@ class _SplashViewState extends BaseWidgetState<SplashView> with TickerProviderSt
           canLaunch(upgrade.upgrade_url).then((value) {
             if (value) {
               launch(upgrade.upgrade_url).then((value) {
-                print("upgrade launch = $value  url = ${upgrade.upgrade_url}");
+                // print("upgrade launch = $value  url = ${upgrade.upgrade_url}");
               });
             }
           });

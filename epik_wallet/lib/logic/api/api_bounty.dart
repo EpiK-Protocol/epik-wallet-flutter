@@ -32,7 +32,7 @@ class ApiBounty {
   /// 获取积分任务列表
   static Future<HttpJsonRes> getBountyTaskList(String token, int page,
       int pageSize, BountyStateType state, BountyFilterType filtertype) async {
-    Dlog.p("cccmax", "${state}  ${filtertype}");
+    // Dlog.p("cccmax", "${state}  ${filtertype}");
 
     // String url = ServiceInfo.HOST + "/bounty/list";
     String url =  ServiceInfo.makeHostUrl("/bounty/list");

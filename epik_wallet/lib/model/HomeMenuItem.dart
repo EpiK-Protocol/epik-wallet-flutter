@@ -1,3 +1,5 @@
+import 'package:epikwallet/logic/EpikWalletUtils.dart';
+import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/string_utils.dart';
@@ -51,6 +53,23 @@ extension HomeMenuItemActionEx on HomeMenuItemAction {
         return "assets/img/ic_more_1.png";
     }
     return null;
+  }
+
+  bool isLocalWalletSupport(WalletAccount wa)
+  {
+    switch(this)
+    {
+      case HomeMenuItemAction.swap:
+        return wa.hasHdWallet && wa.hasEpikWallet;
+      case HomeMenuItemAction.dapp:
+        return wa.hasEpikWallet;
+      case HomeMenuItemAction.scan:
+        return wa.hasEpikWallet;
+      case HomeMenuItemAction.setting:
+        return true;
+      case HomeMenuItemAction.more:
+        return true;
+    }
   }
 }
 

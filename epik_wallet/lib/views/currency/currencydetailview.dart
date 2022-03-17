@@ -345,7 +345,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                       ),
                     ).then((value) {
                       if (value != null && value is LocalAddressObj) {
-                        print(value.address);
+                        // print(value.address);
                         localaddressmgr.add(value);
                         localaddressmgr.save();
                         setState(() {});
@@ -369,7 +369,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
                       ),
                     ).then((value) {
                       if (value != null && value is LocalAddressObj) {
-                        print(value.address);
+                        // print(value.address);
                         localaddressmgr.add(value);
                         localaddressmgr.save();
                         setState(() {});

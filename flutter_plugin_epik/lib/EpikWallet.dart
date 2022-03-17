@@ -34,6 +34,22 @@ class Epik {
     epikWallet = null;
     return epikWallet;
   }
+
+  static Future<EpikWallet> newWalletFromPrivateKey(String privateKey) async {
+    try {
+      await newWallet();
+      if (epikWallet != null) {
+        await epikWallet.import(privateKey);
+        if (epikWallet != null) {
+          return epikWallet;
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+    epikWallet = null;
+    return epikWallet;
+  }
 }
 
 class EpikWallet {
@@ -85,8 +101,9 @@ class EpikWallet {
 
   Future<String> import(String privateKey) async {
     try {
-      return await EpikPlugin.channel.invokeMethod(
+      address = await EpikPlugin.channel.invokeMethod(
           "epik_wallet_import", <String, String>{"privateKey": privateKey});
+      return address;
     } catch (e) {
       print(e);
     }

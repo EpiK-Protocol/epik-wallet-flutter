@@ -353,7 +353,7 @@ class Web3SendTransactionViewState extends State<Web3SendTransactionView> {
                     ),
               onTap: (){
                 extend_data= !extend_data;
-                print("extend_data=$extend_data");
+                // print("extend_data=$extend_data");
                 setState(() {
                 });
               },
@@ -374,7 +374,7 @@ class Web3SendTransactionViewState extends State<Web3SendTransactionView> {
         child: item,
         onTap: () {
           extend_data= !extend_data;
-          print("extend_data=$extend_data");
+          // print("extend_data=$extend_data");
           setState(() {
           });
         },

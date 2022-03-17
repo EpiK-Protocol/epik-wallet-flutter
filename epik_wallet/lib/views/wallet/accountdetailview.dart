@@ -260,7 +260,7 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
                       // Container(height: 20),
                       InkWell(
                         onTap: () {
-                          clickCopyEther(widget.walletaccount);
+                            clickCopyEther(widget.walletaccount);
                         },
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -390,12 +390,15 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
       bool isend = position >= menudata.length - 1;
       Widget item;
 
-      print(menu.type);
+      if(menu.type == MenuType.PRIVATEKEY_EPIK  && widget.walletaccount.hasEpikWallet!=true){
+        return Container();
+      }else if(menu.type == MenuType.PRIVATEKEY_ETH && widget.walletaccount.hasHdWallet!=true){
+        return Container();
+      }
+
       if (menu.type == MenuType.FACEID || menu.type == MenuType.FINGERPRINT) {
-        print(1111);
         item = buildItem2(menu, isend);
       } else {
-        print(2222);
         item = buildItem1(menu, isend);
       }
 
@@ -546,6 +549,8 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
   }
 
   clickCopyEther(WalletAccount wa) {
+    if(StringUtils.isEmpty(wa.hd_eth_address))
+      return;
     dlog("clickCopy");
     DeviceUtils.copyText(wa.hd_eth_address);
 //    ToastUtils.showToast("已复制到剪切板");
@@ -553,6 +558,8 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
   }
 
   clickCopyEpik(WalletAccount wa) {
+    if(StringUtils.isEmpty(wa.epik_EPK_address))
+      return;
     dlog("clickCopy");
     DeviceUtils.copyText(wa.epik_EPK_address);
 //    ToastUtils.showToast("已复制到剪切板");
@@ -560,6 +567,8 @@ class _AccountDetailViewState extends BaseWidgetState<AccountDetailView> {
   }
 
   clickCopyID(WalletAccount wa) {
+    if(StringUtils.isEmpty(wa.mining_id))
+      return;
     dlog("clickCopy");
     DeviceUtils.copyText(wa.mining_id);
 //    ToastUtils.showToast("已复制到剪切板");
