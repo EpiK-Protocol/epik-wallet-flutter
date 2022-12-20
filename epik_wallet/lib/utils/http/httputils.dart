@@ -1,9 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:convert/convert.dart';
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:epikwallet/localstring/LocaleConfig.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
+import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/model/Upgrade.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
@@ -50,7 +54,6 @@ class HttpUtil {
     return _instance;
   }
 
-
   //get请求
   Future<Response> get(String url, Map<String, dynamic> params) async {
     Future future = _dio.get(url, queryParameters: params);
@@ -75,6 +78,7 @@ class HttpUtil {
     data,
     bool needToken = false,
     bool sendLanguageType = true,
+    bool headerSignatureUrlBody = false,
   }) async {
     if (packageinfo == null) packageinfo = await PackageInfo.fromPlatform();
 
@@ -106,8 +110,7 @@ class HttpUtil {
     def_headers.forEach((key, value) {
       // print(key);
       // print(value);
-      if (value != null &&
-          RegExpUtil.re_ascii_00_7f_not.hasMatch(value.toString())) {
+      if (value != null && RegExpUtil.re_ascii_00_7f_not.hasMatch(value.toString())) {
         def_headers[key] = Uri.encodeFull(value); //非基础字符 转义
         // print("$value--->${def_headers[key]}");
       }
@@ -129,6 +132,34 @@ class HttpUtil {
     if (headers != null && headers.length > 0) {
       def_headers.addEntries(headers.entries);
     }
+
+    if (headerSignatureUrlBody && AccountMgr()?.currentAccount?.epik_EPK_address != null) {
+      try {
+        String urlpath = "";
+        Uri _uri = Uri.tryParse(url);
+        urlpath = _uri.path;
+        if(_uri.hasQuery)
+          urlpath+="?"+_uri.query;
+        String text = urlpath;
+        if(text.startsWith("/api"))
+          text=text.substring(4);
+        // print(text);
+        if (!isGet && data != null && data is String) {
+          text += "\n" + data;
+        }
+        Digest digest = sha256.convert(utf8.encode(text));
+        String epik_address = AccountMgr()?.currentAccount?.epik_EPK_address;
+        Uint8List epik_signature_byte =
+            await AccountMgr()?.currentAccount?.epikWallet?.sign(epik_address, Uint8List.fromList(digest.bytes));
+        String epik_signature = hex.encode(epik_signature_byte);
+        def_headers["signature"] = epik_signature;
+        def_headers["address"] = epik_address;
+      } catch (e, s) {
+        print(e);
+        print(s);
+      }
+    }
+
     print("def_headers=$def_headers");
 
     Options options = Options(headers: def_headers);
@@ -136,14 +167,8 @@ class HttpUtil {
 
     try {
       if (isGet) {
-        print("httputils get=" +
-            url +
-            "  params=" +
-            params.toString() +
-            "  headers=" +
-            def_headers.toString());
-        response =
-            await _dio.get(url, queryParameters: params, options: options);
+        print("httputils get=" + url + "  params=" + params.toString() + "  headers=" + def_headers.toString());
+        response = await _dio.get(url, queryParameters: params, options: options);
       } else {
         print("httputils post=" +
             url +
@@ -164,8 +189,7 @@ class HttpUtil {
             }
           });
         }
-        response = await _dio.post(url,
-            data: formData ?? data, queryParameters: params, options: options);
+        response = await _dio.post(url, data: formData ?? data, queryParameters: params, options: options);
 
         print("response code=" + response.statusCode.toString());
       }
@@ -183,8 +207,7 @@ class HttpUtil {
             // UmengAnalyticsPlugin.event("DioErrorType.CANCEL",label:"$err\n${isGet?"Get":"Post"}=$url headers=${getReportHeader(def_headers)?.toString()}");
           } else if (err.type == DioErrorType.response) {
             mHttpJsonRes.code = -2; //404, 503
-            mHttpJsonRes.msg = RSID.request_error.text +
-                (response?.statusCode?.toString() ?? ""); //"请求错误";
+            mHttpJsonRes.msg = RSID.request_error.text + (response?.statusCode?.toString() ?? ""); //"请求错误";
             // UmengAnalyticsPlugin.event("DioErrorType.RESPONSE",label:"$err\n${isGet?"Get":"Post"}=$url headers=${getReportHeader(def_headers)?.toString()}");
           } else if (err.type == DioErrorType.connectTimeout ||
               err.type == DioErrorType.receiveTimeout ||
@@ -204,8 +227,7 @@ class HttpUtil {
                 SocketException socketexception = dioerror?.error;
                 if (socketexception?.osError != null) //Network is unreachable
                 {
-                  mHttpJsonRes.msg =
-                      socketexception?.osError?.message ?? mHttpJsonRes.msg;
+                  mHttpJsonRes.msg = socketexception?.osError?.message ?? mHttpJsonRes.msg;
                 }
               }
             }
@@ -226,9 +248,7 @@ class HttpUtil {
       }
     }
 
-    Dlog.p("httputils",
-        "httputils response=" + response.toString() + "  from=" + url,
-        printAll: true);
+    Dlog.p("httputils", "httputils response=" + response.toString() + "  from=" + url, printAll: true);
 
     if (response != null) {
       mHttpJsonRes.httpStatusCode = response.statusCode;
@@ -261,10 +281,8 @@ class HttpUtil {
     if (mHttpJsonRes.jsonMap != null) {
       var code = mHttpJsonRes.jsonMap["code"] ?? mHttpJsonRes.jsonMap["Code"];
       if (code is Map) {
-        mHttpJsonRes.code = StringUtils.parseInt(
-            StringUtils.parseString(code["code"] ?? code["Code"], ""), -1);
-        mHttpJsonRes.msg =
-            StringUtils.parseString(code["message"] ?? code["Message"], "");
+        mHttpJsonRes.code = StringUtils.parseInt(StringUtils.parseString(code["code"] ?? code["Code"], ""), -1);
+        mHttpJsonRes.msg = StringUtils.parseString(code["message"] ?? code["Message"], "");
       } else {
         mHttpJsonRes.code = -1;
         mHttpJsonRes.msg = "";

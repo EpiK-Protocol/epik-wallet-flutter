@@ -18,6 +18,7 @@ import 'package:epikwallet/utils/RegExpUtil.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/res_color.dart';
+import 'package:epikwallet/utils/sp_utils/sp_utils.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/LoadingButton.dart';
@@ -79,7 +80,55 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
     // }
   }
 
+  bool get isSelfQualified
+  {
+    // print(isSelf);
+    // print(widget.expert.status_e);
+    return isSelf  && widget.expert.status_e==ExpertStatus.normal;//&& expertinfo.status_t==ExpertInfoStatus.nomal
+  }
+
+  ///导航栏appBar中间部分 ，不满足可以自行重写
+  Widget getAppBarRight({Color color}) {
+    if (isSelfQualified)
+      return InkWell(
+        onTap: () {
+          showDomainBackendDialog();
+        },
+        child: Container(
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+          width: 24.0 + 20 + 20,
+          height: getAppBarHeight(),
+          child: Icon(
+            Icons.more_horiz,
+            color: color ?? appBarContentColor,
+            size: 20,
+          ),
+        ),
+      );
+
+    return Container();
+  }
+
+  //dialog 提示领域专家后台
+  showDomainBackendDialog() {
+    MessageDialog.showMsgDialog(
+      context,
+      title: RSID.expertview_2.text,
+      msg: RSID.expertinfoview_17.text+"\n"+ServiceInfo.EPIKG_DOMAIN_BACKEND_URL,
+      btnLeft: RSID.copy.text,
+      btnRight: RSID.confirm.text,
+      onClickBtnLeft: (dialog) {
+        DeviceUtils.copyText(ServiceInfo.EPIKG_DOMAIN_BACKEND_URL);
+        showToast(RSID.copied.text);
+      },
+      onClickBtnRight: (dialog) {
+        dialog.dismiss();
+      },
+    );
+  }
+
   ExpertInfo expertinfo;
+  bool isSelf = false;
 
   refresh() async {
     setLoadingWidgetVisible(true);
@@ -104,10 +153,29 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
     HttpJsonRes hjr = await ApiMainNet.expertProfile(hash: widget.expert.application_hash);
     if (hjr.code == 0) {
       expertinfo = ExpertInfo.fromJson(hjr.jsonMap["profile"]);
+      if (expertinfo.owner == AccountMgr().currentAccount.epik_EPK_address) {
+        isSelf = true;
+      } else {
+        isSelf = false;
+      }
+
+      // isSelf = true;// TODO test
+      // dlog("owner isSelf=${isSelf}");
+      // dlog(expertinfo.owner);
+      // dlog(AccountMgr().currentAccount.epik_EPK_address);
       closeStateLayout();
+
+      if(isSelfQualified && SpUtils.getBool("domain_expert_backend_tip",defValue: true))
+      {
+        SpUtils.putBool("domain_expert_backend_tip", false);
+        showDomainBackendDialog();
+      }
+
     } else if (hjr.code < 0) {
+      isSelf = false;
       setErrorWidgetVisible(true);
     } else {
+      isSelf = false;
       closeStateLayout();
     }
   }
@@ -208,6 +276,32 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
                 ),
               ),
             ),
+            if (isSelf)
+              Positioned(
+                left: -20.05,
+                top: -0.05,
+                height: 30,
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(14, 0, 14, 0),
+                  decoration: BoxDecoration(
+                    gradient: ResColor.lg_2,
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular((20)), bottomRight: Radius.circular((20))),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        RSID.expertinfoview_16.text, //"Self",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -262,7 +356,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
                   disabledColor: Colors.transparent,
                   side: BorderSide(width: 1, color: ResColor.o_1),
                   bg_borderradius: BorderRadius.circular(4),
-                  text:RSID.copy.text,
+                  text: RSID.copy.text,
                   //"复制",//"Copy",
                   textstyle: const TextStyle(
                     color: ResColor.o_1,
@@ -304,7 +398,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
                   disabledColor: Colors.transparent,
                   side: BorderSide(width: 1, color: ResColor.o_1),
                   bg_borderradius: BorderRadius.circular(4),
-                  text:RSID.copy.text,
+                  text: RSID.copy.text,
                   //"复制",//"Copy",
                   textstyle: const TextStyle(
                     color: ResColor.o_1,

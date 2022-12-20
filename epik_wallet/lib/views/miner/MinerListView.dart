@@ -1935,7 +1935,7 @@ class MinerListViewState extends BaseWidgetState<MinerListView> {
         targetList.add(rem.group(0));
       }
       // print(targetList);
-      print("target NodeID size ="+targetList.length.toString());
+      // print("target NodeID size ="+targetList.length.toString());
 
       if(targetList.length!=minerids.length)
       {

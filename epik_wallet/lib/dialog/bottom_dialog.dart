@@ -88,23 +88,22 @@ class BottomDialog {
   static Future simpleAuth(@required BuildContext context, String verifyText, @required ValueChanged<String> callback,
       {String secretVerifyText}) async {
     if (AccountMgr()?.currentAccount?.biometrics == true && await LocalAuthUtils.checkBiometrics() == true) {
-      LocalAuthUtils.authenticate().then((value) {
-        Dlog.p("simpleAuth", "authenticate $value");
-        switch (value) {
-          case true:
-            {
-              callback(verifyText);
-            }
-            break;
-          case false:
-          default:
-            {
-              //切换到密码输入
-              return showPassWordInputDialog(context, verifyText, callback, secretVerifyText: secretVerifyText);
-            }
-            break;
-        }
-      });
+      bool value = await LocalAuthUtils.authenticate();
+      Dlog.p("simpleAuth", "authenticate $value");
+      switch (value) {
+        case true:
+          {
+            callback(verifyText);
+          }
+          break;
+        case false:
+        default:
+          {
+            //切换到密码输入
+            return showPassWordInputDialog(context, verifyText, callback, secretVerifyText: secretVerifyText);
+          }
+          break;
+      }
     } else {
       return showPassWordInputDialog(context, verifyText, callback, secretVerifyText: secretVerifyText);
     }
@@ -174,7 +173,7 @@ class BottomDialog {
               //获取焦点时,启用的键盘类型
               maxLines: 1,
               // 输入框最大的显示行数
-              maxLengthEnforced: true,
+              // maxLengthEnforced: true,
               //是否允许输入的字符长度超过限定的字符长度
               obscureText: true,
               //是否是密码
@@ -436,7 +435,7 @@ class BottomDialog {
                 //获取焦点时,启用的键盘类型
                 maxLines: 1,
                 // 输入框最大的显示行数
-                maxLengthEnforced: true,
+                // maxLengthEnforced: true,
                 //是否允许输入的字符长度超过限定的字符长度
                 obscureText: true,
                 //是否是密码
@@ -550,18 +549,21 @@ class BottomDialog {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Container(
-            height: 58,
+            // height: 58,
             width: double.infinity,
             child: Stack(
               children: <Widget>[
                 Align(
                   alignment: FractionalOffset.center,
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(30, 15, 30, 15),
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -603,7 +605,7 @@ class BottomDialog {
                     //获取焦点时,启用的键盘类型
                     maxLines: multipleLine ? 999 : 1,
                     // 输入框最大的显示行数
-                    maxLengthEnforced: true,
+                    // maxLengthEnforced: true,
                     //是否允许输入的字符长度超过限定的字符长度
                     obscureText: false,
                     //是否是密码
@@ -832,7 +834,7 @@ class BottomDialog {
               //获取焦点时,启用的键盘类型
               maxLines: 1,
               // 输入框最大的显示行数
-              maxLengthEnforced: true,
+              // maxLengthEnforced: true,
               //是否允许输入的字符长度超过限定的字符长度
               obscureText: false,
               //是否是密码
@@ -919,7 +921,7 @@ class BottomDialog {
               //获取焦点时,启用的键盘类型
               maxLines: 1,
               // 输入框最大的显示行数
-              maxLengthEnforced: true,
+              // maxLengthEnforced: true,
               //是否允许输入的字符长度超过限定的字符长度
               obscureText: true,
               //是否是密码
@@ -1176,7 +1178,7 @@ class BottomDialog {
               //获取焦点时,启用的键盘类型
               maxLines: 1,
               // 输入框最大的显示行数
-              maxLengthEnforced: true,
+              // maxLengthEnforced: true,
               //是否允许输入的字符长度超过限定的字符长度
               obscureText: true,
               //是否是密码
@@ -1284,8 +1286,9 @@ class BottomDialog {
     Widget header,
     Widget footer,
     List<TextInputConfigObj> objlist = const [],
-    Function(List<String> datas) callback,
-    bool onOkClose = true,
+    Function(List<String> datas) callback, //输入完成点确定后的回调
+    bool onOkClose = true, //点确认后是否关闭dialog
+    Function(List<String> datas) onChangeCallback,//输入中更新数据的回调
   }) {
     Color dialogbg = ResColor.b_4; //Colors.white;
     Color titleColor = Colors.white; //Colors.black;
@@ -1316,6 +1319,22 @@ class BottomDialog {
       callback(result);
     };
 
+    Function onChange = () {
+      List<String> result = [];
+
+      for (int i = 0; i < teclist.length; i++) {
+        TextEditingController tec = teclist[i];
+        String value = tec?.text?.trim() ?? "";
+        // if (value?.isEmpty == true) {
+        //   ToastUtils.showToast(objlist[i]?.hint);
+        //   return;
+        // }
+        result.add(value);
+      }
+      if(onChangeCallback!=null)
+      onChangeCallback(result);
+    };
+
     List<Widget> inputlist = [];
     if (objlist != null && objlist.length > 0) {
       objlist.forEach((obj) {
@@ -1343,7 +1362,7 @@ class BottomDialog {
                   //获取焦点时,启用的键盘类型
                   maxLines: 1,
                   // 输入框最大的显示行数
-                  maxLengthEnforced: true,
+                  // maxLengthEnforced: true,
                   //是否允许输入的字符长度超过限定的字符长度
                   obscureText: false,
                   //是否是密码
@@ -1374,6 +1393,8 @@ class BottomDialog {
                   style: TextStyle(fontSize: 16, color: textColor),
                   onChanged: (text) {
                     _text = text;
+                    if(onChangeCallback!=null)
+                      onChange();
                   },
                   onSubmitted: (value) {
                     // 当用户确定已经完成编辑时触发

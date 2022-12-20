@@ -12,6 +12,8 @@ import 'package:epikwallet/localstring/LocaleConfig.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
+import 'package:epikwallet/logic/api/api_mainnet.dart';
+import 'package:epikwallet/logic/api/api_pool.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/HomeMenuItem.dart';
@@ -30,6 +32,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:web3dart/web3dart.dart';
 
 class WalletView extends BaseInnerWidget {
   WalletView(Key key) : super(key: key) {}
@@ -843,6 +846,13 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
 
   onClickWalletMenu() async {
     eventMgr.send(EventTag.MAIN_RIGHT_DRAWER, true);
+
+    // ApiMainNet.test().then((hjr){
+    //
+    //   print(hjr.code);
+    //   print(hjr.jsonMap);
+    // });
+
   }
 
   double gridItemHightRatio = 0;

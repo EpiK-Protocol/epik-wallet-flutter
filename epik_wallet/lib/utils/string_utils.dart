@@ -259,7 +259,7 @@ class StringUtils {
     }
     if (num != null && num.length > bit && num.contains(".") == false) {
       List<String> list = num.split("");
-      int index = list.length - 18;
+      int index = list.length - bit;
       list.insert(index, ".");
       if (index == 0) list.insert(0, "0");
       String ret = list.join();
@@ -275,7 +275,7 @@ class StringUtils {
   }
 
   static double bigNumDownsizingDouble(String num, {int bit = 18}) {
-    String text = bigNumDownsizing(num, bit: 18);
+    String text = bigNumDownsizing(num, bit: bit);
     return parseDouble(text, 0);
   }
 

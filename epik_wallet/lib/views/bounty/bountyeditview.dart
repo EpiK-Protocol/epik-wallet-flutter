@@ -115,8 +115,8 @@ class BountyEditViewState extends BaseWidgetState<BountyEditView> {
                               keyboardType: TextInputType.multiline,
                               autofocus: false,
                               inputFormatters: [
-                                WhitelistingTextInputFormatter(
-                                    RegExpUtil.re_ascii_00_7f)
+                                //WhitelistingTextInputFormatter(RegExpUtil.re_ascii_00_7f)
+                                FilteringTextInputFormatter.allow(RegExpUtil.re_ascii_00_7f)
                               ],
                               decoration: InputDecoration(
                                 // 以下属性可用来去除TextField的边框

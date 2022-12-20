@@ -11,7 +11,9 @@ class JfRadio<T> extends StatefulWidget {
 
   void Function(T value) onChange;
 
-  JfRadio({this.value , this.group,this.group_str,this.onChange}) {}
+  bool enable=true;
+
+  JfRadio({this.value , this.group,this.group_str,this.onChange,this.enable=true}) {}
 
   @override
   State<StatefulWidget> createState() {
@@ -38,13 +40,14 @@ class JfRadioState extends State<JfRadio> {
             value: element,
             groupValue: widget.value,
             activeColor: ResColor.o_1,
-            onChanged: (v) {
+            fillColor: MaterialStateProperty.all(ResColor.o_1),
+            onChanged: widget.enable?(v) {
               setState(() {
                 widget.value = v;
                 if(widget.onChange!=null)
                   widget.onChange(v);
               });
-            },
+            }:null,
           ),
           Text(
             e_str,

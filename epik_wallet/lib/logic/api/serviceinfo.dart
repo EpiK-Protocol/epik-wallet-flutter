@@ -107,6 +107,9 @@ class ServiceInfo {
     return serverConfig?.EPKToken ?? _epik_RpcUrl_token;
   }
 
+  //领域专家后台
+  static final String EPIKG_DOMAIN_BACKEND_URL="https://epikg.com/domainBackend/";
+
   static ServerConfig serverConfig;
   static Upgrade upgrade;
   static Map<Locale, List<HomeMenuItem>> homeMenuMap;

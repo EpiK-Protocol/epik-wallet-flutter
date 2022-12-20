@@ -473,6 +473,17 @@ Map<RSID, String> map_zh = {
   RSID.expertview_17:"您已投出",
   RSID.expertview_18:"解锁中",
   RSID.expertview_19:"已解锁",
+  RSID.expertview_20:" (已提交)",
+  RSID.expertview_21:" (已通过)",
+  RSID.expertview_22:" (被拒绝)",
+  RSID.expertview_23:"求助",//  Seek Help
+  RSID.expertview_24:"您的申请ID:%s\n您可以把ID发送给其他领域专家帮助您通过审核",//
+  RSID.expertview_25:"助力",
+  RSID.expertview_26:"输入他人领域专家的申请ID，可以帮助他人通过审核。",
+  RSID.expertview_27:"提名",
+  RSID.expertview_28:"已提名",
+
+
   //ApplyExpertView
   RSID.applyexpertview_1:"申请领域专家",
   RSID.applyexpertview_2:"您的申请已提交，请等待审核结果。",
@@ -534,6 +545,8 @@ Map<RSID, String> map_zh = {
   RSID.expertinfoview_13:"已撤回",
   RSID.expertinfoview_14:"已提取",
   RSID.expertinfoview_15:"查看",
+  RSID.expertinfoview_16:"自己", //自己
+  RSID.expertinfoview_17:"您已成为领域专家，可以去领域专家后台发布任务。",
 
   // Erc20ToEpkRecordView  erc20转epk 兑换记录
   RSID.eerv_1:"兑换记录",//"EPK兑换记录",
@@ -786,4 +799,58 @@ Map<RSID, String> map_zh = {
   RSID.biometrics_iosgoToSettingsDescription: "您的设备上没有设置生物认证。请在您的手机上启用Touch ID或Face ID。", //'Biometric authentication is not set up on your device. Please either enable Touch ID or Face ID on your phone.',
   RSID.biometrics_ioscancelButton: "好的", // "OK"
 
+  //nodepool
+  RSID.nodepool_title:"租赁节点",//"节点池",
+  RSID.nodepool_create:"创建节点池",
+  RSID.nodepool_edit:"编辑",
+  RSID.nodepool_confirm_edit:"确定修改",//Confirm modification
+  RSID.nodepool_node_apy:"年化收益率",
+  RSID.nodepool_node_count:"总节点",
+  RSID.nodepool_node_actived:"运行中",
+  RSID.nodepool_node_available:"可用",
+  RSID.nodepool_node_lock:"已锁定",
+  RSID.nodepool_node_own:"自己的",
+  RSID.nodepool_node_rent:"租赁节点",
+  RSID.nodepool_node_manage:"管理",
+  RSID.nodepool_node_insufficient_epk:"EPK余额不足",//nsufficient EPK balance
+  RSID.nodepool_node_locked:"申请节点成功！\n节点ID：%s（已复制到剪切板）\n请在1小时内完成质押，超时将被释放。",
+  RSID.nodepool_node_abort:"稍后质押",
+  RSID.nodepool_node_palde:"立刻质押",
+  RSID.nodepool_node_poolmanage:"管理节点池",
+
+  //NodePoolCreateView
+  RSID.npcv_1:"名称",
+  RSID.npcv_2:"请输入名称",
+  RSID.npcv_3:"描述",
+  RSID.npcv_4:"请输入描述",
+  RSID.npcv_5:"EPK费用地址",
+  RSID.npcv_6:"请输入EPK费用地址",
+  RSID.npcv_7:"费用比例",
+  RSID.npcv_8:"节点池状态",//"是否可用",
+  RSID.npcv_9:"开启",
+  RSID.npcv_10:"停用",
+  RSID.npcv_11:"请设费用比例",
+  RSID.npcv_12:"已创建",
+  RSID.npcv_13:"已保存",
+
+  //NodePoolManageView
+  RSID.npmv_1:"添加Owner",
+  RSID.npmv_2:"删除",
+  RSID.npmv_3:"提交需要转移质押的节点，节点用户会依据这些记录转移质押到目标节点。",
+  RSID.npmv_4:'输入原MinerID 多个用","分隔',
+  RSID.npmv_5:'输入目标MinerID 多个用","分隔',
+  RSID.npmv_6:"MinerID数量需要相同",
+  RSID.npmv_7:"已提交",
+  RSID.npmv_8:"变更节点",
+
+  //NodePoolAddOwnerView
+  RSID.npaov_1:"请输入OwnerID",
+  RSID.npaov_2:"请复制上述代码，在epik daemon上签名，并将签名粘贴到下方。",//"请复制上述代码，在EpiK miner上签名，并将签名粘贴到下方。",
+  RSID.npaov_3:"签名数据",
+  RSID.npaov_4:"请输入签名数据",
+  RSID.npaov_5:"已添加",
+
+  //RentNodeNeedTransferView
+  RSID.rnntv_1:"租赁节点需要转移",
+  RSID.rnntv_2:"待转移节点",
 };

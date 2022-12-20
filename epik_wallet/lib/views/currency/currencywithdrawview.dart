@@ -170,7 +170,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
                       //1,
                       // 输入框最大的显示行数
 //              maxLength: 20, //允许输入的字符长度/ 右下角有数量提示
-                      maxLengthEnforced: true,
+//                       maxLengthEnforced: true,
                       //是否允许输入的字符长度超过限定的字符长度
                       obscureText: false,
                       //是否是密码
@@ -314,7 +314,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
                       maxLines: 1,
                       // 输入框最大的显示行数
 //              maxLength: 20, //允许输入的字符长度/ 右下角有数量提示
-                      maxLengthEnforced: true,
+//                       maxLengthEnforced: true,
                       //是否允许输入的字符长度超过限定的字符长度
                       obscureText: false,
                       //是否是密码

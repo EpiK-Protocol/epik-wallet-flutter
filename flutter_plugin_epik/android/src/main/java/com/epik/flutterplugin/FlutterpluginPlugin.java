@@ -367,6 +367,12 @@ public class FlutterpluginPlugin implements FlutterPlugin, MethodCallHandler
                             ret = currentEpikWallet.expertList();
                             break;
                         }
+                        case "epik_wallet_expertNominate":
+                        {
+                            //20220823新增  专家提名通过 自己给别人通过申请
+                            ret = currentEpikWallet.expertNominate((String) call.argument("selfId"),(String) call.argument("targetId"));
+                            break;
+                        }
                         case "epik_wallet_messageReceipt":
                         {
                             // 消息回执

@@ -325,7 +325,7 @@
                     resultSync(ret);
                 }
             }else{
-                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"epikWallet is Nil"}];
             }
         }else if ([@"epik_wallet_expertList" isEqualToString:call.method]) {
             // 专家列表
@@ -336,6 +336,16 @@
                 }
             }else{
                 err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"hdWallet is Nil"}];
+            }
+        }else if ([@"epik_wallet_expertNominate" isEqualToString:call.method]) {
+            // TODO 20220823新增  专家提名通过 自己给别人通过申请
+            if (self->_epikWallet){
+                NSString *ret = [self->_epikWallet expertNominate:arguments[@"selfId"] target:arguments[@"targetId"] error:&err];
+                if (!err) {
+                    resultSync(ret);
+                }
+            }else{
+                err = [NSError errorWithDomain:@"epik" code:-1 userInfo:@{@"Error reason":@"epikWallet is Nil"}];
             }
         }else if ([@"epik_wallet_messageReceipt" isEqualToString:call.method]) {
             // 消息回执

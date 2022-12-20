@@ -143,6 +143,7 @@ class JsonFormWidgetState extends State<JsonFormWidget> {
             maxLength: json["maxLength"],
             regexp: json["regexp"],
             classtype: json["classtype"],
+            enable: json["enable"] ?? true,
             onChanged: (text, classtype) {
               var dd;
               switch (classtype) {
@@ -174,6 +175,7 @@ class JsonFormWidgetState extends State<JsonFormWidget> {
             value: value,
             group: json["list"],
             group_str: json["list_str"],
+            enable: json["enable"]??true,
             onChange: (value) {
               formData[json["key"]] = value;
               if (formData != null) {

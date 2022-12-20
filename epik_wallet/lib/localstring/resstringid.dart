@@ -471,6 +471,16 @@ enum RSID {
   expertview_17, //您已投出
   expertview_18, //解锁中
   expertview_19, //已解锁
+  expertview_20, //(已提交)
+  expertview_21, //(已通过)
+  expertview_22, //(被拒绝)
+  expertview_23,//求助  Seek Help
+  expertview_24,//您的申请ID:%s，您可以把ID发送给其他领域专家帮助您通过审核。  Seek Help
+  expertview_25,//助力
+  expertview_26,//输入他人领域专家的申请ID，可以帮助他人通过审核。
+  expertview_27,//提名
+  expertview_28,//已提名
+
 
   //ApplyExpertView
   applyexpertview_1, //申请领域专家
@@ -534,6 +544,8 @@ enum RSID {
   expertinfoview_13, //已撤回
   expertinfoview_14, //已提取
   expertinfoview_15, //查看
+  expertinfoview_16, //自己
+  expertinfoview_17,//您已成为领域专家，可以去领域专家后台发布任务。
 
 
   // Erc20ToEpkRecordView  erc20转epk 兑换记录
@@ -788,6 +800,65 @@ enum RSID {
   biometrics_iosgoToSettingsButton,// "去设置", //"Go to settings",
   biometrics_iosgoToSettingsDescription,// "您的设备上没有设置生物认证。请在您的手机上启用Touch ID或Face ID。", //'Biometric authentication is not set up on your device. Please either enable Touch ID or Face ID on your phone.',
   biometrics_ioscancelButton,// "好的", // "OK"
+
+  //nodepool
+  nodepool_title,//节点商店
+  nodepool_create,//创建节点池
+  nodepool_edit,//编辑
+  nodepool_confirm_edit,//确定修改Confirm modification
+  nodepool_node_apy,//"年化收益",
+  nodepool_node_count,//总节点数
+  nodepool_node_actived,//激活数
+  nodepool_node_available,//可用数
+  nodepool_node_lock,//锁定的
+  nodepool_node_own,//自己的
+  nodepool_node_rent,//租赁
+  nodepool_node_manage,//管理
+  nodepool_node_insufficient_epk,//Insufficient EPK balance
+  nodepool_node_locked,//"申请节点成功！\n节点ID：%s（已复制到剪切板）\n请在1小时内完成质押，超时将被释放。"
+  nodepool_node_abort,//放弃
+  nodepool_node_palde,//立刻质押
+  nodepool_node_poolmanage,//管理节点池
+
+  //NodePoolCreateView
+  npcv_1,//名称
+  npcv_2,//请输入名称
+  npcv_3,//描述
+  npcv_4,//请输入描述
+  npcv_5,//EPK收益地址
+  npcv_6,//请输入收益地址
+  npcv_7,//抽成比例
+  npcv_8,//是否启用
+  npcv_9,//启用
+  npcv_10,//暂停
+  npcv_11,//请设置抽成比例
+  npcv_12,//创建成功
+  npcv_13,//已保存
+
+  //NodePoolManageView
+  npmv_1,//"添加Owner"
+  npmv_2,//"删除"
+  npmv_3,//"提交需要转移质押的节点，节点用户会依据这些记录转移质押到新节点。"
+  npmv_4,//"输入原MinerID 多个用","分隔"
+  npmv_5,//"输入新MinerID 多个用","分隔"
+  npmv_6,//"MinerID数量需要相同"
+  npmv_7,//"已提交"
+  npmv_8,//节点变更
+
+  //NodePoolAddOwnerView
+  npaov_1,//请输入OwnerID
+  npaov_2,//"复制上面的命令在节点服务器上执行，并将签名结果填到下面后点击确定。"
+  npaov_3,//Owner签名数据
+  npaov_4,//请输入Owner签名数据
+  npaov_5,//已添加
+
+
+  //RentNodeNeedTransferView
+  rnntv_1,//租赁节点需要转移
+  rnntv_2,//待转移节点
+
+
+
 
 
 }

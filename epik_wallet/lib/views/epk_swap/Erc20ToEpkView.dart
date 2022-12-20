@@ -171,6 +171,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
       ResultObj result = null;
       try {
         TransactionReceipt tr = await EpikWalletUtils.ethClient.getTransactionReceipt(txhash);
+        //todo  pending、错误的tx 时  tr为空
         result = ResultObj();
         if (tr != null) {
           result.code = 0;

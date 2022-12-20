@@ -23,7 +23,8 @@ extension ExpertStatusEx on ExpertStatus {
   static ExpertStatus ofString(String text) {
     //0
     if (text.contains("registered")) return ExpertStatus.registered;
-    if (text.contains("nominated")) return ExpertStatus.nominated;
+    // 0  2
+    if (text.contains("nominated") || text.contains("no enough votes")) return ExpertStatus.nominated;
     //1
     if (text.contains("normal") || text.contains("qualified")) return ExpertStatus.normal;
     if (text.contains("blocked")) return ExpertStatus.blocked;
@@ -185,6 +186,7 @@ class ExpertInfo {
   String created_at; //":"2021-04-12T17:23:22.122801+08:00"
   // 资料审核状态  pre_regist   regist   nomal   reject
   String status; //"status":"0", //"status_desc":"registered",
+  String status_desc;
   String reason;
 
   DateTime dt_created_at;
@@ -225,7 +227,7 @@ class ExpertInfo {
       how = json["how"];
 
       owner = json["owner"];
-      ex_id = json["ex_id"];
+      ex_id = json["expert_id"];//json["ex_id"];
 
       // "Status":1,"StatusDesc":"qualified"
       status = json["status"]; //资料审核状态
@@ -234,7 +236,10 @@ class ExpertInfo {
 
       dt_created_at = DateUtil.getDateTime(created_at, isUtc: false) ?? DateTime.now();
 
-      status_t = ExpertInfoStatusEx.ofString(status);
+      status_desc = json["status_desc"];
+      status_t = ExpertInfoStatusEx.ofString(status_desc);
+
+      print(status_t);
     } catch (e, s) {
       print(s);
     }

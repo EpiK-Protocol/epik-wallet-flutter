@@ -244,4 +244,23 @@ class ApiMainNet {
     }
     return httpjsonres;
   }
+
+  // static Future<HttpJsonRes> test() {
+  //   String url = "https://testnets.opensea.io/__api/graphql/";
+  //
+  //   Map<String, dynamic> params = {
+  //     "id":"challengeLoginMessageQuery",
+  //     "query":"query challengeLoginMessageQuery(\n  \$address: AddressScalar!\n) {\n  auth {\n    loginMessage(address: \$address)\n  }\n}\n",
+  //     "variables":{
+  //       "address": "0x8DF57Ba8F80418921049554aFa8dFea86a19A1a3",
+  //     },
+  //   };
+  //   String json = jsonEncode(params);
+  //
+  //   Map<String, dynamic> headers = {
+  //     "Content-Type": "application/json",
+  //     "x-signed-query": "05649d324b3f3db988d5065ea33599bca390adf00e3f46952dd59ff5cc61e1e0",
+  //   };
+  //   return HttpUtil.instance.requestJson(false, url, null, data: json,headers: headers);
+  // }
 }

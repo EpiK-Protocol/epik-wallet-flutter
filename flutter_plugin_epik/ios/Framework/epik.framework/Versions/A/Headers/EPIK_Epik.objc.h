@@ -81,6 +81,7 @@
  * ExpertList ...
  */
 - (NSString* _Nonnull)expertList:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)expertNominate:(NSString* _Nullable)p0 target:(NSString* _Nullable)target error:(NSError* _Nullable* _Nullable)error;
 /**
  * Export ...
  */

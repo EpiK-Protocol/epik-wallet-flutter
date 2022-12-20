@@ -15,17 +15,21 @@ import 'package:epikwallet/model/Expert.dart';
 import 'package:epikwallet/model/ExpertBaseInfo.dart';
 import 'package:epikwallet/model/VoterInfo.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
+import 'package:epikwallet/utils/RegExpUtil.dart';
+import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/mainview.dart';
+import 'package:epikwallet/views/thinktank/VerifyApplyExpertInfoView.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:epikwallet/widget/list_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 enum ExpertStateType {
@@ -127,6 +131,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
 
   eventCallback_account(obj) {
     voterinfo = VoterInfo();
+    expertInfo_old = null;
     refresh();
   }
 
@@ -139,7 +144,20 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
   VoterInfo voterinfo;
 
   bool isFirst = true;
-  bool needwalletfull=false;
+  bool needwalletfull = false;
+
+  ExpertInfo expertInfo_old = null;
+
+  loadExpertProfileStatus() async {
+    HttpJsonRes hjr = await ApiMainNet.expertProfile(owner: AccountMgr().currentAccount.epik_EPK_address);
+    // HttpJsonRes hjr= await ApiMainNet.expertProfile(owner: "f3szlp4m2rr3am2vks5ixtjvcipgnx3vuyxe7fnpxlbgxsaxqp6xu2a2u3nl7qjgplthz4vjzysdk4wjybvexq");
+    if (hjr?.code == 0) {
+      expertInfo_old = ExpertInfo.fromJson(hjr.jsonMap["profile"]);
+    } else {
+      expertInfo_old = null;
+    }
+    setState(() {});
+  }
 
   refresh() async {
     if (isFirst) {
@@ -153,9 +171,12 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
       return;
     }
 
-    needwalletfull=false;
+    needwalletfull = false;
 
     setLoadingWidgetVisible(true);
+
+    loadExpertProfileStatus();
+
     isLoading = true;
 
     page = 0;
@@ -225,9 +246,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
 
   @override
   Widget buildWidget(BuildContext context) {
-
-    if(needwalletfull)
-    {
+    if (needwalletfull) {
       Widget widget = Container(
         alignment: Alignment.center,
         child: Column(
@@ -260,8 +279,8 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
   }
 
   Widget buildHeader() {
-    print("voterinfo?.getUnlockingVotesF()=${voterinfo?.getUnlockingVotesF()}");
-    print("voterinfo?.getUnlockedVotesF()=${voterinfo?.getUnlockedVotesF()}");
+    // print("voterinfo?.getUnlockingVotesF()=${voterinfo?.getUnlockingVotesF()}");
+    // print("voterinfo?.getUnlockedVotesF()=${voterinfo?.getUnlockedVotesF()}");
     Container card = Container(
       margin: EdgeInsets.only(top: 0),
       padding: EdgeInsets.fromLTRB(20, getTopBarHeight(), 20, 0),
@@ -474,13 +493,60 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
   }
 
   Widget getBanner() {
-    return LoadingButton(
-      margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
+    // dlog("exid=${expertInfo_old?.ex_id}");
+    String btntext = RSID.expertview_6.text;
+    bool needHelp = false; //可以请别人帮自己通过审核
+    bool verify = false; //可以帮助别人通过审核
+    switch (expertInfo_old?.status_t) {
+      case ExpertInfoStatus.regist:
+        //"您的申请已提交，请等待审核结果。",
+        btntext = RSID.expertview_6.text + RSID.expertview_20.text;
+        // btntext="申请成为领域专家(已提交)";
+        // btntext = "Apply to be domain expert (Submitted)";
+        // RSID.expertview_20:" (Submitted)",//" (已提交)",
+        //允许用户复制ex_id 请他人通过申请
+        needHelp = true;
+        break;
+      case ExpertInfoStatus.nomal:
+        //您的申请已通过
+        btntext = RSID.expertview_6.text + RSID.expertview_21.text;
+        // RSID.expertview_21:" (Passed)",//" (已通过)",
+
+        //如果自己审核通过 查找自己的专家资料 是否拉票成功 然后才有资格给别人激活
+        if (expertInfo_old?.ex_id != null && data_experts != null && data_experts.length > 0) {
+          for (Expert expert in data_experts) {
+            if (expertInfo_old?.ex_id == expert.id && expert.status_e == ExpertStatus.normal) {
+              verify = true;
+              break;
+            }
+          }
+        }
+        break;
+      case ExpertInfoStatus.reject:
+        //申请被拒绝
+        btntext = RSID.expertview_6.text + RSID.expertview_22.text;
+        // RSID.expertview_22:" (Rejected)",//" (被拒绝)",
+        break;
+      case ExpertInfoStatus.pre_regist:
+      default:
+        btntext = RSID.expertview_6.text;
+        break;
+    }
+
+    dlog("needHelp=${needHelp}");
+    dlog("verify=${verify}");
+
+    // needHelp=false;
+    // verify = true; //todo test
+
+    Widget btn1 = LoadingButton(
+      // margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
       gradient_bg: ResColor.lg_1,
       color_bg: Colors.transparent,
       disabledColor: Colors.transparent,
       height: 40,
-      text: RSID.expertview_6.text,
+      text: btntext,
+      //RSID.expertview_6.text,
       //"申请成为领域专家",
       textstyle: TextStyle(
         color: Colors.white,
@@ -496,6 +562,123 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
         }
         ViewGT.showApplyExpertView(context);
       },
+    );
+
+    Widget btn2 = null;
+    if (needHelp) {
+      btn2 = LoadingButton(
+        margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+        gradient_bg: ResColor.lg_2,
+        color_bg: Colors.transparent,
+        disabledColor: Colors.transparent,
+        width: 80,
+        height: 40,
+        text: RSID.expertview_23.text,
+        //求助 "Seek Help",
+        textstyle: TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
+        bg_borderradius: BorderRadius.circular(4),
+        onclick: (lbtn) {
+          if (AccountMgr().currentAccount == null) {
+            showToast(RSID.main_bv_7.text);
+            eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX, main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
+            return;
+          }
+          // 把ID告诉已经激活的领域专家进行激活
+          MessageDialog.showMsgDialog(
+            context,
+            title: RSID.expertview_23.text,
+            //求助 "Seek Help",
+            msg: RSID.expertview_24.replace([expertInfo_old?.ex_id?.trim() ?? ""]),
+            //您的申请ID:%s，您可以把ID发送给其他领域专家帮助您通过审核。  Seek Help
+            btnLeft: RSID.copy.text + " ID",
+            btnRight: RSID.confirm.text,
+            onClickBtnLeft: (dialog) {
+              DeviceUtils.copyText(expertInfo_old?.ex_id?.trim() ?? "");
+              showToast(RSID.copied.text);
+            },
+            onClickBtnRight: (dialog) {
+              dialog.dismiss();
+            },
+          );
+        },
+      );
+    } else if (verify) {
+      btn2 = LoadingButton(
+        margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+        gradient_bg: ResColor.lg_2,
+        color_bg: Colors.transparent,
+        disabledColor: Colors.transparent,
+        width: 80,
+        height: 40,
+        text: RSID.expertview_25.text,
+        //Help Others
+        //助力
+        textstyle: TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
+        bg_borderradius: BorderRadius.circular(4),
+        onclick: (lbtn) {
+          if (AccountMgr().currentAccount == null) {
+            showToast(RSID.main_bv_7.text);
+            eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX, main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
+            return;
+          }
+          //  输入他人的ID 帮助他人通过审核
+          BottomDialog.showTextInputDialog(
+            context,
+            RSID.expertview_26.text,
+            "",
+            "f0xxxxx",
+            99,
+            (value) {
+              showLoadDialog("");
+
+              ApiMainNet.expertProfile(expert_id: value).then((HttpJsonRes hjr) {
+                ExpertInfo _ExpertInfo;
+                closeLoadDialog();
+                if (hjr?.code == 0) {
+                  _ExpertInfo = ExpertInfo.fromJson(hjr.jsonMap["profile"]);
+                  ViewGT.showView(context, VerifyApplyExpertInfoView(expertInfo_old?.ex_id?.trim(),_ExpertInfo));
+                } else {
+                  _ExpertInfo = null;
+                  showToast("ID error");
+                }
+              });
+
+              // AccountMgr()
+              //     .currentAccount
+              //     .epikWallet
+              //     .expertNominate(expertInfo_old?.ex_id?.trim(), value.trim())
+              //     .then((ResultObj<String> resultObj) {
+              //   closeLoadDialog();
+              //   if (resultObj?.isSuccess) {
+              //     showToast(RSID.minerview_18.text);
+              //   } else {
+              //     showToast(resultObj?.errorMsg ?? RSID.request_failed.text);
+              //   }
+              // });
+            },
+            inputFormatters: [FilteringTextInputFormatter.allow(RegExpUtil.re_azAZ09)],
+          );
+        },
+      );
+    }
+
+    return Container(
+      margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
+      child: Row(
+        // mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(child: btn1),
+          if (btn2 != null) btn2,
+        ],
+      ),
     );
   }
 
@@ -755,6 +938,8 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
     // HttpJsonRes hjr = await ApiMainNet.experts(page, pageSize);
     // dataCallback(hjr);
 
+    loadExpertProfileStatus();
+
     ResultObj<String> robj =
         await AccountMgr()?.currentAccount?.epikWallet?.voterInfo(AccountMgr()?.currentAccount?.epik_EPK_address);
     dlog("voterInfo");
@@ -796,7 +981,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
   }
 
   void onClickTab(ExpertStateType type) {
-    //todo
+    //
     if (pageIndex == type) return;
     pageIndex = type;
     setState(() {

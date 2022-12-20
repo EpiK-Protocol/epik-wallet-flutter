@@ -12,6 +12,7 @@ class JfText extends StatefulWidget {
   bool autofocus;
 
   int minLines;
+
   /// 输入框最大的显示行数
   int maxLines;
 
@@ -26,6 +27,11 @@ class JfText extends StatefulWidget {
 
   String classtype;
 
+  double fontsize;
+
+  bool enable;
+  TextAlign textAlign;
+
   void Function(String value, String classtype) onChanged;
 
   JfText({
@@ -33,15 +39,17 @@ class JfText extends StatefulWidget {
     this.hint = "",
     this.label = "",
     this.autofocus = false,
-    this.minLines=1,
+    this.minLines = 1,
     this.maxLines = 1,
     this.maxLength,
     this.isPassword = false,
     this.regexp,
     this.classtype = "String",
     this.onChanged,
-  }) {
-  }
+    this.fontsize = 14,
+    this.enable = true,
+    this.textAlign = TextAlign.left,
+  }) {}
 
   @override
   State<StatefulWidget> createState() {
@@ -57,12 +65,11 @@ class JfTextState extends State<JfText> {
   Widget build(BuildContext context) {
     if (widget.regexp != null && re == null) re = RegExp(widget.regexp);
 
-    if (tec == null || (tec!=null && widget.data!=tec.text))
+    if (tec == null || (tec != null && widget.data != tec.text))
       tec = TextEditingController.fromValue(TextEditingValue(
         text: widget.data ?? "",
         selection: TextSelection.fromPosition(
-          TextPosition(
-              affinity: TextAffinity.downstream, offset: widget?.data?.length ?? 0),
+          TextPosition(affinity: TextAffinity.downstream, offset: widget?.data?.length ?? 0),
         ),
       ));
 
@@ -132,13 +139,14 @@ class JfTextState extends State<JfText> {
     // );
 
     return TextField(
+      enabled: widget.enable,
       controller: tec,
       autofocus: widget.autofocus,
-      textAlign: TextAlign.left,
+      textAlign: widget.textAlign,
       keyboardType: widget.maxLines == 1 ? TextInputType.text : TextInputType.multiline,
       //获取焦点时,启用的键盘类型
       minLines: widget.minLines,
-      maxLines: widget.maxLines==-1 ? null: widget.maxLines ,
+      maxLines: widget.maxLines == -1 ? null : widget.maxLines,
       // 输入框最大的显示行数
       maxLength: widget.maxLength,
       // maxLengthEnforced: true,
@@ -160,39 +168,58 @@ class JfTextState extends State<JfText> {
         // disabledBorder: InputBorder.none,
         // enabledBorder: InputBorder.none,
         // focusedBorder: InputBorder.none,
-        enabledBorder: const UnderlineInputBorder(
-          borderRadius:BorderRadius.zero,
+        disabledBorder: const UnderlineInputBorder(
+          borderRadius: BorderRadius.zero,
           borderSide: BorderSide(
             color: ResColor.white_20,
             width: 1,
           ),
         ),
-        focusedBorder:const UnderlineInputBorder(
-          borderRadius:BorderRadius.zero,
+        enabledBorder: const UnderlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(
+            color: ResColor.white_20,
+            width: 1,
+          ),
+        ),
+        focusedBorder: const UnderlineInputBorder(
+          borderRadius: BorderRadius.zero,
           borderSide: BorderSide(
             color: ResColor.white,
             width: 1,
           ),
         ),
         // contentPadding: EdgeInsets.fromLTRB(0, 10, 40, 20),
-        contentPadding:  widget.maxLines==-1 ? EdgeInsets.fromLTRB(0, 10, 0, 20):EdgeInsets.fromLTRB(0, 10, 0, 20),
-        labelText: widget.maxLines==-1?null:((widget?.label?.isNotEmpty == true)? " ${widget.label} " :null), //有label的话 没焦点时不显示hint
+        contentPadding: widget.maxLines == -1 ? EdgeInsets.fromLTRB(0, 10, 0, 20) : EdgeInsets.fromLTRB(0, 10, 0, 20),
+        // labelText: widget.maxLines == -1 ? null : ((widget?.label?.isNotEmpty == true) ? " ${widget.label} " : null),
+        //有label的话 没焦点时不显示hint
         hintText: widget.hint,
-        hintStyle: const TextStyle(
-          fontSize: 14,
+        hintStyle: TextStyle(
+          fontSize: widget.fontsize,
           color: ResColor.white_60,
         ),
-        labelStyle: const TextStyle(
-          fontSize: 14,
+        labelStyle: TextStyle(
+          fontSize: widget.fontsize,
           color: ResColor.white,
         ),
-        label: widget.maxLines==-1?Text(
-          (widget?.label?.isNotEmpty == true)? " ${widget.label} " :"",
-          style:  const TextStyle(
-            fontSize: 14,
-            color: ResColor.white,
-          ),
-        ):null,
+        // label: (widget?.label?.isEmpty == true)
+        //     ? null
+        //     : Text(
+        //         (widget?.label?.isNotEmpty == true) ? " ${widget.label} " : "",
+        //         style: TextStyle(
+        //           fontSize: widget.fontsize,
+        //           color: ResColor.white,
+        //         ),
+        //       ),
+        label: /*widget.maxLines != -1 ||*/ widget?.label?.isNotEmpty == true
+            ? Text(
+                " ${widget.label} ",
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: ResColor.white,
+                ),
+              )
+            : null,
       ),
       cursorWidth: 2.0,
       //光标宽度
@@ -200,8 +227,8 @@ class JfTextState extends State<JfText> {
       // 光标圆角弧度
       cursorColor: Colors.white,
       //光标颜色
-      style: const TextStyle(
-        fontSize: 14,
+      style: TextStyle(
+        fontSize: widget.fontsize,
         color: ResColor.white,
       ),
       onChanged: (value) {

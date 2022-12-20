@@ -6,8 +6,8 @@ class RecyclXOR {
     if (data == null || key == null || data.length == 0 || key.length == 0) {
       return null;
     }
-    // print(data.length);
-    // print(data);
+    print(data.length);
+    print(data);
     Uint8List ret = Uint8List(data.length);
     try {
       Uint8List keylist = utf8.encode(key);
@@ -16,7 +16,6 @@ class RecyclXOR {
       for (int i = 0; i < length; i++) {
         int key_index = i % keylist.length;
         int key_item = keylist[key_index];
-
         if(ivlist!=null&&ivlist.length>0)
         {
           int iv_index = i % ivlist.length;
@@ -24,6 +23,7 @@ class RecyclXOR {
           key_item=key_item*iv_item;
         }
         ret[i] = data[i] ^ key_item;
+
         // print("${data[i]} ^ $key_item => ${ret[i]}");
       }
     } catch (e, s) {

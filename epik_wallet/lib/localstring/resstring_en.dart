@@ -477,6 +477,17 @@ Map<RSID, String> map_en = {
   RSID.expertview_17:"Your voted",//"您已投出",
   RSID.expertview_18:"Unlocking votes",//"解锁中",
   RSID.expertview_19:"Unlocked Votes",//"已解锁",
+  RSID.expertview_20:" (Submitted)",//" (已提交)",
+  RSID.expertview_21:" (Passed)",//" (已通过)",
+  RSID.expertview_22:" (Rejected)",//" (被拒绝)",
+  RSID.expertview_23:"Seek Help",//"求助",//
+  RSID.expertview_24:"Your application ID: %s\nYou can send your ID to other domain experts to help you pass the review",//"您的申请ID:%s，您可以把ID发送给其他领域专家帮助您通过审核。",//
+  RSID.expertview_25:"Help Others",//"助力",
+  RSID.expertview_26:"Entering the application ID of someone else's domain expert can help others pass the review.",//"输入他人领域专家的申请ID，可以帮助他人通过审核。",
+  RSID.expertview_27:"Nominate",
+  RSID.expertview_28:"Nominated",
+
+
   //ApplyExpertView
   RSID.applyexpertview_1:"Apply for domain expert",//"申请领域专家",
   RSID.applyexpertview_2:"Your application has been submitted. Please wait for the result.",//"您的申请已提交，请等待审核结果。",
@@ -538,6 +549,9 @@ Map<RSID, String> map_en = {
   RSID.expertinfoview_13:"Revoked",//"已撤回",
   RSID.expertinfoview_14:"Withdrawed",//"已提取",
   RSID.expertinfoview_15:"View",
+  RSID.expertinfoview_16:"Self", //自己
+  RSID.expertinfoview_17:"You have become a domain expert and can go to the domain expert background to publish tasks.",//"您已成为领域专家，可以去领域专家后台发布任务。",
+
 
   // Erc20ToEpkRecordView  erc20转epk 兑换记录
   RSID.eerv_1:"Swap Records",//"EPK exchange records",//"EPK兑换记录",
@@ -793,4 +807,58 @@ Map<RSID, String> map_en = {
   RSID.biometrics_iosgoToSettingsDescription:'Biometric authentication is not set up on your device. Please either enable Touch ID or Face ID on your phone.',// "您的设备上没有设置生物认证。请在您的手机上启用Touch ID或Face ID。", //
   RSID.biometrics_ioscancelButton: "OK",//"好的", //
 
+  //nodepool
+  RSID.nodepool_title:"Lease Node",//"Node Pool",
+  RSID.nodepool_create:"Create Node Pool",//"创建节点池",
+  RSID.nodepool_edit:"Edit",
+  RSID.nodepool_confirm_edit:"Confirm modification",//"确定修改",
+  RSID.nodepool_node_apy:"APY",//"年化收益率",
+  RSID.nodepool_node_count:"Total",//"总节点",
+  RSID.nodepool_node_actived:"Running",//"Actived",//"激活中",
+  RSID.nodepool_node_available:"Available",//"可用",
+  RSID.nodepool_node_lock:"Locked",//已锁定
+  RSID.nodepool_node_own:"Own",//自己的
+  RSID.nodepool_node_rent:"Lease",//"租赁",
+  RSID.nodepool_node_manage:"Manage",//"管理",
+  RSID.nodepool_node_insufficient_epk:"Insufficient EPK balance",//"EPK余额不足",//
+  RSID.nodepool_node_locked:"The application node is successful! \nNode ID: %s (copied to the clipboard)\nPlease complete the pledge within 1 hour, the timeout will be released.",//""申请节点成功！\n节点ID：%s（已复制到剪切板）\n请在1小时内完成质押，超时将被释放。""
+  RSID.nodepool_node_abort:"Pledge Later",//"放弃",
+  RSID.nodepool_node_palde:"Pledge Now",//"立刻质押",
+  RSID.nodepool_node_poolmanage:"Manage Node pool",//"管理节点池",
+
+  //NodePoolCreateView
+  RSID.npcv_1:"Name",//"名称",
+  RSID.npcv_2:"Please enter the name",//"请输入名称",
+  RSID.npcv_3:"Description",//"描述",
+  RSID.npcv_4:"Please enter the description",//"请输入描述",
+  RSID.npcv_5:"EPK Fee Address",//"EPK收益地址",
+  RSID.npcv_6:"Please enter the EPK fee address",//"请输入收益地址",
+  RSID.npcv_7:"Fee Percentage",//"费用比例",
+  RSID.npcv_8:"Node Pool Status",//节点池状态 "Whether To Enable",//"是否启用",
+  RSID.npcv_9:"Enable",//"启用",
+  RSID.npcv_10:"Disable",//"停用",
+  RSID.npcv_11:"Please set the fee percentage",//"请设费用比例",
+  RSID.npcv_12:"Created",//"已创建",
+  RSID.npcv_13:"Saved",//"已保存",
+
+  //NodePoolManageView
+  RSID.npmv_1:"Add Owner",//"添加Owner",
+  RSID.npmv_2:"Delete",//删除
+  RSID.npmv_3:"Submit the node that needs to transfer the pledge, and the node user will transfer the pledge to the target node according to these records.",//"提交需要转移质押的节点，节点用户会依据这些记录转移质押到新节点。",
+  RSID.npmv_4:'Original Minerids, separated by ","',//'输入原MinerID 多个用","分隔',
+  RSID.npmv_5:'Target Minerids, separated by ","',//'输入新MinerID 多个用","分隔',
+  RSID.npmv_6:"The number of MinerIDs needs to be same",//"MinerID数量需要相同",
+  RSID.npmv_7:"Submitted",//"已提交",
+  RSID.npmv_8:"Change Node",//"变更节点",
+
+  //NodePoolAddOwnerView
+  RSID.npaov_1:"Please enter the OwnerID",//"请输入OwnerID",
+  RSID.npaov_2:"Please copy the above code, sign in the epik daemon, and paste the signature below.",//请复制上述代码，在epik daemon上签名，并将签名粘贴到下方。
+  RSID.npaov_3:"Signature",//"签名数据",
+  RSID.npaov_4:"Please paste the signature",//"请输入签名数据",
+  RSID.npaov_5:"Added",//"已添加",
+
+  //RentNodeNeedTransferView
+  RSID.rnntv_1:"The leased node needs to be transferred",//"租赁节点需要转移",
+  RSID.rnntv_2:"Waiting Transfer",
 };

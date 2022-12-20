@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:badges/badges.dart';
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
@@ -11,10 +12,13 @@ import 'package:epikwallet/localstring/LocaleConfig.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_mainnet.dart';
+import 'package:epikwallet/logic/api/api_pool.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/CoinbaseInfo2.dart';
 import 'package:epikwallet/model/currencytype.dart';
+import 'package:epikwallet/model/nodepool/RentNodeTransferObj.dart';
 import 'package:epikwallet/utils/ClickUtil.dart';
+import 'package:epikwallet/utils/JsonUtils.dart';
 import 'package:epikwallet/utils/data/date_util.dart';
 import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
@@ -24,6 +28,8 @@ import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
 import 'package:epikwallet/views/mainview.dart';
+import 'package:epikwallet/views/nodepool/NodePoolListView.dart';
+import 'package:epikwallet/views/nodepool/RentNodeNeedTransferView.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:epikwallet/widget/list_view.dart';
@@ -33,7 +39,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 import '../model/CoinbaseInfo.dart';
-import '../utils/string_utils.dart';
 import '../utils/string_utils.dart';
 
 ///矿工
@@ -52,6 +57,11 @@ class MinerView2 extends BaseInnerWidget {
 }
 
 class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
+
+  //右上角租赁节点的开关
+  bool nodepool=false;
+
+
   List<String> headerdata = ["coinbase", "node", "owner"];
 
   CoinbaseInfo2 coinbase;
@@ -60,6 +70,8 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
   String balance_epk_str = "0";
   double balance_usdt = 0;
   String balance_usdt_str = "0";
+
+  List<RentNodeTransferObj> listRentNodeTransferObj = [];
 
   @override
   void initStateConfig() {
@@ -96,18 +108,13 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
 
   calcBalance() {
     if (AccountMgr().currentAccount != null && coinbase != null) {
-      balance_epk =
-          (coinbase?.balance?.Total_d ?? 0) + (coinbase?.pledged?.Total_d ?? 0);
+      balance_epk = (coinbase?.balance?.Total_d ?? 0) + (coinbase?.pledged?.Total_d ?? 0);
       // +(coinbase?.retrieve?.Total_d ?? 0);
       // print(coinbase?.balance?.Total_d);
       // print(coinbase?.pledged?.Total_d);
       // print(coinbase?.retrieve?.Total_d);
-      balance_usdt = (AccountMgr()
-                  ?.currentAccount
-                  ?.getCurrencyAssetByCs(CurrencySymbol.EPK)
-                  ?.price_usd ??
-              0) *
-          balance_epk;
+      balance_usdt =
+          (AccountMgr()?.currentAccount?.getCurrencyAssetByCs(CurrencySymbol.EPK)?.price_usd ?? 0) * balance_epk;
     } else {
       balance_epk = 0;
       balance_usdt = 0;
@@ -125,8 +132,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
 
   @override
   void dispose() {
-    eventMgr.remove(
-        EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
+    eventMgr.remove(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
     eventMgr.remove(EventTag.BALANCE_UPDATE, eventCallback_balance);
     // eventMgr.remove(EventTag.COINBASEINFO_UPDATE, eventmgr_callback);
     super.dispose();
@@ -159,7 +165,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
     }
 
     needwallet = false;
-    needwalletfull=false;
+    needwalletfull = false;
 
     int time_start = DateUtil.getNowDateMs();
 
@@ -168,70 +174,62 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
     if (frompull != true) setLoadingWidgetVisible(true);
 
     CoinbaseInfo cbi;
-    try{
+    try {
       String address = AccountMgr().currentAccount.epik_EPK_address;
-      ResultObj<String> robj_ci = await AccountMgr()
-          .currentAccount
-          .epikWallet
-          .coinbaseInfo(address);
-      if(robj_ci.isSuccess)
-      {
-        cbi= CoinbaseInfo.fromJson(jsonDecode(robj_ci.data));
-        if(StringUtils.isNotEmpty(cbi.Coinbase))
-        {
+      ResultObj<String> robj_ci = await AccountMgr().currentAccount.epikWallet.coinbaseInfo(address);
+      if (robj_ci.isSuccess) {
+        cbi = CoinbaseInfo.fromJson(jsonDecode(robj_ci.data));
+        if (StringUtils.isNotEmpty(cbi.Coinbase)) {
           dlog("coinbaseinfo=${robj_ci.data}");
-        }else{
-          cbi=null;
+        } else {
+          cbi = null;
         }
       }
-    }catch(e){
+    } catch (e) {
       print(e);
     }
 
-    HttpJsonRes hjr = await ApiMainNet.getCoinbase(
-        address: AccountMgr().currentAccount.epik_EPK_address);
+    HttpJsonRes hjr = await ApiMainNet.getCoinbase(address: AccountMgr().currentAccount.epik_EPK_address);
 
-    CbRetrieveAlone cbra=null;
-    ResultObj<String> robj_CbRetrieveAlone = await AccountMgr().currentAccount.epikWallet.retrievePledgeState(AccountMgr().currentAccount.epik_EPK_address);
+    CbRetrieveAlone cbra = null;
+    ResultObj<String> robj_CbRetrieveAlone =
+        await AccountMgr().currentAccount.epikWallet.retrievePledgeState(AccountMgr().currentAccount.epik_EPK_address);
     print(robj_CbRetrieveAlone?.data);
-    if(robj_CbRetrieveAlone?.isSuccess){
+    if (robj_CbRetrieveAlone?.isSuccess) {
       cbra = CbRetrieveAlone.fromJson(jsonDecode(robj_CbRetrieveAlone.data));
     }
 
     if (hjr?.code == 0) {
       coinbase = CoinbaseInfo2.fromJson(hjr.jsonMap);
-      if(cbi!=null)
-      {
-        try{
-          coinbase.balance.Total=cbi.Total;
-          coinbase.balance.Total_d=cbi.total_d;
-          coinbase.balance.Locked=cbi.Vesting;
-          coinbase.balance.Locked_d=cbi.vesting_d;
-          coinbase.balance.Unlocked=cbi.Vested;
-          coinbase.balance.Unlocked_d=cbi.vested_d;
-        }catch(e){
+      if (cbi != null) {
+        try {
+          coinbase.balance.Total = cbi.Total;
+          coinbase.balance.Total_d = cbi.total_d;
+          coinbase.balance.Locked = cbi.Vesting;
+          coinbase.balance.Locked_d = cbi.vesting_d;
+          coinbase.balance.Unlocked = cbi.Vested;
+          coinbase.balance.Unlocked_d = cbi.vested_d;
+        } catch (e) {
           print(e);
         }
       }
 
-      if(cbra!=null)
-        coinbase?.retrieve?.mergeCbRetrieveAlone(cbra);
-
+      if (cbra != null) coinbase?.retrieve?.mergeCbRetrieveAlone(cbra);
     } else {
       coinbase = null;
 
       //如果获取不到coinbase  就单独请求一下coinbase的id
       if (hjr?.code > 0) {
         try {
-          if (cbi!=null) {
+          if (cbi != null) {
             try {
               if (StringUtils.isNotEmpty(cbi.Coinbase)) {
                 Map<String, dynamic> j_Coinbase = {
                   "coinbase": {"ID": cbi.Coinbase},
                   "Balance": {
-                    "Total": cbi?.Total??"0",
-                    "Locked": cbi?.Vesting??"0",
-                    "Unlocked": cbi?.Vested??"0",
+                    "Total": cbi?.Total ?? "0",
+                    "Locked": cbi?.Vesting ?? "0",
+                    "Unlocked": cbi?.Vested ?? "0",
                   },
                 };
                 coinbase = CoinbaseInfo2.fromJson(j_Coinbase);
@@ -245,6 +243,15 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
         }
       }
     }
+
+    List<RentNodeTransferObj> _listRentNodeTransferObj = [];
+    HttpJsonRes hjr_rent_miner_trans = await ApiPool.myTransferList();
+    if (hjr_rent_miner_trans.code == 0) {
+      _listRentNodeTransferObj = JsonArray.parseList(
+          JsonArray.obj2List(hjr_rent_miner_trans.jsonMap["List"]), (json) => RentNodeTransferObj.fromJson(json));
+    }
+    listRentNodeTransferObj = _listRentNodeTransferObj;
+
     calcBalance();
 
     int time_end = DateUtil.getNowDateMs();
@@ -259,8 +266,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
       closeStateLayout();
     } else {
       errorBackgroundColor = Colors.transparent;
-      statelayout_margin =
-          EdgeInsets.only(top: getAppBarHeight() + getTopBarHeight());
+      statelayout_margin = EdgeInsets.only(top: getAppBarHeight() + getTopBarHeight());
       if (hjr?.code >= 0) {
         setErrorContent("coinbase not found");
       } else {
@@ -294,8 +300,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
               highlightColor: Colors.white24,
               splashColor: Colors.white24,
               onPressed: () {
-                eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX,
-                    main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
+                eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX, main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
               },
               child: Text(
                 RSID.main_bv_8.text, //"去创建钱包",
@@ -313,9 +318,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
           ],
         ),
       );
-    }
-    else if(needwalletfull)
-    {
+    } else if (needwalletfull) {
       widget = Container(
         alignment: Alignment.center,
         child: Column(
@@ -401,6 +404,20 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
               ),
             ),
           ),
+          if (nodepool && AccountMgr()?.currentAccount?.hasEpikWallet == true)
+            InkWell(
+              onTap: () {
+                ViewGT.showView(context, NodePoolListView());
+              },
+              child: Text(
+                RSID.nodepool_title.text, // "节点商店",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -460,8 +477,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
         Expanded(
           child: Text(
             "CoinBase",
-            style: const TextStyle(
-                fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
         Text(
@@ -505,21 +521,16 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
       children: [
         Text(
           RSID.main_wv_6.text + ": ", //"总资产",
-          style: const TextStyle(
-              fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
         ),
         Text(
           "${balance_epk_str ?? "--"} EPK",
-          style: const TextStyle(
-              fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
         ),
         Expanded(
           child: Text(
             "  (≈${balance_usdt_str ?? "--"}\$)",
-            style: const TextStyle(
-                fontSize: 12,
-                color: Colors.white60,
-                fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 12, color: Colors.white60, fontWeight: FontWeight.bold),
           ),
         ),
       ],
@@ -561,19 +572,13 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
               children: [
                 Text(
                   RSID.minerview2_3.text + ": ", //"可提余额"
-                  style: const TextStyle(
-                      fontSize: 17,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 Expanded(
                   child: Text(
                     "${StringUtils.formatNumAmount(coinbase?.balance?.Unlocked_d ?? 0, point: 2, supply0: false)} EPK",
                     // "${StringUtils.formatNumAmountLocaleUnit(coinbaseInfo?.vested_d ?? 0, context, point: 4, needZhUnit: false)} EPK",
-                    style: const TextStyle(
-                        fontSize: 17,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
                 // if ((coinbase?.balance?.Unlocked_d ?? 0) > 0)
@@ -585,22 +590,16 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
                   color_bg: Colors.transparent,
                   disabledColor: Colors.transparent,
                   side: BorderSide(
-                      width: 1,
-                      color: ((coinbase?.balance?.Unlocked_d ?? 0) > 0)
-                          ? ResColor.o_1
-                          : ResColor.white_60),
+                      width: 1, color: ((coinbase?.balance?.Unlocked_d ?? 0) > 0) ? ResColor.o_1 : ResColor.white_60),
                   bg_borderradius: BorderRadius.circular(4),
                   text: RSID.minerview2_4.text,
                   // "提现", Withdraw
                   textstyle: TextStyle(
-                    color: ((coinbase?.balance?.Unlocked_d ?? 0) > 0)
-                        ? ResColor.o_1
-                        : ResColor.white_60,
+                    color: ((coinbase?.balance?.Unlocked_d ?? 0) > 0) ? ResColor.o_1 : ResColor.white_60,
                     fontSize: 12,
                   ),
                   onclick: (lbtn) {
-                    if ((coinbase?.balance?.Unlocked_d ?? 0) > 0)
-                      onClickWithdrawCoinbase();
+                    if ((coinbase?.balance?.Unlocked_d ?? 0) > 0) onClickWithdrawCoinbase();
                   },
                 ),
               ],
@@ -624,8 +623,8 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
               "${(coinbase?.power?.getTotalRs() ?? "0")} / ${(coinbase?.TotalPower?.RawBytePower_rs ?? "0")} (${coinbase?.power_percent})"),
         ),
         Expanded(
-          child: getColumnKeyValue(RSID.minerview2_6.text,
-              "${StringUtils.formatNumAmount(coinbase?.pledged?.Total_d ?? 0, point: 2)} EPK"),
+          child: getColumnKeyValue(
+              RSID.minerview2_6.text, "${StringUtils.formatNumAmount(coinbase?.pledged?.Total_d ?? 0, point: 2)} EPK"),
           // "${StringUtils.formatNumAmountLocaleUnit(coinbase?.pledged?.Total_d ?? 0, context, point: 4, needZhUnit: false)} EPK"),
         ),
       ],
@@ -639,8 +638,8 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: getColumnKeyValue(RSID.minerview2_7.text,
-              "${StringUtils.formatNumAmount(coinbase?.pledged?.Mining_d ?? 0, point: 2)} EPK"),
+          child: getColumnKeyValue(
+              RSID.minerview2_7.text, "${StringUtils.formatNumAmount(coinbase?.pledged?.Mining_d ?? 0, point: 2)} EPK"),
           // "${StringUtils.formatNumAmountLocaleUnit(coinbase?.pledged?.Mining_d ?? 0, context, point: 4, needZhUnit: false)} EPK"),
         ),
         Expanded(
@@ -675,8 +674,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
         Expanded(
           child: Text(
             RSID.minerview2_9.text, //"节点数据",
-            style: const TextStyle(
-                fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
         InkWell(
@@ -688,8 +686,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
           },
           child: Text(
             RSID.minerview2_10.text, //"查看全部节点",
-            style: TextStyle(
-                fontSize: 14, color: ResColor.o_1, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 14, color: ResColor.o_1, fontWeight: FontWeight.bold),
           ),
         ),
       ],
@@ -755,6 +752,31 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
       ],
     ));
 
+    //提示租赁节点变更
+    if (listRentNodeTransferObj != null && listRentNodeTransferObj.length > 0) {
+      items.add(
+        InkWell(
+          onTap: () {
+            ViewGT.showView(context, RentNodeNeedTransferView(coinbase,listRentNodeTransferObj));
+          },
+          child: Container(
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+            child: Badge(
+              position: BadgePosition(top: 0, end: -10),
+              child: Text(
+                RSID.rnntv_1.text,//"租赁节点需要转移",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: ResColor.white,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Container(
       width: double.infinity,
       margin: EdgeInsets.fromLTRB(30, 0, 30, 10),
@@ -779,8 +801,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
         Expanded(
           child: Text(
             RSID.minerview2_17.text, //:"流量",
-            style: const TextStyle(
-                fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
         InkWell(
@@ -792,8 +813,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
           },
           child: Text(
             RSID.minerview2_18.text, //:"查看 Owner",
-            style: TextStyle(
-                fontSize: 14, color: ResColor.o_1, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 14, color: ResColor.o_1, fontWeight: FontWeight.bold),
           ),
         ),
       ],
@@ -805,8 +825,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
       children: [
         Text(
           RSID.minerview2_19.text + ": ", //:"总流量质押",
-          style: const TextStyle(
-              fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
         ),
         Expanded(
           child: Text(
@@ -815,8 +834,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
               coinbase?.retrieve?.Total_d ?? 0,
               point: 2,
             )} EPK",
-            style: const TextStyle(
-                fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
       ],
@@ -828,8 +846,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
       children: [
         Text(
           RSID.minerview2_20.text + ": ", //:"我的流量质押",
-          style: const TextStyle(
-              fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
         ),
         Expanded(
           child: Text(
@@ -838,8 +855,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
               coinbase?.retrieve?.Pledged_d ?? 0,
               point: 2,
             )} EPK",
-            style: const TextStyle(
-                fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
       ],
@@ -880,19 +896,13 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
               children: [
                 Text(
                   RSID.minerview2_3.text + ": ", //"已解锁"
-                  style: const TextStyle(
-                      fontSize: 17,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 Expanded(
                   child: Text(
                     "${StringUtils.formatNumAmount((coinbase?.retrieve_unlock_epoch ?? 0) <= 0 ? (coinbase?.retrieve?.Locked_d ?? 0) : 0, point: 2, supply0: false)} EPK",
                     // "${StringUtils.formatNumAmountLocaleUnit((coinbase?.retrieve_unlock_epoch ?? 0) <= 0 ? (coinbase?.retrieve?.Locked_d ?? 0) : 0, context, point: 4, needZhUnit: false)} EPK",
-                    style: const TextStyle(
-                        fontSize: 17,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
                 LoadingButton(
@@ -903,22 +913,16 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
                   color_bg: Colors.transparent,
                   disabledColor: Colors.transparent,
                   side: BorderSide(
-                      width: 1,
-                      color: (coinbase?.hasRetrieveUnlockEpk ?? false)
-                          ? ResColor.o_1
-                          : ResColor.white_60),
+                      width: 1, color: (coinbase?.hasRetrieveUnlockEpk ?? false) ? ResColor.o_1 : ResColor.white_60),
                   bg_borderradius: BorderRadius.circular(4),
                   text: RSID.minerview2_4.text,
                   // "提现", Withdraw
                   textstyle: TextStyle(
-                    color: (coinbase?.hasRetrieveUnlockEpk ?? false)
-                        ? ResColor.o_1
-                        : ResColor.white_60,
+                    color: (coinbase?.hasRetrieveUnlockEpk ?? false) ? ResColor.o_1 : ResColor.white_60,
                     fontSize: 12,
                   ),
                   onclick: (lbtn) {
-                    if (coinbase?.hasRetrieveUnlockEpk ?? false)
-                      onClickRetrieveWithdraw();
+                    if (coinbase?.hasRetrieveUnlockEpk ?? false) onClickRetrieveWithdraw();
                   },
                 ),
               ],
@@ -960,10 +964,8 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
           height: centerpading,
         ),
         textem
-            ? TextEm(value,
-                style: TextStyle(fontSize: 14, color: ResColor.white))
-            : Text(value,
-                style: TextStyle(fontSize: 14, color: ResColor.white)),
+            ? TextEm(value, style: TextStyle(fontSize: 14, color: ResColor.white))
+            : Text(value, style: TextStyle(fontSize: 14, color: ResColor.white)),
       ],
     );
     return InkWell(
@@ -982,18 +984,15 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
 
   /// 提取coinbase收益
   onClickWithdrawCoinbase() {
-    BottomDialog.simpleAuth(
-        context, AccountMgr().currentAccount.password, (value) async {
+    BottomDialog.simpleAuth(context, AccountMgr().currentAccount.password, (value) async {
       showLoadDialog("", touchOutClose: false, backClose: false);
 
-      ResultObj<String> robj =
-          await AccountMgr().currentAccount.epikWallet.coinbaseWithdraw();
+      ResultObj<String> robj = await AccountMgr().currentAccount.epikWallet.coinbaseWithdraw();
 
       closeLoadDialog();
 
       if (robj?.isSuccess) {
-        String cid = robj
-            .data; //bafy2bzaceaa4fwwhrn5oqjsxe5vumlibispulwdzf4uskh4silxlfo4qh6cu6
+        String cid = robj.data; //bafy2bzaceaa4fwwhrn5oqjsxe5vumlibispulwdzf4uskh4silxlfo4qh6cu6
 
         MessageDialog.showMsgDialog(
           context,
@@ -1030,10 +1029,8 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
 
     closeInput();
 
-    BottomDialog.simpleAuth(
-        context, AccountMgr().currentAccount.password, (value) async {
-      LoadingDialog.showLoadDialog(context, "",
-          touchOutClose: false, backClose: false);
+    BottomDialog.simpleAuth(context, AccountMgr().currentAccount.password, (value) async {
+      LoadingDialog.showLoadDialog(context, "", touchOutClose: false, backClose: false);
 
       ResultObj<String> robj = await AccountMgr()
           .currentAccount
@@ -1043,8 +1040,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
       LoadingDialog.cloasLoadDialog(context);
 
       if (robj?.isSuccess) {
-        String cid = robj
-            .data; //bafy2bzaceaa4fwwhrn5oqjsxe5vumlibispulwdzf4uskh4silxlfo4qh6cu6
+        String cid = robj.data; //bafy2bzaceaa4fwwhrn5oqjsxe5vumlibispulwdzf4uskh4silxlfo4qh6cu6
         setState(() {});
 
         MessageDialog.showMsgDialog(

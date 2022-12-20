@@ -177,7 +177,7 @@ class MinerPledgeWithdrawViewState extends State<MinerPledgeWithdrawView> {
         //获取焦点时,启用的键盘类型
         maxLines: 1,
 //              maxLength: 20, //允许输入的字符长度/ 右下角有数量提示
-        maxLengthEnforced: true,
+//         maxLengthEnforced: true,
         //是否允许输入的字符长度超过限定的字符长度
         obscureText: false,
         //是否是密码

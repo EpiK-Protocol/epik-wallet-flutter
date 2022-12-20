@@ -79,7 +79,7 @@ class QRCaptureView(private val registrar: PluginRegistry.Registrar, id: Int) :
                 requestingPermission = true
                 registrar
                         .activity()
-                        .requestPermissions(
+                        ?.requestPermissions(
                                 arrayOf(Manifest.permission.CAMERA),
                                 CAMERA_REQUEST_ID)
             }
@@ -88,7 +88,7 @@ class QRCaptureView(private val registrar: PluginRegistry.Registrar, id: Int) :
 
     private fun hasCameraPermission(): Boolean {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
-                activity.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                activity?.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
     }
 
 
@@ -122,7 +122,7 @@ class QRCaptureView(private val registrar: PluginRegistry.Registrar, id: Int) :
 
         barcode.resume()
 
-        registrar.activity().application.registerActivityLifecycleCallbacks(
+        registrar.activity()?.application?.registerActivityLifecycleCallbacks(
          object : Application.ActivityLifecycleCallbacks {
              override fun onActivityPaused(p0: Activity?) {
                  if (p0 == registrar.activity()) {

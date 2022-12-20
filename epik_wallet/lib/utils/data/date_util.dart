@@ -131,6 +131,10 @@ class DateUtil {
     return DateTime.now().millisecondsSinceEpoch;
   }
 
+  static int getNowDateS() {
+    return (DateTime.now().millisecondsSinceEpoch/1000).toInt();
+  }
+
   /// get Now Date Str.(yyyy-MM-dd HH:mm:ss)
   static String getNowDateStr() {
     return getDateStrByDateTime(DateTime.now());
