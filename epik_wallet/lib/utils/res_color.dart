@@ -52,14 +52,14 @@ class ResColor {
     end: Alignment.bottomRight,
   );
 
-  static const LinearGradient lg_2 = LinearGradient(
-    colors: [Color(0xff4CC8D4), Color(0xff4698F0)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+  static const LinearGradient lg_1_1 = LinearGradient(
+    colors: [Color(0xffF2C17C), Color(0xffD1851A)],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
   );
 
-  static const LinearGradient lg_7 = LinearGradient(
-    colors: [Color(0xff555555), Color(0xff444444)],
+  static const LinearGradient lg_2 = LinearGradient(
+    colors: [Color(0xff4CC8D4), Color(0xff4698F0)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -86,6 +86,18 @@ class ResColor {
     colors: [Color(0xffF2C17C), Color(0x00F2C17C)],
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
+  );
+
+  static const LinearGradient lg_7 = LinearGradient(
+    colors: [Color(0xff555555), Color(0xff444444)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient lg_8 = LinearGradient(
+    colors: [Color(0x00d0a14a),Color(0x10d0a14a), Color(0x42d0a14a)],
+    begin: Alignment.bottomLeft,
+    end: Alignment.topRight,
   );
 
 

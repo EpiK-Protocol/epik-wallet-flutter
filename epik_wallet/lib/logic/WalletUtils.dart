@@ -22,8 +22,6 @@
 //
 //  /// 助记词生成种子
 //  static Future<Uint8List> createSeedFormMnemonic(String mnemonic) async {
-//    //    Uint8List seed = bip39.mnemonicToSeed(
-//    //        "equip will roof matter pink blind book anxiety banner elbow sun young");
 //    Uint8List seed = bip39.mnemonicToSeed(mnemonic);
 //    return seed;
 //  }

@@ -1,4 +1,4 @@
-import 'dart:ui';
+ import 'dart:ui';
 
 import 'package:epikwallet/main.dart';
 import 'package:epikwallet/utils/sp_utils/sp_utils.dart';
@@ -11,7 +11,8 @@ class LocaleConfig {
   static Locale locale;
 
 
-  static Locale get currentAppLocale {
+  static Locale get
+  currentAppLocale {
     try {
       return Localizations.localeOf(appContext);
     } catch (e, s) {

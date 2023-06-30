@@ -36,11 +36,11 @@ class CurrencyAsset {
   });
 
   double getBalanceDouble() {
-    double b = StringUtils.parseDouble(balance.replaceAll(",", ""), 0);
+    double b = StringUtils.parseDouble(balance?.replaceAll(",", ""), 0);
     return b;
   }
 
   double getUsdValue() {
-    return getBalanceDouble() * price_usd;
+    return getBalanceDouble() * (price_usd??0);
   }
 }

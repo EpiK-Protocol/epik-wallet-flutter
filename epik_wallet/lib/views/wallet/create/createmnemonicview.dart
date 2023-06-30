@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/common_function.dart';
@@ -11,9 +9,7 @@ import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/views/wallet/create/createwalletview.dart';
 import 'package:epikwallet/views/wallet/create/verifymnemonicview.dart';
 import 'package:epikwallet/widget/LoadingButton.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class CreateMnemonicView extends BaseWidget {
   CreateAccountModel _CreateAccountModel;
@@ -33,21 +29,6 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
   @override
   void initState() {
     super.initState();
-//    WalletUtils.createSeedFormMnemonic(
-//            "equip will roof matter pink blind book anxiety banner elbow sun young")
-//        .then((seed) async {
-//
-//       HDWallet hdWallet = await WalletUtils.createHdWallet(seed, Bip32Path.filecoin);
-//       String base58 = hdWallet.base58Priv;
-//        dlog("base58="+base58);
-//       HDWallet hdWallet2 = HDWallet.fromBase58(base58);
-//        dlog("hdWallet2.address = ${hdWallet2.address}");
-//        dlog("hdWallet2.pubKey = ${hdWallet2.pubKey}");
-//        dlog("hdWallet2.privkey = ${hdWallet2.privKey}");
-//        dlog("hdWallet2.wif = ${hdWallet2.wif}");
-//        dlog("hdWallet2.networktype = ${hdWallet2.network.toString()}");
-//
-//    });
   }
 
   @override
@@ -170,11 +151,27 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
     if (mnemonic_list != null) {
       mnemonic_list.forEach((text) {
         items.add(
-          FlatButton(
-            highlightColor: Colors.white24,
-            splashColor: Colors.white24,
+          // FlatButton(
+          //   highlightColor: Colors.white24,
+          //   splashColor: Colors.white24,
+          //   onPressed: () {},
+          //   padding: EdgeInsets.zero,
+          //   child: Text(
+          //     text,
+          //     style: TextStyle(
+          //       color: ResColor.b_1,
+          //       fontSize: 14,
+          //       fontWeight: FontWeight.bold,
+          //     ),
+          //   ),
+          //   color: Colors.white,
+          //   //Color(0xff1A1C1F),
+          //   shape: RoundedRectangleBorder(
+          //     borderRadius: BorderRadius.all(Radius.circular(4)),
+          //   ),
+          // ),
+          TextButton(
             onPressed: () {},
-            padding: EdgeInsets.zero,
             child: Text(
               text,
               style: TextStyle(
@@ -183,10 +180,40 @@ class _CreateMnemonicViewState extends BaseWidgetState<CreateMnemonicView> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            color: Colors.white,
-            //Color(0xff1A1C1F),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(4)),
+            style: ButtonStyle(
+              //padding
+              padding: MaterialStateProperty.all(EdgeInsets.zero),
+              //阴影
+              elevation: MaterialStateProperty.all(0),
+              //背景色
+              backgroundColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+                // case MaterialState.hovered: //悬停：
+                // case MaterialState.focused://焦点
+                // case MaterialState.pressed://按住
+                // case MaterialState.dragged://拖拽
+                // case MaterialState.selected://选中
+                // case MaterialState.disabled://禁用
+                // case MaterialState.error://错误
+                if (states.contains(MaterialState.disabled)) {
+                  //禁用时
+                  return Colors.white;
+                } else if (states.contains(MaterialState.pressed)) {
+                  //按住时
+                  return Colors.white;
+                }
+                //默认
+                return Colors.white;
+              }),
+              //前景色 控制btn里的文本和icon颜色
+              // foregroundColor:MaterialStateProperty.all(Colors.white),
+              //设置水波纹颜色
+              overlayColor: MaterialStateProperty.all(Colors.white24),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  // side: widget.side, //描边
+                ),
+              ),
             ),
           ),
         );

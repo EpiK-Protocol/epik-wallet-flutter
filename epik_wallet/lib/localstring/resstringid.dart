@@ -135,6 +135,7 @@ enum RSID {
   mainview_4,
   mainview_5,
   mainview_6,
+  mainview_7,
   //MiningView 首页_挖矿
   main_mv_1,
   main_mv_2,
@@ -182,6 +183,35 @@ enum RSID {
   main_bv_13,
   main_bv_14,
   main_bv_15,
+  //AI Bots 首页_AI机器人
+  main_abv_1, // AI Bot Store
+  main_abv_2, // Points
+  main_abv_3, // (1 Point = xx EPK/BSC-EPK/ERC20-EPK)
+  main_abv_4, // Recharge
+  main_abv_5, // History
+  main_abv_6, // Latest
+  main_abv_7, // Recharge Points
+  main_abv_8, // My Points:
+  main_abv_9, // Type
+  main_abv_10, // Amount
+  main_abv_11, // Wallet Balance
+  main_abv_12, // Use Cid or TxHash to claim points
+  main_abv_13, //All AI Bots
+  main_abv_14,//Confirm payment
+  main_abv_15,// Pay Points to
+  main_abv_16,// Descriptions
+  main_abv_17,// Insufficient balance, please recharge first
+  main_abv_18,//"%s ≤ Amount ≤ %s",
+  main_abv_19,//正在发起交易
+  main_abv_20,//交易已提交，等待交易确认后Point会到账，请稍后刷新Point余额。
+  main_abv_21,//Recharged
+  main_abv_22,//Consumed
+  main_abv_23,//Bills
+  mani_abv_24,//置顶
+
+
+
+
 
   //----------------------------------------views.mining.*
   //MiningProfitView 预挖收益

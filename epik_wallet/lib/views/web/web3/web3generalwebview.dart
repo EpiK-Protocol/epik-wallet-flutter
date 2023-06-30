@@ -21,6 +21,7 @@ import 'package:epikwallet/views/web/web3/Web3SendTransactionView.dart';
 import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:epikwallet/widget/custom_checkbox.dart';
 import 'package:epikwallet/widget/rect_getter.dart';
+import 'package:epikwallet/widget/text/BlinkTextView.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -761,6 +762,17 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
             bottom: 0,
             child: getWebView2(),
           ),
+
+          if(loadprogress <100)
+            Positioned(
+                child:Scaffold(
+                  backgroundColor: ResColor.b_1,
+                  body: Center(
+                    child: BlinkTextView("Loading..."),
+                  ),
+                ),
+            ),
+
           if (loadprogress > 0 && loadprogress < 100)
             Positioned(
               left: 0,

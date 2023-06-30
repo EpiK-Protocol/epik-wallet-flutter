@@ -16,6 +16,11 @@ rootProject.allprojects {
     repositories {
         google()
         jcenter()
+
+        // aar 做私有仓
+        flatDir {
+            dirs project(':epikplugin').file('libs') //epikplugin是作为flutter插件时的名字
+        }
     }
 }
 
@@ -33,5 +38,8 @@ android {
 }
 
 dependencies{
-    implementation files('libs/epik.aar')
+//    implementation files('libs/epik.aar') //主工程gradle升级后4.1.1后 不能直接引用aar
+    api(name: 'epik', ext: 'aar')//引入本地私有仓库
+
+
 }

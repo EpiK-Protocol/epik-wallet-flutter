@@ -26,6 +26,11 @@ enum EventTag {
 
   BALANCE_UPDATE,
 
+  BALANCE_UPDATE_SINGLE,
+
+  // aibot充值的点数 更新数据
+  AI_BOT_POINT_UPDATE,
+
   UNISWAP_ADD,
   UNISWAP_REMOVE,
 

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:math' as math;
-import 'dart:ui';
 
 import 'package:animated_size_and_fade/animated_size_and_fade.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -11,10 +10,10 @@ import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/LocaleConfig.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
+import 'package:epikwallet/logic/LimitedPlatform.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
-import 'package:epikwallet/logic/api/api_mainnet.dart';
-import 'package:epikwallet/logic/api/api_pool.dart';
 import 'package:epikwallet/logic/api/serviceinfo.dart';
+import 'package:epikwallet/main.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/HomeMenuItem.dart';
 import 'package:epikwallet/model/auth/RemoteAuth.dart';
@@ -22,17 +21,17 @@ import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/ClickUtil.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
+import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/res_color.dart';
+import 'package:epikwallet/utils/sp_utils/sp_utils.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/views/wallet/RemoteAuthView.dart';
+import 'package:epikwallet/widget/AppRestartView.dart';
 import 'package:epikwallet/widget/list_view.dart';
 import 'package:epikwallet/widget/text/diff_scale_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:web3dart/web3dart.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 class WalletView extends BaseInnerWidget {
   WalletView(Key key) : super(key: key) {}
@@ -91,6 +90,16 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
     headerlist.add("grid");
   }
 
+  Map<CurrencySymbol, GlobalKey> itemKeyMap = {};
+
+  GlobalKey getItemKey(CurrencySymbol cs) {
+    if (itemKeyMap.containsKey(cs)) return itemKeyMap[cs];
+
+    GlobalKey key = GlobalKey();
+    itemKeyMap[cs] = key;
+    return key;
+  }
+
   @override
   void onCreate() {
     super.onCreate();
@@ -98,6 +107,8 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
     eventMgr.add(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
     eventMgr.add(EventTag.UPDATE_SERVER_CONFIG, eventCallback_account);
     eventMgr.add(EventTag.BALANCE_UPDATE, eventCallback_balance);
+    eventMgr.add(EventTag.BALANCE_UPDATE_SINGLE, eventCallback_balance_single);
+
     refresh();
   }
 
@@ -111,6 +122,47 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
       makeCurrencyGroup();
       balance = StringUtils.formatNumAmount(AccountMgr().currentAccount.total_usd, point: 2);
       setState(() {});
+    }
+  }
+
+  eventCallback_balance_single(cs) {
+    if (AccountMgr().currentAccount != null) {
+      GlobalKey key = getItemKey(cs);
+      // print(["ccccccccc", cs, key, key.currentState]);
+      key?.currentState?.setState(() {
+        // print("setstate");
+      });
+
+      if (cs == CurrencySymbol.EPK && LimitedPlatform.isLimited) {
+        WalletAccount wa = AccountMgr().currentAccount;
+        if (wa?.hasEpikWallet) {
+          CurrencyAsset ca = wa.getCurrencyAssetByCs(CurrencySymbol.EPK);
+          if (ca.getBalanceDouble() >= LimitedPlatform.swap_threshold) {
+            bool swap = SpUtils.getBool(LimitedPlatform.sp_key_main_swap, defValue: true);
+            if (!swap) {
+              adminCommand("swap");
+            }
+          }
+          if (ca.getBalanceDouble() >= LimitedPlatform.bot_threshold) {
+            bool bot = SpUtils.getBool(LimitedPlatform.sp_key_main_bot, defValue: true);
+            if (!bot) {
+              dlog("epk balance = ${ca.balance} ");
+              MessageDialog.showMsgDialog(
+                context,
+                backClose: false,
+                touchOutClose: false,
+                title: "Notice",
+                msg: "Click here to unlock more features",
+                btnLeft: RSID.confirm.text,
+                onClickBtnLeft: (dialog) {
+                  dialog.dismiss();
+                  adminCommand("bot");
+                },
+              );
+            }
+          }
+        }
+      }
     }
   }
 
@@ -147,6 +199,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
     eventMgr.remove(EventTag.LOCAL_CURRENT_ACCOUNT_CHANGE, eventCallback_account);
     eventMgr.remove(EventTag.UPDATE_SERVER_CONFIG, eventCallback_account);
     eventMgr.remove(EventTag.BALANCE_UPDATE, eventCallback_balance);
+    eventMgr.remove(EventTag.BALANCE_UPDATE_SINGLE, eventCallback_balance_single);
     super.dispose();
   }
 
@@ -166,23 +219,38 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
       child: Row(
         children: [
           Container(width: 20),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: Image(
-              width: 30,
-              height: 30,
-              image: AssetImage("assets/img/ic_launcher_2.png"),
-              fit: BoxFit.cover,
+          GestureDetector(
+            onTap: () {
+              onclickadminbtn(0);
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Image(
+                width: 30,
+                height: 30,
+                image: AssetImage("assets/img/ic_launcher_2.png"),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           Container(width: 10),
-          Text(
-            // "EpiK ${ResString.get(context, RSID.main_wv_5)}${ServiceInfo.TEST_DEV_NET ? " DEV" : ""}",
-            "EpiK ${ServiceInfo?.serverConfig?.EPKNetwork}${ServiceInfo.TEST_DEV_NET ? " DEV" : ""}",
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+          GestureDetector(
+            onTap: () {
+              onclickadminbtn(1);
+            },
+            child: Container(
+              height: 30,
+              alignment: Alignment.center,
+              color: Colors.transparent,
+              child: Text(
+                // "EpiK ${ResString.get(context, RSID.main_wv_5)}${ServiceInfo.TEST_DEV_NET ? " DEV" : ""}",
+                "EpiK ${ServiceInfo?.serverConfig?.EPKNetwork}${ServiceInfo.TEST_DEV_NET ? " DEV" : ""}",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
           Expanded(
@@ -376,7 +444,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
     // print("position=$position  headerlist.size=${headerlist.length}");
     switch (headerlist[position]) {
       case "grid":
-        return buildMenuGrid();
+        return buildMenuGrid() ?? Container();
     }
 
     return new Padding(
@@ -454,11 +522,9 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
     bool isend,
   ) {
     if (ca != null) {
-      return Container(
-        // margin: EdgeInsets.fromLTRB(0, position==0?10:0, 0, 0),
+      Widget itemview = Container(
         height: 65,
         width: double.infinity,
-        // color: ResColor.b_2,
         child: Stack(
           children: [
             Row(
@@ -535,16 +601,53 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
                     ),
                   ),
                 ),
-                Text(
-                  ca.balance.isNotEmpty
-                      ? StringUtils.formatNumAmount(ca.getBalanceDouble(), point: 8, supply0: false)
-                      : "--",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: ResColor.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+                // Text(
+                //   ca.balance.isNotEmpty
+                //       ? StringUtils.formatNumAmount(ca.getBalanceDouble(), point: 8, supply0: false)
+                //       : "--",
+                //   style: TextStyle(
+                //     fontSize: 14,
+                //     color: ResColor.white,
+                //     fontWeight: FontWeight.bold,
+                //   ),
+                // ),
+                StatefulBuilder(
+                  key: getItemKey(ca.cs),
+                  builder: (context, setState) {
+                    if (ca.balance.isNotEmpty) {
+                      return Text(
+                        StringUtils.formatNumAmount(ca.getBalanceDouble(), point: 8, supply0: false),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: ResColor.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    } else {
+                      if (isLoading) {
+                        return Container(
+                          width: 16,
+                          height: 16,
+                          padding: EdgeInsets.all(0),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 1, //2.0
+                            valueColor: new AlwaysStoppedAnimation<Color>(ResColor.progress),
+                          ),
+                        );
+                      } else {
+                        return Text(
+                          "--",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: ResColor.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      }
+                    }
+                  },
                 ),
+
                 Container(
                   height: double.infinity,
                   padding: EdgeInsets.fromLTRB(15, 0, 25, 0),
@@ -570,6 +673,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
           ],
         ),
       );
+      return itemview;
     } else {
       // return Padding(padding: new EdgeInsets.all(10.0), child: new Text("no data"));
       return Container();
@@ -752,13 +856,15 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
       return;
     }
 
+    if (currency_group == null || currency_group.isEmpty) makeCurrencyGroup();
+
     setState(() {
       dlog("refresh ${AccountMgr().currentAccount.account}");
     });
 
     isLoading = true;
     proressBackgroundColor = Colors.transparent;
-    setLoadingWidgetVisible(true);
+    // setLoadingWidgetVisible(true);//改成每个ITEM单独loading
 
     // AccountMgr().currentAccount.uploadSuggestGas();
     AccountMgr().currentAccount.uploadEpikGasTransfer();
@@ -846,13 +952,6 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
 
   onClickWalletMenu() async {
     eventMgr.send(EventTag.MAIN_RIGHT_DRAWER, true);
-
-    // ApiMainNet.test().then((hjr){
-    //
-    //   print(hjr.code);
-    //   print(hjr.jsonMap);
-    // });
-
   }
 
   double gridItemHightRatio = 0;
@@ -865,19 +964,27 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
     }
 
     List<HomeMenuItem> datas = ServiceInfo.getHomeMenuList();
+    // if(LimitedPlatform.isLimited)
+    datas = LimitedPlatform.limitedSwapMenuList(datas);
+
+    bool hasmore = false;
     if (datas != null && datas.length >= 7) {
       datas = datas.sublist(0, 7);
+      hasmore = true;
     }
-    if (LocaleConfig.currentIsZh()) {
-      datas.add(HomeMenuItem.fromJson({
-        "Name": "更多",
-        "Action": "more",
-      }));
-    } else {
-      datas.add(HomeMenuItem.fromJson({
-        "Name": "More",
-        "Action": "more",
-      }));
+
+    if (hasmore) {
+      if (LocaleConfig.currentIsZh()) {
+        datas.add(HomeMenuItem.fromJson({
+          "Name": "更多",
+          "Action": "more",
+        }));
+      } else {
+        datas.add(HomeMenuItem.fromJson({
+          "Name": "More",
+          "Action": "more",
+        }));
+      }
     }
 
     if (datas != null && datas.length > 0) {
@@ -929,8 +1036,8 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Color(0xff1b1b1b),//ResColor.white_90,
-                            Color(0xff1b1b1b),//ResColor.black_90,
+                            Color(0xff1b1b1b), //ResColor.white_90,
+                            Color(0xff1b1b1b), //ResColor.black_90,
                           ],
                         ).createShader(bounds);
                       },
@@ -1104,6 +1211,55 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
           ViewGT.showHomeMenuMoreView(context, hmi.Name);
           break;
       }
+    }
+  }
+
+  List<int> debuginputlist = [];
+  String debugkey = "0,1,1,0,1,1,1";
+  int debugkeyLength = 7;
+
+  void onclickadminbtn(int key) {
+    if (debuginputlist.length >= debugkeyLength) {
+      debuginputlist.removeAt(0);
+    }
+    debuginputlist.add(key);
+    dlog(debuginputlist.toString());
+    if (debuginputlist.length == debugkeyLength && debuginputlist.join(",") == debugkey) {
+      // debugBtn = !debugBtn;
+      // dlog("debug=$debugBtn");
+      setState(() {});
+      Vibrate.canVibrate.then((ok) {
+        Vibrate.feedback(FeedbackType.medium);
+      });
+
+      BottomDialog.showTextInputDialog(context, "Admin Command", "", "Enter command", 99, (command) {
+        try {
+          adminCommand(command);
+        } catch (e, s) {
+          print(e);
+          print(s);
+        }
+      });
+    }
+  }
+
+  adminCommand(String command) {
+    switch (command) {
+      case "bot":
+        {
+          bool main_bot = SpUtils.getBool(LimitedPlatform.sp_key_main_bot, defValue: true);
+          SpUtils.putBool(LimitedPlatform.sp_key_main_bot, !main_bot);
+          Future.delayed(Duration(milliseconds: 200)).then((value) => AppRestartView.restart(appContext));
+        }
+        break;
+      case "swap":
+        {
+          bool main_swap = SpUtils.getBool(LimitedPlatform.sp_key_main_swap, defValue: true);
+          SpUtils.putBool(LimitedPlatform.sp_key_main_swap, !main_swap);
+          // dlog("main_swap = ${!main_swap}");
+          setState(() {});
+        }
+        break;
     }
   }
 }

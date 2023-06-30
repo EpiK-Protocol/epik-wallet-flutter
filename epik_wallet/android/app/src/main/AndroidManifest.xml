@@ -67,5 +67,26 @@
             android:name="flutterEmbedding"
             android:value="2" />
         <meta-data android:name="android.max_aspect" android:value="2.5" />
+
+        <provider
+            android:name="com.pichillilorenzo.flutter_inappwebview.InAppWebViewFileProvider"
+            android:authorities="${applicationId}.flutter_inappwebview.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+<!--        <provider-->
+<!--            android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"-->
+<!--            android:authorities="${applicationId}.flutter_downloader.provider"-->
+<!--            android:exported="false"-->
+<!--            android:grantUriPermissions="true">-->
+<!--            <meta-data-->
+<!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
+<!--                android:resource="@xml/provider_paths"/>-->
+<!--        </provider>-->
+
     </application>
 </manifest>

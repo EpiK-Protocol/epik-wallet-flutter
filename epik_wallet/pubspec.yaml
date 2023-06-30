@@ -11,7 +11,7 @@ description: EpiK Portal
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.3.0+130
+version: 1.3.2+132
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -39,7 +39,7 @@ dependencies:
   rx_command: ^6.0.1 #^5.0.0
   # toast弹出提示工具
   fluttertoast: ^3.1.0
-  # 状态管理Provider
+  # 状态管理Providerx
   # provider: ^3.1.0
   # 第三方路由
   fluro: ^1.3.4
@@ -57,8 +57,9 @@ dependencies:
   crypto: ^3.0.0 #^2.1.3
 
   # webview插件
-  flutter_inappwebview: ^5.1.0+4 #^4.0.0+4
-  webview_flutter: ^2.0.0 #^0.3.19+9 #^2.0.2
+  flutter_inappwebview: ^5.4.3+8  #^5.1.0+4 #^4.0.0+4
+  # 浏览器里下载文件  https://pub.dev/packages/flutter_downloader    android 和ios 都需要特殊处理
+#  flutter_downloader: ^1.10.2
 
   # 翻页轮播 banner 或者大的页面  横竖都可以 还有动画
   # https://github.com/best-flutter/flutter_swiper/blob/master/README-ZH.md
@@ -110,7 +111,8 @@ dependencies:
   # <key>NSPhotoLibraryAddUsageDescription</key>
 
   # 权限申请----------------------------
-  permission_handler: ^8.1.6 #^5.0.1
+  #https://pub.dev/packages/permission_handler
+  permission_handler: ^10.2.0 #^8.1.6 #^5.0.1   #^10.2.0 todo ios 需要按文档适配
   # android
   # gradle.properties
   #   android.useAndroidX=true
@@ -130,7 +132,7 @@ dependencies:
 
   #全局 dialog 弹窗 封装 ----------------
   #https://pub.dev/packages/flutter_custom_dialog#-readme-tab-
-  flutter_custom_dialog: ^1.0.20
+  flutter_custom_dialog: ^1.3.0 #^1.0.20
 
   #日历 日程表---------------------------
   #table_calendar: ^2.2.3
@@ -181,7 +183,7 @@ dependencies:
   # charts_flutter: ^0.9.0
 
   # 扩展NestedScrollView 解决一些坑 https://github.com/fluttercandies/extended_nested_scroll_view/blob/master/README-ZH.md
-  extended_nested_scroll_view: ^3.0.0
+  extended_nested_scroll_view: ^6.0.0 #^3.0.0
 
 #  path_provider: 1.6.14
   convert: ^3.0.1
@@ -225,6 +227,7 @@ dependencies:
 
   # 指纹 faceid-----------------------
   local_auth: ^1.1.10
+
 
 #  vm_service: ^9.4.0
 
@@ -277,6 +280,8 @@ flutter:
     - assets/img/ic_main_menu_expert_s.png
     - assets/img/ic_main_menu_swap_n.png
     - assets/img/ic_main_menu_swap_s.png
+    - assets/img/ic_main_menu_aibots_n.png
+    - assets/img/ic_main_menu_aibots_s.png
     - assets/img/ic_main_menu_wallet_n.png
     - assets/img/ic_checkmark.png
     - assets/img/ic_add_circle.png

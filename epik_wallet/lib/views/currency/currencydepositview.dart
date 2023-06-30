@@ -347,7 +347,7 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
 
       saving = true;
 
-      Permission permission = Platform.isIOS ? Permission.photos : Permission.storage;
+      Permission permission = Platform.isIOS ? Permission.photosAddOnly : Permission.storage;
       PermissionStatus pstatus = await permission.request();
       if (!pstatus.isGranted) {
         openAppSettings();

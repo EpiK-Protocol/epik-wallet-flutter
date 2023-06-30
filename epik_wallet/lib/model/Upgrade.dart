@@ -12,11 +12,14 @@ class Upgrade {
   String latest_version = ""; //: "1.0.0",
   /// 强制升级版本
   String required_version = ""; //: "1.0.1",
+  ///审核版本
+  String approvaling_ver = ""; // ios正在审核的版本 "1.3.1"
   String description = ""; //: "更新描述", 暂无字段
   String upgrade_url = ""; //: "https://cdn.aivideo.tech/apk/AiInvestment.apk"
 
   int latest_version_num = 100;
   int required_version_num = 100;
+  int approvaling_ver_num = 0;
 
   bool needUpgrade = false;
   bool needRequired = false;
@@ -27,10 +30,9 @@ class Upgrade {
 
   parseJson(Map<String, dynamic> json) {
     try {
-      latest_version =
-          StringUtils.parseString(json["LatestVersion"], latest_version);
-      required_version =
-          StringUtils.parseString(json["RequiredVersion"], required_version);
+      latest_version = StringUtils.parseString(json["LatestVersion"], latest_version);
+      required_version = StringUtils.parseString(json["RequiredVersion"], required_version);
+      approvaling_ver = StringUtils.parseString(json["approvaling_ver"], "0");
       description = StringUtils.parseString(json["description"], "");
       upgrade_url = StringUtils.parseString(json["UpdateURL"], upgrade_url);
       if (StringUtils.isEmpty(latest_version)) {
@@ -38,6 +40,7 @@ class Upgrade {
       }
       latest_version_num = version2Num(latest_version);
       required_version_num = version2Num(required_version);
+      approvaling_ver_num = version2Num(approvaling_ver);
     } catch (e) {
       print("Upgrade.fromJson error");
       print(e);
@@ -55,13 +58,12 @@ class Upgrade {
     if (needRequired) needUpgrade = needRequired;
 
     // todo test
-   // needUpgrade = true;
-   // needRequired= true;
+    // needUpgrade = true;
+    // needRequired= true;
 
     if (StringUtils.isEmpty(description)) {
 //      description = "有新版本V${latest_version}${needRequired?"需要升级\n如不升级可能会影响正常功能":"可以升级\n是否现在升级?"}";
-      description = ResString.get(appContext, RSID.upgrade_des,
-          replace: ["V$latest_version"]);
+      description = ResString.get(appContext, RSID.upgrade_des, replace: ["V$latest_version"]);
       if (needRequired) {
         description += ResString.get(appContext, RSID.upgrade_des_1);
       } else {

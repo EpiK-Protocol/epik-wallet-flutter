@@ -87,16 +87,16 @@ class ServiceInfo {
     return TEST_DEV_NET ? _HOST_TEST : _HOST;
   }
 
-  static String get hd_RpcUrl {
-    return serverConfig?.ETHAPI ?? (TEST_DEV_NET ? _hd_RpcUrl_test : _hd_RpcUrl); // 从服务器获取
-  }
+  // static String get hd_RpcUrl {
+  //   return serverConfig?.ETHAPI ?? (TEST_DEV_NET ? _hd_RpcUrl_test : _hd_RpcUrl); // 从服务器获取
+  // }
 
   static String get hd_ETH_RpcUrl {
-    return TEST_DEV_NET ? _hd_ETH_RpcUrl_test : _hd_ETH_RpcUrl;
+    return TEST_DEV_NET ? _hd_ETH_RpcUrl_test : (serverConfig?.ETHAPI  ?? _hd_ETH_RpcUrl);
   }
 
   static String get hd_BSC_RpcUrl {
-    return TEST_DEV_NET ? _hd_BSC_RpcUrl_test : _hd_BSC_RpcUrl;
+    return TEST_DEV_NET ? _hd_BSC_RpcUrl_test : (serverConfig?.BSCAPI  ?? _hd_BSC_RpcUrl);
   }
 
   static String get epik_RpcUrl {
@@ -152,18 +152,23 @@ class ServiceInfo {
     if (httpJsonRes != null && httpJsonRes.code == 0) {
       String jsonstr = jsonEncode(httpJsonRes.jsonMap);
       Dlog.p(TAG, "requestConfig save $jsonstr");
-      SpUtils.putString(LOCAL_KEY, jsonstr).then((res) {
-        Dlog.p(TAG, "requestConfig save res => $res");
-      });
+      bool save_res = await SpUtils.putString(LOCAL_KEY, jsonstr);
+      Dlog.p(TAG, "requestConfig save res => $save_res");
+      Dlog.p(TAG, "test 1");
       Map<String, dynamic> json = httpJsonRes.jsonMap["config"];
       parseConfig(json);
       parseMenuList(httpJsonRes.jsonMap);
 
+      Dlog.p(TAG, "test 2");
       if (AccountMgr().currentAccount != null) {
+
+        Dlog.p(TAG, "test 3");
         EpikWalletUtils.setWalletConfig(AccountMgr().currentAccount).then((_) {
+          Dlog.p(TAG, "test 4");
           eventMgr.send(EventTag.UPDATE_SERVER_CONFIG, null);
         });
       }
+      Dlog.p(TAG, "test 5");
     }
   }
 

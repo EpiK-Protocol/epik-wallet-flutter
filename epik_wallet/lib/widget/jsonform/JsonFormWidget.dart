@@ -47,12 +47,16 @@ class JsonFormWidget extends StatefulWidget {
   Map<String, dynamic> formData;
   List schemaData;
   OnFormDataChange onFormDataChange;
+  double paragraph_spacing=20;
+
+
 
   JsonFormWidget({
     Key key,
     @required this.formData,
     @required this.schemaData,
     this.onFormDataChange,
+    this.paragraph_spacing=20,
   }) : super(key: key);
 
   @override
@@ -83,7 +87,7 @@ class JsonFormWidgetState extends State<JsonFormWidget> {
               switchType(ct, widget.formData, element, widget.onFormDataChange);
           if (lw != null) {
             ret.addAll(lw);
-            ret.add(Container(height: 20));
+            ret.add(Container(height: widget.paragraph_spacing));
           }
         }
       }
@@ -176,6 +180,11 @@ class JsonFormWidgetState extends State<JsonFormWidget> {
             group: json["list"],
             group_str: json["list_str"],
             enable: json["enable"]??true,
+            spacing: json["spacing"]??20,
+            runSpacing:json["runSpacing"]??10,
+            fontSize:json["fontSize"]??14,
+            materialTapTargetSize: json["materialTapTargetSize"]??"padded",//触摸范围 padded 大, shrinkWrap 小,
+            visualDensity:json["visualDensity"]??"standard",//视觉密度 standard 标准, comfortable 舒适, compact 紧凑
             onChange: (value) {
               formData[json["key"]] = value;
               if (formData != null) {

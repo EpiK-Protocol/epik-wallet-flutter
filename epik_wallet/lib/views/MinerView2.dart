@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ui';
 
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/base/base_inner_widget.dart';
 import 'package:epikwallet/dialog/bottom_dialog.dart';
@@ -34,12 +33,9 @@ import 'package:epikwallet/views/viewgoto.dart';
 import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:epikwallet/widget/list_view.dart';
 import 'package:epikwallet/widget/text/TextEllipsisMiddle.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 import '../model/CoinbaseInfo.dart';
-import '../utils/string_utils.dart';
 
 ///矿工
 class MinerView2 extends BaseInnerWidget {
@@ -57,10 +53,8 @@ class MinerView2 extends BaseInnerWidget {
 }
 
 class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
-
   //右上角租赁节点的开关
-  bool nodepool=false;
-
+  bool nodepool = false;
 
   List<String> headerdata = ["coinbase", "node", "owner"];
 
@@ -150,7 +144,8 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
       isFirst = false;
     }
 
-    if (AccountMgr().currentAccount == null) {
+    if (AccountMgr().currentAccount == null)
+    {
       needwallet = true;
       closeStateLayout();
       isLoading = false;
@@ -296,25 +291,45 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
             Container(
               height: 10,
             ),
-            FlatButton(
-              highlightColor: Colors.white24,
-              splashColor: Colors.white24,
-              onPressed: () {
+            // FlatButton(
+            //   highlightColor: Colors.white24,
+            //   splashColor: Colors.white24,
+            //   onPressed: () {
+            //     eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX, main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
+            //   },
+            //   child: Text(
+            //     RSID.main_bv_8.text, //"去创建钱包",
+            //     textAlign: TextAlign.center,
+            //     style: TextStyle(
+            //       color: Colors.white,
+            //       fontSize: 16,
+            //     ),
+            //   ),
+            //   color: Color(0xff393E45),
+            //   shape: RoundedRectangleBorder(
+            //     borderRadius: BorderRadius.all(Radius.circular(22)),
+            //   ),
+            // )
+            LoadingButton(
+              // width: null,
+              // text_alignment: null,
+              height: 40,
+              margin: EdgeInsets.fromLTRB(30, 20, 30, 20),
+              gradient_bg: ResColor.lg_1,
+              color_bg: Colors.transparent,
+              disabledColor: Colors.transparent,
+              text: RSID.main_bv_8.text, //"去创建钱包",
+              //"确定",
+              textstyle: TextStyle(
+                color: Colors.white,
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+              ),
+              bg_borderradius: BorderRadius.circular(4),
+              onclick: (lbtn) {
                 eventMgr.send(EventTag.CHANGE_MAINVIEW_INDEX, main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW));
               },
-              child: Text(
-                RSID.main_bv_8.text, //"去创建钱包",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              color: Color(0xff393E45),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(22)),
-              ),
-            )
+            ),
           ],
         ),
       );
@@ -757,14 +772,14 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
       items.add(
         InkWell(
           onTap: () {
-            ViewGT.showView(context, RentNodeNeedTransferView(coinbase,listRentNodeTransferObj));
+            ViewGT.showView(context, RentNodeNeedTransferView(coinbase, listRentNodeTransferObj));
           },
           child: Container(
             padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
-            child: Badge(
-              position: BadgePosition(top: 0, end: -10),
+            child: badges.Badge(
+              position: badges.BadgePosition(top: 0, end: -10),
               child: Text(
-                RSID.rnntv_1.text,//"租赁节点需要转移",
+                RSID.rnntv_1.text, //"租赁节点需要转移",
                 style: TextStyle(
                   fontSize: 14,
                   color: ResColor.white,

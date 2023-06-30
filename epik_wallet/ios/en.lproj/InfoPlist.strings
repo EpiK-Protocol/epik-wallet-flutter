@@ -1,0 +1,16 @@
+
+"CFBundleDisplayName" = "EpiK Portal";
+"CFBundleName" = "EpiK Portal";
+//"NSCameraUsageDescription" = "EpiK Portal requires access to your camera to take pictures and videos";
+"NSCameraUsageDescription" = "EpiK Portal requires access to your camera to scan QR code";
+"NSFaceIDUsageDescription" = "EpiK Portal in order to quickly verify identity，enable FaceID permissions";
+"NSMicrophoneUsageDescription" = "EpiK Portal needs access to your microphone to collect video sounds";
+"NSPhotoLibraryAddUsageDescription" = "EpiK Portal In order to save photos or videos, you need to enable album permissions";
+"NSPhotoLibraryUsageDescription" = "EpiK Portal in order to save photos or videos, you need to enable album permissions";
+//"NSAppleMusicUsageDescription" = "Do you allow this app to access your media library?";
+//"NSCalendarsUsageDescription" = "Do you allow this app to use a calendar?";
+//"NSContactsUsageDescription" = "Do you allow this app to access your contacts?";
+//"NSLocationAlwaysUsageDescription" = "We need to get relevant data from your location through your location information.";
+//"NSLocationWhenInUseUsageDescription" = "We need to get relevant data from your location through your location information.";
+//"NSMotionUsageDescription" = "Do you allow this app to access your pedometer?";
+//"NSSpeechRecognitionUsageDescription" = "Whether to allow this app to use speech recognition?";

@@ -2,6 +2,7 @@ import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/base/buildConfig.dart';
 import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
+import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/main.dart';
 import 'package:epikwallet/model/CreateAccountModel.dart';
 import 'package:epikwallet/utils/res_color.dart';
@@ -10,10 +11,7 @@ import 'package:epikwallet/views/wallet/create/createwalletview.dart';
 import 'package:epikwallet/views/wallet/create/verifycreatepasswordview.dart';
 import 'package:epikwallet/widget/LoadingButton.dart';
 import 'package:epikwallet/widget/text/diff_scale_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:epikwallet/localstring/resstringid.dart';
 
 class SelectedText {
   String text = "";
@@ -69,9 +67,7 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
       physics: AlwaysScrollableScrollPhysics(),
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          minHeight: getScreenHeight() -
-              BaseFuntion.topbarheight -
-              BaseFuntion.appbarheight_def,
+          minHeight: getScreenHeight() - BaseFuntion.topbarheight - BaseFuntion.appbarheight_def,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,7 +80,7 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 17,
-                  fontWeight:FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -94,7 +90,7 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
                 ResString.get(context, RSID.vmv_2),
                 // "为了安全起见，按照顺序填写助记词以确认该助记词是否有效。",
                 style: TextStyle(
-                  color: Colors.white,//Colors.redAccent,
+                  color: Colors.white, //Colors.redAccent,
                   fontSize: 14,
                 ),
               ),
@@ -108,7 +104,7 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 17,
-                      fontWeight:FontWeight.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
@@ -124,45 +120,44 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 17,
-                      fontWeight:FontWeight.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
             ),
             getMnemonicGridWidget_2(),
-
             LoadingButton(
               margin: EdgeInsets.fromLTRB(30, 40, 30, 0),
               gradient_bg: ResColor.lg_1,
               color_bg: Colors.transparent,
               disabledColor: Colors.transparent,
               height: 40,
-              text:ResString.get(context, RSID.vmv_1), //"验证助记词",
+              text: ResString.get(context, RSID.vmv_1),
+              //"验证助记词",
               textstyle: TextStyle(
                 color: Colors.white,
                 fontSize: 14,
-                fontWeight:FontWeight.bold,
+                fontWeight: FontWeight.bold,
               ),
               bg_borderradius: BorderRadius.circular(4),
               onclick: (lbtn) {
                 clickNextSetp();
               },
-              onLongClick:BuildConfig.isDebug? (lbtn) {
-                  setState(() {
-                    mnemonic_list_source.forEach((element) {
-                      element.isSelected = true;
-                    });
-                    mnemonic_list = [];
-                    widget._CreateAccountModel.mnemonic_list
-                        .forEach((element) {
-                      mnemonic_list
-                          .add(SelectedText(element, true));
-                    });
-                  });
-              }:null,
+              onLongClick: BuildConfig.isDebug
+                  ? (lbtn) {
+                      setState(() {
+                        mnemonic_list_source.forEach((element) {
+                          element.isSelected = true;
+                        });
+                        mnemonic_list = [];
+                        widget._CreateAccountModel.mnemonic_list.forEach((element) {
+                          mnemonic_list.add(SelectedText(element, true));
+                        });
+                      });
+                    }
+                  : null,
             ),
-
             InkWell(
               onTap: () {
                 clickRecreate();
@@ -190,9 +185,7 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
 
   Widget getMnemonicGridWidget_1() {
     if (gridItemHightRatio == 0) {
-      gridItemHightRatio = (getScreenWidth() - 30 * 2 - 10 * 3) /
-          4.0 /
-          40.0; //    每个item的宽 / 高 = 比例
+      gridItemHightRatio = (getScreenWidth() - 30 * 2 - 10 * 3) / 4.0 / 40.0; //    每个item的宽 / 高 = 比例
     }
 
     int size = mnemonic_list_source.length;
@@ -205,28 +198,80 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
         if (i < mnemonic_list.length) text = mnemonic_list[i];
 
         items.add(
-          FlatButton(
-            highlightColor: Colors.white24,
-            splashColor: Colors.white24,
+          // FlatButton(
+          //   highlightColor: Colors.white24,
+          //   splashColor: Colors.white24,
+          //   onPressed: text == null
+          //       ? null
+          //       : () {
+          //           clickGroup1Cancel(text, i);
+          //         },
+          //   padding: EdgeInsets.zero,
+          //   child: DiffScaleText(
+          //     text: text == null ? (i + 1).toString() : text.text,
+          //     textStyle: TextStyle(
+          //       color: text == null ?Colors.white: ResColor.b_1,
+          //       fontSize: 14,
+          //       fontFamily: fontFamily_def,
+          //       fontWeight:FontWeight.bold,
+          //     ),
+          //   ),
+          //   disabledColor: bgColor_disabled,
+          //   color: bgColor,
+          //   shape: RoundedRectangleBorder(
+          //     borderRadius: BorderRadius.all(Radius.circular(4)),
+          //   ),
+          // ),
+          TextButton(
             onPressed: text == null
                 ? null
                 : () {
                     clickGroup1Cancel(text, i);
                   },
-            padding: EdgeInsets.zero,
             child: DiffScaleText(
               text: text == null ? (i + 1).toString() : text.text,
               textStyle: TextStyle(
-                color: text == null ?Colors.white: ResColor.b_1,
+                color: text == null ? Colors.white : ResColor.b_1,
                 fontSize: 14,
                 fontFamily: fontFamily_def,
-                fontWeight:FontWeight.bold,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            disabledColor: bgColor_disabled,
-            color: bgColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(4)),
+            style: ButtonStyle(
+              //padding
+              padding: MaterialStateProperty.all(EdgeInsets.zero),
+              //阴影
+              elevation: MaterialStateProperty.all(0),
+              //背景色
+              backgroundColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+                // case MaterialState.hovered: //悬停：
+                // case MaterialState.focused://焦点
+                // case MaterialState.pressed://按住
+                // case MaterialState.dragged://拖拽
+                // case MaterialState.selected://选中
+                // case MaterialState.disabled://禁用
+                // case MaterialState.error://错误
+                if (states.contains(MaterialState.disabled)) {
+                  //禁用时
+                  return bgColor_disabled;
+                }
+                // else if (states.contains(MaterialState.pressed)) {
+                //   //按住时
+                //   return Colors.white;
+                // }
+                //默认
+                return bgColor;
+              }),
+              //前景色 控制btn里的文本和icon颜色
+              // foregroundColor:MaterialStateProperty.all(Colors.white),
+              //设置水波纹颜色
+              overlayColor: MaterialStateProperty.all(Colors.white24),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  // side: widget.side, //描边
+                ),
+              ),
             ),
           ),
         );
@@ -257,9 +302,7 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
 
   Widget getMnemonicGridWidget_2() {
     if (gridItemHightRatio == 0) {
-      gridItemHightRatio = (getScreenWidth() - 30 * 2 - 10 * 3) /
-          4.0 /
-          40.0; //    每个item的宽 / 高 = 比例
+      gridItemHightRatio = (getScreenWidth() - 30 * 2 - 10 * 3) / 4.0 / 40.0; //    每个item的宽 / 高 = 比例
     }
 
     List<Widget> items = [];
@@ -269,24 +312,72 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
         SelectedText text = mnemonic_list_source[i];
 
         items.add(
-          FlatButton(
-            highlightColor: Colors.white24,
-            splashColor: Colors.white24,
+          // FlatButton(
+          //   highlightColor: Colors.white24,
+          //   splashColor: Colors.white24,
+          //   onPressed: () {
+          //     clickGroup2(text, i);
+          //   },
+          //   padding: EdgeInsets.zero,
+          //   child: Text(
+          //     text.text,
+          //     style: TextStyle(
+          //       color: text.isSelected?Colors.white:ResColor.b_1,
+          //       fontSize: 14,
+          //       fontWeight: FontWeight.bold,
+          //     ),
+          //   ),
+          //   color: text.isSelected ? bgColor_disabled : bgColor,
+          //   shape: RoundedRectangleBorder(
+          //     borderRadius: BorderRadius.all(Radius.circular(4)),
+          //   ),
+          // ),
+          TextButton(
             onPressed: () {
               clickGroup2(text, i);
             },
-            padding: EdgeInsets.zero,
             child: Text(
               text.text,
               style: TextStyle(
-                color: text.isSelected?Colors.white:ResColor.b_1,
+                color: text.isSelected ? Colors.white : ResColor.b_1,
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            color: text.isSelected ? bgColor_disabled : bgColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(4)),
+            style: ButtonStyle(
+              //padding
+              padding: MaterialStateProperty.all(EdgeInsets.zero),
+              //阴影
+              elevation: MaterialStateProperty.all(0),
+              //背景色
+              backgroundColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+                // case MaterialState.hovered: //悬停：
+                // case MaterialState.focused://焦点
+                // case MaterialState.pressed://按住
+                // case MaterialState.dragged://拖拽
+                // case MaterialState.selected://选中
+                // case MaterialState.disabled://禁用
+                // case MaterialState.error://错误
+                // if (states.contains(MaterialState.disabled)) {
+                //   //禁用时
+                //   return Colors.white;
+                // } else if (states.contains(MaterialState.pressed)) {
+                //   //按住时
+                //   return Colors.white;
+                // }
+                //默认
+                return text.isSelected ? bgColor_disabled : bgColor;
+              }),
+              //前景色 控制btn里的文本和icon颜色
+              // foregroundColor:MaterialStateProperty.all(Colors.white),
+              //设置水波纹颜色
+              overlayColor: MaterialStateProperty.all(Colors.white24),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  // side: widget.side, //描边
+                ),
+              ),
             ),
           ),
         );
@@ -342,8 +433,7 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
   }
 
   bool checkParams() {
-    if (mnemonic_list == null ||
-        mnemonic_list.length < mnemonic_list_source.length) {
+    if (mnemonic_list == null || mnemonic_list.length < mnemonic_list_source.length) {
 //      showToast("请按助记词顺序点击词组填满数字区域");
       showToast(ResString.get(context, RSID.vmv_6));
       return false;
@@ -364,13 +454,11 @@ class _VerifyMnemonicViewState extends BaseWidgetState<VerifyMnemonicView> {
   clickNextSetp() {
     if (!checkParams()) return;
 
-    ViewGT.showView(
-        context, VerifyCreatePasswordView(widget._CreateAccountModel),
+    ViewGT.showView(context, VerifyCreatePasswordView(widget._CreateAccountModel),
         model: ViewPushModel.PushReplacement);
   }
 
   clickRecreate() {
-    ViewGT.showView(context, CreateWalletView(),
-        model: ViewPushModel.PushReplacement);
+    ViewGT.showView(context, CreateWalletView(), model: ViewPushModel.PushReplacement);
   }
 }

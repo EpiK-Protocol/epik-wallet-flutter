@@ -6,6 +6,7 @@ import 'package:epikwallet/base/_base_widget.dart';
 import 'package:epikwallet/dialog/message_dialog.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
+import 'package:epikwallet/logic/AIBotLatestMgr.dart';
 import 'package:epikwallet/logic/LocalAddressMgr.dart';
 import 'package:epikwallet/logic/LocalWebsiteMgr.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
@@ -20,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class SplashView extends BaseWidget {
   @override
@@ -65,7 +67,8 @@ class _SplashViewState extends BaseWidgetState<SplashView> with TickerProviderSt
     loadConfig2();
 
     // 隐藏底部按钮栏
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
+    // SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
   }
 
   @override
@@ -180,12 +183,10 @@ class _SplashViewState extends BaseWidgetState<SplashView> with TickerProviderSt
   int time_3 = 0;
 
   loadConfig2() async {
-    dlog("loadConfig2 a");
     await ServiceInfo.requestConfig();
 
     // ServiceInfo.serverConfig=null;//todo test
     if (ServiceInfo.serverConfig == null || ServiceInfo.homeMenuMap == null) {
-      dlog("loadConfig2 b");
       closeLoadDialog();
       await Future.delayed(Duration(milliseconds: 200));
       MessageDialog.showMsgDialog(
@@ -197,7 +198,6 @@ class _SplashViewState extends BaseWidgetState<SplashView> with TickerProviderSt
         btnLeft: RSID.retry.text,
         onClickBtnLeft: (dialog) {
           //点击重试
-          dlog("loadConfig2 c");
           dialog.dismiss();
           if (loadingDialogIsShow != true) showLoadDialog("");
           Future.delayed(Duration(milliseconds: 100)).then((value) {
@@ -207,11 +207,10 @@ class _SplashViewState extends BaseWidgetState<SplashView> with TickerProviderSt
       );
     } else
     {
-      dlog("loadConfig2 d");
       await AccountMgr().load(); // 加载钱包账户
-
       await localaddressmgr.load();
       await localwebsitemgr.load();
+      await aibotlatestmgr.load();
 
       bool needRequired = await checkUpgrade();
       if (needRequired == true) {
@@ -221,12 +220,16 @@ class _SplashViewState extends BaseWidgetState<SplashView> with TickerProviderSt
 
       int time_2 = DateUtil.getNowDateMs();
       int t = time_2 - time_3;
-      dlog("loadConfig2 e");
       closeLoadDialog();
-      if (t <= 2000) {
-        await Future.delayed(Duration(milliseconds: 2000 - t));
-      } else {
-        await Future.delayed(Duration(milliseconds: 200));
+      try{
+        if (t <= 2000) {
+          await Future.delayed(Duration(milliseconds: 2000 - t));
+        } else {
+          await Future.delayed(Duration(milliseconds: 200));
+        }
+      }catch(e,s){
+        print(e);
+        print(s);
       }
       startNextView();
     }
@@ -275,17 +278,17 @@ class _SplashViewState extends BaseWidgetState<SplashView> with TickerProviderSt
         }
         if (Platform.isAndroid) {
           // 外部下载
-          canLaunch(upgrade.upgrade_url).then((value) {
+          canLaunchUrlString(upgrade.upgrade_url).then((value) {
             if (value) {
-              launch(upgrade.upgrade_url).then((value) {
+              launchUrlString(upgrade.upgrade_url).then((value) {
                 // print("upgrade launch = $value  url = ${upgrade.upgrade_url}");
               });
             }
           });
         } else if (Platform.isIOS) {
-          canLaunch(upgrade.upgrade_url).then((value) {
+          canLaunchUrlString(upgrade.upgrade_url).then((value) {
             if (value) {
-              launch(upgrade.upgrade_url).then((value) {
+              launchUrlString(upgrade.upgrade_url).then((value) {
                 // print("upgrade launch = $value  url = ${upgrade.upgrade_url}");
               });
             }

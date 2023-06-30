@@ -197,3 +197,5 @@ class LoadingDialogViewState extends State<LoadingDialogView> {
     return LoadingDialog.getLoadingDialog(context, text);
   }
 }
+
+

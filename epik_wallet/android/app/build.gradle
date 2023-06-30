@@ -34,7 +34,7 @@ apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     lintOptions {
         disable 'InvalidPackage'
@@ -101,6 +101,8 @@ android {
 
         debug {
             //调试
+            minifyEnabled false // 是否混淆
+            shrinkResources false // 是否去除无效的资源文件
             signingConfig signingConfigs.debug//设置签名信息
         }
 

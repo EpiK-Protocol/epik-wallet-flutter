@@ -177,8 +177,9 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
           result.code = 0;
           result.data = tr.status == true ? "success" : "";
         }
-      } catch (e) {
+      } catch (e,s) {
         print(e);
+        print(s);
         result = ResultObj.fromError(e);
       }
       dlog("erc20_receipt = ${result?.data}");
@@ -477,7 +478,23 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
     String address = AccountMgr()?.currentAccount?.hd_eth_address ?? "";
 
     CurrencyAsset ca = AccountMgr()?.currentAccount?.getCurrencyAssetByCs(CurrencySymbol.EPKerc20);
-    if (ca != null) balance = ca.balance;
+    if (ca != null){
+      balance = ca.balance;
+    }else
+    {
+      ca = CurrencyAsset(
+        symbol: CurrencySymbol.EPKerc20.symbol,
+        name: "",
+        type: "",
+        balance:"0",
+        icon_url: CurrencySymbol.EPKerc20.iconUrl,
+        cs: CurrencySymbol.EPKerc20,
+        networkType: CurrencySymbol.EPKerc20.networkType,
+        price_usd_str: "0",
+        price_usd: 0,
+        change_usd: 0,
+      );
+    }
 
     // balance = "999598150.037303903730390373039"; //todo test
 
@@ -505,7 +522,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
                       left: 0,
                       top: 0,
                       child: Image(
-                        image: AssetImage(ca.cs.iconUrl),
+                        image: AssetImage(ca?.cs?.iconUrl??""),
                         width: 30,
                         height: 30,
                       ),
@@ -522,7 +539,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
                           child: Image(
-                            image: AssetImage(ca.networkType.iconUrl),
+                            image: AssetImage(ca?.networkType?.iconUrl??""),
                             width: 13,
                             height: 13,
                           )),
@@ -531,7 +548,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
                 ),
               ),
               Text(
-                ca.symbol,
+                ca?.symbol??"",
                 style: TextStyle(
                     color: ResColor.white,
                     fontSize: 14, //17,
@@ -590,7 +607,23 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
     String address = AccountMgr()?.currentAccount?.epik_EPK_address ?? "";
 
     CurrencyAsset ca = AccountMgr()?.currentAccount?.getCurrencyAssetByCs(CurrencySymbol.EPK);
-    if (ca != null) balance = ca.balance;
+    if (ca != null){
+      balance = ca.balance;
+    }else
+    {
+      ca = CurrencyAsset(
+        symbol: CurrencySymbol.EPK.symbol,
+        name: "",
+        type: "",
+        balance:"0",
+        icon_url: CurrencySymbol.EPK.iconUrl,
+        cs: CurrencySymbol.EPK,
+        networkType: CurrencySymbol.EPK.networkType,
+        price_usd_str: "0",
+        price_usd: 0,
+        change_usd: 0,
+      );
+    }
 
     // balance = "999598150.2350130746327";//todo test
 
@@ -618,7 +651,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
                       left: 0,
                       top: 0,
                       child: Image(
-                        image: AssetImage(ca.cs.iconUrl),
+                        image: AssetImage(ca?.cs?.iconUrl??""),
                         width: 30,
                         height: 30,
                       ),
@@ -635,7 +668,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
                           child: Image(
-                            image: AssetImage(ca.networkType.iconUrl),
+                            image: AssetImage(ca?.networkType?.iconUrl??""),
                             width: 13,
                             height: 13,
                           )),
@@ -644,7 +677,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
                 ),
               ),
               Text(
-                ca.symbol,
+                ca?.symbol??"",
                 style: TextStyle(
                     color: ResColor.white,
                     fontSize: 14, //17,
@@ -1651,8 +1684,9 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
 
             result.code = 0;
             result.data = tx;
-          } catch (e) {
+          } catch (e,s) {
             print(e);
+            print(s);
             result = ResultObj.fromError(e);
           }
 
@@ -1837,8 +1871,9 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
             result.code = 0;
             result.data = tr.status == true ? "success" : "";
           }
-        } catch (e) {
+        } catch (e,s) {
           print(e);
+          print(s);
           result = ResultObj.fromError(e);
         }
         dlog("erc20_receipt = ${result?.data}");

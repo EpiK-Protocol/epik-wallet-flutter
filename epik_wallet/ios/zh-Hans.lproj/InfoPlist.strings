@@ -1,0 +1,17 @@
+
+"CFBundleDisplayName" = "EpiK Portal";
+"CFBundleName" = "EpiK Portal";
+//"NSCameraUsageDescription" = "EpiK Portal 需要访问你的相机才可以拍摄图片或视频";
+"NSCameraUsageDescription" = "EpiK Portal 需要访问你的相机才可以扫描二维码";
+"NSFaceIDUsageDescription" = "EpiK Portal 为了快速核实身份，需要访问FaceID";
+"NSMicrophoneUsageDescription" = "EpiK Portal 需要访问你的麦克风才可以拍摄视频";
+"NSPhotoLibraryAddUsageDescription" = "EpiK Portal 为了保存照片或视频，需要访问相册";
+"NSPhotoLibraryUsageDescription" = "EpiK Portal 为了保存照片或视频，需要访问相册";
+//"NSLocationAlwaysUsageDescription" = "是否允许此App访问您的地理位置？";
+//"NSLocationWhenInUseUsageDescription" = "是否允许此App访问您的地理位置？";
+//"NSAppleMusicUsageDescription" = "请允许APP访问您的媒体库";
+//"NSCalendarsUsageDescription" = "是否允许此App使用日历？";
+//"NSContactsUsageDescription" = "请允许APP访问您的通讯录";
+//"NSSpeechRecognitionUsageDescription" = "请允许APP访问语音识别";
+//"NSMotionUsageDescription" = "请允许APP访问运动与健身";
+

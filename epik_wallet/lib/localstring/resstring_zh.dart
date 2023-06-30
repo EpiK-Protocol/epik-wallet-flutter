@@ -132,6 +132,7 @@ Map<RSID, String> map_zh = {
   RSID.mainview_4: "活动",//"赏金",
   RSID.mainview_5: "专家",
   RSID.mainview_6: "节点",//"矿工",
+  RSID.mainview_7: "AI机器人",//AI Bot Store
 
   //MiningView 首页_挖矿
   RSID.main_mv_1: "预挖排行",
@@ -184,6 +185,31 @@ Map<RSID, String> map_zh = {
   RSID.main_bv_13: "参加活动需要绑定社交账号",
   RSID.main_bv_14: "去绑定",
   RSID.main_bv_15: "需要完整的钱包",//Full wallet required
+  //AI Bots 首页_AI机器人
+  RSID.main_abv_1:"AI机器人商店", // AI Bot Store
+  RSID.main_abv_2:"Points", // Points
+  RSID.main_abv_3:"1 Point = %s EPK / BSC-EPK / ERC20-EPK", // (1 Point = xx EPK/BSC-EPK/ERC20-EPK)
+  RSID.main_abv_4:"充值", // Recharge
+  RSID.main_abv_5:"历史", // History
+  RSID.main_abv_6:"最近使用", // Latest
+  RSID.main_abv_7:"Points 充值", // Recharge Points
+  RSID.main_abv_8:"我的Points :  ",//"My Points:",
+  RSID.main_abv_9:"类型",//"Type",
+  RSID.main_abv_10:"数量",//"Amount",
+  RSID.main_abv_11:"钱包余额", // Wallet Balance
+  RSID.main_abv_12:"用Cid或TxHash补领Point", // Use Cid or TxHash to claim points
+  RSID.main_abv_13:"全部AI机器人",//"All AI Bots",
+  RSID.main_abv_14:"确认支付",//
+  RSID.main_abv_15:"支付Points给 ",//Pay Points to
+  RSID.main_abv_16:"说明",// Descriptions
+  RSID.main_abv_17:"余额不足,请先充值.",//
+  RSID.main_abv_18:"%s ≤ 数量 ≤ %s",
+  RSID.main_abv_19:"正在发起交易",
+  RSID.main_abv_20:"交易已提交正在等待交易确认，交易确认后Point就会到账，请稍后查看Point余额。",
+  RSID.main_abv_21:"充值",//"Recharged",
+  RSID.main_abv_22:"消费",//"Consumed",
+  RSID.main_abv_23:"账单",//Bills
+  RSID.mani_abv_24:"置顶",
 
   //----------------------------------------views.mining.*
   //MiningProfitView 预挖收益

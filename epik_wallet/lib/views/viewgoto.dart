@@ -1,7 +1,6 @@
-import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/LocalWebsiteMgr.dart';
-import 'package:epikwallet/model/BountyTask.dart';
+import 'package:epikwallet/model/AIBotApp.dart';
 import 'package:epikwallet/model/CoinbaseInfo2.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/Dapp.dart';
@@ -9,9 +8,6 @@ import 'package:epikwallet/model/Expert.dart';
 import 'package:epikwallet/model/VoterInfo.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/Dlog.dart';
-import 'package:epikwallet/views/bounty/bountydetailview.dart';
-import 'package:epikwallet/views/bounty/bountyeditview.dart';
-import 'package:epikwallet/views/bounty/bountyexchangeview.dart';
 import 'package:epikwallet/views/currency/currencydepositview.dart';
 import 'package:epikwallet/views/currency/currencydetailview.dart';
 import 'package:epikwallet/views/currency/currencywithdrawview.dart';
@@ -28,22 +24,17 @@ import 'package:epikwallet/views/miner/OwnerListView.dart';
 import 'package:epikwallet/views/qrcode/qrcodescanview.dart';
 import 'package:epikwallet/views/thinktank/ApplyExpertView.dart';
 import 'package:epikwallet/views/thinktank/ExpertInfoView.dart';
-import 'package:epikwallet/views/uniswap/transactionview2.dart';
-import 'package:epikwallet/views/uniswap/uniswaporderlistview.dart';
-import 'package:epikwallet/views/uniswap/uniswappooladdview.dart';
-import 'package:epikwallet/views/uniswap/uniswappoolremoveview.dart';
-import 'package:epikwallet/views/uniswap/uniswapview.dart';
 import 'package:epikwallet/views/wallet/accountdetailview.dart';
 import 'package:epikwallet/views/wallet/create/createwalletview.dart';
 import 'package:epikwallet/views/wallet/exprot/exportepikprivatekeyview.dart';
 import 'package:epikwallet/views/wallet/exprot/exportethprivatekeyview.dart';
 import 'package:epikwallet/views/wallet/fixpasswordview.dart';
 import 'package:epikwallet/views/wallet/import/importwalletview.dart';
+import 'package:epikwallet/views/web/aibot/AIBotWebview.dart';
 import 'package:epikwallet/views/web/generalwebview.dart';
 import 'package:epikwallet/views/web/web3/web3generalwebview.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 enum ViewPushModel {
   /// 新页面
@@ -95,16 +86,35 @@ class ViewGT {
   }
 
   /// 通用网页
-  static showWeb3GeneralWebView(BuildContext context, String title, String url, CurrencySymbol web3nettype,{LocalWebsiteObj lwo}) {
-    showView(context, Web3GeneralWebView(title, url, web3nettype,lwo: lwo,));
+  static showWeb3GeneralWebView(BuildContext context, String title, String url, CurrencySymbol web3nettype,
+      {LocalWebsiteObj lwo}) {
+    showView(
+        context,
+        Web3GeneralWebView(
+          title,
+          url,
+          web3nettype,
+          lwo: lwo,
+        ));
+  }
+
+  /// Ai bot 网页
+  static Future showAIBotWebView(BuildContext context, AIBotApp aibotapp, {String wallet_id, String wallet_token}) {
+    return showView(
+        context,
+        AIBotWebView(
+          aibotapp,
+          wallet_id: wallet_id,
+          wallet_token: wallet_token,
+        ));
   }
 
   /// 打开外部网页 必须trim ios有空格就打不开
-  static Future<bool> openOutUrl(String url) async {
+  static Future<bool> openOutUrl(String url, {LaunchMode mode = LaunchMode.externalApplication}) async {
     Dlog.p("ViewGT", "openOutUrl  $url");
     try {
-      if (await canLaunch(url.trim())) {
-        await launch(url);
+      if (await canLaunchUrlString(url.trim())) {
+        await launchUrlString(url, mode: mode);
         return true;
       }
     } catch (e) {
@@ -193,17 +203,17 @@ class ViewGT {
   //   showView(context, UniswaporderlistView(walletAccount));
   // }
 
-  static showBountyExchangeView(BuildContext context) {
-    showView(context, BountyExchangeView());
-  }
-
-  static showBountyDetailView(BuildContext context, BountyTask bt) {
-    showView(context, BountyDetailView(bt));
-  }
-
-  static showBountyEditView(BuildContext context, BountyTask bt) {
-    if (bt != null) showView(context, BountyEditView(bt));
-  }
+  // static showBountyExchangeView(BuildContext context) {
+  //   showView(context, BountyExchangeView());
+  // }
+  //
+  // static showBountyDetailView(BuildContext context, BountyTask bt) {
+  //   showView(context, BountyDetailView(bt));
+  // }
+  //
+  // static showBountyEditView(BuildContext context, BountyTask bt) {
+  //   if (bt != null) showView(context, BountyEditView(bt));
+  // }
 
   static showApplyExpertView(BuildContext context) {
     showView(context, ApplyExpertView());
@@ -250,8 +260,7 @@ class ViewGT {
     showView(context, MinerListView(coinbase));
   }
 
-  static showHomeMenuMoreView(BuildContext context,String name)
-  {
+  static showHomeMenuMoreView(BuildContext context, String name) {
     showView(context, HomeMenuMoreView(name));
   }
 }

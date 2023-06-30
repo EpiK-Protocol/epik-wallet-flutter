@@ -132,6 +132,7 @@ Map<RSID, String> map_en = {
   RSID.mainview_4: "Activities",//活动，//"Bounty",//"赏金",//
   RSID.mainview_5: "Expert",//专家
   RSID.mainview_6: "Node",//"Minner",//"节点"
+  RSID.mainview_7: "AI Bots",//AI Bot Store
 
   //MiningView 首页_挖矿 Homepage mine
   RSID.main_mv_1: "Pre-mining ranking",//"预挖排行",
@@ -184,6 +185,32 @@ Map<RSID, String> map_en = {
   RSID.main_bv_13: "You need to bind a social account to participate in the activity",
   RSID.main_bv_14: "To bind",
   RSID.main_bv_15: "Full wallet required.",//需要完整的钱包
+  //AI Bots 首页_AI机器人
+  RSID.main_abv_1:"AI Bot Store", //
+  RSID.main_abv_2:"Points", // Points
+  RSID.main_abv_3:"1 Point = %s EPK / BSC-EPK / ERC20-EPK", // (1 Point = xx EPK/BSC-EPK/ERC20-EPK)
+  RSID.main_abv_4:"Recharge", //
+  RSID.main_abv_5:"History", //
+  RSID.main_abv_6:"Recently Used",//"Latest", //
+  RSID.main_abv_7:"Recharge Points",
+  RSID.main_abv_8:"My Points :  ",
+  RSID.main_abv_9:"Type",
+  RSID.main_abv_10:"Amount",
+  RSID.main_abv_11:"Wallet Balance", //
+  RSID.main_abv_12:"Use CID or TxHash to claim points",//
+  RSID.main_abv_13:"All AI Bots",
+  RSID.main_abv_14:"Confirm Payment",//
+  RSID.main_abv_15:"Pay Points to ",//
+  RSID.main_abv_16:"Descriptions",//
+  RSID.main_abv_17:"Insufficient balance, please recharge first.",//
+  RSID.main_abv_18:"%s ≤ Amount ≤ %s",
+  RSID.main_abv_19:"Initiating transaction",//"正在发起交易",
+  RSID.main_abv_20:"The transaction has been submitted and is waiting for transaction confirmation. Points will be recharged after the transaction is confirmed. Please check the point balance later.",//"交易已提交正在等待交易确认，交易确认后Point就会到账，请稍后刷新Point余额。",
+  RSID.main_abv_21:"Recharged",
+  RSID.main_abv_22:"Consumed",
+  RSID.main_abv_23:"Bills",
+  RSID.mani_abv_24:"PIN",//置顶
+
 
   //----------------------------------------views.mining.*
   //MiningProfitView 预挖收益 Pre-mining profit

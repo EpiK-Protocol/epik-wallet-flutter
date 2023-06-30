@@ -15,33 +15,34 @@ import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/screen/screen_util.dart';
+import 'package:epikwallet/utils/sp_utils/sp_utils.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
+import 'package:epikwallet/views/AiBotStoreView.dart';
 import 'package:epikwallet/views/ExpertView.dart';
 import 'package:epikwallet/views/MinerView2.dart';
-import 'package:epikwallet/views/bountyview.dart';
 import 'package:epikwallet/views/miner/Minermenu.dart';
 import 'package:epikwallet/views/walletmenu.dart';
 import 'package:epikwallet/views/walletview.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class MainView extends BaseWidget {
   @override
   BaseWidgetState<BaseWidget> getState() {
     return _MainViewState();
   }
+
 }
 
 enum MainSubViewType {
   // MININGVIEW,
   WALLETVIEW,
   // TRANSACTIONVIEW,
-  BOUNTYVIEW,
+  // BOUNTYVIEW,
   THINKTANKVIEW,
   MINNER,
+  AIBOTSTORE,
 }
 
 List<MainSubViewType> main_subviewTypes = [];
@@ -70,7 +71,8 @@ class _MainViewState extends BaseWidgetState<MainView> {
 
     Future.delayed(Duration(milliseconds: 200)).then((value) {
       // 恢复顶部状态栏和底部按钮栏
-      SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top, SystemUiOverlay.bottom]);
+      // SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top, SystemUiOverlay.bottom]);
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
     });
 
     main_subviewTypes = [
@@ -79,7 +81,8 @@ class _MainViewState extends BaseWidgetState<MainView> {
       MainSubViewType.MINNER,
       // MainSubViewType.TRANSACTIONVIEW,
       MainSubViewType.THINKTANKVIEW,
-      MainSubViewType.BOUNTYVIEW,
+      // MainSubViewType.BOUNTYVIEW,
+      if (SpUtils.getBool("main_bot", defValue: true)) MainSubViewType.AIBOTSTORE,
     ];
 
     currentIndex = main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW);
@@ -97,18 +100,25 @@ class _MainViewState extends BaseWidgetState<MainView> {
         //   return;
         case MainSubViewType.WALLETVIEW:
           subViews.add(WalletView(key));
+          keyList.add(key);
           return;
         // case MainSubViewType.TRANSACTIONVIEW:
         //   subViews.add(TransactionView(key));
         //   return;
-        case MainSubViewType.BOUNTYVIEW:
-          subViews.add(BountyView(key));
-          return;
+        // case MainSubViewType.BOUNTYVIEW:
+        //   subViews.add(BountyView(key));
+        //   return;
         case MainSubViewType.THINKTANKVIEW:
           subViews.add(ExpertView(key));
+          keyList.add(key);
           return;
         case MainSubViewType.MINNER:
           subViews.add(MinerView2(key));
+          keyList.add(key);
+          return;
+        case MainSubViewType.AIBOTSTORE:
+          subViews.add(AiBotStoreView(key));
+          keyList.add(key);
           return;
       }
     });
@@ -205,12 +215,12 @@ class _MainViewState extends BaseWidgetState<MainView> {
         //     label: ResString.get(context, RSID.mainview_3), //'交易',
         //   ));
         //   break;
-        case MainSubViewType.BOUNTYVIEW:
-          ret.add(BottomNavigationBarItem(
-            icon: Icon(OMIcons.assignmentTurnedIn),
-            label: ResString.get(context, RSID.mainview_4), //'赏金', 活动
-          ));
-          break;
+        // case MainSubViewType.BOUNTYVIEW:
+        //   ret.add(BottomNavigationBarItem(
+        //     icon: Icon(OMIcons.assignmentTurnedIn),
+        //     label: ResString.get(context, RSID.mainview_4), //'赏金', 活动
+        //   ));
+        //   break;
         case MainSubViewType.THINKTANKVIEW:
           ret.add(BottomNavigationBarItem(
             icon: Icon(Icons.school), //insights awesome psychology
@@ -221,6 +231,12 @@ class _MainViewState extends BaseWidgetState<MainView> {
           ret.add(BottomNavigationBarItem(
             icon: Icon(Icons.bubble_chart),
             label: ResString.get(context, RSID.mainview_6), //'矿工',
+          ));
+          break;
+        case MainSubViewType.AIBOTSTORE:
+          ret.add(BottomNavigationBarItem(
+            icon: Icon(Icons.bubble_chart), // TODO
+            label: ResString.get(context, RSID.mainview_7), //'矿工',
           ));
           break;
       }
@@ -326,7 +342,9 @@ class _MainViewState extends BaseWidgetState<MainView> {
           ],
         ),
       );
-    };
+    }
+
+    ;
 
     List<Widget> ret = [];
 
@@ -352,11 +370,11 @@ class _MainViewState extends BaseWidgetState<MainView> {
         //     label: ResString.get(context, RSID.mainview_3), //'交易',
         //   ));
         //   break;
-        case MainSubViewType.BOUNTYVIEW:
-          img_n = "assets/img/ic_main_menu_bounty_n.png";
-          img_s = "assets/img/ic_main_menu_bounty_s.png";
-          label = ResString.get(context, RSID.mainview_4); //'赏金', 活动
-          break;
+        // case MainSubViewType.BOUNTYVIEW:
+        //   img_n = "assets/img/ic_main_menu_bounty_n.png";
+        //   img_s = "assets/img/ic_main_menu_bounty_s.png";
+        //   label = ResString.get(context, RSID.mainview_4); //'赏金', 活动
+        //   break;
         case MainSubViewType.THINKTANKVIEW:
           img_n = "assets/img/ic_main_menu_expert_n.png";
           img_s = "assets/img/ic_main_menu_expert_s.png";
@@ -368,6 +386,11 @@ class _MainViewState extends BaseWidgetState<MainView> {
           img_n = "assets/img/ic_main_menu_swap_n.png";
           img_s = "assets/img/ic_main_menu_swap_s.png";
           label = ResString.get(context, RSID.mainview_6); //'矿工',
+          break;
+        case MainSubViewType.AIBOTSTORE:
+          img_n = "assets/img/ic_main_menu_aibots_n.png";
+          img_s = "assets/img/ic_main_menu_aibots_s.png";
+          label = ResString.get(context, RSID.mainview_7); //AI Bots
           break;
       }
       ret.add(Expanded(
@@ -451,12 +474,33 @@ class _MainViewState extends BaseWidgetState<MainView> {
     dlog("onResume");
   }
 
+  ///app切回到后台
+  void onBackground() {
+    super.onBackground();
+    if (keyList != null)
+      for (int i = 0; i < keyList.length; i++) {
+        GlobalKey<BaseInnerWidgetState> key = keyList[i];
+        key.currentState.onBackground();
+      }
+  }
+
+  ///app切回到前台
+  void onForeground() {
+    super.onForeground();
+    if (keyList != null)
+      for (int i = 0; i < keyList.length; i++) {
+        GlobalKey<BaseInnerWidgetState> key = keyList[i];
+        key.currentState.onForeground();
+      }
+  }
+
   void _onItemTapped(int index) {
     // if (index == 2) {
     //   if (AccountMgr().currentAccount == null) {
     //     index = 1;
     //   }
     // }
+
     if (AccountMgr().currentAccount == null) {
       int page_wallet = main_subviewTypes.indexOf(MainSubViewType.WALLETVIEW);
       if (index != page_wallet) {
@@ -540,17 +584,17 @@ class _MainViewState extends BaseWidgetState<MainView> {
         }
         if (Platform.isAndroid) {
           // 外部下载
-          canLaunch(upgrade.upgrade_url).then((value) {
+          canLaunchUrlString(upgrade.upgrade_url).then((value) {
             if (value) {
-              launch(upgrade.upgrade_url).then((value) {
+              launchUrlString(upgrade.upgrade_url).then((value) {
                 print("upgrade launch = $value  url = ${upgrade.upgrade_url}");
               });
             }
           });
         } else if (Platform.isIOS) {
-          canLaunch(upgrade.upgrade_url).then((value) {
+          canLaunchUrlString(upgrade.upgrade_url).then((value) {
             if (value) {
-              launch(upgrade.upgrade_url).then((value) {
+              launchUrlString(upgrade.upgrade_url).then((value) {
                 print("upgrade launch = $value  url = ${upgrade.upgrade_url}");
               });
             }

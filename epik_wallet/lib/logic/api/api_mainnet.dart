@@ -71,7 +71,7 @@ class ApiMainNet {
     // String url = ServiceInfo.HOST + "/mainnet/voterPorfit";
     String url = ServiceInfo.makeHostUrl("/mainnet/voterPorfit");
     Map<String, dynamic> params = new Map();
-    return HttpUtil.instance.requestJson(true, url, params, needToken: true);
+    return HttpUtil.instance.requestJson(true, url, params);
   }
 
 //  #领域专家列表
@@ -263,4 +263,7 @@ class ApiMainNet {
   //   };
   //   return HttpUtil.instance.requestJson(false, url, null, data: json,headers: headers);
   // }
+
+
+
 }

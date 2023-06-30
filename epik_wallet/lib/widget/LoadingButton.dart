@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+//当 width= null, text_alignment= null 时， 按钮可以自适应宽度
 class LoadingButton extends StatefulWidget {
   double width, height;
   EdgeInsets margin, padding;
@@ -23,6 +24,8 @@ class LoadingButton extends StatefulWidget {
 
   ///防止双击连点
   bool preventDoubleClick;
+
+  AlignmentGeometry text_alignment;
 
   LoadingButton({
     Key key,
@@ -50,6 +53,7 @@ class LoadingButton extends StatefulWidget {
     this.highlightColor = Colors.white24,
     this.splashColor = Colors.white24,
     this.preventDoubleClick = true,
+    this.text_alignment= Alignment.center,
   }) : super(key: key) {
     if (bg_borderradius == null) {
       bg_borderradius = BorderRadius.circular(20.0);
@@ -91,60 +95,60 @@ class LoadingButtonState extends State<LoadingButton> {
     );
   }
 
-  @Deprecated("快不能用了")
-  Widget getFlatButton() {
-    return FlatButton(
-      // padding: EdgeInsets.all(0),
-      padding: widget.padding,
-      onPressed: (widget.loading == false && widget.onclick != null)
-          ? () {
-              if (widget.preventDoubleClick == true &&
-                  ClickUtil.isFastDoubleClick()) {
-                return;
-              }
-              widget.onclick(widget);
-            }
-          : null,
-      onLongPress: (widget.loading == false && widget.onLongClick != null)
-          ? () {
-              if (widget.preventDoubleClick == true &&
-                  ClickUtil.isFastDoubleClick()) {
-                // print("cccmax 防止双击连点");
-                return;
-              }
-              widget.onLongClick(widget);
-            }
-          : null,
-      color: widget.color_bg,
-      disabledColor: widget.disabledColor,
-      highlightColor: widget.highlightColor,
-      splashColor: widget.splashColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: widget.bg_borderradius,
-        side: widget.side,
-      ),
-
-      child: widget.loading == true
-          ? Container(
-              width: widget.progress_size,
-              height: widget.progress_size,
-              padding: EdgeInsets.all(2),
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation(widget.progress_color),
-              ),
-            )
-          : Container(
-              // height: 30,
-              alignment: Alignment.center,
-              child: Text(
-                widget.text,
-                textAlign: TextAlign.center,
-                style: widget.textstyle,
-              ),
-            ),
-    );
-  }
+  // @Deprecated("Use TextButton instead")
+  // Widget getFlatButton() {
+  //   return FlatButton(
+  //     // padding: EdgeInsets.all(0),
+  //     padding: widget.padding,
+  //     onPressed: (widget.loading == false && widget.onclick != null)
+  //         ? () {
+  //             if (widget.preventDoubleClick == true &&
+  //                 ClickUtil.isFastDoubleClick()) {
+  //               return;
+  //             }
+  //             widget.onclick(widget);
+  //           }
+  //         : null,
+  //     onLongPress: (widget.loading == false && widget.onLongClick != null)
+  //         ? () {
+  //             if (widget.preventDoubleClick == true &&
+  //                 ClickUtil.isFastDoubleClick()) {
+  //               // print("cccmax 防止双击连点");
+  //               return;
+  //             }
+  //             widget.onLongClick(widget);
+  //           }
+  //         : null,
+  //     color: widget.color_bg,
+  //     disabledColor: widget.disabledColor,
+  //     highlightColor: widget.highlightColor,
+  //     splashColor: widget.splashColor,
+  //     shape: RoundedRectangleBorder(
+  //       borderRadius: widget.bg_borderradius,
+  //       side: widget.side,
+  //     ),
+  //
+  //     child: widget.loading == true
+  //         ? Container(
+  //             width: widget.progress_size,
+  //             height: widget.progress_size,
+  //             padding: EdgeInsets.all(2),
+  //             child: CircularProgressIndicator(
+  //               strokeWidth: 2,
+  //               valueColor: AlwaysStoppedAnimation(widget.progress_color),
+  //             ),
+  //           )
+  //         : Container(
+  //             // height: 30,
+  //             alignment: Alignment.center,
+  //             child: Text(
+  //               widget.text,
+  //               textAlign: TextAlign.center,
+  //               style: widget.textstyle,
+  //             ),
+  //           ),
+  //   );
+  // }
 
   Widget getTextButton() {
     return TextButton(
@@ -179,7 +183,7 @@ class LoadingButtonState extends State<LoadingButton> {
             )
           : Container(
               // height: 30,
-              alignment: Alignment.center,
+              alignment: widget.text_alignment,
               child: Text(
                 widget.text,
                 textAlign: TextAlign.center,

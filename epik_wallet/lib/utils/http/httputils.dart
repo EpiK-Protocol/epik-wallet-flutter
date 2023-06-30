@@ -8,6 +8,7 @@ import 'package:dio/dio.dart';
 import 'package:epikwallet/localstring/LocaleConfig.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
+import 'package:epikwallet/logic/loader/DL_TepkLoginToken.dart';
 import 'package:epikwallet/model/Upgrade.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
@@ -116,13 +117,19 @@ class HttpUtil {
       }
     });
 
-    // if (needToken) {
-    //   if (StringUtils.isNotEmpty(AccountMgr().currentAccount.access_token)) {
-    //     def_headers["token"] = AccountMgr().currentAccount.access_token;
-    //   } else {
-    //     print("httputils  requestJson  no token");
-    //   }
-    // }
+    if (needToken) {
+      // if (StringUtils.isNotEmpty(AccountMgr().currentAccount.access_token)) {
+      //   def_headers["token"] = AccountMgr().currentAccount.access_token;
+      // } else {
+      //   print("httputils  requestJson  no token");
+      // }
+      String token = DL_TepkLoginToken?.getEntity()?.getToken();
+      if (StringUtils.isNotEmpty(token)) {
+        def_headers["token"] = token;
+      } else {
+        print("httputils  requestJson  no token");
+      }
+    }
 
     if (sendLanguageType) {
       // language:zh-cn
@@ -138,11 +145,9 @@ class HttpUtil {
         String urlpath = "";
         Uri _uri = Uri.tryParse(url);
         urlpath = _uri.path;
-        if(_uri.hasQuery)
-          urlpath+="?"+_uri.query;
+        if (_uri.hasQuery) urlpath += "?" + _uri.query;
         String text = urlpath;
-        if(text.startsWith("/api"))
-          text=text.substring(4);
+        if (text.startsWith("/api")) text = text.substring(4);
         // print(text);
         if (!isGet && data != null && data is String) {
           text += "\n" + data;

@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:epikplugin/epikplugin.dart';
-import 'package:epikwallet/base/buildConfig.dart';
 import 'package:epikwallet/localstring/localstringdelegate.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
+import 'package:epikwallet/logic/LimitedPlatform.dart';
 import 'package:epikwallet/logic/LocalAuthUtils.dart';
-import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/Upgrade.dart';
 import 'package:epikwallet/utils/CupertinoLocalizationsDelegate.dart';
 import 'package:epikwallet/utils/Dlog.dart';
@@ -14,14 +12,18 @@ import 'package:epikwallet/utils/device/deviceutils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/sp_utils/sp_utils.dart';
 import 'package:epikwallet/utils/toast/toast.dart';
+import 'package:epikwallet/views/mainview.dart';
 import 'package:epikwallet/views/splashview.dart';
-import 'package:flutter/foundation.dart';
+import 'package:epikwallet/widget/AppRestartView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:package_info/package_info.dart';
-// import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 import 'package:umeng_common_sdk/umeng_common_sdk.dart';
+
+// import 'package:flutter_phoenix/flutter_phoenix.dart';
+
+// import 'package:umeng_analytics_plugin/umeng_analytics_plugin.dart';
 
 final String fontFamily_def = "Miui-Light";
 
@@ -33,19 +35,22 @@ String get APP_CHANNEL {
   return _CHANNEL;
 }
 
+
 void main() {
-  runApp(MyApp());
+  // runApp(MyApp());
+  runApp(AppRestartView(child: MyApp()));
+
+  // Phoenix
 
   if (Platform.isAndroid) {
     //沉浸式状态栏
     //写在组件渲染之后，是为了在渲染后进行设置赋值，覆盖状态栏，写在渲染之前对MaterialApp组件会覆盖这个值。
-    SystemUiOverlayStyle systemUiOverlayStyle =
-        SystemUiOverlayStyle(statusBarColor: Colors.transparent);
+    SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent);
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
   }
 }
 
-final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
+GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 
 BuildContext get appContext {
   return navigatorKey?.currentState?.overlay?.context;
@@ -80,13 +85,26 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> initOther() async {
+    navigatorKey = new GlobalKey<NavigatorState>();
     await SpUtils().init(); // 初始化存储工具
+    // SpUtils.remove(LimitedPlatform.sp_key_main_bot);//todo test
+    // SpUtils.remove(LimitedPlatform.sp_key_main_swap);//todo test
+
+    if(LimitedPlatform.isLimited && !SpUtils.haveKey(LimitedPlatform.sp_key_main_bot))
+    {
+      SpUtils.putBool(LimitedPlatform.sp_key_main_bot, false);
+    }
+    if(LimitedPlatform.isLimited && !SpUtils.haveKey(LimitedPlatform.sp_key_main_swap))
+    {
+      SpUtils.putBool(LimitedPlatform.sp_key_main_swap, false);
+    }
+
     await DeviceUtils().initPlatInfo();
     LocalAuthUtils.checkBiometrics().then((value) {
-      Dlog.p("checkBiometrics","$value");
-      if(value){
-        LocalAuthUtils.getAvailableBiometrics().then((bs){
-          Dlog.p("getAvailableBiometrics","$bs");
+      Dlog.p("checkBiometrics", "$value");
+      if (value) {
+        LocalAuthUtils.getAvailableBiometrics().then((bs) {
+          Dlog.p("getAvailableBiometrics", "$bs");
         });
       }
     });
@@ -122,7 +140,7 @@ class _MyAppState extends State<MyApp> {
     UmengCommonSdk.initCommon(
       "5fca552abed37e4506c2b987",
       "5fca556019bda368eb47c630",
-      APP_CHANNEL,//Platform.isAndroid ? "android" : "ios",
+      APP_CHANNEL, //Platform.isAndroid ? "android" : "ios",
     );
     // 手动采集页面信息
     UmengCommonSdk.setPageCollectionModeManual();
@@ -179,8 +197,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<bool> onWillPop() async {
-    if (lastPopTime == null ||
-        DateTime.now().difference(lastPopTime) > Duration(seconds: 1)) {
+    if (lastPopTime == null || DateTime.now().difference(lastPopTime) > Duration(seconds: 1)) {
       //两次点击间隔超过1秒则重新计时
       lastPopTime = DateTime.now();
 //            ToastUtils.showToast("再按一次退出");

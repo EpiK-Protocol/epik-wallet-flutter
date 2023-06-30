@@ -4,7 +4,8 @@ import 'package:epikwallet/utils/res_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:webview_flutter/webview_flutter.dart' as wf;
+import 'package:epikwallet/widget/text/BlinkTextView.dart';
+// import 'package:webview_flutter/webview_flutter.dart' as wf;
 
 class GeneralWebView extends BaseWidget {
   static bool useWF = false;
@@ -27,7 +28,7 @@ class _GeneralWebViewState extends BaseWidgetState<GeneralWebView> {
   Uri weburl_uri = null;
 
   InAppWebViewController _webViewController = null;
-  wf.WebViewController _wfWebViewController = null;
+  // wf.WebViewController _wfWebViewController = null;
 
   bool webview_reload_btn = false;
   bool clearCache = false;
@@ -44,15 +45,34 @@ class _GeneralWebViewState extends BaseWidgetState<GeneralWebView> {
     weburl_uri = Uri.tryParse(weburl);
   }
 
+  Widget getAppBarCenter({Color color}) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.fromLTRB(50, 0, 50, 0),
+      child: Text(
+        appBarTitle,
+        textAlign: TextAlign.center,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontSize: appBarCenterTextSize - 4,
+          color: color ?? appBarContentColor,
+        ),
+      ),
+    );
+  }
+
+
   Widget getAppBarRight({Color color}) {
     if (webview_reload_btn == true) {
       return InkWell(
         onTap: () {
           if (_webViewController != null) {
             _webViewController.reload();
-          } else if (_wfWebViewController != null) {
-            _wfWebViewController.reload();
           }
+          // else if (_wfWebViewController != null) {
+            // _wfWebViewController.reload();
+          // }
         },
         child: Container(
           width: getAppBarHeight() * 0.8,
@@ -101,10 +121,12 @@ class _GeneralWebViewState extends BaseWidgetState<GeneralWebView> {
     // finish();
     if (_webViewController != null && await _webViewController.canGoBack()) {
       _webViewController.goBack();
-    } else if (_wfWebViewController != null &&
-        await _wfWebViewController.canGoBack()) {
-      _wfWebViewController.goBack();
-    } else {
+    }
+    // else if (_wfWebViewController != null &&
+    //     await _wfWebViewController.canGoBack()) {
+    //   _wfWebViewController.goBack();
+    // }
+    else {
       finish();
     }
   }
@@ -128,6 +150,15 @@ class _GeneralWebViewState extends BaseWidgetState<GeneralWebView> {
             bottom: 0,
             child: (GeneralWebView.useWF) ? getWebView() : getWebView2(),
           ),
+          if(loadprogress <100)
+            Positioned(
+              child:Scaffold(
+                backgroundColor: ResColor.b_1,
+                body: Center(
+                  child: BlinkTextView("Loading..."),
+                ),
+              ),
+            ),
           if (loadprogress > 0 && loadprogress < 100)
             Positioned(
               left: 0,
@@ -167,38 +198,38 @@ class _GeneralWebViewState extends BaseWidgetState<GeneralWebView> {
   }
 
   Widget getWebView() {
-    return wf.WebView(
-      initialUrl: weburl,
-      //JS运行模式
-      javascriptMode: wf.JavascriptMode.unrestricted,
-      // 请求拦截器
-      navigationDelegate: (wf.NavigationRequest request) {
-        // print("NavigationRequest request ${request}");
-        //不需要拦截的操作
-        dlog("WebView -> navigate -> ${request?.url}");
-        if (request?.url != null) {
-          String url = request.url;
-          Dlog.p("webview", "onShouldOverrideUrlLoadingurl=$url");
-          bool isHandle = false;
-          try {
-            // isHandle = SchemeLink.schemeUrl(context, url, autoWeb: false);
-            isHandle = !url.startsWith("http");
-          } catch (e) {
-            print(e);
-          }
-          if (isHandle) {
-            return wf.NavigationDecision.prevent; //拦截url 自行处理
-          }
-        }
-        // 其他请求
-        dlog("WebView -> prevent -> ${request?.url}");
-        return wf.NavigationDecision.navigate;
-      },
-      onWebViewCreated: (wf.WebViewController webViewController) {
-        dlog("onWebViewCreated " + webViewController.toString());
-        _wfWebViewController = webViewController;
-      },
-    );
+    // return wf.WebView(
+    //   initialUrl: weburl,
+    //   //JS运行模式
+    //   javascriptMode: wf.JavascriptMode.unrestricted,
+    //   // 请求拦截器
+    //   navigationDelegate: (wf.NavigationRequest request) {
+    //     // print("NavigationRequest request ${request}");
+    //     //不需要拦截的操作
+    //     dlog("WebView -> navigate -> ${request?.url}");
+    //     if (request?.url != null) {
+    //       String url = request.url;
+    //       Dlog.p("webview", "onShouldOverrideUrlLoadingurl=$url");
+    //       bool isHandle = false;
+    //       try {
+    //         // isHandle = SchemeLink.schemeUrl(context, url, autoWeb: false);
+    //         isHandle = !url.startsWith("http");
+    //       } catch (e) {
+    //         print(e);
+    //       }
+    //       if (isHandle) {
+    //         return wf.NavigationDecision.prevent; //拦截url 自行处理
+    //       }
+    //     }
+    //     // 其他请求
+    //     dlog("WebView -> prevent -> ${request?.url}");
+    //     return wf.NavigationDecision.navigate;
+    //   },
+    //   onWebViewCreated: (wf.WebViewController webViewController) {
+    //     dlog("onWebViewCreated " + webViewController.toString());
+    //     _wfWebViewController = webViewController;
+    //   },
+    // );
   }
 
   Widget getWebView2() {
@@ -250,10 +281,10 @@ class _GeneralWebViewState extends BaseWidgetState<GeneralWebView> {
       if (clearCache == true) _webViewController.clearCache();
       _webViewController = null;
     }
-    if (_wfWebViewController != null) {
-      if (clearCache == true) _wfWebViewController.clearCache();
-      _wfWebViewController = null;
-    }
+    // if (_wfWebViewController != null) {
+    //   if (clearCache == true) _wfWebViewController.clearCache();
+    //   _wfWebViewController = null;
+    // }
     super.dispose();
   }
 
@@ -272,11 +303,12 @@ class _GeneralWebViewState extends BaseWidgetState<GeneralWebView> {
     if (_webViewController != null && await _webViewController.canGoBack()) {
       _webViewController.goBack();
       return false;
-    } else if (_wfWebViewController != null &&
-        await _wfWebViewController.canGoBack()) {
-      _wfWebViewController.goBack();
-      return false;
     }
+    // else if (_wfWebViewController != null &&
+    //     await _wfWebViewController.canGoBack()) {
+    //   _wfWebViewController.goBack();
+    //   return false;
+    // }
     return true;
   }
 
