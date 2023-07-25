@@ -202,7 +202,7 @@ class DappBountyItemState extends State<DappBountyItem> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              "EPK: ",
+              "AIEPK: ",
               style: TextStyle(
                 color: ResColor.white_60,
                 fontSize: 11,

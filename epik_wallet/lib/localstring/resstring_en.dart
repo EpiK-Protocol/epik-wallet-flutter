@@ -78,11 +78,11 @@ Map<RSID, String> map_en = {
   RSID.iwv_29:"Need EpiK wallet",
 
   //ExportEpikPrivateKeyView 导出私钥  Export private key
-  RSID.eepkv_1: "Export EPK private key",//"导出tEPK私钥",
+  RSID.eepkv_1: "Export AIEPK private key",//"导出tEPK私钥",
   RSID.eepkv_2: "Copied private key",//"已复制私钥",
   RSID.eepkv_3: "Copy private key",//"复制私钥",
   RSID.eepkv_4: "Reminder",//导出提示
-  RSID.eepkv_5: "What you are exporting is the private key of EPK. EPK is your important asset. Obtaining the private key is equivalent to owning the wallet. Leaking this private key may lose all the assets. Please make sure to keep it and do not disclose it to others.",
+  RSID.eepkv_5: "What you are exporting is the private key of AIEPK. AIEPK is your important asset. Obtaining the private key is equivalent to owning the wallet. Leaking this private key may lose all the assets. Please make sure to keep it and do not disclose it to others.",
   RSID.eepkv_6: "Export ETH private key",//"导出ETH私钥",
   RSID.eepkv_7: "Remote authorization",//"远程授权",
 
@@ -152,7 +152,7 @@ Map<RSID, String> map_en = {
   RSID.main_wv_4: "Import wallet",//"导入钱包",
   RSID.main_wv_5: "Test network 5.0",//"Main network",//"主网",
   RSID.main_wv_6: "Total assets",// "总资产",
-  RSID.main_wv_7: "EPK cross chain swap",//"EPK跨链兑换",//ERC20-EPK 兑换 EPK  "ERC20-EPK swap for EPK"
+  RSID.main_wv_7: "AIEPK cross chain swap",//"EPK跨链兑换",//ERC20-EPK 兑换 EPK  "ERC20-EPK swap for EPK"
   RSID.main_wv_8: "Get the bounty hunter reward",//"领取赏金猎人奖励",
   RSID.main_wv_9: "ERC20-EPK Uniswap",//ERC20-EPK Uniswap 交易
   RSID.main_wv_10: "Not yet open",//"暂未开通",
@@ -188,7 +188,7 @@ Map<RSID, String> map_en = {
   //AI Bots 首页_AI机器人
   RSID.main_abv_1:"AI Bot Store", //
   RSID.main_abv_2:"Points", // Points
-  RSID.main_abv_3:"1 Point = %s EPK / BSC-EPK / ERC20-EPK", // (1 Point = xx EPK/BSC-EPK/ERC20-EPK)
+  RSID.main_abv_3:"1 Point = %s AIEPK / BSC-EPK / ERC20-EPK", // (1 Point = xx EPK/BSC-EPK/ERC20-EPK)
   RSID.main_abv_4:"Recharge", //
   RSID.main_abv_5:"History", //
   RSID.main_abv_6:"Recently Used",//"Latest", //
@@ -215,7 +215,7 @@ Map<RSID, String> map_en = {
   //----------------------------------------views.mining.*
   //MiningProfitView 预挖收益 Pre-mining profit
   RSID.mpv_1: "Test net profit",//"Pre-mining profit",//"预挖收益",
-  RSID.mpv_2: "Mined\nEPK",//"挖出数量\ntEPK",
+  RSID.mpv_2: "Mined\nAIEPK",//"挖出数量\ntEPK",
   RSID.mpv_3: "Granted\nERC20-EPK",//"奖励数量\nERC20-EPK",
   RSID.mpv_4: "Total bonus\nERC20-EPK",//"总奖励\nERC20-EPK",
 
@@ -390,10 +390,10 @@ Map<RSID, String> map_en = {
   RSID.bexv_15:
   "1.An ETH fee is incurred for transfers over Ethernet when redeeming scores for ERC20-EPK.\n\n2.The amount of fees is based on how much ERC20-EPK to deduct based on the ethereum gas fee and the token price in Uniswap.",//"「1」用积分兑换ERC20-EPK时，通过以太网转账会产生ETH手续费；\n\n「2」手续费数量是根据以太坊gas费用和Uniswap中的币价计算出要扣除多少ERC20-EPK。",
   RSID.bexv_16: "Currently Telegram bound：",
-  RSID.bexv_17: "Current swap ratio: %s scores = 1 EPK",//"当前兑换比例：%s 积分 = 1 EPK",
-  RSID.bexv_18: "Current EPK receiving account:",//"当前EPK收币账户：",
-  RSID.bexv_19: "Estimatedfee: %s EPK",//"预估手续费：%s EPK",
-  RSID.bexv_20: "When redeeming scores for EPK, you need to deduct the handling charge.",//"用积分兑换EPK时，需要扣除手续费",
+  RSID.bexv_17: "Current swap ratio: %s scores = 1 AIEPK",//"当前兑换比例：%s 积分 = 1 EPK",
+  RSID.bexv_18: "Current AIEPK receiving account:",//"当前EPK收币账户：",
+  RSID.bexv_19: "Estimatedfee: %s AIEPK",//"预估手续费：%s EPK",
+  RSID.bexv_20: "When redeeming scores for AIEPK, you need to deduct the handling charge.",//"用积分兑换EPK时，需要扣除手续费",
   RSID.bexv_21: "Swap amount",//"兑换数量",
 
   //----------------------------------------logic.*
@@ -457,16 +457,16 @@ Map<RSID, String> map_en = {
   RSID.minerview2_19:"Total Access Pledge",//"总流量质押",
   RSID.minerview2_20:"Pledging",//"质押中",
   //---add
-  RSID.minerview_15:"Notice:\n- You need to start a physical machine to act as a knowledge node\n- A Knowledge node need to complete the basic pledge of 1000 EPK in order to obtain the right to mint blocks\n- Knowledge nodes need to retrieve new files from the network and store new files in order to increase computing power which will improve the probability to mint blocks\n- 1EPK = 10Mib daily access traffic, daily used access traffic will be refreshed\n- You can withdraw the pledged EPK at any time",
-  RSID.minerview_16:" EPK available",//可用 available
+  RSID.minerview_15:"Notice:\n- You need to start a physical machine to act as a knowledge node\n- A Knowledge node need to complete the basic pledge of 1000 AIEPK in order to obtain the right to mint blocks\n- Knowledge nodes need to retrieve new files from the network and store new files in order to increase computing power which will improve the probability to mint blocks\n- 1AIEPK = 10Mib daily access traffic, daily used access traffic will be refreshed\n- You can withdraw the pledged AIEPK at any time",
+  RSID.minerview_16:" AIEPK available",//可用 available
   RSID.minerview_17:"Access Pledge",//"访问流量抵押",
   RSID.minerview_18:"Transaction Submitted",//"交易已提交",
   RSID.minerview_19:"View Details",//"查看交易",
   RSID.minerview_20:"Added Pledge Submitted",//"添加抵押交易已提交",
   //---withdraw
-  RSID.minerview_21:"Notice:\n- Only redeem EPK of its own pledge\n- If you have consumed part of the access traffic at present, you cannot redeem all the access traffic pledge. Please try to reduce the amount of redemption\n- The EPK in the node's basic pledge redemption will arrive immediately\n- EPK accessing traffic pledge can only be redeemed after 3 days of unlocking operation",
-  RSID.minerview_22:" EPK can be withdrawn",//赎回
-  RSID.minerview_23:" EPK can be unlocked",//可解锁
+  RSID.minerview_21:"Notice:\n- Only redeem AIEPK of its own pledge\n- If you have consumed part of the access traffic at present, you cannot redeem all the access traffic pledge. Please try to reduce the amount of redemption\n- The AIEPK in the node's basic pledge redemption will arrive immediately\n- AIEPK accessing traffic pledge can only be redeemed after 3 days of unlocking operation",
+  RSID.minerview_22:" AIEPK can be withdrawn",//赎回
+  RSID.minerview_23:" AIEPK can be unlocked",//可解锁
   RSID.minerview_24:" unlocked",//解锁
   RSID.minerview_25:"Access Pledge",//"访问流量抵押",
   RSID.minerview_26:"Withdraw Request Submitted",//"赎回抵押交易已提交",
@@ -500,7 +500,7 @@ Map<RSID, String> map_en = {
   RSID.expertview_13:"Blocked",//"黑名单",//disqualified
   RSID.expertview_14:"Withdrawable",//"可提现收益", //profit
   RSID.expertview_15:"Enter number of withdrawals",//"请输入提取数量",
-  RSID.expertview_16:"There is currently no EPK that can be extracted",//"There is no profit to draw at present",//"当前没有收益可提取",
+  RSID.expertview_16:"There is currently no AIEPK that can be extracted",//"There is no profit to draw at present",//"当前没有收益可提取",
   RSID.expertview_17:"Your voted",//"您已投出",
   RSID.expertview_18:"Unlocking votes",//"解锁中",
   RSID.expertview_19:"Unlocked Votes",//"已解锁",
@@ -547,11 +547,11 @@ Map<RSID, String> map_en = {
   RSID.applyexpertview_29:"Why are you the right person of this domain?",//"为什么你是这个领域的合适人选？",// Why are you the right person of this domain?
   RSID.applyexpertview_30:"How will you develop or promote the applications to benefit from the data collected in this domain?",//"您将如何根据该领域收集的数据开发或推广应用程序？",//你会如何推动AI应用来使用这个领域的数据并从中获益？How will you develop or promote the applications to be nefit from the data collected in this domain?
   RSID.applyexpertview_31:"Basic Infomation",//"基础信息",// Basic Infomation
-  RSID.applyexpertview_32:"Please tell all EPKers who you are.",//"告诉大家你是谁",// Please tell all EPKers who you are.
+  RSID.applyexpertview_32:"Please tell all AIEPKers who you are.",//"告诉大家你是谁",// Please tell all EPKers who you are.
   RSID.applyexpertview_33:"Professional Introduction",//"专业介绍",// Professional Introduction
-  RSID.applyexpertview_34:"Please choose one domain and combine your own experience to tell all EPKers that you are the right person to be the domain expert in this domain.",//"请选择一个领域，并结合您自己的经验告诉大家您是该领域专家最适合的人选。",// Please choose one domain and combine your own experience to tell all EPKers that you are the right person to be the domain expert in this domain.
+  RSID.applyexpertview_34:"Please choose one domain and combine your own experience to tell all AIEPKers that you are the right person to be the domain expert in this domain.",//"请选择一个领域，并结合您自己的经验告诉大家您是该领域专家最适合的人选。",// Please choose one domain and combine your own experience to tell all EPKers that you are the right person to be the domain expert in this domain.
   RSID.applyexpertview_35:"AI Application",//"人工智能应用程序",// AI Application
-  RSID.applyexpertview_36:"Please tell all EPKers that the data in this domain will be very useful and you could develop a new AI application or find an existing AI application to benefit the data in this domain.",//"请告诉大家，该领域中的数据将非常有用，您可以开发一个新的AI应用程序或找到一个现有的AI应用程序，以使该领域中的数据受益。",// Please tell all EPKers that the data in this domain will be very useful and you could develop a new AI application or find an existing AI application to benefit the data in this domain.
+  RSID.applyexpertview_36:"Please tell all AIEPKers that the data in this domain will be very useful and you could develop a new AI application or find an existing AI application to benefit the data in this domain.",//"请告诉大家，该领域中的数据将非常有用，您可以开发一个新的AI应用程序或找到一个现有的AI应用程序，以使该领域中的数据受益。",// Please tell all EPKers that the data in this domain will be very useful and you could develop a new AI application or find an existing AI application to benefit the data in this domain.
   RSID.applyexpertview_37:"Please select a language",//"请选择语言",
   RSID.applyexpertview_38:"Please enter twitter",//"请输入推特",
   RSID.applyexpertview_39:"Please enter LinkedIn",//"请输入领英",
@@ -594,20 +594,20 @@ Map<RSID, String> map_en = {
   RSID.eev_3:"Waiting for Confirmation",//"确认交易",
   RSID.eev_4:"Done",//"完成",
   RSID.eev_5:"Service Notes",//"兑换须知",
-  RSID.eev_6:"ERC20-EPK on Ethereum and EPK on the EpiK Protocol mainnet can be exchanged 1:1 in both directions, and the cross-chain bridge is provided by the EpiK Protocol Foundation. During the exchange process, because the cross-chain bridge needs to pay a high transaction fee to Ethereum, a certain amount of EPK will be charged as a service fee for each exchange. After the exchange is completed, the EPK or ERC20-EPK you obtained through the exchange will be automatically transferred to your current EpiK wallet. The transfer of tokens will take a while, please be patient.",
+  RSID.eev_6:"ERC20-EPK on Ethereum and AIEPK on the EpiK Protocol mainnet can be exchanged 1:1 in both directions, and the cross-chain bridge is provided by the EpiK Protocol Foundation. During the exchange process, because the cross-chain bridge needs to pay a high transaction fee to Ethereum, a certain amount of AIEPK will be charged as a service fee for each exchange. After the exchange is completed, the AIEPK or ERC20-EPK you obtained through the exchange will be automatically transferred to your current EpiK wallet. The transfer of tokens will take a while, please be patient.",
   RSID.eev_7:"Risk Warning",//"风险提示",
   RSID.eev_8_1:"In order to prevent you from intentionally or unintentionally disclosing the mnemonic words or private key of the current wallet before, it is strongly recommended to ",//"为避免您之前参与挖矿活动有意或者无意的泄露过当前钱包的助记词或私钥，强烈建议",
   RSID.eev_8_2:"create a new wallet",//"创建新钱包",
   RSID.eev_8_3:", and transfer all your ERC20-EPK into the new wallet, and then do the swap.",//"，将ERC20-EPK转入全新的钱包后，再进行兑换。",
   RSID.eev_9:"Disclaimers",//"免责声明",
-  RSID.eev_10:"If you destroy ERC20-EPK through other methods, resulting in the failure of normal exchange of EPK, EpiK Protocol Foundation will not compensate.",//"如您通过其他渠道自行销毁了ERC20-EPK导致无法正常兑换EPK，EpiK基金会将不予赔偿",
+  RSID.eev_10:"If you destroy ERC20-EPK through other methods, resulting in the failure of normal exchange of AIEPK, EpiK Protocol Foundation will not compensate.",//"如您通过其他渠道自行销毁了ERC20-EPK导致无法正常兑换EPK，EpiK基金会将不予赔偿",
   RSID.eev_11:"Address:",//"地址:",
   RSID.eev_12:"Amount",//"兑换数量",
   RSID.eev_13:"Swap For ",//"兑换成",
   RSID.eev_14:"Minimum",//"最少兑换",
   RSID.eev_15:"Maximum",//"最多兑换",
   RSID.eev_16:"Fee",//"手续费",
-  RSID.eev_17:"Submit TxHash to claim EPK",//"已转出交易补领EPK",
+  RSID.eev_17:"Submit TxHash to claim AIEPK",//"已转出交易补领EPK",
   RSID.eev_18:"Submit CID to claim ERC20-EPK",//"已转出交易补领ERC20-EPK",
   RSID.eev_19:"Transaction failed",//"交易失败",
   RSID.eev_20:"Copied TxHash",//"TxHash已复制",
@@ -653,16 +653,16 @@ Map<RSID, String> map_en = {
   //BountyDappListView
   RSID.bdlv_1:"Bounty Hunter Rewards",//"赏金猎人奖励",
   RSID.bdlv_2:"Service Notes",//"领取须知",
-  RSID.bdlv_3_1:"EPK for bounty hunter rewards is provided by the Knowledge Fund of EpiK Protocol. In order to claim EPK, you need to provide ",//"赏金猎人奖励所需的EPK有EpiK知识基金提供。领取过程中，需要您提供",
-  RSID.bdlv_3_2:"'s redeem token. After claiming, your EPK balance in the corresponding application will be reduced, and the EPK you claimed will be automatically transferred to your current EpiK wallet. The transfer of tokens will take a while, please be patient.",//"的领取令牌，领取金额有最小限额，只有余额大于最小限额才能领取。领取后您在知识大陆的EPK余额会减少，您领取的EPK将自动转入您当前的EpiK钱包。",
+  RSID.bdlv_3_1:"AIEPK for bounty hunter rewards is provided by the Knowledge Fund of EpiK Protocol. In order to claim AIEPK, you need to provide ",//"赏金猎人奖励所需的EPK有EpiK知识基金提供。领取过程中，需要您提供",
+  RSID.bdlv_3_2:"'s redeem token. After claiming, your AIEPK balance in the corresponding application will be reduced, and the AIEPK you claimed will be automatically transferred to your current EpiK wallet. The transfer of tokens will take a while, please be patient.",//"的领取令牌，领取金额有最小限额，只有余额大于最小限额才能领取。领取后您在知识大陆的EPK余额会减少，您领取的EPK将自动转入您当前的EpiK钱包。",
   RSID.bdlv_4:"Risk Warning",//"风险提示",
   RSID.bdlv_5_1:"Please make sure that you do not disclose the mnemonics and private key of the current wallet, otherwise it is strongly recommended to ",//"请确保您没有泄露当前钱包助记词和私钥，否则强烈建议",
   RSID.bdlv_5_2:"create a new wallet",//"创建新钱包",
-  RSID.bdlv_5_3:" and claim EPK in the new wallet.",//"，在新钱包中进行领取。",
+  RSID.bdlv_5_3:" and claim AIEPK in the new wallet.",//"，在新钱包中进行领取。",
 
   //BountyDappTakeRecordView
   RSID.bdtrv_1:"Records",//"领取记录",
-  RSID.bdtrv_2:"EPK transaction",//"EPK 发放交易",
+  RSID.bdtrv_2:"AIEPK transaction",//"EPK 发放交易",
 
   //BountyDappTakeView
   RSID.bdtv_1:"Amount must be greater than ",//"数量需要大于",
@@ -671,9 +671,9 @@ Map<RSID, String> map_en = {
   RSID.bdtv_4:"Account: ",//"账号: ",
   RSID.bdtv_5:"Name: ",//"名称: ",
   RSID.bdtv_6:"Confirm to claim",//"确认领取",
-  RSID.bdtv_7:"After confirmation, the request will be submitted and the EPK will be sent to your current wallet after the request is approved.",//"确认领取后会提交领取申请，审核通过后会发放EPK到您当前的钱包",
-  RSID.bdtv_8:"Claim EPK",//"领取EPK",
-  RSID.bdtv_9:"The claim request has been submitted and the EPK will be transfered to your current wallet after the request is approved. Please check in the claim records.",//"已提交领取申请，审核通过后将发放到您当前钱包，请在领取记录中查看。",
+  RSID.bdtv_7:"After confirmation, the request will be submitted and the AIEPK will be sent to your current wallet after the request is approved.",//"确认领取后会提交领取申请，审核通过后会发放EPK到您当前的钱包",
+  RSID.bdtv_8:"Claim AIEPK",//"领取EPK",
+  RSID.bdtv_9:"The claim request has been submitted and the AIEPK will be transfered to your current wallet after the request is approved. Please check in the claim records.",//"已提交领取申请，审核通过后将发放到您当前钱包，请在领取记录中查看。",
   RSID.bdtv_10:"Claim",//"领取",
   RSID.bdtv_11:"Bind",//"绑定",
   RSID.bdtv_12:"Please enter the redeem token",//"请输入兑换令牌",
@@ -847,7 +847,7 @@ Map<RSID, String> map_en = {
   RSID.nodepool_node_own:"Own",//自己的
   RSID.nodepool_node_rent:"Lease",//"租赁",
   RSID.nodepool_node_manage:"Manage",//"管理",
-  RSID.nodepool_node_insufficient_epk:"Insufficient EPK balance",//"EPK余额不足",//
+  RSID.nodepool_node_insufficient_epk:"Insufficient AIEPK balance",//"EPK余额不足",//
   RSID.nodepool_node_locked:"The application node is successful! \nNode ID: %s (copied to the clipboard)\nPlease complete the pledge within 1 hour, the timeout will be released.",//""申请节点成功！\n节点ID：%s（已复制到剪切板）\n请在1小时内完成质押，超时将被释放。""
   RSID.nodepool_node_abort:"Pledge Later",//"放弃",
   RSID.nodepool_node_palde:"Pledge Now",//"立刻质押",
@@ -858,8 +858,8 @@ Map<RSID, String> map_en = {
   RSID.npcv_2:"Please enter the name",//"请输入名称",
   RSID.npcv_3:"Description",//"描述",
   RSID.npcv_4:"Please enter the description",//"请输入描述",
-  RSID.npcv_5:"EPK Fee Address",//"EPK收益地址",
-  RSID.npcv_6:"Please enter the EPK fee address",//"请输入收益地址",
+  RSID.npcv_5:"AIEPK Fee Address",//"EPK收益地址",
+  RSID.npcv_6:"Please enter the AIEPK fee address",//"请输入收益地址",
   RSID.npcv_7:"Fee Percentage",//"费用比例",
   RSID.npcv_8:"Node Pool Status",//节点池状态 "Whether To Enable",//"是否启用",
   RSID.npcv_9:"Enable",//"启用",

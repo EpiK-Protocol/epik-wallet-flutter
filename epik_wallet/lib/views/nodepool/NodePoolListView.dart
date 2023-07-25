@@ -39,6 +39,9 @@ class NodePoolListView extends BaseWidget {
 }
 
 class NodePoolListViewState extends BaseWidgetState<NodePoolListView> with TickerProviderStateMixin {
+
+  String epkname="AIEPK";
+
   List<PoolObj> data = [];
   PoolObj myCreatePoolObj = null;
   GlobalKey<ListPageState> key_scroll = GlobalKey();

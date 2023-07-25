@@ -3,6 +3,7 @@ import 'package:epikwallet/base/common_function.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/LocalAddressMgr.dart';
 import 'package:epikwallet/logic/LocalWebsiteMgr.dart';
+import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
@@ -303,6 +304,8 @@ class EditWebsiteViewState extends BaseWidgetState<EditWebsiteView> {
     ));
 
     List<CurrencySymbol> cslist = [CurrencySymbol.ETH, CurrencySymbol.BNB];
+    if(ServiceInfo.hideBSC)
+      cslist.remove(CurrencySymbol.BNB);
     Widget footer = StatefulBuilder(
       builder: (context, setState) {
         return Container(

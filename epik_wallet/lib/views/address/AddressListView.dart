@@ -8,6 +8,7 @@ import 'package:epikwallet/localstring/LocaleConfig.dart';
 import 'package:epikwallet/localstring/resstringid.dart';
 import 'package:epikwallet/logic/LocalAddressMgr.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
+import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/ClickUtil.dart';
 import 'package:epikwallet/utils/RegExpUtil.dart';
@@ -45,6 +46,14 @@ class AddressListViewState extends BaseWidgetState<AddressListView> with TickerP
   void initStateConfig() {
     super.initStateConfig();
     setTopBarVisible(false);
+
+    if(ServiceInfo.hideBSC)
+    {
+      tabTypes= tabTypes.sublist(0,4);
+      // tabTypes.remove(CurrencySymbol.BNB);
+      // tabTypes.remove(CurrencySymbol.EPKbsc);
+      // tabTypes.remove(CurrencySymbol.USDTbsc);
+    }
   }
 
   @override

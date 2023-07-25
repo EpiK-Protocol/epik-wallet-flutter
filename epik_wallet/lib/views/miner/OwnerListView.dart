@@ -226,7 +226,7 @@ class OwnerListViewState extends BaseWidgetState<OwnerListView> {
             child: getColumnKeyValue(
                 RSID.olv_1.text, //"余额",
                 // "${StringUtils.formatNumAmountLocaleUnit(owner?.Balance_d??0, context, point: 2, needZhUnit: false)} EPK",
-                "${StringUtils.formatNumAmount(owner?.Balance_d ?? 0, point: 2, supply0: false)} EPK",
+                "${StringUtils.formatNumAmount(owner?.Balance_d ?? 0, point: 2, supply0: false)} AIEPK",
                 crossAxisAlignment: CrossAxisAlignment.end),
           ),
         ],
@@ -269,7 +269,7 @@ class OwnerListViewState extends BaseWidgetState<OwnerListView> {
                 Expanded(
                   child: Text(
                     // "${StringUtils.formatNumAmountLocaleUnit(0, context, point: 2, needZhUnit: false)} EPK",
-                    "${StringUtils.formatNumAmount(owner?.Pledged_d ?? 0, point: 2, supply0: false)} EPK",
+                    "${StringUtils.formatNumAmount(owner?.Pledged_d ?? 0, point: 2, supply0: false)} AIEPK",
                     style: const TextStyle(
                         fontSize: 17,
                         color: Colors.white,
@@ -292,7 +292,7 @@ class OwnerListViewState extends BaseWidgetState<OwnerListView> {
                 Expanded(
                   child: Text(
                     // "${StringUtils.formatNumAmountLocaleUnit(0, context, point: 2, needZhUnit: false)} EPK",
-                    "${StringUtils.formatNumAmount(owner?.MyPledged_d ?? 0, point: 2, supply0: false)} EPK",
+                    "${StringUtils.formatNumAmount(owner?.MyPledged_d ?? 0, point: 2, supply0: false)} AIEPK",
                     style: const TextStyle(
                         fontSize: 17,
                         color: Colors.white,

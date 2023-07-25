@@ -570,7 +570,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
             ),
           ),
           Text(
-            "${StringUtils.formatNumAmount(widget.expert.vote)}${widget.expert.getRequiredVoteStr()} EPK",
+            "${StringUtils.formatNumAmount(widget.expert.vote)}${widget.expert.getRequiredVoteStr()} AIEPK",
             style: TextStyle(
               color: ResColor.o_1,
               fontSize: 14,
@@ -581,7 +581,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
       Container(height: 20),
       Text(
         //收益
-        "${RSID.expertinfoview_5.text}: ${StringUtils.formatNumAmount(widget.expert.income)} EPK",
+        "${RSID.expertinfoview_5.text}: ${StringUtils.formatNumAmount(widget.expert.income)} AIEPK",
         style: TextStyle(
           color: ResColor.white,
           fontSize: 14,
@@ -652,7 +652,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
       child: Row(
         children: [
           Text(
-            "${RSID.expertinfoview_6.text} EPK", //已投
+            "${RSID.expertinfoview_6.text} AIEPK", //已投
             style: TextStyle(
               fontSize: 14,
               color: Colors.white,

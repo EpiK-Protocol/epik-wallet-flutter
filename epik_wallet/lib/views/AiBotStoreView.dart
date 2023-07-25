@@ -1315,6 +1315,17 @@ class AiBotStoreViewState extends BaseInnerWidgetState<AiBotStoreView> with Tick
       // 请求成功
       if (isFirstPage) {
         bots.clear();
+
+        // todo test
+        AIBotApp aibotapp  = AIBotApp();
+        aibotapp.id=22;
+        aibotapp.name="Comic to Human Master";
+        aibotapp.icon="https://cdn.epik-protocol.io/DAuqfa4ikx8m2MpP598z3hkv1eBzHDLiL8XgFswM752x";
+        aibotapp.description="漫改真人";
+        aibotapp.description_en="Comic to Human";
+        // aibotapp.url="http://192.168.31.203:62638/#/?type=cartoon_realistic";
+        aibotapp.url="https://bot.epik-protocol.io/bot-avator/#/?type=cartoon_realistic";
+        bots.add(aibotapp);
       }
 
       List<AIBotApp> _bots = JsonArray.parseList(data, (json) => AIBotApp.fromJson(json));

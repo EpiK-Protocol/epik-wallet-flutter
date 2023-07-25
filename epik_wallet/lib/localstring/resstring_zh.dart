@@ -78,11 +78,11 @@ Map<RSID, String> map_zh = {
 
 
   //ExportEpikPrivateKeyView 导出私钥
-  RSID.eepkv_1: "导出EPK私钥",
+  RSID.eepkv_1: "导出AIEPK私钥",
   RSID.eepkv_2: "已复制私钥",
   RSID.eepkv_3: "复制私钥",
   RSID.eepkv_4: "温馨提示",//导出提示
-  RSID.eepkv_5: "您正在导出的是EPK的私钥，EPK是您的重要资产。获得私钥等于拥有钱包所有权，泄露此私钥将有可能失去全部资产。请务必保管好，切勿泄露给他人。",
+  RSID.eepkv_5: "您正在导出的是AIEPK的私钥，AIEPK是您的重要资产。获得私钥等于拥有钱包所有权，泄露此私钥将有可能失去全部资产。请务必保管好，切勿泄露给他人。",
   RSID.eepkv_6: "导出ETH私钥",
   RSID.eepkv_7: "远程授权",
 
@@ -152,7 +152,7 @@ Map<RSID, String> map_zh = {
   RSID.main_wv_4: "导入钱包",
   RSID.main_wv_5: "测试网5.0",//主网
   RSID.main_wv_6: "总资产",
-  RSID.main_wv_7: "EPK跨链兑换",//"ERC20-EPK 兑换 EPK",
+  RSID.main_wv_7: "AIEPK跨链兑换",//"ERC20-EPK 兑换 EPK",
   RSID.main_wv_8: "领取赏金猎人奖励",
   RSID.main_wv_9: "ERC20-EPK Uniswap 交易",
   RSID.main_wv_10: "暂未开放",
@@ -188,7 +188,7 @@ Map<RSID, String> map_zh = {
   //AI Bots 首页_AI机器人
   RSID.main_abv_1:"AI机器人商店", // AI Bot Store
   RSID.main_abv_2:"Points", // Points
-  RSID.main_abv_3:"1 Point = %s EPK / BSC-EPK / ERC20-EPK", // (1 Point = xx EPK/BSC-EPK/ERC20-EPK)
+  RSID.main_abv_3:"1 Point = %s AIEPK / BSC-EPK / ERC20-EPK", // (1 Point = xx EPK/BSC-EPK/ERC20-EPK)
   RSID.main_abv_4:"充值", // Recharge
   RSID.main_abv_5:"历史", // History
   RSID.main_abv_6:"最近使用", // Latest
@@ -214,7 +214,7 @@ Map<RSID, String> map_zh = {
   //----------------------------------------views.mining.*
   //MiningProfitView 预挖收益
   RSID.mpv_1: "测试网收益",//"预挖收益",
-  RSID.mpv_2: "挖出数量\nEPK",
+  RSID.mpv_2: "挖出数量\nAIEPK",
   RSID.mpv_3: "奖励数量\nERC20-EPK",
   RSID.mpv_4: "总奖励\nERC20-EPK",
 
@@ -386,10 +386,10 @@ Map<RSID, String> map_zh = {
   RSID.bexv_14: "关于手续费",
   RSID.bexv_15: "「1」用积分兑换ERC20-EPK时，通过以太网转账会产生ETH手续费；\n\n「2」手续费数量是根据以太坊gas费用和Uniswap中的币价计算出要扣除多少ERC20-EPK。",
   RSID.bexv_16: "当前绑定Telegram：",
-  RSID.bexv_17: "当前兑换比例：%s 积分 = 1 EPK",
-  RSID.bexv_18: "当前EPK收币账户：",
-  RSID.bexv_19: "预估手续费：%s EPK",
-  RSID.bexv_20: "用积分兑换EPK时，需要扣除手续费",
+  RSID.bexv_17: "当前兑换比例：%s 积分 = 1 AIEPK",
+  RSID.bexv_18: "当前AIEPK收币账户：",
+  RSID.bexv_19: "预估手续费：%s AIEPK",
+  RSID.bexv_20: "用积分兑换AIEPK时，需要扣除手续费",
   RSID.bexv_21: "兑换数量",
 
   //----------------------------------------logic.*
@@ -452,16 +452,16 @@ Map<RSID, String> map_zh = {
   RSID.minerview2_19:"总流量质押",
   RSID.minerview2_20:"质押中",
   //---add
-  RSID.minerview_15:"注意：\n- 您需要启动物理机器才能成为知识节点\n- 一个知识节点需要完成 1000EPK 的节点基础抵押才能获得出块资格\n- 知识节点需要从网络里读取新文件，存储新文件才能增加算力，增大出块概率 \n- 1EPK = 10Mib 的每日访问流量，每日已用访问流量将会刷新\n- 您可以在任何时候赎回抵押的 EPK",//"注意：\n- 知识矿工需要启动实体矿机才能参与挖矿\n- 知识矿工需要完成1000EPK的矿工基础抵押才能获得出块资格\n- 知识矿工需要从网络里读取新文件，存储新文件才能增加算力，增大出块概率 \n- 1EPK=10Mb的每日访问流量，每日已用访问流量将会返还\n- 您可以在任何时候赎回抵押的EPK",
-  RSID.minerview_16:" EPK 可用",
+  RSID.minerview_15:"注意：\n- 您需要启动物理机器才能成为知识节点\n- 一个知识节点需要完成 1000AIEPK 的节点基础抵押才能获得出块资格\n- 知识节点需要从网络里读取新文件，存储新文件才能增加算力，增大出块概率 \n- 1AIEPK = 10Mib 的每日访问流量，每日已用访问流量将会刷新\n- 您可以在任何时候赎回抵押的 AIEPK",//"注意：\n- 知识矿工需要启动实体矿机才能参与挖矿\n- 知识矿工需要完成1000EPK的矿工基础抵押才能获得出块资格\n- 知识矿工需要从网络里读取新文件，存储新文件才能增加算力，增大出块概率 \n- 1EPK=10Mb的每日访问流量，每日已用访问流量将会返还\n- 您可以在任何时候赎回抵押的EPK",
+  RSID.minerview_16:" AIEPK 可用",
   RSID.minerview_17:"访问流量抵押",
   RSID.minerview_18:"交易已提交",
   RSID.minerview_19:"查看交易",
   RSID.minerview_20:"添加抵押交易已提交",
   //---withdraw
-  RSID.minerview_21:"注意：\n- 仅能赎回自己抵押的EPK\n- 如果你当前已经消耗了一部分访问流量，则无法赎回全部的访问流量抵押，请尝试减少赎回的数量\n- 节点基础抵押赎回中的EPK将会立刻到账\n- 访问流量抵押的EPK需要在解锁操作3天后才能赎回",//"注意：\n- 仅能赎回自己抵押的EPK\n- 如果你当前已经消耗了一部分访问流量，则无法赎回全部的访问流量抵押，请尝试减少赎回的数量\n- 矿工基础抵押赎回中的EPK将会立刻到账\n- 访问流量抵押的EPK需要在解锁操作3天后才能赎回",
-  RSID.minerview_22:" EPK 可赎回",
-  RSID.minerview_23:" EPK 可解锁",
+  RSID.minerview_21:"注意：\n- 仅能赎回自己抵押的AIEPK\n- 如果你当前已经消耗了一部分访问流量，则无法赎回全部的访问流量抵押，请尝试减少赎回的数量\n- 节点基础抵押赎回中的AIEPK将会立刻到账\n- 访问流量抵押的AIEPK需要在解锁操作3天后才能赎回",//"注意：\n- 仅能赎回自己抵押的EPK\n- 如果你当前已经消耗了一部分访问流量，则无法赎回全部的访问流量抵押，请尝试减少赎回的数量\n- 矿工基础抵押赎回中的EPK将会立刻到账\n- 访问流量抵押的EPK需要在解锁操作3天后才能赎回",
+  RSID.minerview_22:" AIEPK 可赎回",
+  RSID.minerview_23:" AIEPK 可解锁",
   RSID.minerview_24:" 解锁",
   RSID.minerview_25:"访问流量抵押",
   RSID.minerview_26:"赎回抵押交易已提交",
@@ -495,7 +495,7 @@ Map<RSID, String> map_zh = {
   RSID.expertview_13:"黑名单",//disqualified
   RSID.expertview_14:"可提现收益",
   RSID.expertview_15:"请输入提取数量",
-  RSID.expertview_16:"当前没有可提取的EPK",
+  RSID.expertview_16:"当前没有可提取的AIEPK",
   RSID.expertview_17:"您已投出",
   RSID.expertview_18:"解锁中",
   RSID.expertview_19:"已解锁",
@@ -565,7 +565,7 @@ Map<RSID, String> map_zh = {
   RSID.expertinfoview_7:"请输入数额",
   RSID.expertinfoview_8:"追加投票",
   RSID.expertinfoview_9:"撤回投票",
-  RSID.expertinfoview_10:"提取EPK",
+  RSID.expertinfoview_10:"提取AIEPK",
   RSID.expertinfoview_11:"请输入数量",
   RSID.expertinfoview_12:"已投票",
   RSID.expertinfoview_13:"已撤回",
@@ -589,20 +589,20 @@ Map<RSID, String> map_zh = {
   RSID.eev_3:"确认交易",
   RSID.eev_4:"完成",
   RSID.eev_5:"兑换须知",
-  RSID.eev_6:"以太坊上的 ERC20-EPK 和 EpiK Protocol 主网上的 EPK 可以 1:1 双向兑换，跨链桥由 EpiK Protocol 基金会提供。兑换过程中因跨链桥需要向以太坊缴纳高昂的交易手续费，所以会向每一笔兑换收取一定的 EPK 作为服务费。兑换完成后，您兑换获取的 EPK 或者 ERC20-EPK 将自动转入您当前的 EpiK 钱包，资产转入需要一段时间，请耐心等待。",
+  RSID.eev_6:"以太坊上的 ERC20-EPK 和 EpiK Protocol 主网上的 AIEPK 可以 1:1 双向兑换，跨链桥由 EpiK Protocol 基金会提供。兑换过程中因跨链桥需要向以太坊缴纳高昂的交易手续费，所以会向每一笔兑换收取一定的 AIEPK 作为服务费。兑换完成后，您兑换获取的 AIEPK 或者 ERC20-EPK 将自动转入您当前的 EpiK 钱包，资产转入需要一段时间，请耐心等待。",
   RSID.eev_7:"风险提示",
   RSID.eev_8_1:"为避免您之前参与挖矿活动有意或者无意的泄露过当前钱包的助记词或私钥，强烈建议",
   RSID.eev_8_2:"创建新钱包",
   RSID.eev_8_3:"，将 ERC20-EPK 转入全新的钱包后，再进行兑换。",
   RSID.eev_9:"免责声明",
-  RSID.eev_10:"如您通过其他渠道自行销毁了 ERC20-EPK 导致无法正常兑换 EPK，EpiK Protocol 基金会将不予赔偿",
+  RSID.eev_10:"如您通过其他渠道自行销毁了 ERC20-EPK 导致无法正常兑换 AIEPK，EpiK Protocol 基金会将不予赔偿",
   RSID.eev_11:"地址:",
   RSID.eev_12:"兑换数量",
   RSID.eev_13:"兑换为",
   RSID.eev_14:"最少兑换",
   RSID.eev_15:"最多兑换",
   RSID.eev_16:"手续费",
-  RSID.eev_17:"已转出交易补领 EPK",
+  RSID.eev_17:"已转出交易补领 AIEPK",
   RSID.eev_18:"已转出交易补领 ERC20-EPK",
   RSID.eev_19:"交易失败",
   RSID.eev_20:"TxHash 已复制",
@@ -622,7 +622,7 @@ Map<RSID, String> map_zh = {
   RSID.eev_31:"提交失败",
   RSID.eev_32:"TxHash 查询失败",
   RSID.eev_33:"TxHash 无效",
-  RSID.eev_34:"请输入转出 EPK 交易的 CID",
+  RSID.eev_34:"请输入转出 AIEPK 交易的 CID",
   RSID.eev_35:"CID 查询失败",
   RSID.eev_36:"CID无效",
   RSID.eev_37:"预计 6 - 15 分钟完成",
@@ -647,8 +647,8 @@ Map<RSID, String> map_zh = {
   //BountyDappListView
   RSID.bdlv_1:"赏金猎人奖励",
   RSID.bdlv_2:"领取须知",
-  RSID.bdlv_3_1:"赏金猎人奖励所需的 EPK 由 EpiK Protocol 知识基金提供。领取过程中，需要您提供",
-  RSID.bdlv_3_2:"提供的领取令牌，领取金额有最小限额，只有余额大于最小限额才能领取。领取后您在对应应用内的 EPK 余额会减少，您领取的 EPK 将自动转入您当前的 EpiK 钱包。",
+  RSID.bdlv_3_1:"赏金猎人奖励所需的 AIEPK 由 EpiK Protocol 知识基金提供。领取过程中，需要您提供",
+  RSID.bdlv_3_2:"提供的领取令牌，领取金额有最小限额，只有余额大于最小限额才能领取。领取后您在对应应用内的 AIEPK 余额会减少，您领取的 AIEPK 将自动转入您当前的 EpiK 钱包。",
   RSID.bdlv_4:"风险提示",
   RSID.bdlv_5_1:"请确保您没有泄露当前钱包助记词和私钥，否则强烈建议",
   RSID.bdlv_5_2:"创建新钱包",
@@ -656,7 +656,7 @@ Map<RSID, String> map_zh = {
 
   //BountyDappTakeRecordView
   RSID.bdtrv_1:"领取记录",
-  RSID.bdtrv_2:"EPK 发放交易",
+  RSID.bdtrv_2:"AIEPK 发放交易",
 
   //BountyDappTakeView
   RSID.bdtv_1:"数量需要大于",//
@@ -665,8 +665,8 @@ Map<RSID, String> map_zh = {
   RSID.bdtv_4:"账号: ",
   RSID.bdtv_5:"名称: ",
   RSID.bdtv_6:"确认领取",
-  RSID.bdtv_7:"确认领取后会提交领取申请，审核通过后会发放EPK到您当前的钱包",
-  RSID.bdtv_8:"领取EPK",
+  RSID.bdtv_7:"确认领取后会提交领取申请，审核通过后会发放AIEPK到您当前的钱包",
+  RSID.bdtv_8:"领取AIEPK",
   RSID.bdtv_9:"已提交领取申请，审核通过后将发放到您当前钱包，请在领取记录中查看。",
   RSID.bdtv_10:"领取",
   RSID.bdtv_11:"绑定",
@@ -838,7 +838,7 @@ Map<RSID, String> map_zh = {
   RSID.nodepool_node_own:"自己的",
   RSID.nodepool_node_rent:"租赁节点",
   RSID.nodepool_node_manage:"管理",
-  RSID.nodepool_node_insufficient_epk:"EPK余额不足",//nsufficient EPK balance
+  RSID.nodepool_node_insufficient_epk:"AIEPK余额不足",//nsufficient AIEPK balance
   RSID.nodepool_node_locked:"申请节点成功！\n节点ID：%s（已复制到剪切板）\n请在1小时内完成质押，超时将被释放。",
   RSID.nodepool_node_abort:"稍后质押",
   RSID.nodepool_node_palde:"立刻质押",
@@ -849,8 +849,8 @@ Map<RSID, String> map_zh = {
   RSID.npcv_2:"请输入名称",
   RSID.npcv_3:"描述",
   RSID.npcv_4:"请输入描述",
-  RSID.npcv_5:"EPK费用地址",
-  RSID.npcv_6:"请输入EPK费用地址",
+  RSID.npcv_5:"AIEPK费用地址",
+  RSID.npcv_6:"请输入AIEPK费用地址",
   RSID.npcv_7:"费用比例",
   RSID.npcv_8:"节点池状态",//"是否可用",
   RSID.npcv_9:"开启",

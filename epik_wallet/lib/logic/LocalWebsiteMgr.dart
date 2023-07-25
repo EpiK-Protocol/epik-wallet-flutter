@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/Dlog.dart';
 import 'package:epikwallet/utils/JsonUtils.dart';
@@ -144,6 +145,8 @@ class LocalWebsiteObj {
       ico = json["ico"];
       String _symbol = json["symbol"];
       symbol = _symbol != null ? CurrencySymbolEx.fromCodeName(_symbol) : null;
+      if(ServiceInfo.hideBSC && symbol==CurrencySymbol.BNB)
+        symbol=null;
     } catch (e, s) {
       print(s);
     }

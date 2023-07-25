@@ -49,6 +49,8 @@ class MinerListView extends BaseWidget {
 }
 
 class MinerListViewState extends BaseWidgetState<MinerListView> {
+  String epkname="AIEPK";
+
   MinerFilterType _MinerFilterType = MinerFilterType.ALL;
   MinerSortType _MinerSortType = MinerSortType.ID_UP;
 
@@ -1255,7 +1257,7 @@ class MinerListViewState extends BaseWidgetState<MinerListView> {
                   style: const TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "${StringUtils.formatNumAmount(obj?.MiningPledge ?? 0)} EPK",
+                  "${StringUtils.formatNumAmount(obj?.MiningPledge ?? 0)} $epkname",
                   style: const TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ],
@@ -1270,7 +1272,7 @@ class MinerListViewState extends BaseWidgetState<MinerListView> {
                 ),
                 Expanded(
                   child: Text(
-                    "${StringUtils.formatNumAmount(obj?.getMyPledge(coinbase: widget?.coinbase?.ID ?? "") ?? 0)} EPK",
+                    "${StringUtils.formatNumAmount(obj?.getMyPledge(coinbase: widget?.coinbase?.ID ?? "") ?? 0)} $epkname",
                     style: const TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -1417,7 +1419,7 @@ class MinerListViewState extends BaseWidgetState<MinerListView> {
                 Expanded(
                   child: getColumnKeyValue(
                       RSID.minerview2_2.text, //锁定中
-                      "${StringUtils.formatNumAmount(leftover_unlockepoch > 0 ? lockedepk : 0, point: 2, supply0: false)} EPK"),
+                      "${StringUtils.formatNumAmount(leftover_unlockepoch > 0 ? lockedepk : 0, point: 2, supply0: false)} $epkname"),
                 ),
                 Expanded(
                   child: getColumnKeyValue(
@@ -1435,7 +1437,7 @@ class MinerListViewState extends BaseWidgetState<MinerListView> {
                 ),
                 Expanded(
                   child: Text(
-                    "${StringUtils.formatNumAmount(leftover_unlockepoch <= 0 ? lockedepk : 0, point: 2, supply0: false)} EPK",
+                    "${StringUtils.formatNumAmount(leftover_unlockepoch <= 0 ? lockedepk : 0, point: 2, supply0: false)} $epkname",
                     style: const TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -1481,7 +1483,7 @@ class MinerListViewState extends BaseWidgetState<MinerListView> {
             child: getColumnKeyValue(RSID.mlv_7.text, obj?.getQualityAdjPowerRs() ?? "--"),
           ),
           Expanded(
-            child: getColumnKeyValue(RSID.mlv_8.text, "${StringUtils.formatNumAmount(obj?.TotalMined)} EPK"),
+            child: getColumnKeyValue(RSID.mlv_8.text, "${StringUtils.formatNumAmount(obj?.TotalMined)} $epkname"),
           ),
         ],
       ),

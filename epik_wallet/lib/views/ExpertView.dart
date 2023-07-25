@@ -81,6 +81,9 @@ class ExpertView extends BaseInnerWidget {
 }
 
 class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProviderStateMixin {
+
+  String epkname = "AIEPK";
+
   ExpertInfomation expertInfomation;
 
   ExpertStateType pageIndex = ExpertStateType.ALL;
@@ -383,7 +386,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
                 children: [
                   Expanded(
                     child: Text(
-                      "${RSID.expertview_4.text}: ${expertInfomation?.TotalVote_f ?? 0} EPK", //已投
+                      "${RSID.expertview_4.text}: ${expertInfomation?.TotalVote_f ?? 0} $epkname", //已投
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         color: Colors.white,
@@ -393,7 +396,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
                   ),
                   Expanded(
                     child: Text(
-                      "${RSID.expertview_5.text}: ${expertInfomation?.TotalVoteReward_f ?? 0} EPK", //累计收益
+                      "${RSID.expertview_5.text}: ${expertInfomation?.TotalVoteReward_f ?? 0} $epkname", //累计收益
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         color: Colors.white,
@@ -414,7 +417,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
                 children: [
                   Expanded(
                     child: Text(
-                      "${RSID.expertview_17.text}: ${voterinfo?.getAllvoterF() ?? 0} EPK",
+                      "${RSID.expertview_17.text}: ${voterinfo?.getAllvoterF() ?? 0} $epkname",
                       //已投
                       textAlign: TextAlign.left,
                       style: TextStyle(
@@ -425,7 +428,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
                   ),
                   Expanded(
                     child: Text(
-                      "${RSID.expertview_14.text}: ${voterinfo?.getWithdrawableRewardsF() ?? 0} EPK",
+                      "${RSID.expertview_14.text}: ${voterinfo?.getWithdrawableRewardsF() ?? 0} $epkname",
                       //可提收益
                       textAlign: TextAlign.right,
                       style: TextStyle(
@@ -448,7 +451,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
                 children: [
                   Expanded(
                     child: Text(
-                      "${RSID.expertview_18.text}: ${voterinfo?.getUnlockingVotesF() ?? 0} EPK",
+                      "${RSID.expertview_18.text}: ${voterinfo?.getUnlockingVotesF() ?? 0} $epkname",
                       //已投
                       textAlign: TextAlign.left,
                       style: TextStyle(
@@ -459,7 +462,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
                   ),
                   Expanded(
                     child: Text(
-                      "${RSID.expertview_19.text}: ${voterinfo?.getUnlockedVotesF() ?? 0} EPK",
+                      "${RSID.expertview_19.text}: ${voterinfo?.getUnlockedVotesF() ?? 0} $epkname",
                       //可提收益
                       textAlign: TextAlign.right,
                       style: TextStyle(
@@ -876,7 +879,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
                 ),
                 Container(width: 6),
                 Text(
-                  "${StringUtils.formatNumAmount(item.vote)}${item.getRequiredVoteStr()} EPK",
+                  "${StringUtils.formatNumAmount(item.vote)}${item.getRequiredVoteStr()} $epkname",
                   style: TextStyle(
                     fontSize: 17,
                     color: ResColor.o_1,
@@ -899,7 +902,7 @@ class ExpertViewState extends BaseInnerWidgetState<ExpertView> with TickerProvid
                   ),
                 Expanded(
                   child: Text(
-                    "${RSID.expertview_8.text}: ${StringUtils.formatNumAmount(item.income)} EPK", //收益
+                    "${RSID.expertview_8.text}: ${StringUtils.formatNumAmount(item.income)} $epkname", //收益
                     textAlign: TextAlign.end,
                     style: TextStyle(
                       fontSize: 12,

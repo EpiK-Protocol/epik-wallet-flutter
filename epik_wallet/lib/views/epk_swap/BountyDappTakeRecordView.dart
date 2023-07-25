@@ -204,7 +204,7 @@ class BountyDappTakeRecordViewState
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  "${record.amount} EPK",
+                  "${record.amount} AIEPK",
                   textAlign: TextAlign.right,
                   style: TextStyle(
                     fontSize: 14,

@@ -58,7 +58,8 @@ class ServiceInfo {
 
   //epk 在eth上的合约地址   //测试用ropsten
   static final String TOKEN_ADDRESS_ETH_EPK =
-      TEST_DEV_NET ? "0x6936bae5b97c6eba746932e9cfa33931963cd333" : "0xdaf88906ac1de12ba2b1d2f7bfc94e9638ac40c4";
+      TEST_DEV_NET ? "0x6936bae5b97c6eba746932e9cfa33931963cd333" : "0xac5B038058bcD0424C9c252c6487C25F032E5dDc";
+  // static final String TOKEN_ADDRESS_ETH_EPK = TEST_DEV_NET ? "0x6936bae5b97c6eba746932e9cfa33931963cd333" : "0xdaf88906ac1de12ba2b1d2f7bfc94e9638ac40c4";
 
   //usdt 在eth上的合约地址  //测试用ropsten
   static final String TOKEN_ADDRESS_ETH_USDT =
@@ -69,7 +70,7 @@ class ServiceInfo {
       TEST_DEV_NET ? "0xD5ff1A29De6Ac0CA40Da97398C482C4Ac2c00Eba" : "0x87ecea8512516ced5db9375c63c23a0846c73a57";
 
   static final String TOKEN_ADDRESS_BSC_USDT =
-    TEST_DEV_NET ? "0x38179046038147d9B2f70A8E27Ec771a0F38884A" : "0x55d398326f99059fF775485246999027B3197955";
+      TEST_DEV_NET ? "0x38179046038147d9B2f70A8E27Ec771a0F38884A" : "0x55d398326f99059fF775485246999027B3197955";
 
   static String get server_wechat {
     return serverConfig?.SignWeixin ?? "Sigrid_EpiK"; //"fengyunbzb";
@@ -92,11 +93,11 @@ class ServiceInfo {
   // }
 
   static String get hd_ETH_RpcUrl {
-    return TEST_DEV_NET ? _hd_ETH_RpcUrl_test : (serverConfig?.ETHAPI  ?? _hd_ETH_RpcUrl);
+    return TEST_DEV_NET ? _hd_ETH_RpcUrl_test : (serverConfig?.ETHAPI ?? _hd_ETH_RpcUrl);
   }
 
   static String get hd_BSC_RpcUrl {
-    return TEST_DEV_NET ? _hd_BSC_RpcUrl_test : (serverConfig?.BSCAPI  ?? _hd_BSC_RpcUrl);
+    return TEST_DEV_NET ? _hd_BSC_RpcUrl_test : (serverConfig?.BSCAPI ?? _hd_BSC_RpcUrl);
   }
 
   static String get epik_RpcUrl {
@@ -108,7 +109,9 @@ class ServiceInfo {
   }
 
   //领域专家后台
-  static final String EPIKG_DOMAIN_BACKEND_URL="https://epikg.com/domainBackend/";
+  static final String EPIKG_DOMAIN_BACKEND_URL = "https://epikg.com/domainBackend/";
+
+  static bool hideBSC = true;
 
   static ServerConfig serverConfig;
   static Upgrade upgrade;
@@ -124,6 +127,7 @@ class ServiceInfo {
         Map<String, dynamic> root = jsonDecode(jsonstr);
         Map<String, dynamic> json = root["config"];
         parseConfig(json);
+        print("parseMenuList local");
         parseMenuList(root);
         return true;
       }
@@ -157,11 +161,11 @@ class ServiceInfo {
       Dlog.p(TAG, "test 1");
       Map<String, dynamic> json = httpJsonRes.jsonMap["config"];
       parseConfig(json);
+      print("parseMenuList request");
       parseMenuList(httpJsonRes.jsonMap);
 
       Dlog.p(TAG, "test 2");
       if (AccountMgr().currentAccount != null) {
-
         Dlog.p(TAG, "test 3");
         EpikWalletUtils.setWalletConfig(AccountMgr().currentAccount).then((_) {
           Dlog.p(TAG, "test 4");
@@ -184,6 +188,8 @@ class ServiceInfo {
             JsonArray.parseList(JsonArray.obj2List(json["home_list_en"]), (json) => HomeMenuItem.fromJson(json));
         homeMenuMap[LocaleConfig.locale_zh] = zh;
         homeMenuMap[LocaleConfig.locale_en] = en;
+
+        print("parseMenuList $zh  ${json["home_list_ch"]}");
 
         //todo
         // HomeMenuItem test = HomeMenuItem.fromJson({
@@ -208,7 +214,6 @@ class ServiceInfo {
         //   "Name":"More",
         //   "Action":"more",
         // }));
-
       } catch (e) {
         print(e);
       }
@@ -217,7 +222,14 @@ class ServiceInfo {
 
   static List<HomeMenuItem> getHomeMenuList() {
     if (homeMenuMap != null) {
-      return homeMenuMap[LocaleConfig.currentAppLocale];
+      List<HomeMenuItem> data = homeMenuMap[LocaleConfig.currentAppLocale];
+      if (ServiceInfo.hideBSC) {
+        List<HomeMenuItem> ret = [];
+        data.forEach((element) {
+          if (element.Web3net != "BSC") ret.add(element);
+        });
+      }
+      return data;
     }
     return null;
   }

@@ -1023,7 +1023,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
       mainAxisSize: MainAxisSize.min,
       children: [
         getSubType(RSID.eev_13.text, //"兑换为",
-            text2: is2Epik ? "EPK" : "ERC20-EPK",
+            text2: is2Epik ? "AIEPK" : "ERC20-EPK",
             text2PadingTop: 4,
             paddingbottom: 2),
         Container(
@@ -1069,7 +1069,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
               ),
               Text(
                 //手续费
-                "${RSID.eev_16.text} ${(is2Epik ? config?.erc20_fee : config?.epik_fee) ?? "0"} ${is2Epik ? "ERC20-EPK" : "EPK"}",
+                "${RSID.eev_16.text} ${(is2Epik ? config?.erc20_fee : config?.epik_fee) ?? "0"} ${is2Epik ? "ERC20-EPK" : "AIEPK"}",
                 style: const TextStyle(
                   fontSize: 14,
                   color: ResColor.white_60,

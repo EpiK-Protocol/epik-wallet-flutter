@@ -53,6 +53,9 @@ class MinerView2 extends BaseInnerWidget {
 }
 
 class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
+
+  String epkname = "AIEPK";
+
   //右上角租赁节点的开关
   bool nodepool = false;
 
@@ -66,6 +69,8 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
   String balance_usdt_str = "0";
 
   List<RentNodeTransferObj> listRentNodeTransferObj = [];
+
+
 
   @override
   void initStateConfig() {
@@ -539,7 +544,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
           style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
         ),
         Text(
-          "${balance_epk_str ?? "--"} EPK",
+          "${balance_epk_str ?? "--"} $epkname",
           style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
         ),
         Expanded(
@@ -572,13 +577,13 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
                   child: getColumnKeyValue(
                       RSID.minerview2_1.text, //总余额,
                       // "${StringUtils.formatNumAmountLocaleUnit(coinbase?.balance?.Total_d ?? 0, context, point: 4, needZhUnit: false)} EPK"),
-                      "${StringUtils.formatNumAmount(coinbase?.balance?.Total_d ?? 0, point: 2, supply0: false)} EPK"),
+                      "${StringUtils.formatNumAmount(coinbase?.balance?.Total_d ?? 0, point: 2, supply0: false)} $epkname"),
                 ),
                 Expanded(
                   child: getColumnKeyValue(
                       RSID.minerview2_2.text, //"锁定中",
                       // "${StringUtils.formatNumAmountLocaleUnit(coinbase?.balance?.Locked_d ?? 0, context, point: 4, needZhUnit: false)} EPK"),
-                      "${StringUtils.formatNumAmount(coinbase?.balance?.Locked_d ?? 0, point: 2, supply0: false)} EPK"),
+                      "${StringUtils.formatNumAmount(coinbase?.balance?.Locked_d ?? 0, point: 2, supply0: false)} $epkname"),
                 ),
               ],
             ),
@@ -591,7 +596,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
                 ),
                 Expanded(
                   child: Text(
-                    "${StringUtils.formatNumAmount(coinbase?.balance?.Unlocked_d ?? 0, point: 2, supply0: false)} EPK",
+                    "${StringUtils.formatNumAmount(coinbase?.balance?.Unlocked_d ?? 0, point: 2, supply0: false)} $epkname",
                     // "${StringUtils.formatNumAmountLocaleUnit(coinbaseInfo?.vested_d ?? 0, context, point: 4, needZhUnit: false)} EPK",
                     style: const TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
@@ -639,7 +644,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
         ),
         Expanded(
           child: getColumnKeyValue(
-              RSID.minerview2_6.text, "${StringUtils.formatNumAmount(coinbase?.pledged?.Total_d ?? 0, point: 2)} EPK"),
+              RSID.minerview2_6.text, "${StringUtils.formatNumAmount(coinbase?.pledged?.Total_d ?? 0, point: 2)} $epkname"),
           // "${StringUtils.formatNumAmountLocaleUnit(coinbase?.pledged?.Total_d ?? 0, context, point: 4, needZhUnit: false)} EPK"),
         ),
       ],
@@ -654,12 +659,12 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
       children: [
         Expanded(
           child: getColumnKeyValue(
-              RSID.minerview2_7.text, "${StringUtils.formatNumAmount(coinbase?.pledged?.Mining_d ?? 0, point: 2)} EPK"),
+              RSID.minerview2_7.text, "${StringUtils.formatNumAmount(coinbase?.pledged?.Mining_d ?? 0, point: 2)} $epkname"),
           // "${StringUtils.formatNumAmountLocaleUnit(coinbase?.pledged?.Mining_d ?? 0, context, point: 4, needZhUnit: false)} EPK"),
         ),
         Expanded(
           child: getColumnKeyValue(RSID.minerview2_8.text,
-              "${StringUtils.formatNumAmount(coinbase?.pledged?.Retrieve_d ?? 0, point: 2)} EPK"),
+              "${StringUtils.formatNumAmount(coinbase?.pledged?.Retrieve_d ?? 0, point: 2)} $epkname"),
           // "${StringUtils.formatNumAmountLocaleUnit(coinbase?.pledged?.Retrieve_d ?? 0, context, point: 4, needZhUnit: false)} EPK"),
         ),
       ],
@@ -848,7 +853,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
             "${StringUtils.formatNumAmount(
               coinbase?.retrieve?.Total_d ?? 0,
               point: 2,
-            )} EPK",
+            )} $epkname",
             style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
@@ -869,7 +874,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
             "${StringUtils.formatNumAmount(
               coinbase?.retrieve?.Pledged_d ?? 0,
               point: 2,
-            )} EPK",
+            )} $epkname",
             style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
@@ -897,7 +902,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
                   child: getColumnKeyValue(
                       RSID.minerview2_2.text, //锁定中
                       // "${StringUtils.formatNumAmountLocaleUnit((coinbase?.retrieve_unlock_epoch ?? 0) > 0 ? (coinbase?.retrieve?.Locked_d ?? 0) : 0, context, point: 4, needZhUnit: false)} EPK"),
-                      "${StringUtils.formatNumAmount((coinbase?.retrieve_unlock_epoch ?? 0) > 0 ? (coinbase?.retrieve?.Locked_d ?? 0) : 0, point: 2, supply0: false)} EPK"),
+                      "${StringUtils.formatNumAmount((coinbase?.retrieve_unlock_epoch ?? 0) > 0 ? (coinbase?.retrieve?.Locked_d ?? 0) : 0, point: 2, supply0: false)} $epkname"),
                 ),
                 Expanded(
                   child: getColumnKeyValue(
@@ -915,7 +920,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
                 ),
                 Expanded(
                   child: Text(
-                    "${StringUtils.formatNumAmount((coinbase?.retrieve_unlock_epoch ?? 0) <= 0 ? (coinbase?.retrieve?.Locked_d ?? 0) : 0, point: 2, supply0: false)} EPK",
+                    "${StringUtils.formatNumAmount((coinbase?.retrieve_unlock_epoch ?? 0) <= 0 ? (coinbase?.retrieve?.Locked_d ?? 0) : 0, point: 2, supply0: false)} $epkname",
                     // "${StringUtils.formatNumAmountLocaleUnit((coinbase?.retrieve_unlock_epoch ?? 0) <= 0 ? (coinbase?.retrieve?.Locked_d ?? 0) : 0, context, point: 4, needZhUnit: false)} EPK",
                     style: const TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
                   ),

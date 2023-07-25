@@ -21,7 +21,6 @@ import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/ClickUtil.dart';
 import 'package:epikwallet/utils/eventbus/event_manager.dart';
 import 'package:epikwallet/utils/eventbus/event_tag.dart';
-import 'package:epikwallet/utils/http/httputils.dart';
 import 'package:epikwallet/utils/res_color.dart';
 import 'package:epikwallet/utils/sp_utils/sp_utils.dart';
 import 'package:epikwallet/utils/string_utils.dart';
@@ -185,11 +184,12 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
         wa.getCurrencyAssetByCs(CurrencySymbol.ETH),
         wa.getCurrencyAssetByCs(CurrencySymbol.USDT),
       ];
-      currency_group[CurrencySymbol.BNB] = [
-        wa.getCurrencyAssetByCs(CurrencySymbol.EPKbsc),
-        wa.getCurrencyAssetByCs(CurrencySymbol.BNB),
-        wa.getCurrencyAssetByCs(CurrencySymbol.USDTbsc),
-      ];
+      if (!ServiceInfo.hideBSC)
+        currency_group[CurrencySymbol.BNB] = [
+          wa.getCurrencyAssetByCs(CurrencySymbol.EPKbsc),
+          wa.getCurrencyAssetByCs(CurrencySymbol.BNB),
+          wa.getCurrencyAssetByCs(CurrencySymbol.USDTbsc),
+        ];
     }
   }
 
@@ -967,30 +967,38 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
     // if(LimitedPlatform.isLimited)
     datas = LimitedPlatform.limitedSwapMenuList(datas);
 
+    List<HomeMenuItem> _datas = [];
+    _datas.addAll(datas);
+
     bool hasmore = false;
-    if (datas != null && datas.length >= 7) {
-      datas = datas.sublist(0, 7);
+    if (_datas != null && _datas.length >= 7) {
+      _datas = _datas.sublist(0, 7);
+      hasmore = true;
+    }else{
       hasmore = true;
     }
 
     if (hasmore) {
       if (LocaleConfig.currentIsZh()) {
-        datas.add(HomeMenuItem.fromJson({
+        _datas.add(HomeMenuItem.fromJson({
           "Name": "更多",
           "Action": "more",
         }));
       } else {
-        datas.add(HomeMenuItem.fromJson({
+        _datas.add(HomeMenuItem.fromJson({
           "Name": "More",
           "Action": "more",
         }));
       }
     }
 
-    if (datas != null && datas.length > 0) {
+    if (_datas != null && _datas.length > 0) {
       List<Widget> items = [];
 
-      datas.forEach((hmi) {
+      _datas.forEach((hmi) {
+
+        print(hmi.Name);
+
         bool isLocalWalletSupport = hmi?.action_l?.isLocalWalletSupport(AccountMgr().currentAccount) ??
             AccountMgr().currentAccount.isSupportCurrency(hmi?.web3nettype) ??
             true;

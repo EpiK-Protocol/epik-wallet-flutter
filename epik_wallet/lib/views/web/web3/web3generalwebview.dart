@@ -335,6 +335,8 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
 
   onClickNetwork() {
     List<CurrencySymbol> data = [CurrencySymbol.ETH, CurrencySymbol.BNB];
+    if(ServiceInfo.hideBSC)
+      data.remove(CurrencySymbol.BNB);
 
     CurrencySymbol seleted = widget.web3nettype;
 

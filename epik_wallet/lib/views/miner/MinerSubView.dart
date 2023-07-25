@@ -288,19 +288,19 @@ class MinerSubViewState extends BaseInnerWidgetState<MinerSubView>
           minerInfo==null ? "--":"${minerInfo.mining_power_s} / ${minerInfo.total_power_s} (${minerInfo.power_percent})"),
       getRowText(
           RSID.minerview_10.text, //"矿工基础抵押",
-          minerInfo==null ? "--": "${StringUtils.formatNumAmount(minerInfo.mining_pledged, point: 8, supply0: false)} EPK"),
+          minerInfo==null ? "--": "${StringUtils.formatNumAmount(minerInfo.mining_pledged, point: 8, supply0: false)} AIEPK"),
       getRowText(
           RSID.minerview_11.text, //"我的基础抵押",
-          minerInfo==null ? "--": "${StringUtils.formatNumAmount(minerInfo.my_mining_pledge, point: 8, supply0: false)} EPK"),
+          minerInfo==null ? "--": "${StringUtils.formatNumAmount(minerInfo.my_mining_pledge, point: 8, supply0: false)} AIEPK"),
       getRowText(
           RSID.minerview_12.text, //"流量抵押余额",
-          minerInfo==null ? "--":"${StringUtils.formatNumAmount(minerInfo.retrieve_balance, point: 8, supply0: false)} EPK"),
+          minerInfo==null ? "--":"${StringUtils.formatNumAmount(minerInfo.retrieve_balance, point: 8, supply0: false)} AIEPK"),
       getRowText(
           RSID.minerview_28.text, //"我的流量抵押",
-          minerInfo==null ? "--": "${StringUtils.formatNumAmount(minerInfo.my_retrieve_pledge_d, point: 8, supply0: false)} EPK"),
+          minerInfo==null ? "--": "${StringUtils.formatNumAmount(minerInfo.my_retrieve_pledge_d, point: 8, supply0: false)} AIEPK"),
       getRowText(
           RSID.minerview_13.text, //"流量抵押锁定",
-          minerInfo==null ? "--": "${StringUtils.formatNumAmount(minerInfo.retrieve_locked, point: 8, supply0: false)} EPK"),
+          minerInfo==null ? "--": "${StringUtils.formatNumAmount(minerInfo.retrieve_locked, point: 8, supply0: false)} AIEPK"),
 
       Container(height: 20),
       LinearPercentIndicator(

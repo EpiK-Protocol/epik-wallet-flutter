@@ -354,7 +354,7 @@ class BountyDappTakeViewState extends BaseWidgetState<BountyDappTakeView> {
           Container(
             padding: EdgeInsets.only(bottom: 7, left: 8),
             child: Text(
-              "EPK",
+              "AIEPK",
               style: TextStyle(
                 color: ResColor.white_80,
                 fontSize: 14,
@@ -395,7 +395,7 @@ class BountyDappTakeViewState extends BaseWidgetState<BountyDappTakeView> {
               maxWidth: 200,
             ),
             child: Text(
-              (widget?.dapp?.dappInfo?.fee ?? "0") + " EPK",
+              (widget?.dapp?.dappInfo?.fee ?? "0") + " AIEPK",
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(

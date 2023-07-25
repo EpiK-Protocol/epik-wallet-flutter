@@ -173,7 +173,7 @@ class ApplyExpertViewState extends BaseWidgetState<ApplyExpertView> {
             ),
             Expanded(
               child: Text(
-                "100 EPK",
+                "100 AIEPK",
                 textAlign: TextAlign.right,
                 style: TextStyle(
                   fontSize: 17,

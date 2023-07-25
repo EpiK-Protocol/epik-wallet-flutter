@@ -1,5 +1,6 @@
 import 'package:epikwallet/logic/EpikWalletUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
+import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
 import 'package:epikwallet/model/currencytype.dart';
 import 'package:epikwallet/utils/string_utils.dart';
@@ -100,7 +101,13 @@ class HomeMenuItem {
       Web3net=json["Web3net"];
       if(StringUtils.isNotEmpty(Web3net))
       {
-        web3nettype = CurrencySymbolEx.getNetworkTypeByName(Web3net);
+        if(ServiceInfo.hideBSC && Web3net=="BSC")
+        {
+
+        }else
+        {
+          web3nettype = CurrencySymbolEx.getNetworkTypeByName(Web3net);
+        }
       }
 
       Invalid = json["Invalid"]?? false;

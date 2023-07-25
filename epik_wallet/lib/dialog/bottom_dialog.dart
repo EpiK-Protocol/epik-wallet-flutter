@@ -10,6 +10,7 @@ import 'package:epikwallet/logic/LocalAddressMgr.dart';
 import 'package:epikwallet/logic/LocalAuthUtils.dart';
 import 'package:epikwallet/logic/account_mgr.dart';
 import 'package:epikwallet/logic/api/api_AIBot.dart';
+import 'package:epikwallet/logic/api/serviceinfo.dart';
 import 'package:epikwallet/main.dart';
 import 'package:epikwallet/model/AIBotApp.dart';
 import 'package:epikwallet/model/CurrencyAsset.dart';
@@ -1112,7 +1113,7 @@ class BottomDialog {
           if (left == "value") {
             try {
               right = StringUtils.bigNumDownsizing(right ?? "0");
-              right = StringUtils.formatNumAmount(right, point: 18) + " EPK";
+              right = StringUtils.formatNumAmount(right, point: 18) + " AIEPK";
               bold = true;
             } catch (e) {
               print(e);
@@ -1743,7 +1744,7 @@ class BottomDialog {
     List<CurrencySymbol> cslist = [
       CurrencySymbol.EPK,
       CurrencySymbol.EPKerc20,
-      CurrencySymbol.EPKbsc,
+      if (!ServiceInfo.hideBSC) CurrencySymbol.EPKbsc,
     ];
 
     List<CurrencySymbol> _cslist = List.from(cslist);

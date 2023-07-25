@@ -480,7 +480,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
           width: double.infinity,
           margin: EdgeInsets.fromLTRB(20, 5, 20, 0),
           child: Text(
-            RSID.cwv_13.text + widget.walletaccount.epik_gas_transfer_format + "EPK",
+            RSID.cwv_13.text + widget.walletaccount.epik_gas_transfer_format + "AIEPK",
             textAlign: TextAlign.end,
             style: TextStyle(
               color: ResColor.white_40,
