@@ -6,7 +6,6 @@ import 'dart:typed_data';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:convert/convert.dart';
 import 'package:dart_bip32_bip44/dart_bip32_bip44.dart';
-import 'package:epikplugin/Bip44Path.dart';
 import 'package:epikplugin/epikplugin.dart';
 import 'package:epikwallet/abi/ERC20.g.dart';
 import 'package:epikwallet/logic/UniswapHistoryMgr.dart';
@@ -34,7 +33,6 @@ import 'package:epikwallet/utils/sp_utils/sp_utils.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
-import 'package:web3dart/credentials.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/src/crypto/secp256k1.dart' as secp256k1;
 import 'package:web3dart/web3dart.dart';
@@ -63,14 +61,14 @@ class EpikWalletUtils {
 
       //新的钱包客户端 dart库
       if (ethClient == null) {
-        Dlog.p("ServiceInfo.hd_ETH_RpcUrl",ServiceInfo.hd_ETH_RpcUrl);
+        Dlog.p("ServiceInfo.hd_ETH_RpcUrl", ServiceInfo.hd_ETH_RpcUrl);
         ethClient = new Web3Client(ServiceInfo.hd_ETH_RpcUrl, Client());
         ethClient.getChainId().then((value) {
           eth_chainid = value;
         });
       }
-      if (bscClient == null) {
-        Dlog.p("ServiceInfo.hd_BSC_RpcUrl",ServiceInfo.hd_BSC_RpcUrl);
+      if (bscClient == null && !ServiceInfo.hideBSC) {
+        Dlog.p("ServiceInfo.hd_BSC_RpcUrl", ServiceInfo.hd_BSC_RpcUrl);
         bscClient = new Web3Client(ServiceInfo.hd_BSC_RpcUrl, Client());
         bscClient.getChainId().then((value) {
           bsc_chainid = value;
@@ -159,15 +157,15 @@ class EpikWalletUtils {
     await waccount.epikWallet.setRPC(ServiceInfo.epik_RpcUrl, ServiceInfo.epik_RpcUrl_token);
   }
 
-  static respondSingleBalance(WalletAccount waccount,CurrencySymbol cs,String balance) async
-  {
+  static respondSingleBalance(WalletAccount waccount, CurrencySymbol cs, String balance) async {
     // Prices price = cs.getPriceUSD(priceslist);
     // Dlog.p("EWU", "cs = $cs price=${price.dPrice}");
-    CurrencyAsset ca = waccount.currencyList.firstWhere((element)=> element.cs==cs);
+    CurrencyAsset ca = waccount.currencyList.firstWhere((element) => element.cs == cs);
     ca.balance = balance ?? "";
     // ca.price_usd_str = price.price;
     // ca.price_usd = price.dPrice;
     // ca.change_usd = price.dChange;
+    Dlog.p("requestBalance", "respondSingleBalance ${cs} ${balance}");
     eventMgr.send(EventTag.BALANCE_UPDATE_SINGLE, cs);
   }
 
@@ -182,7 +180,7 @@ class EpikWalletUtils {
         ? waccount.epikWallet.balance(waccount.epik_EPK_address).then((value) {
             Dlog.p("EWU", "epk balance=${value}");
             String ret = value;
-            respondSingleBalance(waccount,CurrencySymbol.EPK, ret);
+            respondSingleBalance(waccount, CurrencySymbol.AIEPK, ret);
             return ret;
           })
         : Future.value(null);
@@ -192,8 +190,8 @@ class EpikWalletUtils {
     Future eth = waccount.hasHdWallet
         ? ethClient.getBalance(waccount.ethereumAddress).then((balance) {
             Dlog.p("EWU", "eth balance=${balance}");
-            String ret= balance.getValueInUnit(EtherUnit.ether).toString();
-            respondSingleBalance(waccount,CurrencySymbol.ETH, ret);
+            String ret = balance.getValueInUnit(EtherUnit.ether).toString();
+            respondSingleBalance(waccount, CurrencySymbol.ETH, ret);
             return ret;
           })
         : Future.value(null);
@@ -205,8 +203,8 @@ class EpikWalletUtils {
             EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
             BigInt decimals = await waccount.hdTokenMap[CurrencySymbol.USDT].decimals(); //获取token的精度
             EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
-            String ret= balance.getValueInUnit(eu).toString();
-            respondSingleBalance(waccount,CurrencySymbol.USDT, ret);
+            String ret = balance.getValueInUnit(eu).toString();
+            respondSingleBalance(waccount, CurrencySymbol.USDT, ret);
             return ret;
           })
         : Future.value(null);
@@ -221,22 +219,23 @@ class EpikWalletUtils {
             EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
             BigInt decimals = await waccount.hdTokenMap[CurrencySymbol.EPKerc20].decimals(); //获取token的精度
             EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
-            String ret= balance.getValueInUnit(eu).toString();
-            respondSingleBalance(waccount,CurrencySymbol.EPKerc20, ret);
+            String ret = balance.getValueInUnit(eu).toString();
+            respondSingleBalance(waccount, CurrencySymbol.EPKerc20, ret);
             return ret;
           })
         : Future.value(null);
 
     //BSC net
-    Future bsc_bnb = waccount.hasHdWallet
+    Future bsc_bnb = waccount.hasHdWallet && !ServiceInfo.hideBSC
         ? bscClient.getBalance(waccount.ethereumAddress).then((balance) {
-            String ret= balance.getValueInUnit(EtherUnit.ether).toString();
-            respondSingleBalance(waccount,CurrencySymbol.BNB, ret);
+            String ret = balance.getValueInUnit(EtherUnit.ether).toString();
+            respondSingleBalance(waccount, CurrencySymbol.BNB, ret);
             return ret;
           })
         : Future.value(null);
 
-    Future bsc_epk = waccount.hasHdWallet
+
+    Future bsc_epk = waccount.hasHdWallet && !ServiceInfo.hideBSC
         ? waccount.hdTokenMap[CurrencySymbol.EPKbsc].balanceOf(waccount.ethereumAddress).then((bint) async {
             // EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
             // return balance.getValueInUnit(EtherUnit.ether).toString();
@@ -244,33 +243,41 @@ class EpikWalletUtils {
             EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
             BigInt decimals = await waccount.hdTokenMap[CurrencySymbol.EPKbsc].decimals(); //获取token的精度
             EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
-            String ret= balance.getValueInUnit(eu).toString();
-            respondSingleBalance(waccount,CurrencySymbol.EPKbsc, ret);
+            String ret = balance.getValueInUnit(eu).toString();
+            respondSingleBalance(waccount, CurrencySymbol.EPKbsc, ret);
             return ret;
           })
         : Future.value(null);
 
-    Future bsc_usdt = waccount.hasHdWallet
+    Future bsc_usdt = waccount.hasHdWallet && !ServiceInfo.hideBSC
         ? waccount.hdTokenMap[CurrencySymbol.USDTbsc].balanceOf(waccount.ethereumAddress).then((bint) async {
             Dlog.p("EWU", "bscusdt bint=${bint}");
             EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
             BigInt decimals = await waccount.hdTokenMap[CurrencySymbol.USDTbsc].decimals(); //获取token的精度
             EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
-            String ret= balance.getValueInUnit(eu).toString();
-            respondSingleBalance(waccount,CurrencySymbol.USDTbsc, ret);
+            String ret = balance.getValueInUnit(eu).toString();
+            respondSingleBalance(waccount, CurrencySymbol.USDTbsc, ret);
             return ret;
           })
         : Future.value(null);
 
-    List values = await Future.wait([eth, usdt, epk_erc20, epk, bsc_bnb, bsc_epk, bsc_usdt, prices]);
+    List<Future> flist = [
+      eth,
+      usdt,
+      epk_erc20,
+      epk,
+      if (!ServiceInfo.hideBSC) ...[bsc_bnb, bsc_epk, bsc_usdt],
+      prices,
+    ];
+    List values = await Future.wait(flist);
     Map<CurrencySymbol, String> map = {
-      CurrencySymbol.ETH: values[0] ?? "",
-      CurrencySymbol.USDT: values[1] ?? "",
-      CurrencySymbol.EPKerc20: values[2] ?? "",
-      CurrencySymbol.EPK: values[3] ?? "",
-      CurrencySymbol.BNB: values[4] ?? "",
-      CurrencySymbol.EPKbsc: values[5] ?? "",
-      CurrencySymbol.USDTbsc: values[6] ?? "",
+      CurrencySymbol.ETH: values[flist.indexOf(eth)] ?? "",
+      CurrencySymbol.USDT: values[flist.indexOf(usdt)] ?? "",
+      CurrencySymbol.EPKerc20: values[flist.indexOf(epk_erc20)] ?? "",
+      CurrencySymbol.AIEPK: values[flist.indexOf(epk)] ?? "",
+      if (!ServiceInfo.hideBSC) CurrencySymbol.BNB: values[flist.indexOf(bsc_bnb)] ?? "",
+      if (!ServiceInfo.hideBSC) CurrencySymbol.EPKbsc: values[flist.indexOf(bsc_epk)] ?? "",
+      if (!ServiceInfo.hideBSC) CurrencySymbol.USDTbsc: values[flist.indexOf(bsc_usdt)] ?? "",
     };
     //todo test
 //    Map<CurrencySymbol, String> map = {
@@ -382,7 +389,7 @@ class EpikWalletUtils {
       "epkHeight": 0,
     };
     try {
-      if (cs == CurrencySymbol.EPK) {
+      if (cs == CurrencySymbol.AIEPK) {
         // 从api接口读取 使用 lasttime
         List<EpkOrder> temp;
         HttpJsonRes hjr = await ApiWallet.getEpkOrderList(waccount.epik_EPK_address, lastTime, pagesize, epkHeight);
@@ -617,7 +624,7 @@ class EpikWalletUtils {
 
   static Future<HdGas> getHdTransferGas(CurrencySymbol cs,
       {String value = "0.00001", String toAddress = "0x000000000000000000000000000000000000dead"}) async {
-    if (cs == CurrencySymbol.EPK) return null;
+    if (cs == CurrencySymbol.AIEPK) return null;
 
     ERC20 erc20 = AccountMgr().currentAccount.hdTokenMap[cs];
 
@@ -940,7 +947,7 @@ class WalletAccount {
   }
 
   bool isSupportCurrency(CurrencySymbol cs) {
-    if (cs.networkType == CurrencySymbol.EPK) {
+    if (cs.networkType == CurrencySymbol.AIEPK) {
       return hasEpikWallet;
     } else if (cs.networkType == CurrencySymbol.ETH || cs.networkType == CurrencySymbol.BNB) {
       return hasHdWallet;

@@ -819,7 +819,7 @@ class ExpertInfoViewState extends BaseWidgetState<ExpertInfoView> {
         maxOnClick: () {
           String balance = "0";
 
-          CurrencyAsset ca = AccountMgr()?.currentAccount?.getCurrencyAssetByCs(CurrencySymbol.EPK);
+          CurrencyAsset ca = AccountMgr()?.currentAccount?.getCurrencyAssetByCs(CurrencySymbol.AIEPK);
           if (ca != null) balance = ca.balance;
           _tec_vote = null;
           text_vote = balance;

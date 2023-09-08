@@ -831,6 +831,8 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
           // debuggingEnabled: kReleaseMode ? false : true, // release模式下 没有日志,
           clearCache: clearCache, //自动清理缓存
           useShouldOverrideUrlLoading: true, //开启url拦截 配合shouldOverrideUrlLoading
+          useShouldInterceptAjaxRequest: false, //拦截 篡改 请求
+          useShouldInterceptFetchRequest: false, //拦截 篡改 请求
         ),
         android: AndroidInAppWebViewOptions(
           useHybridComposition: true, //DeviceUtils().androidQ,
@@ -865,6 +867,35 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
         dlog("LoadedResource ${resource.url}");
       },
       shouldOverrideUrlLoading: onShouldOverrideUrlLoading,
+      // shouldInterceptAjaxRequest: (controller, ajaxRequest) async{
+      //   dlog("ajaxRequest=$ajaxRequest");
+      //   return ajaxRequest;
+      // },
+      // shouldInterceptFetchRequest: (controller, fetchRequest) async{
+      //   //篡改请求 todo
+      //   dlog("fetchRequest=$fetchRequest");
+      //   if(fetchRequest.url.toString().contains(rpcUrl))
+      //   {
+      //     dlog("-----------------------");
+      //     if(fetchRequest.body is String)
+      //     {
+      //       String body1= fetchRequest.body;
+      //       String body2="";
+      //       Map<String,dynamic> json = jsonDecode(fetchRequest.body);
+      //       if(!json.containsKey("jsonrpc"))
+      //       {
+      //         json["jsonrpc"]="2.0";
+      //         fetchRequest.body = jsonEncode(json);
+      //         body2=fetchRequest.body;
+      //
+      //         print("$body1 ===> $body2");
+      //       }
+      //
+      //     }
+      //     dlog("-----------------------");
+      //   }
+      //   return fetchRequest;
+      // },
       onConsoleMessage: DeviceUtils.isDebug
           ? (controller, consoleMessage) {
               dlog("consoleMessage : ${consoleMessage.message}");

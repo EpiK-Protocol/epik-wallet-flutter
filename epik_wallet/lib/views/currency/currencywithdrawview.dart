@@ -58,7 +58,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
     resizeToAvoidBottomPadding = true;
 
     switch (widget.currencyAsset.cs) {
-      case CurrencySymbol.EPK:
+      case CurrencySymbol.AIEPK:
         {
           from_address = widget.walletaccount.epik_EPK_address;
           break;
@@ -427,7 +427,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
                   } catch (e) {
                     print(e);
                   }
-                } else if (widget.currencyAsset.cs == CurrencySymbol.EPK) {
+                } else if (widget.currencyAsset.cs == CurrencySymbol.AIEPK) {
                   try {
                     double _a = StringUtils.parseDouble(amount, 0);
                     double _gas = widget?.walletaccount?.epik_gas_transfer ?? 0;
@@ -474,7 +474,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
       ),
     );
 
-    if (widget.currencyAsset.networkType == CurrencySymbol.EPK) {
+    if (widget.currencyAsset.networkType == CurrencySymbol.AIEPK) {
       views.add(
         Container(
           width: double.infinity,
@@ -642,7 +642,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
       return false;
     }
 
-    if (widget.currencyAsset.networkType == CurrencySymbol.EPK) {
+    if (widget.currencyAsset.networkType == CurrencySymbol.AIEPK) {
       // EPK
       if (widget.currencyAsset.getBalanceDouble() < widget.walletaccount.epik_gas_transfer + amount_d) {
         showToast(RSID.cwv_14.text); //余额不足
@@ -684,7 +684,7 @@ class _CurrencyWithdrawViewState extends BaseWidgetState<CurrencyWithdrawView> {
           touchOutClose: false,
           backClose: false,
           onShow: () {
-            if (widget.currencyAsset.cs == CurrencySymbol.EPK) {
+            if (widget.currencyAsset.cs == CurrencySymbol.AIEPK) {
               doWithdraw_epik();
             } else {
               doWithdraw_hd();

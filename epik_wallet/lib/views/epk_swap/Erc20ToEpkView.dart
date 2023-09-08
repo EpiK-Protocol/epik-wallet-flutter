@@ -606,19 +606,19 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
     String balance = "0.0";
     String address = AccountMgr()?.currentAccount?.epik_EPK_address ?? "";
 
-    CurrencyAsset ca = AccountMgr()?.currentAccount?.getCurrencyAssetByCs(CurrencySymbol.EPK);
+    CurrencyAsset ca = AccountMgr()?.currentAccount?.getCurrencyAssetByCs(CurrencySymbol.AIEPK);
     if (ca != null){
       balance = ca.balance;
     }else
     {
       ca = CurrencyAsset(
-        symbol: CurrencySymbol.EPK.symbol,
+        symbol: CurrencySymbol.AIEPK.symbol,
         name: "",
         type: "",
         balance:"0",
-        icon_url: CurrencySymbol.EPK.iconUrl,
-        cs: CurrencySymbol.EPK,
-        networkType: CurrencySymbol.EPK.networkType,
+        icon_url: CurrencySymbol.AIEPK.iconUrl,
+        cs: CurrencySymbol.AIEPK,
+        networkType: CurrencySymbol.AIEPK.networkType,
         price_usd_str: "0",
         price_usd: 0,
         change_usd: 0,
@@ -993,7 +993,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
 
                         CurrencyAsset ca = AccountMgr()
                             ?.currentAccount
-                            ?.getCurrencyAssetByCs(is2Epik ? CurrencySymbol.EPKerc20 : CurrencySymbol.EPK);
+                            ?.getCurrencyAssetByCs(is2Epik ? CurrencySymbol.EPKerc20 : CurrencySymbol.AIEPK);
                         if (ca != null) balance = ca.balance;
 
                         // _tec_erc20.text=balance;
@@ -1023,7 +1023,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
       mainAxisSize: MainAxisSize.min,
       children: [
         getSubType(RSID.eev_13.text, //"兑换为",
-            text2: is2Epik ? "AIEPK" : "ERC20-EPK",
+            text2: is2Epik ? "AIEPK" : "AIEPK(ERC20)",
             text2PadingTop: 4,
             paddingbottom: 2),
         Container(
@@ -1069,7 +1069,7 @@ class Erc20ToEpkViewState extends BaseWidgetState<Erc20ToEpkView> with TickerPro
               ),
               Text(
                 //手续费
-                "${RSID.eev_16.text} ${(is2Epik ? config?.erc20_fee : config?.epik_fee) ?? "0"} ${is2Epik ? "ERC20-EPK" : "AIEPK"}",
+                "${RSID.eev_16.text} ${(is2Epik ? config?.erc20_fee : config?.epik_fee) ?? "0"} ${is2Epik ? "AIEPK(ERC20)" : "AIEPK"}",
                 style: const TextStyle(
                   fontSize: 14,
                   color: ResColor.white_60,

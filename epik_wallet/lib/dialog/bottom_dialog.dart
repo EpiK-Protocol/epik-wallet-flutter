@@ -1742,7 +1742,7 @@ class BottomDialog {
       Function(bool ok_transfer, bool ok_recharge, CurrencySymbol cs, String txhash, String error) callback) {
     // List<CurrencySymbol> cslist = [CurrencySymbol.EPK, CurrencySymbol.EPKerc20, CurrencySymbol.EPKbsc];
     List<CurrencySymbol> cslist = [
-      CurrencySymbol.EPK,
+      CurrencySymbol.AIEPK,
       CurrencySymbol.EPKerc20,
       if (!ServiceInfo.hideBSC) CurrencySymbol.EPKbsc,
     ];
@@ -2218,7 +2218,7 @@ class BottomDialog {
               (password) {
                 String address = "";
                 switch (use_cs) {
-                  case CurrencySymbol.EPK:
+                  case CurrencySymbol.AIEPK:
                     address = config.epik_address;
                     break;
                   case CurrencySymbol.EPKerc20:
@@ -2242,7 +2242,7 @@ class BottomDialog {
 
                   Future<ResultObj<String>> result_future;
                   switch (use_cs) {
-                    case CurrencySymbol.EPK:
+                    case CurrencySymbol.AIEPK:
                       result_future = account.epikWallet.send(address, amount_str);
                       break;
                     case CurrencySymbol.EPKerc20:
@@ -2364,9 +2364,10 @@ class BottomDialog {
     // txhash = "asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf";
 
     List<CurrencySymbol> cslist = [
-      CurrencySymbol.EPK,
+      CurrencySymbol.AIEPK,
       CurrencySymbol.EPKerc20,
-      CurrencySymbol.EPKbsc,
+      if(!ServiceInfo.hideBSC)
+        CurrencySymbol.EPKbsc,
     ];
 
     CurrencySymbol use_cs = cslist[0];

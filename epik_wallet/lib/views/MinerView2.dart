@@ -113,7 +113,7 @@ class MinnerViewState2 extends BaseInnerWidgetState<MinerView2> {
       // print(coinbase?.pledged?.Total_d);
       // print(coinbase?.retrieve?.Total_d);
       balance_usdt =
-          (AccountMgr()?.currentAccount?.getCurrencyAssetByCs(CurrencySymbol.EPK)?.price_usd ?? 0) * balance_epk;
+          (AccountMgr()?.currentAccount?.getCurrencyAssetByCs(CurrencySymbol.AIEPK)?.price_usd ?? 0) * balance_epk;
     } else {
       balance_epk = 0;
       balance_usdt = 0;

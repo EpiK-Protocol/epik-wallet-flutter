@@ -3,7 +3,7 @@ import 'package:epikwallet/model/prices.dart';
 import 'package:epikwallet/utils/string_utils.dart';
 
 enum CurrencySymbol {
-  EPK,
+  AIEPK,
   EPKerc20,
   ETH,
   USDT,
@@ -15,7 +15,7 @@ enum CurrencySymbol {
 extension CurrencySymbolEx on CurrencySymbol {
   String get iconUrl {
     switch (this) {
-      case CurrencySymbol.EPK:
+      case CurrencySymbol.AIEPK:
         return "assets/img/ic_epk_2.png";
       case CurrencySymbol.EPKerc20:
         return "assets/img/ic_epk_2.png";
@@ -52,7 +52,7 @@ extension CurrencySymbolEx on CurrencySymbol {
     String aa = toString().replaceAll("CurrencySymbol.", "");
     switch (aa) {
       case "EPKerc20":
-        aa = "ERC20-EPK";
+        aa = "AIEPK(ERC20)";//"ERC20-EPK";
         break;
       case "EPKbsc":
         aa = "BSC-EPK";
@@ -69,7 +69,7 @@ extension CurrencySymbolEx on CurrencySymbol {
     // if (aa == "EPKerc20") aa = "EPK";
     switch (aa) {
       case "EPKerc20":
-        aa = "ERC20-EPK";
+        aa = "AIEPK(ERC20)";//"ERC20-EPK";
         break;
       case "EPKbsc":
         aa = "BSC-EPK";
@@ -95,8 +95,8 @@ extension CurrencySymbolEx on CurrencySymbol {
   CurrencySymbol get networkType {
     // if (this == CurrencySymbol.EPK) return CurrencySymbol.EPK;
     switch (this) {
-      case CurrencySymbol.EPK:
-        return CurrencySymbol.EPK;
+      case CurrencySymbol.AIEPK:
+        return CurrencySymbol.AIEPK;
       case CurrencySymbol.EPKerc20:
       case CurrencySymbol.ETH:
       case CurrencySymbol.USDT:
@@ -127,7 +127,7 @@ extension CurrencySymbolEx on CurrencySymbol {
   String get networkTypeName {
     // if (this == CurrencySymbol.EPK) return CurrencySymbol.EPK;
     switch (this) {
-      case CurrencySymbol.EPK:
+      case CurrencySymbol.AIEPK:
         return "EpiK";
       case CurrencySymbol.EPKerc20:
       case CurrencySymbol.ETH:
@@ -174,7 +174,7 @@ extension CurrencySymbolEx on CurrencySymbol {
   String get networkTypeNorm {
     // if (this == CurrencySymbol.EPK) return CurrencySymbol.EPK;
     switch (this) {
-      case CurrencySymbol.EPK:
+      case CurrencySymbol.AIEPK:
         return "EpiK";
       case CurrencySymbol.EPKerc20:
       case CurrencySymbol.ETH:
@@ -194,7 +194,7 @@ extension CurrencySymbolEx on CurrencySymbol {
         return networkTypeName;
       case CurrencySymbol.USDTbsc:
         return networkTypeName; //Binance Smart Chain
-      case CurrencySymbol.EPK:
+      case CurrencySymbol.AIEPK:
       case CurrencySymbol.EPKerc20:
       case CurrencySymbol.ETH:
       case CurrencySymbol.EPKbsc:
@@ -216,7 +216,7 @@ extension CurrencySymbolEx on CurrencySymbol {
 
     if (priceslist != null) {
       switch (this) {
-        case CurrencySymbol.EPK:
+        case CurrencySymbol.AIEPK:
           return find(priceslist, "EPK") ?? Prices(price: "0", dPrice: 0);
         case CurrencySymbol.EPKerc20:
         case CurrencySymbol.EPKbsc: //return find(priceslist, "BSC-EPK") ?? Prices(price: "0", dPrice: 1);

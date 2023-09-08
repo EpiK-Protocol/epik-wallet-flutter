@@ -87,7 +87,7 @@ class AIBotRechargeConfig {
 
   bool hasChainAddress(CurrencySymbol cs) {
     switch (cs) {
-      case CurrencySymbol.EPK:
+      case CurrencySymbol.AIEPK:
         return StringUtils.isNotEmpty(epik_address);
       case CurrencySymbol.EPKerc20:
         return StringUtils.isNotEmpty(eth_address);

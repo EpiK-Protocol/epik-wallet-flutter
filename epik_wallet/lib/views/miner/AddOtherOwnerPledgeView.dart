@@ -89,7 +89,7 @@ class AddOtherOwnerPledgeViewState extends BaseWidgetState<AddOtherOwnerPledgeVi
   {
     List<Widget> items = [];
 
-    CurrencyAsset epk = AccountMgr().currentAccount.getCurrencyAssetByCs(CurrencySymbol.EPK);
+    CurrencyAsset epk = AccountMgr().currentAccount.getCurrencyAssetByCs(CurrencySymbol.AIEPK);
     String balance = StringUtils.formatNumAmount(epk?.balance ?? "0",
         supply0: false, point: 2);
 

@@ -45,7 +45,7 @@ android {
         // 正式版需要删除.test
         applicationId "com.epik.wallet"//.test
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
 

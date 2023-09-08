@@ -154,7 +154,7 @@ Map<RSID, String> map_en = {
   RSID.main_wv_6: "Total assets",// "总资产",
   RSID.main_wv_7: "AIEPK cross chain swap",//"EPK跨链兑换",//ERC20-EPK 兑换 EPK  "ERC20-EPK swap for EPK"
   RSID.main_wv_8: "Get the bounty hunter reward",//"领取赏金猎人奖励",
-  RSID.main_wv_9: "ERC20-EPK Uniswap",//ERC20-EPK Uniswap 交易
+  RSID.main_wv_9: "AIEPK(ERC20) Uniswap",//ERC20-EPK Uniswap 交易
   RSID.main_wv_10: "Not yet open",//"暂未开通",
   RSID.main_wv_11:"Wallet setting",//钱包设置
 
@@ -188,7 +188,7 @@ Map<RSID, String> map_en = {
   //AI Bots 首页_AI机器人
   RSID.main_abv_1:"AI Bot Store", //
   RSID.main_abv_2:"Points", // Points
-  RSID.main_abv_3:"1 Point = %s AIEPK / BSC-EPK / ERC20-EPK", // (1 Point = xx EPK/BSC-EPK/ERC20-EPK)
+  RSID.main_abv_3:"1 Point = %s AIEPK / AIEPK(ERC20)", // (1 Point = xx EPK/BSC-EPK/ERC20-EPK)//BSC-EPK /
   RSID.main_abv_4:"Recharge", //
   RSID.main_abv_5:"History", //
   RSID.main_abv_6:"Recently Used",//"Latest", //
@@ -216,8 +216,8 @@ Map<RSID, String> map_en = {
   //MiningProfitView 预挖收益 Pre-mining profit
   RSID.mpv_1: "Test net profit",//"Pre-mining profit",//"预挖收益",
   RSID.mpv_2: "Mined\nAIEPK",//"挖出数量\ntEPK",
-  RSID.mpv_3: "Granted\nERC20-EPK",//"奖励数量\nERC20-EPK",
-  RSID.mpv_4: "Total bonus\nERC20-EPK",//"总奖励\nERC20-EPK",
+  RSID.mpv_3: "Granted\nAIEPK(ERC20)",//"奖励数量\nERC20-EPK",
+  RSID.mpv_4: "Total bonus\nAIEPK(ERC20)",//"总奖励\nERC20-EPK",
 
 //MiningSignupView 预挖报名 Register for pre-mining
   RSID.msv_1: "Register for pre-mining",//"预挖报名",
@@ -299,7 +299,7 @@ Map<RSID, String> map_en = {
   RSID.uspv_13: "EpiK reminds you",//"EpiK提醒您",
   RSID.uspv_14: "Contract",//"合约",
   RSID.uspv_15_1:
-      "1.This page is based on Uniswap's ERC20-EPK and USDT's liquidity support \n\n2.The underlying layer is deployed on the ethereum public chain, and both swap and pooling operations will incur ETH fees.\n\n3.The official smart contract address is: ", //"「1」本页资金池交易是基于Uniswap的ERC20-EPK与USDT的流动性支持\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
+      "1.This page is based on Uniswap's AIEPK(ERC20) and USDT's liquidity support \n\n2.The underlying layer is deployed on the ethereum public chain, and both swap and pooling operations will incur ETH fees.\n\n3.The official smart contract address is: ", //"「1」本页资金池交易是基于Uniswap的ERC20-EPK与USDT的流动性支持\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
   RSID.uspv_15_2: "\n\n4.For instructions for beginners, please click ",//"\n\n「4」新手操作说明请点击",
   RSID.uspv_15_3: "here",//"这里",
   //UniswapExchangeView
@@ -313,7 +313,7 @@ Map<RSID, String> map_en = {
   RSID.usev_8: "Amount can't be 0",//"数量不能为0",
   RSID.usev_9: "Estimating the amount...",//"正在预估数量...",
   RSID.usev_10_1:
-  "1.This page is based on Uniswap's ERC20-EPK and USDT's liquidity support \n\n2.The underlying layer is deployed on the ethereum public chain, and both swap and pooling operations will incur ETH fees.\n\n3.The official smart contract address is: ",//"「1」本页兑换交易是基于Uniswap的ERC20-EPK与USDT交易\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
+  "1.This page is based on Uniswap's AIEPK(ERC20) and USDT's liquidity support \n\n2.The underlying layer is deployed on the ethereum public chain, and both swap and pooling operations will incur ETH fees.\n\n3.The official smart contract address is: ",//"「1」本页兑换交易是基于Uniswap的ERC20-EPK与USDT交易\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
   RSID.usev_10_2: "\n\n4.For instructions for beginners, please click ",//"\n\n「4」新手操作说明请点击",
   RSID.usev_10_3: "here",//"这里",
   RSID.usev_11: "Being submitted to the Ethernet network, please be patient!",//"正在提交到以太坊网络，请耐心等待",
@@ -374,13 +374,13 @@ Map<RSID, String> map_en = {
   RSID.brrlv_1: "Complete task",//"完成任务",
   //BountyExchangeView 积分兑换h
   RSID.bexv_1: "Scores swap",//"积分兑换",
-  RSID.bexv_2: "Current swap ratio: %s scores = 1 ERC20-EPK",//"当前兑换比例：%s 积分 = 1 ERC20-EPK",
+  RSID.bexv_2: "Current swap ratio: %s scores = 1 AIEPK(ERC20)",//"当前兑换比例：%s 积分 = 1 ERC20-EPK",
   RSID.bexv_3: "Currently WeChat bound: ",//"当前绑定微信：",
   RSID.bexv_4: "Current Ethereum receiving account: ",//"当前以太坊收币账户：",
   RSID.bexv_5: "Please enter swap amount",//"请输入兑换数量",
   RSID.bexv_6: "swap",//"兑换",
   RSID.bexv_7: "Minimum swap quantity: %s scores",//"最少兑换数量：%s 积分",
-  RSID.bexv_8: "Estimated fee: %s ERC20-EPK",//"预估手续费：%s ERC20-EPK",
+  RSID.bexv_8: "Estimated fee: %s AIEPK(ERC20)",//"预估手续费：%s ERC20-EPK",
   RSID.bexv_9: "Bonus records",//"奖励记录",
   RSID.bexv_10: "Swap records",//"兑换记录",
   RSID.bexv_11: "Swap submitting",//"正在提交兑换...",
@@ -388,7 +388,7 @@ Map<RSID, String> map_en = {
   RSID.bexv_13: "Scores swap has been submitted,\nplease refresh later to check the wallet balance.",//"积分兑换已提交，\n请稍后刷新查看钱包余额。",
   RSID.bexv_14: "About fee",//"关于手续费",
   RSID.bexv_15:
-  "1.An ETH fee is incurred for transfers over Ethernet when redeeming scores for ERC20-EPK.\n\n2.The amount of fees is based on how much ERC20-EPK to deduct based on the ethereum gas fee and the token price in Uniswap.",//"「1」用积分兑换ERC20-EPK时，通过以太网转账会产生ETH手续费；\n\n「2」手续费数量是根据以太坊gas费用和Uniswap中的币价计算出要扣除多少ERC20-EPK。",
+  "1.An ETH fee is incurred for transfers over Ethernet when redeeming scores for AIEPK(ERC20).\n\n2.The amount of fees is based on how much AIEPK(ERC20) to deduct based on the ethereum gas fee and the token price in Uniswap.",//"「1」用积分兑换ERC20-EPK时，通过以太网转账会产生ETH手续费；\n\n「2」手续费数量是根据以太坊gas费用和Uniswap中的币价计算出要扣除多少ERC20-EPK。",
   RSID.bexv_16: "Currently Telegram bound：",
   RSID.bexv_17: "Current swap ratio: %s scores = 1 AIEPK",//"当前兑换比例：%s 积分 = 1 EPK",
   RSID.bexv_18: "Current AIEPK receiving account:",//"当前EPK收币账户：",
@@ -594,13 +594,13 @@ Map<RSID, String> map_en = {
   RSID.eev_3:"Waiting for Confirmation",//"确认交易",
   RSID.eev_4:"Done",//"完成",
   RSID.eev_5:"Service Notes",//"兑换须知",
-  RSID.eev_6:"ERC20-EPK on Ethereum and AIEPK on the EpiK Protocol mainnet can be exchanged 1:1 in both directions, and the cross-chain bridge is provided by the EpiK Protocol Foundation. During the exchange process, because the cross-chain bridge needs to pay a high transaction fee to Ethereum, a certain amount of AIEPK will be charged as a service fee for each exchange. After the exchange is completed, the AIEPK or ERC20-EPK you obtained through the exchange will be automatically transferred to your current EpiK wallet. The transfer of tokens will take a while, please be patient.",
+  RSID.eev_6:"AIEPK(ERC20) on Ethereum and AIEPK on the EpiK Protocol mainnet can be exchanged 1:1 in both directions, and the cross-chain bridge is provided by the EpiK Protocol Foundation. During the exchange process, because the cross-chain bridge needs to pay a high transaction fee to Ethereum, a certain amount of AIEPK will be charged as a service fee for each exchange. After the exchange is completed, the AIEPK or AIEPK(ERC20) you obtained through the exchange will be automatically transferred to your current EpiK wallet. The transfer of tokens will take a while, please be patient.",
   RSID.eev_7:"Risk Warning",//"风险提示",
   RSID.eev_8_1:"In order to prevent you from intentionally or unintentionally disclosing the mnemonic words or private key of the current wallet before, it is strongly recommended to ",//"为避免您之前参与挖矿活动有意或者无意的泄露过当前钱包的助记词或私钥，强烈建议",
   RSID.eev_8_2:"create a new wallet",//"创建新钱包",
-  RSID.eev_8_3:", and transfer all your ERC20-EPK into the new wallet, and then do the swap.",//"，将ERC20-EPK转入全新的钱包后，再进行兑换。",
+  RSID.eev_8_3:", and transfer all your AIEPK(ERC20) into the new wallet, and then do the swap.",//"，将ERC20-EPK转入全新的钱包后，再进行兑换。",
   RSID.eev_9:"Disclaimers",//"免责声明",
-  RSID.eev_10:"If you destroy ERC20-EPK through other methods, resulting in the failure of normal exchange of AIEPK, EpiK Protocol Foundation will not compensate.",//"如您通过其他渠道自行销毁了ERC20-EPK导致无法正常兑换EPK，EpiK基金会将不予赔偿",
+  RSID.eev_10:"If you destroy AIEPK(ERC20) through other methods, resulting in the failure of normal exchange of AIEPK, EpiK Protocol Foundation will not compensate.",//"如您通过其他渠道自行销毁了ERC20-EPK导致无法正常兑换EPK，EpiK基金会将不予赔偿",
   RSID.eev_11:"Address:",//"地址:",
   RSID.eev_12:"Amount",//"兑换数量",
   RSID.eev_13:"Swap For ",//"兑换成",
@@ -608,7 +608,7 @@ Map<RSID, String> map_en = {
   RSID.eev_15:"Maximum",//"最多兑换",
   RSID.eev_16:"Fee",//"手续费",
   RSID.eev_17:"Submit TxHash to claim AIEPK",//"已转出交易补领EPK",
-  RSID.eev_18:"Submit CID to claim ERC20-EPK",//"已转出交易补领ERC20-EPK",
+  RSID.eev_18:"Submit CID to claim AIEPK(ERC20)",//"已转出交易补领ERC20-EPK",
   RSID.eev_19:"Transaction failed",//"交易失败",
   RSID.eev_20:"Copied TxHash",//"TxHash已复制",
   RSID.eev_21:"New Swap",//"发起新的兑换",

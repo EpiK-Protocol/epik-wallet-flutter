@@ -476,7 +476,7 @@ class EditAddressViewState extends BaseWidgetState<EditAddressView> {
     if (seletedCs.networkType == CurrencySymbol.ETH || seletedCs.networkType == CurrencySymbol.BNB) {
       checkaddress = AddressListViewState.checkEthAddress(address);
       dlog("checkEthAddress $checkaddress");
-    } else if (seletedCs.networkType == CurrencySymbol.EPK) {
+    } else if (seletedCs.networkType == CurrencySymbol.AIEPK) {
       checkaddress = AddressListViewState.checkEpikAddress(address);
       dlog("checkEpikAddress $checkaddress");
     }

@@ -132,10 +132,10 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
         // print("setstate");
       });
 
-      if (cs == CurrencySymbol.EPK && LimitedPlatform.isLimited) {
+      if (cs == CurrencySymbol.AIEPK && LimitedPlatform.isLimited) {
         WalletAccount wa = AccountMgr().currentAccount;
         if (wa?.hasEpikWallet) {
-          CurrencyAsset ca = wa.getCurrencyAssetByCs(CurrencySymbol.EPK);
+          CurrencyAsset ca = wa.getCurrencyAssetByCs(CurrencySymbol.AIEPK);
           if (ca.getBalanceDouble() >= LimitedPlatform.swap_threshold) {
             bool swap = SpUtils.getBool(LimitedPlatform.sp_key_main_swap, defValue: true);
             if (!swap) {
@@ -176,7 +176,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
     currency_group = {};
     WalletAccount wa = AccountMgr().currentAccount;
     if (wa.hasEpikWallet) {
-      currency_group[CurrencySymbol.EPK] = [wa.getCurrencyAssetByCs(CurrencySymbol.EPK)];
+      currency_group[CurrencySymbol.AIEPK] = [wa.getCurrencyAssetByCs(CurrencySymbol.AIEPK)];
     }
     if (wa.hasHdWallet) {
       currency_group[CurrencySymbol.ETH] = [
@@ -997,7 +997,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
 
       _datas.forEach((hmi) {
 
-        print(hmi.Name);
+        // print(hmi.Name);
 
         bool isLocalWalletSupport = hmi?.action_l?.isLocalWalletSupport(AccountMgr().currentAccount) ??
             AccountMgr().currentAccount.isSupportCurrency(hmi?.web3nettype) ??

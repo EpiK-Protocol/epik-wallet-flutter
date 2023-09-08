@@ -586,7 +586,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
           // 外部下载
           canLaunchUrlString(upgrade.upgrade_url).then((value) {
             if (value) {
-              launchUrlString(upgrade.upgrade_url).then((value) {
+              launchUrlString(upgrade.upgrade_url,mode: LaunchMode.externalApplication).then((value) {
                 print("upgrade launch = $value  url = ${upgrade.upgrade_url}");
               });
             }
@@ -594,7 +594,7 @@ class _MainViewState extends BaseWidgetState<MainView> {
         } else if (Platform.isIOS) {
           canLaunchUrlString(upgrade.upgrade_url).then((value) {
             if (value) {
-              launchUrlString(upgrade.upgrade_url).then((value) {
+              launchUrlString(upgrade.upgrade_url,mode: LaunchMode.externalApplication).then((value) {
                 print("upgrade launch = $value  url = ${upgrade.upgrade_url}");
               });
             }

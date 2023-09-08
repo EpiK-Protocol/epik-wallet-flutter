@@ -36,7 +36,7 @@ class AddressListView extends BaseWidget {
 
 class AddressListViewState extends BaseWidgetState<AddressListView> with TickerProviderStateMixin {
   List<CurrencySymbol> tabTypes = CurrencySymbol.values;
-  CurrencySymbol pageIndex = CurrencySymbol.EPK;
+  CurrencySymbol pageIndex = CurrencySymbol.AIEPK;
 
   TabController tabcontroller;
 

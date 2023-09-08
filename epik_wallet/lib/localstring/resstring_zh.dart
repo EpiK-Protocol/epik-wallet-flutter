@@ -154,7 +154,7 @@ Map<RSID, String> map_zh = {
   RSID.main_wv_6: "总资产",
   RSID.main_wv_7: "AIEPK跨链兑换",//"ERC20-EPK 兑换 EPK",
   RSID.main_wv_8: "领取赏金猎人奖励",
-  RSID.main_wv_9: "ERC20-EPK Uniswap 交易",
+  RSID.main_wv_9: "AIEPK(ERC20) Uniswap 交易",
   RSID.main_wv_10: "暂未开放",
   RSID.main_wv_11:"钱包设置",
 
@@ -188,7 +188,7 @@ Map<RSID, String> map_zh = {
   //AI Bots 首页_AI机器人
   RSID.main_abv_1:"AI机器人商店", // AI Bot Store
   RSID.main_abv_2:"Points", // Points
-  RSID.main_abv_3:"1 Point = %s AIEPK / BSC-EPK / ERC20-EPK", // (1 Point = xx EPK/BSC-EPK/ERC20-EPK)
+  RSID.main_abv_3:"1 Point = %s AIEPK / AIEPK(ERC20)", // (1 Point = xx EPK/BSC-EPK/ERC20-EPK) // BSC-EPK /
   RSID.main_abv_4:"充值", // Recharge
   RSID.main_abv_5:"历史", // History
   RSID.main_abv_6:"最近使用", // Latest
@@ -215,8 +215,8 @@ Map<RSID, String> map_zh = {
   //MiningProfitView 预挖收益
   RSID.mpv_1: "测试网收益",//"预挖收益",
   RSID.mpv_2: "挖出数量\nAIEPK",
-  RSID.mpv_3: "奖励数量\nERC20-EPK",
-  RSID.mpv_4: "总奖励\nERC20-EPK",
+  RSID.mpv_3: "奖励数量\nAIEPK(ERC20)",
+  RSID.mpv_4: "总奖励\nAIEPK(ERC20)",
 
   //MiningSignupView 预挖报名
   RSID.msv_1: "预挖报名",
@@ -296,7 +296,7 @@ Map<RSID, String> map_zh = {
   RSID.uspv_12: "您没有可撤回的资金",
   RSID.uspv_13: "EpiK提醒您",
   RSID.uspv_14: "合约",
-  RSID.uspv_15_1: "「1」本页资金池交易是基于Uniswap的ERC20-EPK与USDT的流动性支持\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
+  RSID.uspv_15_1: "「1」本页资金池交易是基于Uniswap的AIEPK(ERC20)与USDT的流动性支持\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
   RSID.uspv_15_2: "\n\n「4」新手操作说明请点击",
   RSID.uspv_15_3: "这里",
   //UniswapExchangeView
@@ -309,7 +309,7 @@ Map<RSID, String> map_zh = {
   RSID.usev_7: "请输入%s数量",
   RSID.usev_8: "数量不能为0",
   RSID.usev_9: "正在预估数量...",
-  RSID.usev_10_1: "「1」本页兑换交易是基于Uniswap的ERC20-EPK与USDT交易\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
+  RSID.usev_10_1: "「1」本页兑换交易是基于Uniswap的AIEPK(ERC20)与USDT交易\n\n「2」底层部署在以太坊公链上，兑换及资金池操作均会产生ETH手续费，操作前请确保钱包有足够的ETH。\n\n「3」官方智能合约地址为：",
   RSID.usev_10_2: "\n\n「4」新手操作说明请点击",
   RSID.usev_10_3: "这里",
   RSID.usev_11: "正在提交到以太坊网络，请耐心等待",
@@ -371,20 +371,20 @@ Map<RSID, String> map_zh = {
   RSID.brrlv_1: "完成任务",
   //BountyExchangeView 积分兑换
   RSID.bexv_1: "积分兑换",
-  RSID.bexv_2: "当前兑换比例：%s 积分 = 1 ERC20-EPK",
+  RSID.bexv_2: "当前兑换比例：%s 积分 = 1 AIEPK(ERC20)",
   RSID.bexv_3: "当前绑定微信：",
   RSID.bexv_4: "当前以太坊收币账户：",
   RSID.bexv_5: "请输入兑换数量",
   RSID.bexv_6: "兑换",
   RSID.bexv_7: "最少兑换数量：%s 积分",
-  RSID.bexv_8: "预估手续费：%s ERC20-EPK",
+  RSID.bexv_8: "预估手续费：%s AIEPK(ERC20)",
   RSID.bexv_9: "奖励记录",
   RSID.bexv_10: "兑换记录",
   RSID.bexv_11: "正在提交兑换...",
   RSID.bexv_12: "积分兑换",
   RSID.bexv_13: "积分兑换已提交，\n请稍后刷新查看钱包余额。",
   RSID.bexv_14: "关于手续费",
-  RSID.bexv_15: "「1」用积分兑换ERC20-EPK时，通过以太网转账会产生ETH手续费；\n\n「2」手续费数量是根据以太坊gas费用和Uniswap中的币价计算出要扣除多少ERC20-EPK。",
+  RSID.bexv_15: "「1」用积分兑换AIEPK(ERC20)时，通过以太网转账会产生ETH手续费；\n\n「2」手续费数量是根据以太坊gas费用和Uniswap中的币价计算出要扣除多少AIEPK(ERC20)。",
   RSID.bexv_16: "当前绑定Telegram：",
   RSID.bexv_17: "当前兑换比例：%s 积分 = 1 AIEPK",
   RSID.bexv_18: "当前AIEPK收币账户：",
@@ -589,13 +589,13 @@ Map<RSID, String> map_zh = {
   RSID.eev_3:"确认交易",
   RSID.eev_4:"完成",
   RSID.eev_5:"兑换须知",
-  RSID.eev_6:"以太坊上的 ERC20-EPK 和 EpiK Protocol 主网上的 AIEPK 可以 1:1 双向兑换，跨链桥由 EpiK Protocol 基金会提供。兑换过程中因跨链桥需要向以太坊缴纳高昂的交易手续费，所以会向每一笔兑换收取一定的 AIEPK 作为服务费。兑换完成后，您兑换获取的 AIEPK 或者 ERC20-EPK 将自动转入您当前的 EpiK 钱包，资产转入需要一段时间，请耐心等待。",
+  RSID.eev_6:"以太坊上的 AIEPK(ERC20) 和 EpiK Protocol 主网上的 AIEPK 可以 1:1 双向兑换，跨链桥由 EpiK Protocol 基金会提供。兑换过程中因跨链桥需要向以太坊缴纳高昂的交易手续费，所以会向每一笔兑换收取一定的 AIEPK 作为服务费。兑换完成后，您兑换获取的 AIEPK 或者 AIEPK(ERC20) 将自动转入您当前的 EpiK 钱包，资产转入需要一段时间，请耐心等待。",
   RSID.eev_7:"风险提示",
   RSID.eev_8_1:"为避免您之前参与挖矿活动有意或者无意的泄露过当前钱包的助记词或私钥，强烈建议",
   RSID.eev_8_2:"创建新钱包",
-  RSID.eev_8_3:"，将 ERC20-EPK 转入全新的钱包后，再进行兑换。",
+  RSID.eev_8_3:"，将 AIEPK(ERC20) 转入全新的钱包后，再进行兑换。",
   RSID.eev_9:"免责声明",
-  RSID.eev_10:"如您通过其他渠道自行销毁了 ERC20-EPK 导致无法正常兑换 AIEPK，EpiK Protocol 基金会将不予赔偿",
+  RSID.eev_10:"如您通过其他渠道自行销毁了 AIEPK(ERC20) 导致无法正常兑换 AIEPK，EpiK Protocol 基金会将不予赔偿",
   RSID.eev_11:"地址:",
   RSID.eev_12:"兑换数量",
   RSID.eev_13:"兑换为",
@@ -603,7 +603,7 @@ Map<RSID, String> map_zh = {
   RSID.eev_15:"最多兑换",
   RSID.eev_16:"手续费",
   RSID.eev_17:"已转出交易补领 AIEPK",
-  RSID.eev_18:"已转出交易补领 ERC20-EPK",
+  RSID.eev_18:"已转出交易补领 AIEPK(ERC20)",
   RSID.eev_19:"交易失败",
   RSID.eev_20:"TxHash 已复制",
   RSID.eev_21:"发起新的兑换",
@@ -618,7 +618,7 @@ Map<RSID, String> map_zh = {
   RSID.eev_27_3:"中查看到账情况",
   RSID.eev_28:"兑换数量限制",
   RSID.eev_29:"兑换已提交",
-  RSID.eev_30:"请输入转出 ERC20-EPK 交易的 TxHash",
+  RSID.eev_30:"请输入转出 AIEPK(ERC20) 交易的 TxHash",
   RSID.eev_31:"提交失败",
   RSID.eev_32:"TxHash 查询失败",
   RSID.eev_33:"TxHash 无效",

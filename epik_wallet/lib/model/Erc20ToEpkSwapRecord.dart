@@ -106,9 +106,9 @@ class Erc20ToEpkSwapRecord {
       is2Epik = direction == "erc202epik" || direction == "";
       if (is2Epik) {
         cs_from = CurrencySymbol.EPKerc20;
-        cs_to = CurrencySymbol.EPK;
+        cs_to = CurrencySymbol.AIEPK;
       } else {
-        cs_from = CurrencySymbol.EPK;
+        cs_from = CurrencySymbol.AIEPK;
         cs_to = CurrencySymbol.EPKerc20;
       }
 

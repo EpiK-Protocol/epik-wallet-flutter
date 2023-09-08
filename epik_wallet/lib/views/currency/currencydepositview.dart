@@ -52,7 +52,7 @@ class _CurrencyDepositViewState extends BaseWidgetState<CurrencyDepositView> {
     isTopFloatWidgetShow = true;
 
     switch (widget.currencysymbol) {
-      case CurrencySymbol.EPK:
+      case CurrencySymbol.AIEPK:
         {
           address = widget.walletaccount.epik_EPK_address;
           break;

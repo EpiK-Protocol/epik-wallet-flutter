@@ -464,6 +464,7 @@ class EpikWallet {
       return ResultObj<String>(data: ret);
     } catch (e, s) {
       print(e);
+      print(s);
       return ResultObj<String>.fromError(e);
     }
     return null;

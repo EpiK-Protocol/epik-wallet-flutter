@@ -42,7 +42,7 @@ class MinerPledgeAddViewState extends State<MinerPledgeAddView> {
   @override
   Widget build(BuildContext context) {
     CurrencyAsset epk =
-        AccountMgr().currentAccount.getCurrencyAssetByCs(CurrencySymbol.EPK);
+        AccountMgr().currentAccount.getCurrencyAssetByCs(CurrencySymbol.AIEPK);
     String balance = StringUtils.formatNumAmount(epk?.balance ?? "0",
         supply0: false, point: 8);
 

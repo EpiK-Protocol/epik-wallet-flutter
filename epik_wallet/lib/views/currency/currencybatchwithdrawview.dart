@@ -62,7 +62,7 @@ class CurrencyBatchWithdrawViewState extends BaseWidgetState<CurrencyBatchWithdr
     resizeToAvoidBottomPadding = true;
 
     switch (widget.currencyAsset.cs) {
-      case CurrencySymbol.EPK:
+      case CurrencySymbol.AIEPK:
         {
           from_address = widget.walletaccount.epik_EPK_address;
           break;
@@ -619,7 +619,7 @@ class CurrencyBatchWithdrawViewState extends BaseWidgetState<CurrencyBatchWithdr
 
       if(!isCurrent)
       {
-        if (widget.currencyAsset.cs == CurrencySymbol.EPK) {
+        if (widget.currencyAsset.cs == CurrencySymbol.AIEPK) {
           String tx = await doWithdraw_epik(lao, amount);
           tx_map[lao] = tx;
         } else {

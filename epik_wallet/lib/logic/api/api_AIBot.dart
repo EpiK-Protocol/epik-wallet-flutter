@@ -114,7 +114,7 @@ class ApiAIBot {
 
     String chain;
     switch (cs) {
-      case CurrencySymbol.EPK:
+      case CurrencySymbol.AIEPK:
         chain = "epik";
         break;
       case CurrencySymbol.EPKerc20:

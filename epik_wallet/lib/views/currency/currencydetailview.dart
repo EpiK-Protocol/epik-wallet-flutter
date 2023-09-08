@@ -85,7 +85,12 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
     isTopBarShow = false; //状态栏是否显示
     isAppBarShow = false; //导航栏是否显示
     isTopFloatWidgetShow = true;
-    setAppBarTitle(widget.currencyAsset.symbol + " (${widget.currencyAsset.cs.networkTypeName})");
+    if(widget.currencyAsset.symbol.contains("(")){
+      setAppBarTitle(widget.currencyAsset.symbol );
+    }else{
+      setAppBarTitle(widget.currencyAsset.symbol + " (${widget.currencyAsset.cs.networkTypeName})");
+    }
+
     setBackIconHinde(isHinde: false);
 
     await Future.delayed(Duration(milliseconds: 200));
@@ -1143,7 +1148,7 @@ class _CurrencyDetailViewState extends BaseWidgetState<CurrencyDetailView> {
   }
 
   bool get usePage {
-    return widget?.currencyAsset?.cs != CurrencySymbol.EPK;
+    return widget?.currencyAsset?.cs != CurrencySymbol.AIEPK;
   }
 
   bool get isFirstPage {
