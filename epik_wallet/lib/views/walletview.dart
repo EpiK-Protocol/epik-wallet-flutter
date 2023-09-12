@@ -112,6 +112,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
   }
 
   eventCallback_account(obj) {
+    currency_group=null;//切换账号时 清空旧数据
     refresh();
   }
 
@@ -126,6 +127,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
 
   eventCallback_balance_single(cs) {
     if (AccountMgr().currentAccount != null) {
+      // print("JSONRPC CALL  balance update");
       GlobalKey key = getItemKey(cs);
       // print(["ccccccccc", cs, key, key.currentState]);
       key?.currentState?.setState(() {
@@ -846,6 +848,7 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
   bool hasMore = false;
 
   void refresh() {
+    // print("JSONRPC CALL  refresh 1 ");
     hasRefresh = true;
 
     noWallet =
@@ -869,12 +872,19 @@ class _WalletViewState extends BaseInnerWidgetState<WalletView> with TickerProvi
     // AccountMgr().currentAccount.uploadSuggestGas();
     AccountMgr().currentAccount.uploadEpikGasTransfer();
 
+    // print("JSONRPC CALL  refresh 2 ");
+
     EpikWalletUtils.requestBalance(AccountMgr().currentAccount).then((value) {
+
+      // print("JSONRPC CALL  refresh 3 ");
+
       isLoading = false;
       // data_list_item = AccountMgr().currentAccount.currencyList;
       makeCurrencyGroup();
       balance = StringUtils.formatNumAmount(AccountMgr().currentAccount.total_usd, point: 2);
       closeStateLayout();
+
+      // print("JSONRPC CALL  refresh 4 ");
     });
   }
 

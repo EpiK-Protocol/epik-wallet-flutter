@@ -161,7 +161,13 @@ class EpikWalletUtils {
     // Prices price = cs.getPriceUSD(priceslist);
     // Dlog.p("EWU", "cs = $cs price=${price.dPrice}");
     CurrencyAsset ca = waccount.currencyList.firstWhere((element) => element.cs == cs);
-    ca.balance = balance ?? "";
+    // if(ca.balance!=null && balance==null)
+    // {
+    //
+    // }else
+    {
+      ca.balance = balance ?? "";
+    }
     // ca.price_usd_str = price.price;
     // ca.price_usd = price.dPrice;
     // ca.change_usd = price.dChange;
@@ -186,44 +192,114 @@ class EpikWalletUtils {
         : Future.value(null);
 
     //ETH net
-    // Future eth = waccount.hdwallet.balance(waccount.hd_eth_address);
-    Future eth = waccount.hasHdWallet
-        ? ethClient.getBalance(waccount.ethereumAddress).then((balance) {
-            Dlog.p("EWU", "eth balance=${balance}");
-            String ret = balance.getValueInUnit(EtherUnit.ether).toString();
-            respondSingleBalance(waccount, CurrencySymbol.ETH, ret);
-            return ret;
-          })
-        : Future.value(null);
+    Future eth = Future.value(null);
+    if (waccount.hasHdWallet) {
+      eth=Future.delayed(Duration(milliseconds: 0)).then((value)async{
+        String ret=null;
+        try {
+          EtherAmount balance = await ethClient.getBalance(waccount.ethereumAddress);
+          Dlog.p("EWU", "eth balance=${balance}");
+          ret = balance.getValueInUnit(EtherUnit.ether).toString();
+        } catch (e) {
+          print(e);
+          Dlog.p("EWU","JSONRPC CALL balance ETH error1");
+        }
+        respondSingleBalance(waccount, CurrencySymbol.ETH, ret);
+        return ret;
+      });
+    }
+    // Future eth = waccount.hasHdWallet
+    //     ? ethClient.getBalance(waccount.ethereumAddress).then((balance) {
+    //         Dlog.p("EWU", "eth balance=${balance}");
+    //         String ret = balance.getValueInUnit(EtherUnit.ether).toString();
+    //         respondSingleBalance(waccount, CurrencySymbol.ETH, ret);
+    //         return ret;
+    //       }).catchError(() {
+    //         print("JSONRPC CALL balance ETH error");
+    //       }):Future.value(null);
 
-    // Future usdt = waccount.hdwallet.tokenBalance(waccount.hd_eth_address, "USDT");
-    Future usdt = waccount.hasHdWallet
-        ? waccount.hdTokenMap[CurrencySymbol.USDT].balanceOf(waccount.ethereumAddress).then((bint) async {
-            Dlog.p("EWU", "usdt bint=${bint}");
-            EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
-            BigInt decimals = await waccount.hdTokenMap[CurrencySymbol.USDT].decimals(); //获取token的精度
-            EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
-            String ret = balance.getValueInUnit(eu).toString();
-            respondSingleBalance(waccount, CurrencySymbol.USDT, ret);
-            return ret;
-          })
-        : Future.value(null);
+    Future usdt = Future.value(null);
+    if (waccount.hasHdWallet) {
+      usdt=Future.delayed(Duration(milliseconds: 0)).then((value)async {
+
+        String ret=null;
+        try {
+          BigInt bint = await waccount.hdTokenMap[CurrencySymbol.USDT].balanceOf(waccount.ethereumAddress);
+          Dlog.p("EWU", "usdt bint=${bint}");
+          EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
+          BigInt decimals=BigInt.from(18);
+          try {
+            decimals = await waccount.hdTokenMap[CurrencySymbol.USDT].decimals(); //获取token的精度
+            Dlog.p("EWU","JSONRPC CALL decimals usdt ${decimals}");
+          } catch (e) {
+            Dlog.p("EWU","JSONRPC CALL balance ETH USDT error2");
+            decimals=BigInt.from(18);
+          }
+          EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
+          ret = balance.getValueInUnit(eu).toString();
+        } catch (e) {
+          Dlog.p("EWU","JSONRPC CALL balance ETH USDT error1");
+        }
+        respondSingleBalance(waccount, CurrencySymbol.USDT, ret);
+        return ret;
+      });
+
+    }
+    // Future usdt = waccount.hasHdWallet
+    //     ? waccount.hdTokenMap[CurrencySymbol.USDT].balanceOf(waccount.ethereumAddress).then((bint) async {
+    //         Dlog.p("EWU", "usdt bint=${bint}");
+    //         EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
+    //         BigInt decimals = await waccount.hdTokenMap[CurrencySymbol.USDT].decimals(); //获取token的精度
+    //         EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
+    //         String ret = balance.getValueInUnit(eu).toString();
+    //         respondSingleBalance(waccount, CurrencySymbol.USDT, ret);
+    //         return ret;
+    //       })
+    //     : Future.value(null);
 
     // Future epk_erc20 = waccount.hdwallet.tokenBalance(waccount.hd_eth_address, "EPK");
-    Future epk_erc20 = waccount.hasHdWallet
-        ? waccount.hdTokenMap[CurrencySymbol.EPKerc20].balanceOf(waccount.ethereumAddress).then((bint) async {
-            Dlog.p("EWU", "epk_erc20 bint=${bint}");
-            // EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
-            // return balance.getValueInUnit(EtherUnit.ether).toString();
+    Future epk_erc20 = Future.value(null);
+    if (waccount.hasHdWallet) {
+      epk_erc20=Future.delayed(Duration(milliseconds: 0)).then((value)async {
+        String ret = null;
+        try {
+          BigInt bint = await waccount.hdTokenMap[CurrencySymbol.EPKerc20].balanceOf(waccount.ethereumAddress);
+          Dlog.p("EWU", "epk_erc20 bint=${bint}");
+          EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
+          BigInt decimals=BigInt.from(18);
+          try {
+            decimals = await waccount.hdTokenMap[CurrencySymbol.EPKerc20].decimals(); //获取token的精度
+            Dlog.p("EWU","JSONRPC CALL decimals epk_erc20 ${decimals}");
+          } catch (e) {
+            Dlog.p("EWU","JSONRPC CALL balance ETH EPK error2");
+            decimals=BigInt.from(18);
+          }
+          EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
+          ret = balance.getValueInUnit(eu).toString();
+        } catch (e) {
+          Dlog.p("EWU","JSONRPC CALL balance ETH EPK error1");
+        }
+        respondSingleBalance(waccount, CurrencySymbol.EPKerc20, ret);
+        return ret;
+      });
 
-            EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
-            BigInt decimals = await waccount.hdTokenMap[CurrencySymbol.EPKerc20].decimals(); //获取token的精度
-            EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
-            String ret = balance.getValueInUnit(eu).toString();
-            respondSingleBalance(waccount, CurrencySymbol.EPKerc20, ret);
-            return ret;
-          })
-        : Future.value(null);
+    }
+    // Future epk_erc20 = waccount.hasHdWallet
+    //     ? waccount.hdTokenMap[CurrencySymbol.EPKerc20].balanceOf(waccount.ethereumAddress).then((bint) async {
+    //         Dlog.p("EWU", "epk_erc20 bint=${bint}");
+    //         // EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
+    //         // return balance.getValueInUnit(EtherUnit.ether).toString();
+    //
+    //         EtherAmount balance = EtherAmount.fromUnitAndValue(EtherUnit.wei, bint);
+    //         BigInt decimals = await waccount.hdTokenMap[CurrencySymbol.EPKerc20].decimals(); //获取token的精度
+    //         EtherUnit eu = EtherAmountEx.getEtherUnitByDecimals(decimals);
+    //         String ret = balance.getValueInUnit(eu).toString();
+    //         respondSingleBalance(waccount, CurrencySymbol.EPKerc20, ret);
+    //         return ret;
+    //       }).catchError(() {
+    //         print("JSONRPC CALL balance ETH EPK error");
+    //       })
+    //     : Future.value(null);
 
     //BSC net
     Future bsc_bnb = waccount.hasHdWallet && !ServiceInfo.hideBSC
@@ -233,7 +309,6 @@ class EpikWalletUtils {
             return ret;
           })
         : Future.value(null);
-
 
     Future bsc_epk = waccount.hasHdWallet && !ServiceInfo.hideBSC
         ? waccount.hdTokenMap[CurrencySymbol.EPKbsc].balanceOf(waccount.ethereumAddress).then((bint) async {

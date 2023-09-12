@@ -94,6 +94,7 @@ class ServiceInfo {
 
   static String get hd_ETH_RpcUrl {
     return TEST_DEV_NET ? _hd_ETH_RpcUrl_test : (serverConfig?.ETHAPI ?? _hd_ETH_RpcUrl);
+    // return "https://clean-maximum-meme.quiknode.pro/399317ea41ae93969dd07b37ceee07a6460b2d9c/"; //todo
   }
 
   static String get hd_BSC_RpcUrl {
@@ -127,7 +128,7 @@ class ServiceInfo {
         Map<String, dynamic> root = jsonDecode(jsonstr);
         Map<String, dynamic> json = root["config"];
         parseConfig(json);
-        print("parseMenuList local");
+        // print("parseMenuList local");
         parseMenuList(root);
         return true;
       }
@@ -161,7 +162,7 @@ class ServiceInfo {
       Dlog.p(TAG, "test 1");
       Map<String, dynamic> json = httpJsonRes.jsonMap["config"];
       parseConfig(json);
-      print("parseMenuList request");
+      // print("parseMenuList request");
       parseMenuList(httpJsonRes.jsonMap);
 
       Dlog.p(TAG, "test 2");
@@ -189,7 +190,7 @@ class ServiceInfo {
         homeMenuMap[LocaleConfig.locale_zh] = zh;
         homeMenuMap[LocaleConfig.locale_en] = en;
 
-        print("parseMenuList $zh  ${json["home_list_ch"]}");
+        // print("parseMenuList $zh  ${json["home_list_ch"]}");
 
         //todo
         // HomeMenuItem test = HomeMenuItem.fromJson({

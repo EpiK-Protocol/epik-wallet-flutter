@@ -832,7 +832,7 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
           clearCache: clearCache, //自动清理缓存
           useShouldOverrideUrlLoading: true, //开启url拦截 配合shouldOverrideUrlLoading
           useShouldInterceptAjaxRequest: false, //拦截 篡改 请求
-          useShouldInterceptFetchRequest: false, //拦截 篡改 请求
+          useShouldInterceptFetchRequest: true, //拦截 篡改 请求
         ),
         android: AndroidInAppWebViewOptions(
           useHybridComposition: true, //DeviceUtils().androidQ,
@@ -871,31 +871,29 @@ class _Web3GeneralWebViewState extends BaseWidgetState<Web3GeneralWebView> {
       //   dlog("ajaxRequest=$ajaxRequest");
       //   return ajaxRequest;
       // },
-      // shouldInterceptFetchRequest: (controller, fetchRequest) async{
-      //   //篡改请求 todo
-      //   dlog("fetchRequest=$fetchRequest");
-      //   if(fetchRequest.url.toString().contains(rpcUrl))
-      //   {
-      //     dlog("-----------------------");
-      //     if(fetchRequest.body is String)
-      //     {
-      //       String body1= fetchRequest.body;
-      //       String body2="";
-      //       Map<String,dynamic> json = jsonDecode(fetchRequest.body);
-      //       if(!json.containsKey("jsonrpc"))
-      //       {
-      //         json["jsonrpc"]="2.0";
-      //         fetchRequest.body = jsonEncode(json);
-      //         body2=fetchRequest.body;
-      //
-      //         print("$body1 ===> $body2");
-      //       }
-      //
-      //     }
-      //     dlog("-----------------------");
-      //   }
-      //   return fetchRequest;
-      // },
+      shouldInterceptFetchRequest: (controller, fetchRequest) async{
+        //篡改请求 todo  trust.js  发送的RPC请求 有的没有写 jsonrpc 2.0 版本
+        dlog("fetchRequest=$fetchRequest");
+        if(fetchRequest.url.toString().contains(rpcUrl))
+        {
+          dlog("fetchRequest -----------------------");
+          if(fetchRequest.body is String)
+          {
+            String body1= fetchRequest.body;
+            String body2="";
+            Map<String,dynamic> json = jsonDecode(fetchRequest.body);
+            if(!json.containsKey("jsonrpc"))
+            {
+              json["jsonrpc"]="2.0";
+              fetchRequest.body = jsonEncode(json);
+              body2=fetchRequest.body;
+              print("fetchRequest $body1 ===> $body2");
+            }
+          }
+          dlog("fetchRequest -----------------------");
+        }
+        return fetchRequest;
+      },
       onConsoleMessage: DeviceUtils.isDebug
           ? (controller, consoleMessage) {
               dlog("consoleMessage : ${consoleMessage.message}");
